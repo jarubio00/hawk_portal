@@ -1,0 +1,307 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Clientes {
+  id        Int     @id @default(autoincrement())
+  nombre            String?
+  correo           String?   @unique
+  correoVerificado   DateTime?
+  imagen           String?
+  password  String?
+  nivel   Int @default(1) //nivel lealtad
+  categoria Int @default(1) //clientes con credito, cobros, etc
+  saldo   Float @default(0) //saldo de guias prepagadas, cobros, credito, etc
+  tipo Int @default(0) //particular, empresa, negocio
+  credito Boolean @default(false) // tiene credito?
+  limiteCredito Float @default(0) //Limite de credito disponible
+  cobros Boolean @default(false) //puede cobrar a destinatarios
+  direccionDefaultId Int 
+  loggedIn Boolean @default(false) //primera vez que entra se presenta onboarding 
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  lastLoginAt     DateTime 
+  accounts Account[]
+  recolecciones Recolecciones[]
+  pedidos Pedidos[]
+  direcciones Misdirecciones[]
+  destinos Misdestinos[]
+  paquetes Mispaquetes[]
+}
+
+model Account {
+  id        Int     @id @default(autoincrement())
+  userId             Int   
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?  
+  access_token       String?  
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?  
+  session_state      String?
+  user Clientes @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([provider, providerAccountId])
+}
+
+model Recolecciones {
+  id        Int     @id @default(autoincrement())
+  clienteId Int
+  estatusRecoleccionId Int // programado, recolectado, cancelado, incidencia, etc
+  fecha  DateTime // fecha de recoleccion (ej. 24/04/2023 10:000  o 14:000)
+  bloque Int // am 1, pm 2
+  contactoNombre String?
+  contactoTel String
+  cpId Int //id del codigo postal, id = cp
+  calle String
+  numero String
+  numeroInt String
+  colonia String
+  otraColonia Boolean @default(false)
+  municipioId Int
+  empresa String?
+  referencias String?
+  lat String?
+  lng String?
+  createdAt DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  updatedBy Int // id del empleado
+  user Clientes @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  pedidos Pedidos[]
+}
+
+model Pedidos {
+  id        Int     @id @default(autoincrement())
+  clienteId Int
+  recoleccionId Int
+  estatusPedidoId Int // programado, recolectado, central, incidencia, entregado, etc
+  fechaEntrega  DateTime
+  bloqueEntrega Int
+  entregaContactoNombre String?
+  entregaContactoTel String
+  entregaCpId Int
+  entregaCalle String
+  entregaNumero String
+  entregaNumeroInt String
+  entregaColonia String
+  entregaOtraColonia Boolean @default(false)
+  entregaMunicipioId Int
+  entregaEmpresa String?
+  entregaReferencias String?
+  entregaLat String?
+  entregaLng String?
+  paqTipoId Int //mini, mediano, etc
+  paqEmpaqueId Int @default(1) //bolsa, sobre, caja
+  paqAncho Float
+  paqLargo Float
+  paqAlto Float
+  paqPeso Float
+  paqContenido String?
+  paqPesoVol Float
+  precioVenta Float
+  formaPagoId Int @default(1)// efectivo, transferencia, tarjeta, etc
+  estatusPagoId Int @default(1)// pendiente, pagado, cancelado, etc
+  cobroDestino Boolean @default(false)
+  cobroDestinoId Int?
+  printCorte Int?
+  printMCorte Int?
+  comprobante Boolean @default(false)
+  comprobanteUrl String?
+  createdAt DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  updatedBy Int
+  cliente Clientes @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  recoleccion Recolecciones @relation(fields: [recoleccionId], references: [id], onDelete: Cascade)
+}
+
+model Misdirecciones {
+  id        Int     @id @default(autoincrement())
+  clienteId Int
+  nombreDireccion String
+  contactoNombre String?
+  contactoTel String
+  cpId Int //id del codigo postal, id = cp
+  calle String
+  numero String
+  numeroInt String
+  colonia String
+  otraColonia Boolean @default(false)
+  municipioId Int
+  empresa String?
+  referencias String?
+  lat String?
+  lng String?
+  createdAt DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  updatedBy Int
+  cliente Clientes @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+}
+
+model Misdestinos {
+  id        Int     @id @default(autoincrement())
+  clienteId Int
+  contactoNombre String?
+  contactoTel String
+  cpId Int //id del codigo postal, id = cp
+  calle String
+  numero String
+  numeroInt String
+  colonia String
+  otraColonia Boolean @default(false)
+  municipioId Int
+  empresa String?
+  referencias String?
+  lat String?
+  lng String?
+  createdAt DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  updatedBy Int
+  cliente Clientes @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+}
+
+model Mispaquetes {
+  id        Int     @id @default(autoincrement())
+  clienteId Int 
+  nombrePaquete String
+  paqTipoId Int //mini, mediano, etc
+  paqEmpaqueId Int @default(1) //bolsa, sobre, caja
+  paqAncho Float
+  paqLargo Float
+  paqAlto Float
+  paqPeso Float
+  paqContenido String?
+  paqPesoVol Float
+  createdAt DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  cliente Clientes @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+}
+
+model CobrosDestino {
+  id        Int     @id @default(autoincrement())
+  clienteId Int
+  pedidoId Int
+  cantidad Float @default(0)
+  estatusCobroId Int @default(1) //activo, completado, incidencia, cancelado
+  estatusPagoCobroId Int @default(1) //por cobrar, cobrado, recibido, confirmado
+  comentario String?
+  cobradoAt DateTime?
+  cobradoBy Int?
+  retornado Boolean @default(false)
+  retornoFormaId Int @default(1) //efectivo domicilio, transferencia, deposito 
+  retornoAt DateTime?
+  retornoBy Int?
+  createdAt DateTime @default(now())
+  createdBy Int?
+}
+
+model CatalogoNivelesClientes {
+  id        Int     @id @default(autoincrement())
+  nivel String
+  desc String?
+}
+
+model CatalalogoCategoriasClientes {
+  id        Int     @id @default(autoincrement())
+  categoria String
+  desc String?
+}
+
+model CatalogoTiposClientes {
+  id        Int     @id @default(autoincrement())
+  tipo String
+  desc String?
+}
+
+model CatalogoEstatusRecolecciones {
+  id        Int     @id @default(autoincrement())
+  estatus String
+  desc String?
+}
+
+model CatalogoEstatusPedidos {
+  id        Int     @id @default(autoincrement())
+  estatus String
+  desc String?
+}
+
+model CatalogoTiposPaquetes {
+  id        Int     @id @default(autoincrement())
+  tipo String
+  desc String?
+}
+
+model CatalogoEmpaquesPaquetes {
+  id        Int     @id @default(autoincrement())
+  empaque String
+  desc String?
+}
+
+model CatalogoFormasPago {
+  id        Int     @id @default(autoincrement())
+  forma String
+  desc String?
+}
+
+model CatalogoEstatusPagos {
+  id        Int     @id @default(autoincrement())
+  estatus String
+  desc String?
+}
+
+model CatalogoEstatusCobros {
+  id        Int     @id @default(autoincrement())
+  estatus String
+  desc String?
+}
+
+model CatalogoEstatusPagoCobros {
+  id        Int     @id @default(autoincrement())
+  estatus String
+  desc String?
+}
+
+
+model CatalogoTiposRetornoCobros {
+  id        Int     @id @default(autoincrement())
+  tipo String
+  desc String?
+}
+
+model CatalogoCodigosPostales {
+  id        Int     @id
+  municipioId Int
+  zonaId Int?
+  rutaId Int?
+  coberturaId Int?
+  lat String?
+  lng String?
+  base String?
+}
+
+model CatalogoColonias {
+  id        Int     @id @default(autoincrement())
+  colonia String
+  cpId Int
+  municipio_id Int
+  tipo String
+  custom Boolean @default(false)
+  customCreatedAt DateTime @default(now())
+}
+
+model CatalogoMunicipios {
+  id        Int     @id @default(autoincrement())
+  municipio String
+  abrev String?
+  estado String @default("Nuevo León")
+  pais String @default("México")
+}
