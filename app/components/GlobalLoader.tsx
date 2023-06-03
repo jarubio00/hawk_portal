@@ -12,11 +12,11 @@ const GlobalLoader = () => {
     <>
     { loader.isOpen && <div
       className="
-      fixed top-0 left-0 right-0 bottom-0 w-full h-screen z-50 overflow-hidden  flex flex-col items-center justify-center
+      fixed top-0 left-0 right-0 bottom-0 w-full h-screen z-50 overflow-hidden bg-white/25 flex flex-col items-center justify-center
       "
       >
         <PulseLoader
-          size={25}
+          size={18}
           color="#F43F5E"
         />
       </div>}

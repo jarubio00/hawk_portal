@@ -10,6 +10,10 @@ export default async function getDirecciones() {
             where: {
                 clienteId: currentUser?.id,
             },
+            include: {
+              //@ts-ignore
+              municipio: true
+            },
           orderBy: {
             createdAt: 'desc'
           }
@@ -18,6 +22,7 @@ export default async function getDirecciones() {
         const safeListings = listings.map((listing) => ({
           ...listing,
           createdAt: listing.createdAt.toISOString(),
+          default: listing.id == currentUser?.direccionDefaultId ? true : false
         }));
     
         return safeListings;

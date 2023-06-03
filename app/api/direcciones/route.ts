@@ -13,6 +13,7 @@ export async function POST(
   }
 
   const body = await request.json();
+  
   const { 
     clienteId, 
     nombreDireccion, 
@@ -26,6 +27,8 @@ export async function POST(
     municipioId, 
     empresa, 
     referencias, 
+    isOtraColonia,
+    otraColonia
    } = body;
 
   Object.keys(body).forEach((value: any) => {
@@ -33,6 +36,8 @@ export async function POST(
       NextResponse.error();
     }
   });
+
+  const coloniaVal = isOtraColonia ? otraColonia : colonia;
 
   const direccion = await prisma.direccion.create({
     data: {
@@ -44,7 +49,7 @@ export async function POST(
         calle, 
         numero, 
         numeroInt, 
-        colonia,
+        colonia: coloniaVal,
         municipioId, 
         empresa, 
         referencias, 

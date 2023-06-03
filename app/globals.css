@@ -13,6 +13,11 @@
     }
  }
 
+ mark {
+  @apply   bg-transparent font-bold ;
+
+}
+
 html,
 body, 
 :root {

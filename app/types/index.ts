@@ -1,17 +1,14 @@
-import { Listing, Reservation, User } from "@prisma/client";
+import { Direccion, Destino, User } from "@prisma/client";
 
-export type SafeListing = Omit<Listing, "createdAt"> & {
+export type SafeDireccion = Omit<Direccion, "createdAt"> & {
   createdAt: string;
 };
 
-export type SafeReservation = Omit<
-  Reservation, 
-  "createdAt" | "startDate" | "endDate" | "listing"
+export type SafeDestino = Omit<
+  Destino, 
+  "createdAt" 
 > & {
   createdAt: string;
-  startDate: string;
-  endDate: string;
-  listing: SafeListing;
 };
 
 export type SafeUser = Omit<
@@ -22,3 +19,14 @@ export type SafeUser = Omit<
   updatedAt: string;
   emailVerified: string | null;
 };
+
+enum Status {
+  ok = 1,
+  error = 2
+}
+
+export type ApiResponse = {
+  status: Status;
+  statusMessage: string;
+  response?: object; 
+}

@@ -153,6 +153,7 @@ model Direccion {
   updatedAt       DateTime? @updatedAt
   updatedBy Int?
   user User? @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  municipio CatalogoMunicipios @relation(fields: [municipioId], references: [id], onDelete: Cascade)
 
   @@map("Misdirecciones")
 }
@@ -323,4 +324,5 @@ model CatalogoMunicipios {
   estado String @default("Nuevo León")
   pais String @default("México")
   colonias CatalogoCodigosPostales[]
+  direccion Direccion[]
 }

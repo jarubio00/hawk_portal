@@ -19,7 +19,7 @@ const Navbar: React.FC<NavbarProps> = ({
 }) => {
  ;
 
- console.log('user: ', currentUser);
+ //console.log('user: ', currentUser);
   const router = useRouter();
   return ( 
     <div className="fixed w-full bg-white z-50 shadow-sm">

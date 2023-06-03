@@ -4,10 +4,10 @@ import ClientOnly from "@/app/components/ClientOnly";
 import getDirecciones from "@/app/actions/getDirecciones";
 import getCurrentUser from '@/app/actions/getCurrentUser';
 
-import MisdireccionesClient from "./Misdirecciones";
+import DestinosClient from "./Destinos";
 
 
-const Misdirecciones  = async () => {
+const Destinos  = async () => {
 
 
   const direcciones = await getDirecciones();
@@ -19,11 +19,11 @@ const Misdirecciones  = async () => {
 
     return (
       <ClientOnly>
-        <MisdireccionesClient  data={direcciones} currentUser={currentUser}/>
+        <DestinosClient  data={direcciones} currentUser={currentUser}/>
 
       </ClientOnly>
     )
   }
 
   
-export default Misdirecciones;
+export default Destinos;

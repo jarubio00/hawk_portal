@@ -21,7 +21,7 @@ import EditarDireccion from "@/app/components/portal/EditarDireccion";
 import ListSearch from "@/app/components/ListSearch";
 
 
-const MisdireccionesClient  = (props:any) => {
+const DestinosClient  = (props:any) => {
   const router = useRouter();
   const loader = useLoader();
   
@@ -234,4 +234,4 @@ const MisdireccionesClient  = (props:any) => {
 
 
   
-export default MisdireccionesClient;
+export default DestinosClient;

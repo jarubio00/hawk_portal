@@ -1,6 +1,6 @@
 'use client';
 
-    import { useCallback, useState } from "react";
+    import { Fragment, useCallback, useState } from "react";
     import { 
         FieldValues, 
         SubmitHandler, 
@@ -8,6 +8,7 @@
     } from "react-hook-form";
     import Select from 'react-select'
     import useLoader from "@/app/hooks/useLoader";
+    import { useRouter } from 'next/navigation';
     import { PulseLoader } from "react-spinners";
     import { LoadingIndicatorProps } from 'react-select';
     import { BiSearch } from "react-icons/bi";
@@ -15,32 +16,27 @@
     import CpInput from "../inputs/CpInput";
     import Button from "../Button";
     import Heading from "../Heading";
-import axios from "axios";
-import BuscarCodigo from "./BuscarCodigo";
+    import axios from "axios";
+    import BuscarCodigoDialog from "../modals/BuscarCodigoDialog";
+    import toast from "react-hot-toast";
+    import { SafeUser, ApiResponse } from "@/app/types";
+    
+    
 
- 
-      
-      const colourOptions  = [
-        { value: 'ocean', label: 'Ocean', color: '#00B8D9', isFixed: true },
-        { value: 'blue', label: 'Blue', color: '#0052CC', isDisabled: true },
-        { value: 'purple', label: 'Purple', color: '#5243AA' },
-        { value: 'red', label: 'Red', color: '#FF5630', isFixed: true },
-        { value: 'orange', label: 'Orange', color: '#FF8B00' },
-        { value: 'yellow', label: 'Yellow', color: '#FFC400' },
-        { value: 'green', label: 'Green', color: '#36B37E' },
-        { value: 'forest', label: 'Forest', color: '#00875A' },
-        { value: 'slate', label: 'Slate', color: '#253858' },
-        { value: 'silver', label: 'Silver', color: '#666666' },
-      ];
 
   interface AgregarDireccionProps {
     title: string;
+    currentUser?: SafeUser | null;
+    onClose: (value: string) => void;
   }
 
   const AgregarDireccion: React.FC<AgregarDireccionProps> = ({
-    title
+    title,
+    currentUser,
+    onClose
   }) => {
     const loader = useLoader();
+    const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
     const [coloniasLoading, setColoniasLoading] = useState(false);
     const [cpActive, setCpActive] = useState(false);
@@ -50,9 +46,10 @@ import BuscarCodigo from "./BuscarCodigo";
     const [coloniaPlaceholder, setColoniaPlaceHolder] = useState('Colonia');
     const [contacto,setContacto] = useState({nombre: "", tel: ""});
     const [misDatosChecked, setMisDatosChecked] = useState(false);
-    const [otraColonia, setOtraColonia] = useState(false);
+    const [otraColoniaSelected, setOtraColoniaSelected] = useState(false);
     const [cpError, setCpError] = useState({error: false, errorMessage: ''});
     const [buscarCp, setBuscarCP] = useState(true);
+    const [openBuscarDialog, setOpenBuscarDialog] = useState(false);
 
 
     const { 
@@ -81,16 +78,71 @@ import BuscarCodigo from "./BuscarCodigo";
       },
     });
     
-    const onSubmit: SubmitHandler<FieldValues> = 
-    (data) => {
-      //loader.onOpen();
+    const onSubmit:  SubmitHandler<FieldValues> = 
+    async (data) => {
+      loader.onOpen();
       console.log('submit');
-      console.log(data);
-  
-      const timer = setTimeout(() => {
-       
-        }, 1000);
+      const post = await postDireccion(data);
+      console.log(post);
+      onClose('close');
+
+       /*  axios.post('/api/direcciones', direccion)
+        .then(() => {
+          toast.success('Dirección creada!');
+          //router.refresh();
+        })
+        .catch((error) => {
+          toast.error(error.message);
+        })
+        .finally(() => {
+          loader.onClose();
+        }) */
      
+    }
+
+    const postDireccion = async (data: any) => {
+
+      console.log('id',currentUser?.id); 
+      const direccion = {
+        clienteId : currentUser?.id, 
+        nombreDireccion: data.nombreDireccion, 
+        contactoNombre: data.nombreContacto, 
+        contactoTel: data.telContacto, 
+        cpId: parseInt(data.cp), 
+        calle: data.calle, 
+        numero: data.numero, 
+        numeroInt: data.interior, 
+        colonia: data.colonia.label, 
+        municipioId: data.municipio.id, 
+        empresa: data.empresa, 
+        referencias: data.referencias,
+        isOtraColonia: otraColoniaSelected,
+        otraColonia: data.otraColonia
+      }
+
+      axios.post('/api/direcciones', direccion)
+        .then(() => {
+          toast.success('Dirección creada!');
+          const response:ApiResponse = {status:1,statusMessage: 'OK', response: {data: direccion} }
+          return response;
+          //router.refresh();
+        })
+        .catch((error) => {
+          toast.error(error.message);
+          const response:ApiResponse = {status:2,statusMessage: 'Error de API', response: {data: {}, error: error} }
+          return response;
+        })
+        .finally(() => {
+          router.refresh();
+
+          const timer = setTimeout(() => {
+              loader.onClose();
+            }, 2000);
+          
+        })
+   
+        const response:ApiResponse = {status:2, statusMessage: 'No se realizo ninguna accion', response: {data: {}, error: {error: 'No se realizo ninguna accion'}} }
+        return response;
     }
 
     const LoadingIndicator = (props: LoadingIndicatorProps<any>) => {
@@ -105,9 +157,9 @@ import BuscarCodigo from "./BuscarCodigo";
     };
   
     const onToggleBuscarCp = useCallback(() => {
-        setBuscarCP(!buscarCp);
-        console.log(buscarCp);
-    }, [buscarCp])
+        //buscarCodigoModal.onOpen();
+        setOpenBuscarDialog(!openBuscarDialog)
+    }, [openBuscarDialog])
 
     const nombreContacto = watch('nombreContacto');
     const telContacto = watch('telContacto');
@@ -122,8 +174,11 @@ import BuscarCodigo from "./BuscarCodigo";
       })
     }
 
-    const getColonias = (cp: any) => { 
+ 
+
+    const getColonias = (cp: any, colonia?: any) => { 
       setColoniasLoading(true);
+      loader.onOpen();
       //loader.onOpen();
   
       axios.post(`/api/colonias/${cp}`)
@@ -134,16 +189,25 @@ import BuscarCodigo from "./BuscarCodigo";
         if(r.status == 1) {
           setCpActive(true);
           setColoniasLoading(false);
-          setColoniaPlaceHolder(`Selecciona una colonia (${response.data.colonias.length -1})`)
           setColonias(response.data.colonias);
           setCustomValue('municipio', response.data.codigo.municipio);
+          setCustomValue('cp', cp);
           setCpError({error: false, errorMessage: ''})
+
+            if(colonia) {
+              setCustomValue('colonia', colonia)
+            } else {
+              setColoniaPlaceHolder(`Selecciona una colonia (${response.data.colonias.length -1})`)
+            }
+         
+          
         } else {
           setColoniasLoading(false);
           setCpActive(false);
           setCpError({error: true, errorMessage: 'Código postal inválido'});
         }
         
+        loader.onClose();
       })
       .catch((error) => {
         console.log(error);
@@ -166,7 +230,7 @@ import BuscarCodigo from "./BuscarCodigo";
                   md:grid-cols-2
                   gap-4">
               
-                  <div className={`${otraColonia ? "col-span-2 md:col-span-1" : "col-span-2"}`}>
+                  <div className={`${otraColoniaSelected ? "col-span-2 md:col-span-1" : "col-span-2"}`}>
                     <Select
                         id="colonia"
                         //@ts-ignore
@@ -175,11 +239,11 @@ import BuscarCodigo from "./BuscarCodigo";
                         onChange={(val: any) => {
               
                           if (val.value && val.value == 9999) {
-                            setOtraColonia(true);
+                            setOtraColoniaSelected(true);
                             setCustomValue('isOtraColonia', true);
                             setCustomValue('colonia', val)
                           } else {
-                            setOtraColonia(false);
+                            setOtraColoniaSelected(false);
                             setCustomValue('isOtraColonia', false);
                             setCustomValue('otraColonia', '');
                             setCustomValue('colonia', val)
@@ -209,7 +273,7 @@ import BuscarCodigo from "./BuscarCodigo";
                         components={{ LoadingIndicator }}
                     />
                   </div>
-                  <div className={`${otraColonia ? "block col-span-2" : "hidden"}`}>
+                  <div className={`${otraColoniaSelected ? "block col-span-2" : "hidden"}`}>
                     <Input
                           id="otraColonia"
                           label="Otra Colonia"
@@ -264,31 +328,32 @@ import BuscarCodigo from "./BuscarCodigo";
                         }}
                         />
                   </div>
-                  <Input
-                      id="numero"
-                      label="Número"
-                      disabled={isLoading}
-                      register={register}
-                      errors={errors}
-                      required
-                      type='number'
-                      maxlength={6}
-                      onChange={(event: any) => {
-              
-                      }}
-                      />
-                  <Input
-                      id="interior"
-                      label="Interior"
-                      disabled={isLoading}
-                      register={register}
-                      errors={errors}
-                      required
-                      maxlength={5}
-                      onChange={(event: any) => {
-              
-                      }}
-                      />
+                  <div className="col-span-2 md:col-span-1">
+                    <Input
+                        id="numero"
+                        label="Número"
+                        disabled={isLoading}
+                        register={register}
+                        errors={errors}
+                        required
+                        type='number'
+                        maxlength={6}
+                        onChange={(event: any) => {
+                        }}
+                        />
+                  </div>
+                  <div className="col-span-2 md:col-span-1">
+                    <Input
+                        id="interior"
+                        label="Interior"
+                        disabled={isLoading}
+                        register={register}
+                        errors={errors}
+                        maxlength={5}
+                        onChange={(event: any) => {
+                        }}
+                        />
+                  </div>
                   <div className="col-span-2">
                     <Input
                         id="empresa"
@@ -317,11 +382,11 @@ import BuscarCodigo from "./BuscarCodigo";
                   </div>
               
               </div>
-              <hr className="h-px my-1 bg-gray-300 border-0 dark:bg-gray-700"></hr>
+              <hr className="h-px my-4 bg-gray-300 border-0 dark:bg-gray-700"></hr>
               <div className="text-sm font-bold text-gray-700">
                  Datos de contacto de este domicilio
               </div>
-              <div className="flex items-center mb-0">
+              <div className="flex items-center my-2">
                 <input id="default-checkbox" type="checkbox" value=""
                 className="w-4 h-4 accent-rose-500 text-rose-500 bg-gray-100 border-gray-300 rounded"
                 onChange={(event: any) => {
@@ -378,8 +443,8 @@ import BuscarCodigo from "./BuscarCodigo";
                       }}
                       />
               </div>
-              <hr className="h-px my-1 bg-gray-300 border-0 dark:bg-gray-700"></hr>
-              <div className="text-sm font-bold text-gray-700">
+              <hr className="h-px my-4 bg-gray-300 border-0 dark:bg-gray-700"></hr>
+              <div className="text-sm font-bold text-gray-700 my-2">
                  Nombre de la dirección (Ej. Casa)
               </div>
               <div className="w-full lg:w-2/4 xl:w-3/5 2xl:w-2/5 pr-4">
@@ -400,22 +465,21 @@ import BuscarCodigo from "./BuscarCodigo";
                   small
                   label="Agregar"
                   onClick={handleSubmit(onSubmit)}
+                
                   />
               </div>
             </div>
     )}
 
-    const searchCp = () => { 
-
-
-      
-      return (
-        <div className="flex my-4">
-          Buscar Codigo
-        </div>
-    )}
+    //@ts-ignore
+    const useCp = (cp) => { 
+      setCustomValue('cp', cp.id);
+      getColonias(cp.id, {label: cp.col, value: cp.id});
+     }
   
     return (
+      <>
+        <BuscarCodigoDialog onClose={onToggleBuscarCp} useCp={useCp} isOpen={openBuscarDialog}/>
         <div className="w-full md:w-3/4 flex flex-col gap-2 mx-2 md:mx-6 py-2">
            
             
@@ -443,6 +507,7 @@ import BuscarCodigo from "./BuscarCodigo";
                       setColoniaSelected(null);
                       setColoniaPlaceHolder(`Colonia`)
                       setCustomValue('municipio', null);
+                      setCustomValue('colonia', null);
                       setCpError({error: false, errorMessage: ''})
                       setCpActive(false);
 
@@ -452,37 +517,30 @@ import BuscarCodigo from "./BuscarCodigo";
               <div className="flex text-xs ml-1 text-rose-500 my-1">
                 {cpError.error ? cpError.errorMessage : ''}
               </div>
-
-              <div className="flex flex-row items-center content-center my-1 mt-4">
+            </div>
+            {!cpActive && !coloniasLoading && <div className="flex flex-row items-center content-center my-1 mt-2">
                 <BiSearch size={16} className="text-blue-500"/>
                 <div className="text-sm text-blue-500 font-medium pb-0 cursor-pointer" onClick={onToggleBuscarCp}>
                   Buscar código por colonia
                 </div>
-              </div>
-
-              {buscarCp && <BuscarCodigo />}
-
-
-              <div className="text-sm font-medium  mt-4">
-                  <Button
-                    outline
-                    small
-                    label="Continuar sin código postal"
-                    onClick={() => {}}
-                    />
-              </div>
-
+            </div>}
               
-
-              
-
-
-            </div>
+            {!cpActive && !coloniasLoading && <div className="text-sm font-medium w-48 mt-0">
+                <Button
+                  outline
+                  small
+                  label="Continuar sin código postal"
+                  onClick={() => {}}
+                  />
+            </div>}
             {cpActive ? addContent('conCP') : ''}
+
+            
            
            
             
-      </div>
+        </div>
+      </>
     );
 
 

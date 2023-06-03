@@ -11,6 +11,7 @@ import TrackModal from './components/modals/TrackModal';
 
 import getCurrentUser from './actions/getCurrentUser';
 import GlobalLoader from './components/GlobalLoader';
+import BuscarCodigoModal from './components/modals/BuscarCodigoModal';
 
 const font = Poppins({
   weight: ['200','400', '700', '900'],
@@ -51,6 +52,7 @@ export default async function RootLayout({
           <RegisterModal />
           <SidebarModal />
           <TrackModal />
+          <BuscarCodigoModal />
           <Navbar currentUser={currentUser}/>
         </ClientOnly>
         <div className="pb-0 pt-0">
