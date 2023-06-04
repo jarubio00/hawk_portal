@@ -1,7 +1,7 @@
 
 import ClientOnly from "@/app/components/ClientOnly";
 
-import getDirecciones from "@/app/actions/getDirecciones";
+import getDestinos from "@/app/actions/getDestinos";
 import getCurrentUser from '@/app/actions/getCurrentUser';
 
 import DestinosClient from "./Destinos";
@@ -10,7 +10,7 @@ import DestinosClient from "./Destinos";
 const Destinos  = async () => {
 
 
-  const direcciones = await getDirecciones();
+  const destinos = await getDestinos();
   const currentUser = await getCurrentUser();
   
   
@@ -19,7 +19,7 @@ const Destinos  = async () => {
 
     return (
       <ClientOnly>
-        <DestinosClient  data={direcciones} currentUser={currentUser}/>
+        <DestinosClient  data={destinos} currentUser={currentUser}/>
 
       </ClientOnly>
     )

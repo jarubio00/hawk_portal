@@ -175,9 +175,10 @@ model Destino {
   lat String?
   lng String?
   createdAt DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  updatedBy Int
-  user User @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  updatedAt       DateTime? @updatedAt
+  updatedBy Int?
+  user User? @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  municipio CatalogoMunicipios? @relation(fields: [municipioId], references: [id], onDelete: Cascade)
 
   @@map("Misdestinos")
 }
@@ -325,4 +326,5 @@ model CatalogoMunicipios {
   pais String @default("México")
   colonias CatalogoCodigosPostales[]
   direccion Direccion[]
+  destino Destino[]
 }

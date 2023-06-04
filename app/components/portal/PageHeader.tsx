@@ -56,7 +56,7 @@ interface PageHeaderProps {
                         <div className="text-lg md:text-2xl font-bold">
                             {title}
                         </div>
-                        <div className={`text-xs md:text-base ${adding ? "text-rose-500" : "text-neutral-500"} `}>
+                        <div className={`text-xs md:text-base ${adding ? "text-blue-500" : "text-neutral-500"} `}>
                             {subtitle}
                         </div>
                         <ScreenSizeUtil />

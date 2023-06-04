@@ -5,7 +5,7 @@ import ActionButtons from "../ActionButtons";
 
 
 interface DireccionesCardProps {
-  tipo: string; //recoleccion,entrega
+  tipo: string; //direccion,destino
   direccion: SafeDireccion;
   destino?: SafeDestino;
   onDelete: (props: any) => void;
@@ -30,9 +30,9 @@ const DireccionesCard: React.FC<DireccionesCardProps> = ({
       <div className={'text-start my-2 shadow-sm bg-white shadow-neutral-300 rounded-md border-1 p-3 w-full  lg:w-3/4 xl:w-3/5'}>
         <div className="flex flex-row justify-between ">
           <div >
-            <div className="text-md font-bold text-gray-400 uppercase">
+            {tipo == 'direccion' && <div className="text-md font-bold text-gray-400 uppercase">
               {direccion.nombreDireccion}
-            </div>
+            </div>}
             <div className="flex flex-row items-center text-xs">
               <div className="font-bold">
                 {direccion.contactoNombre}
@@ -53,6 +53,7 @@ const DireccionesCard: React.FC<DireccionesCardProps> = ({
           <div className="flex flex-col justify-between items-end">
             <div></div>
             <ActionButtons 
+                tipo={tipo}
                 onDelete={() => onDelete({data: direccion, tipo: 'delete'})}
                 deleteDisabled={false}
                 onEdit={() => onEdit(direccion)}

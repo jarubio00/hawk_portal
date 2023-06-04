@@ -183,7 +183,9 @@ const DestinosClient  = (props:any) => {
                         title="Agrega una dirección de recolección" 
                         currentUser={props.currentUser} 
                         onClose={toggleAdding} 
-                        tipo='destino'/>
+                        tipo='destino'
+                        from='menu'
+                        />
                     </div>
                   </div>
                 :
@@ -192,7 +194,7 @@ const DestinosClient  = (props:any) => {
                       {props.data.length >3 && <div className="flex mb-6 mt-2 mx-0 w-full sm:w-2/4 md:w-3/4  xl:w-2/4 ">
                         <ListSearch 
                           inputArray={direcciones}
-                          keys={['contactoNombre', 'calle', 'colonia', 'nombreDireccion']}
+                          keys={['contactoNombre', 'calle', 'colonia']}
                           filteredData={handleSearch}
                           onReset={() => setDirecciones(props.data)}
                           minLength={2}
@@ -204,7 +206,7 @@ const DestinosClient  = (props:any) => {
                           
                         <div key={i}>
                           <DireccionesCard 
-                            tipo='recoleccion' 
+                            tipo='destino' 
                             direccion={direccion} 
                             onDelete={handleConfirmDialog}
                             onEdit={onEditDireccion}

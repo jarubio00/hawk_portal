@@ -12,6 +12,7 @@ interface ButtonProps {
   editDisabled?: boolean;
   defaultDisabled?: boolean;
   defaultDir?: boolean;
+  tipo: string; 
 }
 
 const Button: React.FC<ButtonProps> = ({ 
@@ -21,14 +22,15 @@ const Button: React.FC<ButtonProps> = ({
   deleteDisabled,
   editDisabled,
   defaultDisabled,
-  defaultDir
+  defaultDir,
+  tipo
 }) => {
 
 
   return ( 
     
     <div className="flex flex-row gap-0 items-center">
-        <button
+        {tipo == 'direccion' && <button
           disabled={defaultDir}
           onClick={onMark}
           className={`
@@ -47,7 +49,7 @@ const Button: React.FC<ButtonProps> = ({
             <FaStar
               className="h-4 w-4 md:h-5 md:w-5"
             />
-        </button>
+        </button>}
       <button
         disabled={deleteDisabled}
         onClick={onEdit}

@@ -183,7 +183,8 @@ const MisdireccionesClient  = (props:any) => {
                         title="Agrega una dirección de recolección" 
                         currentUser={props.currentUser} 
                         onClose={toggleAdding}
-                        tipo='direcion'/>
+                        tipo='direccion'
+                        from='menu'/>
                     </div>
                   </div>
                 :
@@ -204,7 +205,7 @@ const MisdireccionesClient  = (props:any) => {
                           
                         <div key={i}>
                           <DireccionesCard 
-                            tipo='recoleccion' 
+                            tipo='direccion' 
                             direccion={direccion} 
                             onDelete={handleConfirmDialog}
                             onEdit={onEditDireccion}

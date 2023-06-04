@@ -20,8 +20,8 @@
     import BuscarCodigoDialog from "../modals/BuscarCodigoDialog";
     import toast from "react-hot-toast";
     import { SafeUser, ApiResponse } from "@/app/types";
-    import { addDireccion } from "@/app/actions/apiQuerys";
-    
+    import { addDireccion, addDestino } from "@/app/actions/apiQuerys";
+    import { Switch } from '@headlessui/react'
     
 
 
@@ -30,13 +30,15 @@
     currentUser?: SafeUser | null;
     onClose: (value: string) => void;
     tipo: string;
+    from: string; // 'menu' , 'pedido'
   }
 
   const AgregarDireccion: React.FC<AgregarDireccionProps> = ({
     title,
     currentUser,
     onClose,
-    tipo: string,
+    tipo,
+    from
   }) => {
     const loader = useLoader();
     const router = useRouter();
@@ -53,7 +55,7 @@
     const [cpError, setCpError] = useState({error: false, errorMessage: ''});
     const [buscarCp, setBuscarCP] = useState(true);
     const [openBuscarDialog, setOpenBuscarDialog] = useState(false);
-
+    const [saveEnabled, setSaveEnabled] = useState(false);
 
     const { 
       register, 
@@ -84,9 +86,15 @@
     const onSubmit:  SubmitHandler<FieldValues> = 
     async (data) => {
       loader.onOpen();
-      console.log('submit');
-      const post = await postDireccion(data);
-      console.log(post);
+      if (tipo == 'direccion') {
+        const post = await postDireccion(data);
+        console.log(post);
+      } else if (tipo == 'destino') {
+        const post = await postDestino(data);
+        console.log(post);
+      }
+      
+      
       onClose('close');
      
     }
@@ -102,6 +110,28 @@
       const res = await addDireccion(apiData);
         if(res.status == 1) {
           toast.success('Dirección creada!');
+        } else {
+          toast.error(res.statusMessage);
+        }
+        router.refresh();
+        const timer = setTimeout(() => {
+          loader.onClose();
+        }, 2000);
+
+        const response:ApiResponse = {status:2, statusMessage: 'No se realizo ninguna accion', response: {data: {}, error: {error: 'No se realizo ninguna accion'}} }
+        return response;
+    }
+
+    const postDestino = async (data: any) => {
+
+      const apiData = {
+        data: data, 
+        currentUser: currentUser, 
+        otraColoniaSelected: otraColoniaSelected}
+
+      const res = await addDestino(apiData);
+        if(res.status == 1) {
+          toast.success('Destino creado!');
         } else {
           toast.error(res.statusMessage);
         }
@@ -412,23 +442,45 @@
                       }}
                       />
               </div>
-              <hr className="h-px my-4 bg-gray-300 border-0 dark:bg-gray-700"></hr>
-              <div className="text-sm font-bold text-gray-700 my-2">
-                 Nombre de la dirección (Ej. Casa)
-              </div>
-              <div className="w-full lg:w-2/4 xl:w-3/5 2xl:w-2/5 pr-4">
-                <Input
-                  id="nombreDireccion"
-                  label="Nombre direccion"
-                  disabled={isLoading}
-                  register={register}
-                  errors={errors}
-                  required
-                  onChange={(event: any) => {
               
-                  }}
+              {tipo == 'direccion' && 
+                <>
+                <hr className="h-px my-4 bg-gray-300 border-0 dark:bg-gray-700"></hr>
+                  <div className="text-sm font-bold text-gray-700 my-2">
+                    Nombre de la dirección (Ej. Casa)
+                  </div>
+                  <div className="w-full lg:w-2/4 xl:w-3/5 2xl:w-2/5 pr-4">
+                    <Input
+                      id="nombreDireccion"
+                      label="Nombre direccion"
+                      disabled={isLoading}
+                      register={register}
+                      errors={errors}
+                      required
+                      onChange={(event: any) => {
+                  
+                      }}
+                      />
+                  </div>
+                </>
+              }
+
+              {tipo == 'destino' && from == 'pedido' && <div className="my-2 felx flex-row gap-2 items-center">
+                <Switch
+                  checked={saveEnabled}
+                  onChange={setSaveEnabled}
+                  className={`${
+                    saveEnabled ? 'bg-rose-500' : 'bg-gray-400'
+                  } relative inline-flex h-4 w-7 items-center rounded-full`}
+                >
+                  <span
+                    className={`${
+                      saveEnabled ? 'translate-x-3' : 'translate-x-1'
+                    } inline-block h-3 w-3 transform rounded-full bg-white transition`}
                   />
-              </div>
+                </Switch>
+                <span className="text-sm font-semibold text-neutral-700 ml-2">Guardar en mis destinos favoritos</span>
+              </div>}
               <div className="w-40 my-4">
                 <Button
                   small
@@ -494,7 +546,7 @@
                 </div>
             </div>}
               
-            {!cpActive && !coloniasLoading && <div className="text-sm font-medium w-48 mt-0">
+            {!cpActive && !coloniasLoading && tipo == 'destino' && <div className="text-sm font-medium w-48 mt-0">
                 <Button
                   outline
                   small
