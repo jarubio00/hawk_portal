@@ -3,6 +3,7 @@
 import { IconType } from "react-icons";
 import Button from "../Button";
 import IconButton from "../IconButton";
+import ScreenSizeUtil from "../utils/ScreenSize";
 
 interface PageHeaderProps {
     title?: string;
@@ -58,6 +59,7 @@ interface PageHeaderProps {
                         <div className={`text-xs md:text-base ${adding ? "text-rose-500" : "text-neutral-500"} `}>
                             {subtitle}
                         </div>
+                        <ScreenSizeUtil />
                     </div>
                 </div>
                 <div className="hidden md:block ">

@@ -44,10 +44,10 @@ const DestinosClient  = (props:any) => {
    
     if (!adding) {
       setAdding(true);
-      setSubtitle('Agrega una dirección de recolección');
+      setSubtitle('Agrega un destino favorito');
     } else {
       setAdding(false);
-      setSubtitle('Administra tus direcciones de recolección');
+      setSubtitle('Administra tus destinos favoritos');
     }
   }
 
@@ -160,7 +160,7 @@ const DestinosClient  = (props:any) => {
         <ConfirmDialog isOpen={confirmDialogOpen} onClose={handleConfirm} dialogContent={dialogContent}/>
         <PortalLayout>
             <PageHeader 
-              title="Mis direcciones"
+              title="Destinos favoritos"
               subtitle={subtitle}
               icon={BiSearch}
               buttonIcon={FaPlus}
@@ -179,13 +179,17 @@ const DestinosClient  = (props:any) => {
               {adding ? 
                   <div className="m-4 flex flex-col bg-gray-100 rounded-md">
                     <div className="p-2"  >
-                      <AgregarDireccion title="Agrega una dirección de recolección" currentUser={props.currentUser} onClose={toggleAdding}/>
+                      <AgregarDireccion 
+                        title="Agrega una dirección de recolección" 
+                        currentUser={props.currentUser} 
+                        onClose={toggleAdding} 
+                        tipo='destino'/>
                     </div>
                   </div>
                 :
                   <div className="my-2 md:my-4 mx-0 lg:mx-4 p-4">
                     <>
-                      {props.data.length >3 && <div className="flex my-6 mx-0 w-full md:w-3/4  xl:w-1/4 ">
+                      {props.data.length >3 && <div className="flex mb-6 mt-2 mx-0 w-full sm:w-2/4 md:w-3/4  xl:w-2/4 ">
                         <ListSearch 
                           inputArray={direcciones}
                           keys={['contactoNombre', 'calle', 'colonia', 'nombreDireccion']}

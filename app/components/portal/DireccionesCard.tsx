@@ -27,7 +27,7 @@ const DireccionesCard: React.FC<DireccionesCardProps> = ({
   
   return ( 
     
-      <div className={'text-start my-2 shadow-sm shadow-neutral-300 rounded-md border-1 p-3 w-full  lg:w-3/4 xl:w-3/5'}>
+      <div className={'text-start my-2 shadow-sm bg-white shadow-neutral-300 rounded-md border-1 p-3 w-full  lg:w-3/4 xl:w-3/5'}>
         <div className="flex flex-row justify-between ">
           <div >
             <div className="text-md font-bold text-gray-400 uppercase">

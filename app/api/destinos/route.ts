@@ -16,7 +16,6 @@ export async function POST(
   
   const { 
     clienteId, 
-    nombreDireccion, 
     contactoNombre, 
     contactoTel, 
     cpId, 
@@ -39,10 +38,10 @@ export async function POST(
 
   const coloniaVal = isOtraColonia ? otraColonia : colonia;
 
-  const direccion = await prisma.direccion.create({
+  const direccion = await prisma.destino.create({
+    //@ts-ignore
     data: {
         clienteId, 
-        nombreDireccion, 
         contactoNombre, 
         contactoTel, 
         cpId, 
@@ -53,7 +52,7 @@ export async function POST(
         municipioId, 
         empresa, 
         referencias, 
-        otraColonia: isOtraColonia
+        otraColonia
     }
   });
 

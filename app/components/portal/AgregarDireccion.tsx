@@ -20,6 +20,7 @@
     import BuscarCodigoDialog from "../modals/BuscarCodigoDialog";
     import toast from "react-hot-toast";
     import { SafeUser, ApiResponse } from "@/app/types";
+    import { addDireccion } from "@/app/actions/apiQuerys";
     
     
 
@@ -28,12 +29,14 @@
     title: string;
     currentUser?: SafeUser | null;
     onClose: (value: string) => void;
+    tipo: string;
   }
 
   const AgregarDireccion: React.FC<AgregarDireccionProps> = ({
     title,
     currentUser,
-    onClose
+    onClose,
+    tipo: string,
   }) => {
     const loader = useLoader();
     const router = useRouter();
@@ -85,62 +88,28 @@
       const post = await postDireccion(data);
       console.log(post);
       onClose('close');
-
-       /*  axios.post('/api/direcciones', direccion)
-        .then(() => {
-          toast.success('Dirección creada!');
-          //router.refresh();
-        })
-        .catch((error) => {
-          toast.error(error.message);
-        })
-        .finally(() => {
-          loader.onClose();
-        }) */
      
     }
 
     const postDireccion = async (data: any) => {
 
       console.log('id',currentUser?.id); 
-      const direccion = {
-        clienteId : currentUser?.id, 
-        nombreDireccion: data.nombreDireccion, 
-        contactoNombre: data.nombreContacto, 
-        contactoTel: data.telContacto, 
-        cpId: parseInt(data.cp), 
-        calle: data.calle, 
-        numero: data.numero, 
-        numeroInt: data.interior, 
-        colonia: data.colonia.label, 
-        municipioId: data.municipio.id, 
-        empresa: data.empresa, 
-        referencias: data.referencias,
-        isOtraColonia: otraColoniaSelected,
-        otraColonia: data.otraColonia
-      }
+      const apiData = {
+        data: data, 
+        currentUser: currentUser, 
+        otraColoniaSelected: otraColoniaSelected}
 
-      axios.post('/api/direcciones', direccion)
-        .then(() => {
+      const res = await addDireccion(apiData);
+        if(res.status == 1) {
           toast.success('Dirección creada!');
-          const response:ApiResponse = {status:1,statusMessage: 'OK', response: {data: direccion} }
-          return response;
-          //router.refresh();
-        })
-        .catch((error) => {
-          toast.error(error.message);
-          const response:ApiResponse = {status:2,statusMessage: 'Error de API', response: {data: {}, error: error} }
-          return response;
-        })
-        .finally(() => {
-          router.refresh();
+        } else {
+          toast.error(res.statusMessage);
+        }
+        router.refresh();
+        const timer = setTimeout(() => {
+          loader.onClose();
+        }, 2000);
 
-          const timer = setTimeout(() => {
-              loader.onClose();
-            }, 2000);
-          
-        })
-   
         const response:ApiResponse = {status:2, statusMessage: 'No se realizo ninguna accion', response: {data: {}, error: {error: 'No se realizo ninguna accion'}} }
         return response;
     }
@@ -480,13 +449,13 @@
     return (
       <>
         <BuscarCodigoDialog onClose={onToggleBuscarCp} useCp={useCp} isOpen={openBuscarDialog}/>
-        <div className="w-full md:w-3/4 flex flex-col gap-2 mx-2 md:mx-6 py-2">
+        <div className="w-full 2xl:w-3/4 flex flex-col gap-2 mx-2 md:mx-6 py-2">
            
             
             <div className="text-sm font-bold text-gray-700">
                Domicilio de recolección
             </div>
-            <div className="w-full md:w-2/4 lg:w-2/4 xl:w-1/5 pr-4">
+            <div className="w-full md:w-2/4 lg:w-2/4 xl:w-2/5 2xl:w-1/5 pr-4">
               <CpInput
                 id="cp"
                 label="Código postal"

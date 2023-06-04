@@ -177,9 +177,13 @@ const MisdireccionesClient  = (props:any) => {
            :
               <>
               {adding ? 
-                  <div className="m-4 flex flex-col bg-gray-100 rounded-md">
+                  <div className="m-4 flex flex-col bg-white rounded-md">
                     <div className="p-2"  >
-                      <AgregarDireccion title="Agrega una dirección de recolección" currentUser={props.currentUser} onClose={toggleAdding}/>
+                      <AgregarDireccion 
+                        title="Agrega una dirección de recolección" 
+                        currentUser={props.currentUser} 
+                        onClose={toggleAdding}
+                        tipo='direcion'/>
                     </div>
                   </div>
                 :

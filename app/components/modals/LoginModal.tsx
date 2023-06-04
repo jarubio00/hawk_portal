@@ -69,7 +69,7 @@ const LoginModal = () => {
         }
       }).finally(() => {
         setIsLoading(false);
-        //loader.onClose();
+        loader.onClose();
       });
       }, 1000);
    

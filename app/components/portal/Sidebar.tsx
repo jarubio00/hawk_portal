@@ -132,9 +132,9 @@ const data = [
           route: '/portal/misdirecciones'
         },
         {
-          title: 'Reading history',
+          title: 'Destinos',
           icon: BsEyeFill,
-          route: '/portal/mispedidos'
+          route: '/portal/destinos'
         },
         {
           title: 'Focus Mode',
