@@ -137,9 +137,9 @@ const data = [
           route: '/portal/destinos'
         },
         {
-          title: 'Focus Mode',
+          title: 'Paquetes',
           icon: MdNightlightRound,
-          route: '/portal/mispedidos'
+          route: '/portal/paquetes'
         },
         {
           title: 'Customize',

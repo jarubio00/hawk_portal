@@ -4,7 +4,7 @@ import getCurrentUser from "@/app/actions/getCurrentUser";
 import prisma from "@/app/libs/prismadb";
 
 interface IParams {
-  direccionId?: string;
+  destinoId?: string;
 }
 
 export async function DELETE(
@@ -17,20 +17,20 @@ export async function DELETE(
     return NextResponse.error();
   }
 
-  const { direccionId } = params;
+  const { destinoId } = params;
 
-  if (!direccionId || typeof direccionId !== 'string') {
+  if (!destinoId || typeof destinoId !== 'string') {
     throw new Error('Invalid ID');
   }
 
-  const direccion = await prisma.direccion.deleteMany({
+  const destino = await prisma.destino.deleteMany({
     where: {
-      id: parseInt(direccionId),
+      id: parseInt(destinoId),
       clienteId: currentUser.id
     }
   });
 
-  return NextResponse.json(direccion);
+  return NextResponse.json(destino);
 }
 
 export async function PATCH(
@@ -44,9 +44,9 @@ export async function PATCH(
   }
 
   const body = await request.json();
-  const { direccionId } = params;
+  const { destinoId } = params;
 
-  if (!direccionId || typeof direccionId !== 'string') {
+  if (!destinoId || typeof destinoId !== 'string') {
     throw new Error('Invalid ID');
   }
 
@@ -54,12 +54,12 @@ export async function PATCH(
     throw new Error('No Changes!');
   }
 
-  const direccion = await prisma.direccion.update({
+  const destino = await prisma.destino.update({
     where: {
-      id: parseInt(direccionId),
+      id: parseInt(destinoId),
     }, 
     data: body
   });
 
-  return NextResponse.json(direccion);
+  return NextResponse.json(destino);
 }
