@@ -86,7 +86,7 @@ const CrearPedidoWidget: React.FC<CrearPedidoWidgetProps> = ({
   return ( 
     <>
       <ConfirmDialog isOpen={confirmSalirOpen} onClose={handleConfirmSalir} dialogContent={dialogContent}/>
-      <UtilDrawer props={drawer} onClose={() => setOpenDrawer(false)} size={sm ? 700 : 850}  content={handleDrawerComponent(drawer?.tipo)}/>
+      <UtilDrawer props={drawer} onClose={() => setOpenDrawer(false)} size={sm ? 700 : 1050}  content={handleDrawerComponent(drawer?.tipo)}/>
       <CrearNavbar  onClose={() => setConfirmSalirOpen(true)} />
       <div className="w-full md:w-3/4 py-4 px-1 md:px-8 mx-auto">
         <div className="mt-16 ">

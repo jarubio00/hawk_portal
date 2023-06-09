@@ -453,7 +453,7 @@
     return (
       <>
         <BuscarCodigoDialog onClose={onToggleBuscarCp} useCp={useCp} isOpen={openBuscarDialog}/>
-        <div className="w-full 2xl:w-3/4 flex flex-col gap-2   py-2 ">
+        <div className="w-full  flex flex-col gap-2   py-2 ">
           <div className="text-sm font-bold text-gray-700">
               Domicilio de recolección
           </div>
