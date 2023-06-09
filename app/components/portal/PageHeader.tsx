@@ -53,10 +53,10 @@ interface PageHeaderProps {
                          <Icon className="h-3 md:h-6 w-3 md:w-6" /> 
                     </div>
                     <div className="flex flex-col w-6/6 md:w-full">
-                        <div className="text-lg md:text-2xl font-bold">
+                        <div className="text-lg md:text-xl font-bold">
                             {title}
                         </div>
-                        <div className={`text-xs md:text-base ${adding ? "text-blue-500" : "text-neutral-500"} `}>
+                        <div className={`text-xs md:text-md ${adding ? "text-blue-500" : "text-neutral-500"} `}>
                             {subtitle}
                         </div>
                         <ScreenSizeUtil />

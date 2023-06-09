@@ -9,8 +9,8 @@ export  async function addDireccion(props: any) {
   const direccion = {
     clienteId : props.currentUser?.id, 
     nombreDireccion: props.data.nombreDireccion, 
-    contactoNombre: props.data.nombreContacto, 
-    contactoTel: props.data.telContacto, 
+    contactoNombre: props.data.contactoNombre, 
+    contactoTel: props.data.contactoTel, 
     cpId: parseInt(props.data.cp), 
     calle: props.data.calle, 
     numero: props.data.numero, 
@@ -24,8 +24,8 @@ export  async function addDireccion(props: any) {
   }
   
   const result = await axios.post('/api/direcciones', direccion)
-          .then(() => {
-            const response:ApiResponse = {status:1,statusMessage: 'OK', response: {data: props.direccion} }
+          .then((res) => {
+            const response:ApiResponse = {status:1,statusMessage: 'OK', response: {data: res.data} }
             return response;
             //router.refresh();
           })
@@ -44,8 +44,8 @@ export  async function addDestino(props: any) {
 
   const direccion = {
     clienteId : props.currentUser?.id, 
-    contactoNombre: props.data.nombreContacto, 
-    contactoTel: props.data.telContacto, 
+    contactoNombre: props.data.contactoNombre, 
+    contactoTel: props.data.contactoTel, 
     cpId: parseInt(props.data.cp), 
     calle: props.data.calle, 
     numero: props.data.numero, 
@@ -80,10 +80,8 @@ export  async function deleteDireccion(props: any) {
   
     const result = await axios.delete(`/api/direcciones/${props.id}`)
         .then(() => {
-          console.log('axios deleted');
           const response:ApiResponse = {status:1,statusMessage: 'OK', response: {data: props.id} }
           return response;
-          //router.refresh();
         })
         .catch((error) => {
           const response:ApiResponse = {status:2,statusMessage: 'Error de API', response: {data: {}, error: error} }
@@ -93,6 +91,23 @@ export  async function deleteDireccion(props: any) {
         
 
         return result;
+}
+
+export  async function deleteDestino(props: any) {
+  
+  const result = await axios.delete(`/api/destinos/${props.id}`)
+      .then(() => {
+        const response:ApiResponse = {status:1,statusMessage: 'OK', response: {data: props.id} }
+        return response;
+      })
+      .catch((error) => {
+        const response:ApiResponse = {status:2,statusMessage: 'Error de API', response: {data: {}, error: error} }
+        return response;
+      })
+ 
+      
+
+      return result;
 }
 
 export  async function markDireccion(props: any) {
@@ -122,6 +137,79 @@ export  async function updateDireccion(props: any) {
         const response:ApiResponse = {status:1,statusMessage: 'OK', response: {data: props.id} }
         return response;
         //router.refresh();
+      })
+      .catch((error) => {
+        const response:ApiResponse = {status:2,statusMessage: 'Error de API', response: {data: {}, error: error} }
+        return response;
+      })
+ 
+      
+
+      return result;
+}
+
+export  async function updateDestino(props: any) {
+  
+  const result = await axios.patch(`/api/destinos/${props.id}`, props.data)
+      .then(() => {
+        const response:ApiResponse = {status:1,statusMessage: 'OK', response: {data: props.id} }
+        return response;
+      })
+      .catch((error) => {
+        const response:ApiResponse = {status:2,statusMessage: 'Error de API', response: {data: {}, error: error} }
+        return response;
+      })
+ 
+      
+
+      return result;
+}
+
+export  async function addPaquete(props: any) {
+
+  const paquete = {...props.data, clienteId: props.currentUser?.id, }
+
+ 
+  const result = await axios.post('/api/paquetes', paquete)
+          .then(() => {
+            const response:ApiResponse = {status:1,statusMessage: 'OK', response: {data: props.data} }
+            return response;
+            //router.refresh();
+          })
+          .catch((error) => {
+           
+            const response:ApiResponse = {status:2,statusMessage: 'Error de API', response: {data: {}, error: error} }
+            return response;
+          });
+ 
+      
+
+      return result;
+}
+
+export  async function deletePaquete(props: any) {
+  
+  const result = await axios.delete(`/api/paquetes/${props.id}`)
+      .then(() => {
+        const response:ApiResponse = {status:1,statusMessage: 'OK', response: {data: props.id} }
+        return response;
+      })
+      .catch((error) => {
+        const response:ApiResponse = {status:2,statusMessage: 'Error de API', response: {data: {}, error: error} }
+        return response;
+      })
+ 
+      
+
+      return result;
+}
+
+export  async function updatePaquete(props: any) {
+  
+  const result = await axios.patch(`/api/paquetes/${props.id}`, props.data)
+      .then(() => {
+        const response:ApiResponse = {status:1,statusMessage: 'OK', response: {data: props.id} }
+        return response;
       })
       .catch((error) => {
         const response:ApiResponse = {status:2,statusMessage: 'Error de API', response: {data: {}, error: error} }

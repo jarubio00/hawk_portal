@@ -3,24 +3,19 @@
 import { forwardRef, useRef } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import { BiSearch } from 'react-icons/bi';
+import { BiSearch, BiCurrentLocation } from 'react-icons/bi';
 
 import {
-    BsPlus,
-    BsSearch,
-    BsEyeFill,
-    BsBookmarkFill,
-    BsFillArrowLeftSquareFill,
-    BsPeopleFill,
-    BsTerminalFill,
-    BsFillArrowRightSquareFill
+  BsFillBoxSeamFill
   } from 'react-icons/bs'
   
   import { AiFillFire, AiFillMessage, } from 'react-icons/ai'
-  import { IoMdArrowRoundUp } from 'react-icons/io'
-  import { MdNightlightRound, MdFeedback } from 'react-icons/md'
-  import { FaCog } from 'react-icons/fa'
+  import { IoMdArrowRoundUp,IoMdPricetag } from 'react-icons/io'
+  import { MdNightlightRound, MdLocationOn, MdViewInAr } from 'react-icons/md'
+  import { FaCog, FaPlus, FaHome, FaMapMarkedAlt, } from 'react-icons/fa'
   import { AiOutlineMenu } from "react-icons/ai";
+  import { GoPackage } from "react-icons/go";
+import Button from "../Button";
 
 
 interface SidebarProps {
@@ -36,24 +31,33 @@ const SideBar = forwardRef<Ref, SidebarProps>((showNav, ref) => {
   return (
     // @ts-ignore
     <div ref={ref} className="fixed pt-16 z-40 w-56 h-full bg-white shadow-sm">
-        <div className="flex flex-col h-5/6 pt-8 justify-between">    
+        <div className="flex flex-col h-[92vh] pt-8 justify-between">    
             <div className='grow my-0'>
+              <div className="flex mx-auto px-6 w-full justify-center items-end mb-6 rounded-lg">
+              <Link href={`/portal/crear`}>
+                  <Button 
+                    label="Programar envío"
+                    onClick={() => {}}
+                    icon={FaPlus}
+                    />
+              </Link>
+              </div>
                 {data.map((group,index) => (
                     <div key={index} className='my-2' >
                         <div className="pl-4 mb-2 text-sm text-gray-500">
                             {group.name}
                         </div>
                         <hr className="mb-3"></hr>
-                        <div>
+                        <div className="mb-4">
                             {group.items.map((item, index2) => (
                                 <div key={index2}>
                                     <Link href={`${item.route}`}>
                                         <div
                                             key={index2}
-                                            className={`pl-4 py-1 mx-5  rounded text-center cursor-pointer mb-1 flex items-center transition-colors ${
+                                            className={`pl-2 py-1 mx-2  rounded text-center text-sm cursor-pointer mb-1 flex items-center transition-colors ${
                                             pathname == `${item.route}`
-                                                ? "text-black-800 font-bold text-md"
-                                                : "text-gray-800 hover:bg-gray-100 hover:text-gray-600 text-md"
+                                                ? "text-black-800 font-bold text-sm"
+                                                : "text-neutral-600 hover:bg-gray-100 hover:text-gray-600 text-md"
                                             }`}
                                             >
                                                 <div className="mr-2">
@@ -63,13 +67,13 @@ const SideBar = forwardRef<Ref, SidebarProps>((showNav, ref) => {
                                                             mr-1
                                                             ${pathname == `${item.route}`
                                                                     ? "bg-rose-500 "
-                                                                    : "text-gray-800 hover:bg-gray-200 hover:text-gray-600"
+                                                                    : "text-neutral-600 hover:bg-gray-200 hover:text-gray-600"
                                                                 }
                                                             rounded-full 
                                                             text-white
                                                         `}
                                                         >
-                                                        <BiSearch size={18} />
+                                                        <item.icon size={20} />
                                                     </div>
                                                 </div>
                                                 
@@ -83,10 +87,10 @@ const SideBar = forwardRef<Ref, SidebarProps>((showNav, ref) => {
                     </div>
                 ))}
             </div>
-            <div className="flex mx-auto  w-full justify-center mb-2 rounded-lg">
+            <div className="flex mx-auto  w-full justify-center items-end mb-2 rounded-lg">
                 <img
                     onClick={() => router.push('/portal/mispedidos')}
-                    className="block w-32 md:w-44  cursor-pointer" 
+                    className="block w-20 md:w-32  cursor-pointer" 
                     src="/images/plat-hawk3.png" 
                 />
             </div>
@@ -99,53 +103,48 @@ const SideBar = forwardRef<Ref, SidebarProps>((showNav, ref) => {
 
 const data = [
     {
-      name: 'Discover',
+      name: 'Operaciones',
       items: [
         {
           title: 'Mis envíos',
-          icon: AiFillFire,
-          route: '/portal/mispedidos'
+          icon: BsFillBoxSeamFill,
+          route: '/portal/adm/mispedidos'
         },
         {
           title: 'Cotizar',
-          icon: IoMdArrowRoundUp,
-          route: '/portal/cotizar'
+          icon: IoMdPricetag,
+          route: '/portal/adm/cotizar'
         },
         {
           title: 'Cobertura',
-          icon: AiFillMessage,
-          route: '/portal/cobertura'
+          icon: FaMapMarkedAlt,
+          route: '/portal/adm/cobertura'
         },
         {
           title: 'Rastreo',
-          icon: BsSearch,
-          route: '/portal/otro'
+          icon: BiCurrentLocation,
+          route: '/portal/adm/rastreo'
         },
       ]
     },
     {
-      name: 'Manage',
+      name: 'Administrar',
       items: [
         {
           title: 'Mis direcciones',
-          icon: BsBookmarkFill,
-          route: '/portal/misdirecciones'
+          icon: FaHome,
+          route: '/portal/adm/misdirecciones'
         },
         {
           title: 'Destinos',
-          icon: BsEyeFill,
-          route: '/portal/destinos'
+          icon: MdLocationOn,
+          route: '/portal/adm/destinos'
         },
         {
           title: 'Paquetes',
-          icon: MdNightlightRound,
-          route: '/portal/paquetes'
-        },
-        {
-          title: 'Customize',
-          icon: FaCog,
-          route: '/portal/mispedidos'
-        },
+          icon: MdViewInAr,
+          route: '/portal/adm/paquetes'
+        }
       ]
     },
   ]

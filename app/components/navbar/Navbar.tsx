@@ -17,9 +17,9 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({
   currentUser,
 }) => {
- ;
+ 
 
- //console.log('user: ', currentUser);
+ 
   const router = useRouter();
   return ( 
     <div className="fixed w-full bg-white z-50 shadow-sm">
@@ -40,11 +40,11 @@ const Navbar: React.FC<NavbarProps> = ({
             md:gap-0
           "
         >
-          <div className="flex flex-row gap-6 md:gap-14 order-0">
+          <div className="flex flex-row gap-4 md:gap-8 order-0 ">
             <SidebarButton />
             <Logo />
           </div>
-            <div className=" w-full md:w-1/4 order-1 md:order-1">
+            <div className=" w-2/4 md:w-1/4 order-1 md:order-1">
               <Search />
             </div>
             

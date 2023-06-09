@@ -102,7 +102,7 @@ const ModalTrack: React.FC<ModalTrackProps> = ({
             translate
             duration-300
             h-full
-            ${showModalTrack ? 'translate-y-full' : 'translate-y-0'}
+            ${showModalTrack ? 'translate-y-0' : 'translate-y-0'}
             ${showModalTrack ? 'opacity-100' : 'opacity-0'}
           `}>
             <div className="

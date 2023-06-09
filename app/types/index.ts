@@ -1,7 +1,12 @@
-import { Direccion, Destino, User } from "@prisma/client";
+import { Direccion, Destino, User, Paquete } from "@prisma/client";
 
 export type SafeDireccion = Omit<Direccion, "createdAt"> & {
   createdAt: string;
+};
+
+export type SafePaquete = Omit<Paquete, "createdAt"> & {
+  createdAt: string;
+  tipo: any;
 };
 
 export type SafeDestino = Omit<

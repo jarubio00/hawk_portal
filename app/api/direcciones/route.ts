@@ -57,5 +57,14 @@ export async function POST(
     }
   });
 
-  return NextResponse.json(direccion);
+  const direccionCompleta = await prisma.direccion.findUnique({
+    where: {
+      id: direccion.id
+    }, 
+    include: {
+      municipio: true,
+    }
+  })
+
+  return NextResponse.json(direccionCompleta);
 }

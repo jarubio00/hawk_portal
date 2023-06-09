@@ -1,19 +1,25 @@
-'use client';
 
-import useLoader from "@/app/hooks/useLoader";
-import { useEffect } from "react";
 
-export default function Home() {
-  const loader = useLoader();
+import getCurrentUser from "@/app/actions/getCurrentUser";
+import ClientOnly from "./components/ClientOnly";
+import Container from "@/app/components/Container";
+import Navbar from "./components/navbar/Navbar";
 
-  useEffect(() => {
-    if (loader.isOpen) {
-      //loader.onClose();
-    }
-  }, []);
+interface HomeProps {
+  searchParams: any
+};
+
+const Home = async ({ searchParams }: HomeProps) => {
+
+  const currentUser = await getCurrentUser();
+
 
 
   return (
-    <div></div>
+    <ClientOnly>
+      <Navbar currentUser={currentUser}/>
+    </ClientOnly>
+    
   )
 }
+export default Home;

@@ -3,27 +3,26 @@ import ClientOnly from "@/app/components/ClientOnly";
 
 import getDirecciones from "@/app/actions/getDirecciones";
 import getCurrentUser from '@/app/actions/getCurrentUser';
+import getPaquetes from '@/app/actions/getPaquetes';
 
-import PaquetesClient from "./Paquetes";
+import PedidosClient from "./Pedidos";
 
 
-const Misdirecciones  = async () => {
+const Pedidos  = async () => {
 
 
   const direcciones = await getDirecciones();
   const currentUser = await getCurrentUser();
-  
-  
-
+  const paquetes = await getPaquetes();
 
 
     return (
       <ClientOnly>
-        <PaquetesClient  data={direcciones} currentUser={currentUser}/>
+        <PedidosClient  data={paquetes} currentUser={currentUser}/>
 
       </ClientOnly>
     )
   }
 
   
-export default Misdirecciones;
+export default Pedidos;

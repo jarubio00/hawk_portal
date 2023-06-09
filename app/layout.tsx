@@ -9,7 +9,6 @@ import LoginModal from './components/modals/LoginModal';
 import SidebarModal from './components/modals/SidebarModal';
 import TrackModal from './components/modals/TrackModal';
 
-import getCurrentUser from './actions/getCurrentUser';
 import GlobalLoader from './components/GlobalLoader';
 import BuscarCodigoModal from './components/modals/BuscarCodigoModal';
 
@@ -30,7 +29,7 @@ export default async function RootLayout({
   children: React.ReactNode
 }) {
 
-  const currentUser = await getCurrentUser();
+  
 
   return (
     <html lang="en">
@@ -53,7 +52,7 @@ export default async function RootLayout({
           <SidebarModal />
           <TrackModal />
           <BuscarCodigoModal />
-          <Navbar currentUser={currentUser}/>
+          
         </ClientOnly>
         <div className="pb-0 pt-0">
           {children}

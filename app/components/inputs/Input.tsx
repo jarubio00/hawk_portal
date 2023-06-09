@@ -20,6 +20,8 @@ interface InputProps {
   errors: FieldErrors;
   width?: string;
   onChange?: ChangeEventHandler<HTMLInputElement>;
+  onFocus?: () => void;
+  onBlur?: () => void;
   maxlength?: number;
 }
 
@@ -35,7 +37,9 @@ const Input: React.FC<InputProps> = ({
   width,
   onChange,
   maxlength,
-  value
+  value,
+  onFocus,
+  onBlur
 }) => {
   return (
     <div className={`
@@ -81,13 +85,16 @@ const Input: React.FC<InputProps> = ({
           ${errors[id] ? 'focus:border-rose-500' : 'focus:border-black'}
         `}
         onChange={onChange}
+        onFocus={onFocus}
+        onBlur={onBlur}
       />
       <label 
         htmlFor={id}
         className={`
           cursor-text
           absolute 
-          text-md
+          text-sm
+          text-neutral-400
           duration-150 
           transform 
           -translate-y-3 

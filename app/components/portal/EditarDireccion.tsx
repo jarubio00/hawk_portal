@@ -1,6 +1,6 @@
 'use client';
 
-    import { Fragment, useCallback, useEffect, useState } from "react";
+    import { useState } from "react";
     import { 
         FieldValues, 
         SubmitHandler, 
@@ -9,22 +9,16 @@
     import Select from 'react-select'
     import useLoader from "@/app/hooks/useLoader";
     import { useRouter } from 'next/navigation';
-    import { PulseLoader } from "react-spinners";
-    import { LoadingIndicatorProps } from 'react-select';
-    import { BiSearch } from "react-icons/bi";
     import Input from "../inputs/Input";
     import CpInput from "../inputs/CpInput";
     import Button from "../Button";
-    import Heading from "../Heading";
-    import axios from "axios";
-    import BuscarCodigoDialog from "../modals/BuscarCodigoDialog";
-    import toast from "react-hot-toast";
-    import { SafeUser, ApiResponse, SafeDireccion } from "@/app/types";
+    import { SafeUser} from "@/app/types";
     
     
 
 
   interface EditarDireccionProps {
+    tipo: string;
     title: string;
     currentUser?: SafeUser | null;
     direccion: any;
@@ -32,6 +26,7 @@
   }
 
   const EditarDireccion: React.FC<EditarDireccionProps> = ({
+    tipo,
     title,
     currentUser,
     onClose,
@@ -71,8 +66,8 @@
         interior: direccion.numeroInt,
         empresa: direccion.empresa,
         referencias: direccion.referencias,
-        nombreContacto: direccion.contactoNombre,
-        telContacto: direccion.contactoTel,
+        contactoNombre: direccion.contactoNombre,
+        contactoTel: direccion.contactoTel,
       },
     });
 
@@ -89,8 +84,8 @@
 
 
 
-    const nombreContacto = watch('nombreContacto');
-    const telContacto = watch('telContacto');
+    const contactoNombre = watch('contactoNombre');
+    const contactoTel = watch('contactoTel');
     const colonia = watch('colonia');
     const municipio = watch('municipio');
 
@@ -279,34 +274,34 @@
                   md:grid-cols-2
                   gap-4">
                     <Input
-                      id="nombreContacto"
+                      id="contactoNombre"
                       label="Nombre contacto"
-                      value={nombreContacto}
+                      value={contactoNombre}
                       disabled={misDatosChecked}
                       register={register}
                       errors={errors}
                       required
                       onChange={(event: any) => {
                         //setContacto({...contacto,nombre: event.target.value});
-                        setCustomValue('nombreContacto', event.target.value);
+                        setCustomValue('contactoNombre', event.target.value);
                       }}
                       />
                     <Input
-                      id="telContacto"
+                      id="contactoTel"
                       label="Teléfono contacto"
                       type='number'
-                      value={telContacto}
+                      value={contactoTel}
                       disabled={misDatosChecked}
                       register={register}
                       errors={errors}
                       required
                       onChange={(event: any) => {
                         //setContacto({...contacto,tel: event.target.value});
-                        setCustomValue('telContacto', event.target.value);
+                        setCustomValue('contactoTel', event.target.value);
                       }}
                       />
               </div>
-              <hr className="h-px my-4 bg-gray-300 border-0 dark:bg-gray-700"></hr>
+              {tipo== 'direccion' && <><hr className="h-px my-4 bg-gray-300 border-0 dark:bg-gray-700"></hr>
               <div className="text-sm font-bold text-gray-700 my-2">
                  Nombre de la dirección (Ej. Casa)
               </div>
@@ -322,7 +317,7 @@
                     setCustomValue('nombreDireccion', event.target.value);
                   }}
                   />
-              </div>
+              </div></>}
               <div className="flex flex-row gap-3 items-center">
                 <div className="w-40 my-4">
                   <Button

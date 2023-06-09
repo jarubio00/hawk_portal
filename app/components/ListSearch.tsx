@@ -4,6 +4,7 @@ import SearchInput from "@/app/components/inputs/SearchInput";
 import { useState } from "react";
 
 interface ListSearchProps {
+  placeholder?: string;
   inputArray: any;
   filteredData: (data: any) => void;
   onReset: () => void;
@@ -13,6 +14,7 @@ interface ListSearchProps {
 }
 
 const ListSearch: React.FC<ListSearchProps> = ({
+   placeholder,
     inputArray,
     filteredData,
     onReset,
@@ -62,7 +64,7 @@ const ListSearch: React.FC<ListSearchProps> = ({
   return (
     <SearchInput
         id="search"
-        label="Buscar dirección"
+        label={placeholder}
         value={value}
         disabled={disabled}
         onClear={handleClear}

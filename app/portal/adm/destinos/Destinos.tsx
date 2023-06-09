@@ -8,13 +8,13 @@ import useLoader from "@/app/hooks/useLoader";
 import ClientOnly from "@/app/components/ClientOnly";
 import PageHeader from "@/app/components/portal/PageHeader";
 
-import { BiSearch } from "react-icons/bi";
+import { MdLocationOn} from 'react-icons/md'
 import { FaPlus, FaTimes } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import AgregarDireccion from "@/app/components/portal/AgregarDireccion";
 import { SafeDireccion,SafeDestino, SafeUser} from "@/app/types";
 import DireccionesCard from "@/app/components/portal/DireccionesCard";
-import { deleteDireccion, markDireccion, updateDireccion } from "@/app/actions/apiQuerys";
+import { addDestino, deleteDestino, markDireccion, updateDestino } from "@/app/actions/apiQuerys";
 import ConfirmDialog from "@/app/components/modals/ConfirmDialog";
 import toast from "react-hot-toast";
 import EditarDireccion from "@/app/components/portal/EditarDireccion";
@@ -93,8 +93,8 @@ const DestinosClient  = (props:any) => {
       if (props.tipo == 'delete') {
         setConfirmDialogOpen(false);
         loader.onOpen();
-        const res = await deleteDireccion({id: props.data.id});
-        toast.success('Dirección borrada!');
+        const res = await deleteDestino({id: props.data.id});
+        toast.success('Destino borrado!');
       } else if (props.tipo == 'mark') {
         setConfirmDialogOpen(false);
         loader.onOpen();
@@ -135,7 +135,8 @@ const DestinosClient  = (props:any) => {
   const onEditClose  = async (props: any) => {
 
     if(props.action == 'save') {
-      const res = await updateDireccion({id: props.id, data: props.data});
+      const res = await updateDestino({id: props.id, data: props.data});
+      toast.success('Destino editado');
       setEditing(false);
       router.refresh();
       const timer = setTimeout(() => {
@@ -146,6 +147,20 @@ const DestinosClient  = (props:any) => {
       setEditing(false);
     }
   } 
+
+  const onAddClose  = async (props: any) => {
+    const res = await addDestino(props.apiData);
+      if(res.status == 1) {
+        toast.success('Dirección creada!');
+      } else {
+        toast.error(res.statusMessage);
+      }
+      setAdding(false);
+      router.refresh();
+      const timer = setTimeout(() => {
+        loader.onClose();
+      }, 1000);
+} 
 
   const handleSearch = (data: any) => {
     if (data) {
@@ -162,7 +177,7 @@ const DestinosClient  = (props:any) => {
             <PageHeader 
               title="Destinos favoritos"
               subtitle={subtitle}
-              icon={BiSearch}
+              icon={MdLocationOn}
               buttonIcon={FaPlus}
               buttonAction={onButtonClick}
               cancelIcon={FaTimes}
@@ -173,7 +188,7 @@ const DestinosClient  = (props:any) => {
          
            { editing ? 
            
-           <EditarDireccion direccion={editData} title="Editar direccion" currentUser={props.currentUser} onClose={onEditClose}/>
+           <EditarDireccion tipo='destino' direccion={editData} title="Editar direccion" currentUser={props.currentUser} onClose={onEditClose}/>
            :
               <>
               {adding ? 
@@ -182,7 +197,7 @@ const DestinosClient  = (props:any) => {
                       <AgregarDireccion 
                         title="Agrega una dirección de recolección" 
                         currentUser={props.currentUser} 
-                        onClose={toggleAdding} 
+                        onClose={onAddClose} 
                         tipo='destino'
                         from='menu'
                         />
@@ -193,6 +208,7 @@ const DestinosClient  = (props:any) => {
                     <>
                       {props.data.length >3 && <div className="flex mb-6 mt-2 mx-0 w-full sm:w-2/4 md:w-3/4  xl:w-2/4 ">
                         <ListSearch 
+                        placeholder="Buscar destino"
                           inputArray={direcciones}
                           keys={['contactoNombre', 'calle', 'colonia']}
                           filteredData={handleSearch}

@@ -76,12 +76,11 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
 
                   </Dialog.Description>
                   <p className=" text-lg  my-6 mx-6">
-                    {dialogContent.action} <span className="text-gray-500 font-bold uppercase">{dialogContent.object}</span>?
+                    {dialogContent.action} <span className="text-gray-500 font-bold uppercase">{dialogContent?.object}</span>?
                   </p>
                   <div className="flex flex-row  items-center justify-end mt-6 mb-2"> 
                     <div className="w-24 ml-2">
                       <Button
-                          small
                           outline
                           label="Cancelar"
                           onClick={() =>onClose({confirm: false})}
@@ -89,7 +88,6 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
                     </div>
                     <div className="w-24 ml-2">
                       <Button
-                        small
                         label="Confirmar"
                         onClick={() =>onClose({confirm: true, data: dialogContent.data, tipo: dialogContent.tipo})}
                       />

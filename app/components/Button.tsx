@@ -11,6 +11,7 @@ interface ButtonProps {
   icon?: IconType;
 }
 
+//se quito w-full , se agregp px-2
 const Button: React.FC<ButtonProps> = ({ 
   label, 
   onClick, 
@@ -30,7 +31,7 @@ const Button: React.FC<ButtonProps> = ({
         rounded-lg
         hover:opacity-80
         transition
-        w-full
+        px-3
         justify-center 
         shadow-lg
         ${outline ? 'bg-white' : 'bg-rose-500'}
@@ -43,7 +44,7 @@ const Button: React.FC<ButtonProps> = ({
         ${small ? 'border-[1px]' : 'border-2'}
       `}
     >
-      <div className="flex flex-row gap-3 items-center justify-center">
+      <div className="flex flex-row gap-3 items-center justify-center text-sm">
         {Icon && (
           <Icon
             size={14}

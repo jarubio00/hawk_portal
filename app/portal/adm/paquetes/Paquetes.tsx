@@ -8,17 +8,19 @@ import useLoader from "@/app/hooks/useLoader";
 import ClientOnly from "@/app/components/ClientOnly";
 import PageHeader from "@/app/components/portal/PageHeader";
 
-import { BiSearch } from "react-icons/bi";
+import { MdViewInAr } from 'react-icons/md'
 import { FaPlus, FaTimes } from "react-icons/fa";
 import { useEffect, useState } from "react";
-import AgregarDireccion from "@/app/components/portal/AgregarDireccion";
-import { SafeDireccion,SafeDestino, SafeUser} from "@/app/types";
+import AgregarPaquete from "@/app/components/portal/AgregarPaquete";
+import { SafeDireccion,SafeDestino, SafeUser, SafePaquete} from "@/app/types";
 import DireccionesCard from "@/app/components/portal/DireccionesCard";
-import { deleteDireccion, markDireccion, updateDireccion } from "@/app/actions/apiQuerys";
+import { deleteDireccion, deletePaquete, markDireccion, updateDireccion, updatePaquete } from "@/app/actions/apiQuerys";
 import ConfirmDialog from "@/app/components/modals/ConfirmDialog";
 import toast from "react-hot-toast";
 import EditarDireccion from "@/app/components/portal/EditarDireccion";
 import ListSearch from "@/app/components/ListSearch";
+import PaquetesCard from "@/app/components/portal/PaquetesCard";
+import EditarPaquete from "@/app/components/portal/EditarPaquete";
 
 
 const PaquetesClient  = (props:any) => {
@@ -33,11 +35,11 @@ const PaquetesClient  = (props:any) => {
   const [dialogContent, setDialogContent] = useState({});
   const [editing,setEditing] = useState(false);
   const [editData,setEditData] = useState({});
-  const [direcciones,setDirecciones] = useState(props?.data);
+  const [paquetes,setPaquetes] = useState(props?.data);
 
 
   useEffect(() => {
-    setDirecciones(props.data);
+    setPaquetes(props.data);
     }, [props]) 
 
   const onButtonClick = () => {
@@ -63,9 +65,9 @@ const PaquetesClient  = (props:any) => {
   const handleConfirmDialog = async (props: any) => {
     if (props.tipo == 'delete') {
       setDialogContent({
-        title: "Borrar dirección",
-        notes: "La dirección no se borrara de tus guías activas o completadas.",
-        action: "Estas seguro de borrar",
+        title: "Borrar paquete",
+        notes: "Los datos del paquete no se borraran de tus guías activas o completadas.",
+        action: "Estas seguro de borrar este paquete",
         object: props.data.nombreDireccion,
         data: props.data,
         tipo: 'delete'
@@ -93,8 +95,8 @@ const PaquetesClient  = (props:any) => {
       if (props.tipo == 'delete') {
         setConfirmDialogOpen(false);
         loader.onOpen();
-        const res = await deleteDireccion({id: props.data.id});
-        toast.success('Dirección borrada!');
+        const res = await deletePaquete({id: props.data.id});
+        toast.success('Paquete borrado!');
       } else if (props.tipo == 'mark') {
         setConfirmDialogOpen(false);
         loader.onOpen();
@@ -116,26 +118,22 @@ const PaquetesClient  = (props:any) => {
   }
   
 
-  const onDeleteDireccion = async (id: number) => {
-    loader.onOpen();
-    setConfirmDialogOpen(true);
-
-    //deleteDireccion({id: id});
-
-    const timer = setTimeout(() => {
-      loader.onClose();
-      }, 3000);
-  } 
-
-  const onEditDireccion = async (direccion: any) => {
-    setEditData(direccion);
+  const onEditPaquete = async (paquete: any) => {
+    setEditData(paquete);
     setEditing(true);
   } 
 
   const onEditClose  = async (props: any) => {
 
     if(props.action == 'save') {
-      const res = await updateDireccion({id: props.id, data: props.data});
+      const res = await updatePaquete({id: props.id, data: props.data});
+
+      if(res.status == 1) {
+        toast.success('Paquete editado');
+      } else {
+        toast.error(res.statusMessage);
+      }
+      
       setEditing(false);
       router.refresh();
       const timer = setTimeout(() => {
@@ -149,7 +147,7 @@ const PaquetesClient  = (props:any) => {
 
   const handleSearch = (data: any) => {
     if (data) {
-     setDirecciones(data);
+     setPaquetes(data);
     } 
   }
   
@@ -162,7 +160,7 @@ const PaquetesClient  = (props:any) => {
             <PageHeader 
               title="Paquetes favoritos"
               subtitle={subtitle}
-              icon={BiSearch}
+              icon={MdViewInAr}
               buttonIcon={FaPlus}
               buttonAction={onButtonClick}
               cancelIcon={FaTimes}
@@ -173,13 +171,13 @@ const PaquetesClient  = (props:any) => {
          
            { editing ? 
            
-           <EditarDireccion direccion={editData} title="Editar direccion" currentUser={props.currentUser} onClose={onEditClose}/>
+           <EditarPaquete  paquete={editData} title="Editar paquete" currentUser={props.currentUser} onClose={onEditClose} from='menu'/>
            :
               <>
               {adding ? 
                   <div className="m-4 flex flex-col bg-white rounded-md">
                     <div className="p-2"  >
-                      <AgregarDireccion 
+                      <AgregarPaquete 
                         title="Agrega una dirección de recolección" 
                         currentUser={props.currentUser} 
                         onClose={toggleAdding}
@@ -192,23 +190,23 @@ const PaquetesClient  = (props:any) => {
                     <>
                       {props.data.length >3 && <div className="flex my-6 mx-0 w-full md:w-3/4  xl:w-1/4 ">
                         <ListSearch 
-                          inputArray={direcciones}
-                          keys={['contactoNombre', 'calle', 'colonia', 'nombreDireccion']}
+                          placeholder="Buscar paquete"
+                          inputArray={paquetes}
+                          keys={['nombrePaquete']}
                           filteredData={handleSearch}
-                          onReset={() => setDirecciones(props.data)}
+                          onReset={() => setPaquetes(props.data)}
                           minLength={2}
                         />
                       </div>}
 
-                      { direcciones.length >= 1 ? direcciones?.map((direccion: SafeDireccion, i: number) => {
+                      { paquetes.length >= 1 ? paquetes?.map((paquete: SafePaquete, i: number) => {
                         return (
                           
                         <div key={i}>
-                          <DireccionesCard 
-                            tipo='direccion' 
-                            direccion={direccion} 
+                          <PaquetesCard 
+                            paquete={paquete} 
                             onDelete={handleConfirmDialog}
-                            onEdit={onEditDireccion}
+                            onEdit={onEditPaquete}
                             onMark={handleConfirmDialog}
                             onSelect={() => {}}
                             />

@@ -9,7 +9,7 @@ import {
   useForm
 } from "react-hook-form";
 import { FcGoogle } from "react-icons/fc";
-import { AiFillGithub } from "react-icons/ai";
+import {BsFacebook } from "react-icons/bs";
 import { useRouter } from "next/navigation";
 
 import useRegisterModal from "@/app/hooks/useRegisterModal";
@@ -31,6 +31,8 @@ const LoginModal = () => {
   const { 
     register, 
     handleSubmit,
+    setValue,
+      watch,
     formState: {
       errors,
     },
@@ -40,6 +42,14 @@ const LoginModal = () => {
       password: ''
     },
   });
+
+  const setCustomValue = (id: string, value: any) => {
+    setValue(id, value, {
+      shouldDirty: true,
+      shouldTouch: true,
+      shouldValidate: true
+    })
+  }
   
   const onSubmit: SubmitHandler<FieldValues> = 
   (data) => {
@@ -83,25 +93,31 @@ const LoginModal = () => {
   const bodyContent = (
     <div className="flex flex-col gap-4">
       <Heading
-        title="Welcome back"
-        subtitle="Login to your account!"
+        title="Bienvenido a la plataforma Hawk"
+        subtitle="Entra a tu panel con correo y contraseña"
       />
       <Input
         id="email"
-        label="Email"
+        label="email"
         disabled={isLoading}
         register={register}  
         errors={errors}
         required
+        onChange={(event: any) => {
+          setCustomValue('email', event.target.value);
+        }}
       />
       <Input
         id="password"
-        label="Password"
+        label="password"
         type="password"
         disabled={isLoading}
         register={register}
         errors={errors}
         required
+        onChange={(event: any) => {
+          setCustomValue('password', event.target.value);
+        }}
       />
     </div>
   )
@@ -111,19 +127,19 @@ const LoginModal = () => {
       <hr />
       <Button 
         outline 
-        label="Continue with Google"
+        label="Continuar con Google"
         icon={FcGoogle}
         onClick={() => loader.onOpen()}
       />
       <Button 
         outline 
-        label="Continue with Github"
-        icon={AiFillGithub}
+        label="Continuar con Facebook"
+        icon={BsFacebook}
         onClick={() => loader.onClose()}
       />
       <div className="
       text-neutral-500 text-center mt-4 font-light">
-        <p>First time using Airbnb?
+        <p>No tienes cuenta aún?
           <span 
             onClick={onToggle} 
             className="
@@ -131,7 +147,7 @@ const LoginModal = () => {
               cursor-pointer 
               hover:underline
             "
-            > Create an account</span>
+            > Crear cuenta</span>
         </p>
       </div>
     </div>
@@ -141,8 +157,8 @@ const LoginModal = () => {
     <Modal
       disabled={isLoading}
       isOpen={loginModal.isOpen}
-      title="Login"
-      actionLabel="Continue"
+      title="Entrar"
+      actionLabel="Continuar"
       onClose={loginModal.onClose}
       onSubmit={handleSubmit(onSubmit)}
       body={bodyContent}

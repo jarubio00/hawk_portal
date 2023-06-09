@@ -33,7 +33,7 @@ const BuscarCodigoDialog: React.FC<BuscarCodigoDialogProps> = ({
     <>
 
 <Transition appear show={isOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={onClose}>
+        <Dialog as="div" className="relative z-[9997]" onClose={onClose}>
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -57,7 +57,7 @@ const BuscarCodigoDialog: React.FC<BuscarCodigoDialogProps> = ({
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-md  transform  rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all ">
+                <Dialog.Panel className="relative md:absolute right-0 md:right-72 w-full max-w-md  transform  rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all ">
                   <Dialog.Title
                     as="div"
                     className="flex flex-row justify-between items-center"

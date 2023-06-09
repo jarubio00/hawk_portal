@@ -1,13 +1,13 @@
-'use client';
+
 import PortalLayout from "@/app/components/portal/PortalLayout";
 
 
-const MisPedidos = () => {
+const Cobertura= () => {
     return (
       <PortalLayout>
-        <div className="pt-0 h-screen">Mis Pedidos</div>
+        <div className="pt-0 h-screen">Cobertura</div>
       </PortalLayout>
     )
   }
   
-export default MisPedidos;
+export default Cobertura;

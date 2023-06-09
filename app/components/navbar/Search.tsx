@@ -34,14 +34,15 @@ const Search = () => {
             items-center 
             justify-between
           "
-          >
-              
-          
+          >   
           <div 
             className="
-            text-sm 
+            text-sm
             font-normal
+            md:font-semibold
             px-6
+            hidden
+            md:block
             "
           >
             Rastrea tu paquete 
@@ -53,6 +54,41 @@ const Search = () => {
                 bg-rose-500 
                 rounded-full 
                 text-white
+                hidden
+                md:block
+              "
+            >
+              <BiSearch size={18} />
+            </div>
+
+          </div>
+          <div 
+          className="
+            flex 
+            flex-row 
+            items-center 
+            justify-between
+            md:hidden
+          "
+          >   
+          <div 
+            className="
+            text-sm 
+            font-normal
+            px-6
+            "
+          >
+            Rastreo 
+            </div>
+            <div 
+              className="
+                p-2 
+                mr-2
+                bg-rose-500 
+                rounded-full 
+                text-white
+                block
+                md:hidden
               "
             >
               <BiSearch size={18} />

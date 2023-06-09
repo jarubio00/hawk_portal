@@ -11,7 +11,7 @@ import {ChangeEventHandler} from 'react';
 
 interface SearchInputProps {
   id: string;
-  label: string;
+  label?: string;
   value?: string | undefined;
   type?: string;
   disabled?: boolean;

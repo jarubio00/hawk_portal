@@ -28,7 +28,7 @@
   interface AgregarDireccionProps {
     title: string;
     currentUser?: SafeUser | null;
-    onClose: (value: string) => void;
+    onClose: (value: Object) => void;
     tipo: string;
     from: string; // 'menu' , 'pedido'
   }
@@ -76,8 +76,8 @@
         interior: '',
         empresa: '',
         referencias: '',
-        nombreContacto: '',
-        telContacto: '',
+        contactoNombre: '',
+        contactoTel: '',
         isOtraColonia: false,
         otraColonia: ''
       },
@@ -86,62 +86,15 @@
     const onSubmit:  SubmitHandler<FieldValues> = 
     async (data) => {
       loader.onOpen();
-      if (tipo == 'direccion') {
-        const post = await postDireccion(data);
-        console.log(post);
-      } else if (tipo == 'destino') {
-        const post = await postDestino(data);
-        console.log(post);
-      }
-      
-      
-      onClose('close');
+
+      const apiData = {
+        data: data, 
+        currentUser: currentUser, 
+        otraColoniaSelected: otraColoniaSelected}
+
+      onClose({apiData: apiData});
+    
      
-    }
-
-    const postDireccion = async (data: any) => {
-
-      console.log('id',currentUser?.id); 
-      const apiData = {
-        data: data, 
-        currentUser: currentUser, 
-        otraColoniaSelected: otraColoniaSelected}
-
-      const res = await addDireccion(apiData);
-        if(res.status == 1) {
-          toast.success('Dirección creada!');
-        } else {
-          toast.error(res.statusMessage);
-        }
-        router.refresh();
-        const timer = setTimeout(() => {
-          loader.onClose();
-        }, 2000);
-
-        const response:ApiResponse = {status:2, statusMessage: 'No se realizo ninguna accion', response: {data: {}, error: {error: 'No se realizo ninguna accion'}} }
-        return response;
-    }
-
-    const postDestino = async (data: any) => {
-
-      const apiData = {
-        data: data, 
-        currentUser: currentUser, 
-        otraColoniaSelected: otraColoniaSelected}
-
-      const res = await addDestino(apiData);
-        if(res.status == 1) {
-          toast.success('Destino creado!');
-        } else {
-          toast.error(res.statusMessage);
-        }
-        router.refresh();
-        const timer = setTimeout(() => {
-          loader.onClose();
-        }, 2000);
-
-        const response:ApiResponse = {status:2, statusMessage: 'No se realizo ninguna accion', response: {data: {}, error: {error: 'No se realizo ninguna accion'}} }
-        return response;
     }
 
     const LoadingIndicator = (props: LoadingIndicatorProps<any>) => {
@@ -160,8 +113,8 @@
         setOpenBuscarDialog(!openBuscarDialog)
     }, [openBuscarDialog])
 
-    const nombreContacto = watch('nombreContacto');
-    const telContacto = watch('telContacto');
+    const contactoNombre = watch('contactoNombre');
+    const contactoTel = watch('contactoTel');
     const colonia = watch('colonia');
     const municipio = watch('municipio');
 
@@ -323,7 +276,7 @@
                         errors={errors}
                         required
                         onChange={(event: any) => {
-              
+                          setCustomValue('calle', event.target.value);
                         }}
                         />
                   </div>
@@ -338,6 +291,7 @@
                         type='number'
                         maxlength={6}
                         onChange={(event: any) => {
+                          setCustomValue('numero', event.target.value);
                         }}
                         />
                   </div>
@@ -350,6 +304,7 @@
                         errors={errors}
                         maxlength={5}
                         onChange={(event: any) => {
+                          setCustomValue('interior', event.target.value);
                         }}
                         />
                   </div>
@@ -360,9 +315,8 @@
                         disabled={isLoading}
                         register={register}
                         errors={errors}
-                        required
                         onChange={(event: any) => {
-              
+                          setCustomValue('empresa', event.target.value);
                         }}
                         />
                   </div>
@@ -373,9 +327,8 @@
                       disabled={isLoading}
                       register={register}
                       errors={errors}
-                      required
                       onChange={(event: any) => {
-              
+                        setCustomValue('referencias', event.target.value);
                       }}
                       />
                   </div>
@@ -392,14 +345,14 @@
                     if(event.target.checked) {
                       setMisDatosChecked(true);
                       //setContacto({nombre: "Javier Rubio", tel: "8115995194"});
-                      setCustomValue('nombreContacto','Javier Rubio');
-                      setCustomValue('telContacto','8115995194');
+                      setCustomValue('contactoNombre','Javier Rubio');
+                      setCustomValue('contactoTel','8115995194');
               
                     } else {
                       setMisDatosChecked(false);
                       //setContacto({nombre: "", tel: ""});
-                      setCustomValue('nombreContacto','');
-                      setCustomValue('telContacto','');
+                      setCustomValue('contactoNombre','');
+                      setCustomValue('contactoTel','');
                     }
                 }}
               
@@ -415,30 +368,30 @@
                   md:grid-cols-2
                   gap-4">
                     <Input
-                      id="nombreContacto"
+                      id="contactoNombre"
                       label="Nombre contacto"
-                      value={nombreContacto}
+                      value={contactoNombre}
                       disabled={misDatosChecked}
                       register={register}
                       errors={errors}
                       required
                       onChange={(event: any) => {
                         //setContacto({...contacto,nombre: event.target.value});
-                        setCustomValue('nombreContacto', event.target.value);
+                        setCustomValue('contactoNombre', event.target.value);
                       }}
                       />
                     <Input
-                      id="telContacto"
+                      id="contactoTel"
                       label="Teléfono contacto"
                       type='number'
-                      value={telContacto}
+                      value={contactoTel}
                       disabled={misDatosChecked}
                       register={register}
                       errors={errors}
                       required
                       onChange={(event: any) => {
                         //setContacto({...contacto,tel: event.target.value});
-                        setCustomValue('telContacto', event.target.value);
+                        setCustomValue('contactoTel', event.target.value);
                       }}
                       />
               </div>
@@ -458,7 +411,7 @@
                       errors={errors}
                       required
                       onChange={(event: any) => {
-                  
+                        setCustomValue('nombreDireccion', event.target.value);
                       }}
                       />
                   </div>
@@ -483,8 +436,7 @@
               </div>}
               <div className="w-40 my-4">
                 <Button
-                  small
-                  label="Agregar"
+                  label={from == 'pedido' ? 'Agregar y usar' : 'Agregar'}
                   onClick={handleSubmit(onSubmit)}
                 
                   />
@@ -501,65 +453,57 @@
     return (
       <>
         <BuscarCodigoDialog onClose={onToggleBuscarCp} useCp={useCp} isOpen={openBuscarDialog}/>
-        <div className="w-full 2xl:w-3/4 flex flex-col gap-2 mx-2 md:mx-6 py-2">
-           
-            
-            <div className="text-sm font-bold text-gray-700">
-               Domicilio de recolección
+        <div className="w-full 2xl:w-3/4 flex flex-col gap-2   py-2 ">
+          <div className="text-sm font-bold text-gray-700">
+              Domicilio de recolección
+          </div>
+          <div className="w-56 pr-4">
+            <CpInput
+              id="cp"
+              label="Código postal"
+              disabled={coloniasLoading}
+              isLoading={coloniasLoading}
+              register={register}  
+              errors={errors}
+              required
+              type='number'
+              maxlength={5}
+              cpError={cpError.error}
+              onChange={(event: any) => {
+                  if (event.target.value.length == 5) {
+                    getColonias(event.target.value);
+
+                  } else {
+                    setColonias([]);
+                    setColoniaSelected(null);
+                    setColoniaPlaceHolder(`Colonia`)
+                    setCustomValue('municipio', null);
+                    setCustomValue('colonia', null);
+                    setCpError({error: false, errorMessage: ''})
+                    setCpActive(false);
+
+                  }
+              }}
+                    />
+            <div className="flex text-xs ml-1 text-rose-500 my-1">
+              {cpError.error ? cpError.errorMessage : ''}
             </div>
-            <div className="w-full md:w-2/4 lg:w-2/4 xl:w-2/5 2xl:w-1/5 pr-4">
-              <CpInput
-                id="cp"
-                label="Código postal"
-                disabled={coloniasLoading}
-                isLoading={coloniasLoading}
-                register={register}  
-                errors={errors}
-                required
-                type='number'
-                maxlength={5}
-                cpError={cpError.error}
-                onChange={(event: any) => {
-                    if (event.target.value.length == 5) {
-                      getColonias(event.target.value);
-
-                    } else {
-                      setColonias([]);
-                      setColoniaSelected(null);
-                      setColoniaPlaceHolder(`Colonia`)
-                      setCustomValue('municipio', null);
-                      setCustomValue('colonia', null);
-                      setCpError({error: false, errorMessage: ''})
-                      setCpActive(false);
-
-                    }
-                }}
-                      />
-              <div className="flex text-xs ml-1 text-rose-500 my-1">
-                {cpError.error ? cpError.errorMessage : ''}
+          </div>
+          {!cpActive && !coloniasLoading && <div className="flex flex-row items-center content-center my-1 mt-2">
+              <BiSearch size={16} className="text-blue-500"/>
+              <div className="text-sm text-blue-500 font-medium pb-0 cursor-pointer" onClick={onToggleBuscarCp}>
+                Buscar código por colonia
               </div>
-            </div>
-            {!cpActive && !coloniasLoading && <div className="flex flex-row items-center content-center my-1 mt-2">
-                <BiSearch size={16} className="text-blue-500"/>
-                <div className="text-sm text-blue-500 font-medium pb-0 cursor-pointer" onClick={onToggleBuscarCp}>
-                  Buscar código por colonia
-                </div>
-            </div>}
-              
-            {!cpActive && !coloniasLoading && tipo == 'destino' && <div className="text-sm font-medium w-48 mt-0">
-                <Button
-                  outline
-                  small
-                  label="Continuar sin código postal"
-                  onClick={() => {}}
-                  />
-            </div>}
-            {cpActive ? addContent('conCP') : ''}
-
-            
-           
-           
-            
+          </div>}
+          {!cpActive && !coloniasLoading && tipo == 'destino' && <div className="text-sm font-medium w-48 mt-0">
+              <Button
+                outline
+                small
+                label="Continuar sin código postal"
+                onClick={() => {}}
+                />
+          </div>}
+          {cpActive ? addContent('conCP') : ''}
         </div>
       </>
     );

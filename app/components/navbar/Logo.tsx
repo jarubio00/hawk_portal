@@ -16,7 +16,7 @@ const Logo = () => {
       />
       <img
         onClick={() => router.push('/')}
-        className="block w-16  md:hidden cursor-pointer" 
+        className="block w-12  md:hidden cursor-pointer" 
         src="/images/lmpink-m.png" 
         
       />
