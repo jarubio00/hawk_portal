@@ -68,7 +68,7 @@ const LoginModal = () => {
           toast.success('Logged in');
           loginModal.onClose();
           router.refresh();
-          router.push("/portal/mispedidos");
+          router.push("/portal/adm/mispedidos");
           
           
         }

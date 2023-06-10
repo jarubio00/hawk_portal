@@ -24,7 +24,7 @@ const {updateActiveStep , pedido} = useContext(PedidoContext) as PedidoContextTy
             {JSON.stringify(pedido,null,2)}
         </p>
         <div className=" my-4 ml-4 flex flex-row gap-6">
-          <Button label="Anterior" onClick={() => updateActiveStep(0)}  />
+          <Button outline label="Anterior" onClick={() => updateActiveStep(1)}  />
           <Button label="Terminar" onClick={() => updateActiveStep(4)}  />
         </div>
     </div>

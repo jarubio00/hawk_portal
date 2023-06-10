@@ -15,6 +15,7 @@ import {PedidoContext} from "../context/PedidoContext"
 import {PedidoContextType, IRecoleccion} from "@/app/types/pedido"
 import Button from "@/app/components/Button";
 import {FaPlus} from 'react-icons/fa'
+import StepHeading from "../components/StepHeading";
 
 interface RecoleccionStepProps {
   label?: string;
@@ -63,10 +64,30 @@ const RecoleccionStep: React.FC<RecoleccionStepProps> = ({
 
   return ( 
    <div className="px-2">
-    <div className="flex flex-col">
-      <span className="text-xl font-black ">Recolección</span>
-      <span className="text-sm text-bold text-neutral-400">Selecciona tu dirección de recolección</span>
-    </div>
+    <StepHeading title="Recolección" subtitle="Selecciona la dirección de recolección" />
+    <div className="flex mt-2">
+       <div className="
+          text-white flex-wrap
+          font-semibold
+          text-xs
+          mb-4
+          flex
+          flex-row
+          gap-1
+          items-center
+          cursor-pointer
+          bg-blue-500
+          hover:bg-blue-300
+          rounded-md
+          px-2
+          py-1
+          "
+            onClick={() => useDrawer({open: true, title: 'Agregar dirección de recolección', tipo: 'addDireccion'})}
+        >
+          <FaPlus size={12} />
+          <span>Agregar nueva dirección de recolección</span>
+       </div>
+     </div>
     <Swiper
         slidesPerView={2.5}
         spaceBetween={10}
@@ -94,19 +115,14 @@ const RecoleccionStep: React.FC<RecoleccionStepProps> = ({
           )
         })}   
      </Swiper>
-     <div className="text-blue-500 font-semibold text-xs mb-4 flex flex-row gap-1 items-center cursor-pointer"
-          onClick={() => useDrawer({open: true, title: 'Agregar dirección de recolección', tipo: 'addDireccion'})}
-      >
-        <FaPlus size={12} />
-        <span>Agregar nueva dirección de recolección</span>
-     </div>
+     
      {pedido?.recoleccion && <div className="my-0 ">
         <DireccionCard data={pedido?.recoleccion}/>
      </div>}
      <div className="my-4"> 
         <Button 
           label='Continuar'
-          onClick={() => updateActiveStep(4)}
+          onClick={() => updateActiveStep(1)}
         />
      </div>
    </div>

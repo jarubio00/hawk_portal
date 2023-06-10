@@ -31,6 +31,8 @@
     onClose: (value: Object) => void;
     tipo: string;
     from: string; // 'menu' , 'pedido'
+    saved?: boolean;
+    direccion?: any;
   }
 
   const AgregarDireccion: React.FC<AgregarDireccionProps> = ({
@@ -38,7 +40,9 @@
     currentUser,
     onClose,
     tipo,
-    from
+    from,
+    saved = false,
+    direccion
   }) => {
     const loader = useLoader();
     const router = useRouter();
@@ -68,18 +72,18 @@
     } = useForm<FieldValues>({
       defaultValues: {
         nombreDireccion: '',
-        cp: '',
-        colonia: '',
-        municipio: '',
-        calle: '',
-        numero: '',
-        interior: '',
-        empresa: '',
-        referencias: '',
-        contactoNombre: '',
-        contactoTel: '',
+        cp: saved ? direccion.calle : '',
+        colonia: saved ? direccion.calle : '',
+        municipio: saved ? direccion.calle :'',
+        calle: saved ? direccion.calle :'',
+        numero: saved ? direccion.calle :'',
+        interior: saved ? direccion.calle :'',
+        empresa: saved ? direccion.calle :'',
+        referencias: saved ? direccion.calle :'',
+        contactoNombre: saved ? direccion.calle : '',
+        contactoTel: saved ? direccion.calle :'',
         isOtraColonia: false,
-        otraColonia: ''
+        otraColonia: saved ? direccion.calle : ''
       },
     });
     

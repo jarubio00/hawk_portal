@@ -17,6 +17,7 @@ import ConfirmarStep from "./steps/Confirmar";
 import UtilDrawer from "./components/UtilDrawer"
 import { SafeUser } from "@/app/types";
 import DireccionDrawer from "./components/DireccionDrawer";
+import DestinoStep from "./steps/Destino";
 
 
 interface CrearPedidoWidgetProps {
@@ -42,11 +43,8 @@ const CrearPedidoWidget: React.FC<CrearPedidoWidgetProps> = ({
     const [drawerContent, setDrawerContent] = useState();
 
     const dialogContent ={
-      title: "Salir",
+      title: "Estas seguro de salir?",
       notes: "Los avances no se guardarán",
-      action: "Estas seguro de salir?",
-      object: '',
-      data: {},
       tipo: 'salir'
     }
 
@@ -75,6 +73,11 @@ const CrearPedidoWidget: React.FC<CrearPedidoWidgetProps> = ({
             <DireccionDrawer currentUser={currentUser}/>
           )
         } 
+        if(tipo == 'destinos') {
+          return (
+            <DireccionDrawer currentUser={currentUser}/>
+          )
+        } 
     }
     
 
@@ -92,6 +95,9 @@ const CrearPedidoWidget: React.FC<CrearPedidoWidgetProps> = ({
         <div className="mt-16 ">
           {activeStep === 0 && 
               <RecoleccionStep direcciones={data.direcciones}/>
+          }
+          {activeStep === 1 && 
+              <DestinoStep />
           }
           {activeStep === 4 && 
               <ConfirmarStep />

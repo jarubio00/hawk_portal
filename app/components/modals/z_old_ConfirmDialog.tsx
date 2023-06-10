@@ -63,19 +63,21 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
                     as="div"
                     className="flex flex-row justify-between items-center mt-1 mb-3"
                   >
-                    <p className="text-lg font-bold leading-6 uppercase ">{dialogContent.title}</p>
+                    <p className="text-lg font-black leading-6 uppercase ">{dialogContent.title}</p>
                     <div></div>
                   </Dialog.Title>
                   <hr></hr>
                   <Dialog.Description
                    as="div"
-                   className="flex flex-row  items-center text-md text-neutral-500 my-4"
+                   className="flex flex-row  items-center text-sm text-neutral-500 my-4"
                   >
-                    <FaInfoCircle size={22} className="text-blue-500"/>
+                    <FaInfoCircle size={20} className="text-blue-500"/>
                     <span className="ml-2">{dialogContent.notes}</span>
 
                   </Dialog.Description>
-                  
+                  <p className=" text-lg  my-6 mx-6">
+                    {dialogContent.action} <span className="text-gray-500 font-bold uppercase">{dialogContent?.object}</span>?
+                  </p>
                   <div className="flex flex-row  items-center justify-end mt-6 mb-2"> 
                     <div className="w-24 ml-2">
                       <Button
