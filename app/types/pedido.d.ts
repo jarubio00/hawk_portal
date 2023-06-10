@@ -32,12 +32,13 @@ export interface IDestino {
     cpId: number;
     calle: string;
     numero: string;
-    numeroInt: string;
+    numeroInt?: string;
     colonia: string;
     otraColonia: boolean;
     municipioId: number;
-    empresa: string;
-    referencias: string;
+    empresa?: string;
+    referencias?: string;
+    municipio: Municipio;
     save: boolean;
 }
 
@@ -63,6 +64,10 @@ export type PedidoContextType = {
     updateActiveStep: (step: number) => void;
     updateDireccionSelected: (id: number) => void;
     direccionSelected: number;
+    updateDestinoSelected: (id: number) => void;
+    destinoSelected: number;
+    updatePaqueteSelected: (id: number) => void;
+    paqueteSelected: number;
     drawer?: IDrawer;
     useDrawer: (props: IDrawer) => void;
 }

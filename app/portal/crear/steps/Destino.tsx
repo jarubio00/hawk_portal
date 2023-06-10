@@ -22,9 +22,21 @@ const DestinoStep: React.FC<DestinoStepProps> = ({
   currentUser
 }) => {
 
-const {updateActiveStep , saveRecoleccion, pedido, useDrawer} = useContext(PedidoContext) as PedidoContextType;
+const {updateActiveStep , saveDestino, destinoSelected, updateDestinoSelected, pedido, useDrawer} = useContext(PedidoContext) as PedidoContextType;
 const router = useRouter();
 const loader = useLoader();
+
+const [saved,setSaved] = useState(false);
+const [direccion,setDireccion] = useState({});
+
+useEffect(() => {
+  if (destinoSelected && destinoSelected > 0 && pedido?.destino) {
+    setSaved(true);
+    setDireccion(pedido?.destino);
+  }
+  //console.log(destinoSelected);
+  //console.log(pedido?.destino);
+},[destinoSelected])
 
 const onAddClose = () => {}
 
@@ -48,7 +60,7 @@ const onAddClose = () => {}
           px-2
           py-1
           "
-            onClick={() => useDrawer({open: true, title: 'Agregar dirección de recolección', tipo: 'addDireccion'})}
+            onClick={() => useDrawer({open: true, title: 'Selecciona una dirección de destino', tipo: 'destinos'})}
         >
           <FaPlus size={12} />
           <span>Usar destino guardado</span>
@@ -61,7 +73,8 @@ const onAddClose = () => {}
               onClose={onAddClose}
               tipo='destino'
               from='pedido'
-              saved={false}
+              saved={saved}
+              direccion={direccion}
               />
         </div>
         <div className="my-4 flex flex-row items-center gap-4"> 

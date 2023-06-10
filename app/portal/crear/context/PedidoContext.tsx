@@ -12,6 +12,8 @@ interface Props {
 const PedidoProvider: React.FC<Props> = ({children}) => {
   const [activeStep, setActiveStep] = useState(0);
   const [direccionSelected, setDireccionSelected] = useState(0);
+  const [destinoSelected, setDestinoSelected] = useState(0);
+  const [paqueteSelected, setPaqueteSelected] = useState(0);
   const [pedido, setPedido] = useState<IPedido>();
   const [recoleccion, setRecoleccion] = useState<IRecoleccion>();
   const [drawer, setDrawer] = useState<IDrawer>({
@@ -40,7 +42,21 @@ const PedidoProvider: React.FC<Props> = ({children}) => {
   }
 
   const saveDestino = (dest: IDestino) => {
-    setPedido({...pedido,destino: dest});
+    setPedido({...pedido,destino: {
+      contactoNombre: dest.contactoNombre,
+      contactoTel: dest.contactoTel,
+      cpId: dest.cpId,
+      calle: dest.calle,
+      numero: dest.numero,
+      numeroInt: dest.numeroInt,
+      colonia: dest.colonia,
+      otraColonia: dest.otraColonia,
+      municipioId: dest.municipioId,
+      empresa: dest.empresa,
+      referencias: dest.referencias,
+      municipio: dest.municipio,
+      save: dest.save
+    }});
   }
 
   const updateActiveStep = (step: number) => {
@@ -49,6 +65,14 @@ const PedidoProvider: React.FC<Props> = ({children}) => {
 
   const updateDireccionSelected = (id: number) => {
     setDireccionSelected(id);
+  }
+
+  const updateDestinoSelected = (id: number) => {
+    setDestinoSelected(id);
+  }
+
+  const updatePaqueteSelected = (id: number) => {
+    setPaqueteSelected(id);
   }
 
   const useDrawer = (props: IDrawer) => {
@@ -65,6 +89,10 @@ const PedidoProvider: React.FC<Props> = ({children}) => {
         activeStep,
         updateDireccionSelected,
         direccionSelected,
+        updateDestinoSelected,
+        destinoSelected,
+        updatePaqueteSelected,
+        paqueteSelected,
         drawer,
         useDrawer
       }}

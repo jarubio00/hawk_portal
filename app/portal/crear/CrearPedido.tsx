@@ -48,6 +48,7 @@ const CrearPedidoClient  = (props:any) => {
 
   //console.log(breakpoints);
 
+  console.log(props);
 
  
     return (

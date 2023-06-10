@@ -1,6 +1,6 @@
 'use client';
 
-    import { Fragment, useCallback, useState } from "react";
+    import { Fragment, useCallback, useEffect, useState } from "react";
     import { 
         FieldValues, 
         SubmitHandler, 
@@ -86,6 +86,22 @@
         otraColonia: saved ? direccion.calle : ''
       },
     });
+
+    useEffect(() =>{
+      if(saved) {
+        setCpActive(true);
+        console.log(direccion);
+        setCustomValue('cp', direccion.cpId);
+        setCustomValue('colonia', {label: direccion.colonia, value: direccion.id});
+        setCustomValue('calle', direccion.calle);
+        setCustomValue('numero', direccion.numero);
+        setCustomValue('interior', direccion.interior);
+        setCustomValue('empresa', direccion.empresa);
+        setCustomValue('referencias', direccion.referencias);
+        setCustomValue('contactoNombre', direccion.contactoNombre);
+        setCustomValue('contactoTel', direccion.contactoTel);
+      }
+    },[saved])
     
     const onSubmit:  SubmitHandler<FieldValues> = 
     async (data) => {

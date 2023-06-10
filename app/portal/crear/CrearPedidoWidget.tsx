@@ -18,6 +18,7 @@ import UtilDrawer from "./components/UtilDrawer"
 import { SafeUser } from "@/app/types";
 import DireccionDrawer from "./components/DireccionDrawer";
 import DestinoStep from "./steps/Destino";
+import DestinoDrawer from "./components/DestinoDrawer";
 
 
 interface CrearPedidoWidgetProps {
@@ -75,7 +76,7 @@ const CrearPedidoWidget: React.FC<CrearPedidoWidgetProps> = ({
         } 
         if(tipo == 'destinos') {
           return (
-            <DireccionDrawer currentUser={currentUser}/>
+            <DestinoDrawer currentUser={currentUser} destinos={data.destinos}/>
           )
         } 
     }
