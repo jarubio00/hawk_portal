@@ -69,6 +69,7 @@
       formState: {
         errors,
       },
+      reset
     } = useForm<FieldValues>({
       defaultValues: {
         nombreDireccion: '',
@@ -87,8 +88,17 @@
       },
     });
 
+    //console.log('agr dir:', direccion)
+    useEffect(() => {
+      if(!saved) {
+        reset();
+        setCpActive(false);
+      }
+    },[saved])
+
     useEffect(() =>{
-      if(direccion.id) {
+      console.log('agr')
+      if(direccion && saved) {
         setCpActive(true);
         console.log('agr dir',direccion);
         setCustomValue('cp', direccion.cpId);
@@ -441,7 +451,7 @@
               {tipo == 'destino' && from == 'pedido' && <div className="my-2 felx flex-row gap-2 items-center">
                 <Switch
                   checked={saveEnabled}
-                  onChange={setSaveEnabled}
+                  onChange={()=> reset()}
                   className={`${
                     saveEnabled ? 'bg-rose-500' : 'bg-gray-400'
                   } relative inline-flex h-4 w-7 items-center rounded-full`}

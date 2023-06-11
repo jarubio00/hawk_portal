@@ -106,7 +106,7 @@ const UserMenu: React.FC<UserMenuProps> = ({
               <>
                 <MenuItem 
                   label="Mi Panel" 
-                  onClick={() => router.push('/portal/mispedidos')}
+                  onClick={() => router.push('/portal/adm/mispedidos')}
                 />
                 <MenuItem 
                   label="Mi Perfil" 
@@ -137,11 +137,11 @@ const UserMenu: React.FC<UserMenuProps> = ({
             ) : (
               <>
                 <MenuItem 
-                  label="Login" 
+                  label="Entrar a mi cuenta" 
                   onClick={loginModal.onOpen}
                 />
                 <MenuItem 
-                  label="Sign up" 
+                  label="Salir" 
                   onClick={registerModal.onOpen}
                 />
               </>
