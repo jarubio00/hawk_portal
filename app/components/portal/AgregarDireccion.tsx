@@ -72,25 +72,25 @@
     } = useForm<FieldValues>({
       defaultValues: {
         nombreDireccion: '',
-        cp: saved ? direccion.calle : '',
-        colonia: saved ? direccion.calle : '',
-        municipio: saved ? direccion.calle :'',
-        calle: saved ? direccion.calle :'',
-        numero: saved ? direccion.calle :'',
-        interior: saved ? direccion.calle :'',
-        empresa: saved ? direccion.calle :'',
-        referencias: saved ? direccion.calle :'',
-        contactoNombre: saved ? direccion.calle : '',
-        contactoTel: saved ? direccion.calle :'',
+        cp:  '',
+        colonia:  '',
+        municipio: '',
+        calle: '',
+        numero: '',
+        interior: '',
+        empresa: '',
+        referencias: '',
+        contactoNombre:  '',
+        contactoTel: '',
         isOtraColonia: false,
-        otraColonia: saved ? direccion.calle : ''
+        otraColonia:  ''
       },
     });
 
     useEffect(() =>{
-      if(saved) {
+      if(direccion.id) {
         setCpActive(true);
-        console.log(direccion);
+        console.log('agr dir',direccion);
         setCustomValue('cp', direccion.cpId);
         setCustomValue('colonia', {label: direccion.colonia, value: direccion.id});
         setCustomValue('calle', direccion.calle);
@@ -101,7 +101,7 @@
         setCustomValue('contactoNombre', direccion.contactoNombre);
         setCustomValue('contactoTel', direccion.contactoTel);
       }
-    },[saved])
+    },[direccion])
     
     const onSubmit:  SubmitHandler<FieldValues> = 
     async (data) => {
