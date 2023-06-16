@@ -31,11 +31,13 @@ const {updateActiveStep , savePaquete, paqueteSelected, updatePaqueteSelected, p
 const router = useRouter();
 const loader = useLoader();
 
+const clientDate = new Date();
+
 
 const serverDate = useCallback(async () => {
   const date = await getServerDate();
 
-  console.log(date);
+  setDatetime(date.toISOString());
 
 }, [])
 
@@ -45,7 +47,9 @@ useEffect(() => {
 
 const [saved,setSaved] = useState(false);
 const [paquete,setPaquete] = useState({});
-const [datetime,setDatetime] = useState(0);
+const [datetime,setDatetime] = useState('');
+const [clienttime,setClienttime] = useState(new Date().toString());
+
 
 
 const handleBack = () => {
@@ -74,7 +78,10 @@ const handleServerDate = async () => {
         <StepHeading title="Programación" subtitle="Selecciona las fechas y horarios de recolección y entrega" />
        
      <div className="my-4">
-      
+      Server: {datetime}
+      </div>
+      <div className="my-4">
+      Client: {clienttime}
       </div>
       <div className="my-4 flex flex-row items-center gap-4"> 
               <Button 
