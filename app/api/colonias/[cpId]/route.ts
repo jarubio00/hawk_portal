@@ -11,11 +11,11 @@ export async function POST(
   request: Request, 
   { params }: { params: IParams }
 ) {
-  const currentUser = await getCurrentUser();
+ /*  const currentUser = await getCurrentUser();
 
   if (!currentUser) {
     return NextResponse.error();
-  }
+  } */
 
   const { cpId } = params;
 
@@ -24,6 +24,7 @@ export async function POST(
   }
 
   let data = {}
+  console.log('colonias api req: ', cpId);
   
   const codigopostal = await prisma.catalogoCodigosPostales.findUnique({
     where: {

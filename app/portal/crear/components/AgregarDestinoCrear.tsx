@@ -1,6 +1,6 @@
 'use client';
 
-    import { Fragment, useCallback, useEffect, useState } from "react";
+    import { Fragment, useCallback, useContext, useEffect, useState } from "react";
     import { 
         FieldValues, 
         SubmitHandler, 
@@ -12,20 +12,25 @@
     import { PulseLoader } from "react-spinners";
     import { LoadingIndicatorProps } from 'react-select';
     import { BiSearch } from "react-icons/bi";
-    import Input from "../inputs/Input";
-    import CpInput from "../inputs/CpInput";
-    import Button from "../Button";
-    import Heading from "../Heading";
+    import Input from "@/app/components/inputs/Input";
+    import CpInput from "@/app/components/inputs/CpInput";
+    import Button from "@/app/components/Button";
+    import Heading from "@/app/components/Heading";
     import axios from "axios";
-    import BuscarCodigoDialog from "../modals/BuscarCodigoDialog";
+    import BuscarCodigoDialog from "@/app/components/modals/BuscarCodigoDialog";
     import toast from "react-hot-toast";
     import { SafeUser, ApiResponse } from "@/app/types";
     import { addDireccion, addDestino } from "@/app/actions/apiQuerys";
     import { Switch } from '@headlessui/react'
+    import {PedidoContext} from "@/app/portal/crear/context/PedidoContext"
+import { IoMdClose } from "react-icons/io";
+import { PedidoContextType } from "@/app/types/pedido";
+import { FaInfoCircle } from "react-icons/fa";
+import ConfirmDialog from "@/app/components/modals/ConfirmDialog";
     
 
 
-  interface AgregarDireccionProps {
+  interface AgregarDestinoCrearProps {
     title: string;
     currentUser?: SafeUser | null;
     onClose: (value: Object) => void;
@@ -33,14 +38,18 @@
     from: string; // 'menu' , 'pedido'
     saved?: boolean;
     direccion?: any;
+    onCp: (value: boolean) => void;
   }
 
-  const AgregarDireccion: React.FC<AgregarDireccionProps> = ({
+  const AgregarDestinoCrear: React.FC<AgregarDestinoCrearProps> = ({
     title,
     currentUser,
     onClose,
     tipo,
     from,
+    saved = false,
+    direccion,
+    onCp
   }) => {
     const loader = useLoader();
     const router = useRouter();
@@ -58,6 +67,14 @@
     const [buscarCp, setBuscarCP] = useState(true);
     const [openBuscarDialog, setOpenBuscarDialog] = useState(false);
     const [saveEnabled, setSaveEnabled] = useState(false);
+    const [cpFromSearch, setCpFromSearch] = useState(0);
+    const [usingCpFromSearch, setUsingCpFromSearch] = useState(false);
+    const [axiosString, setAxiosString] = useState('');
+    const [sinCpDialogOpen, setSinCpDialogOpen] = useState(false);
+    const [dialogContent, setDialogContent] = useState({});
+
+    const {updateActiveStep,saveDestino, saveDestinoKey, pedido} = useContext(PedidoContext) as PedidoContextType;
+
 
     const { 
       register, 
@@ -86,19 +103,53 @@
       },
     });
 
+    const formReset = reset;
+
     //console.log('agr dir:', direccion)
-   
+    useEffect(() => {
+      if(!saved) {
+        reset();
+        setCpActive(false);
+        setUsingCpFromSearch(false);
+        setCpFromSearch(0);
+      }
+    },[saved])
+
+    useEffect(() =>{
+      console.log(direccion);
+      if(direccion && saved) {
+        setCpActive(true);
+        setCustomValue('cp', direccion.cpId);
+        setCustomValue('colonia', {label: direccion.colonia, value: direccion.value});
+        setCustomValue('municipio', direccion.municipio)
+        setCustomValue('calle', direccion.calle);
+        setCustomValue('numero', direccion.numero);
+        setCustomValue('interior', direccion.interior);
+        setCustomValue('empresa', direccion.empresa);
+        setCustomValue('referencias', direccion.referencias);
+        setCustomValue('contactoNombre', direccion.contactoNombre);
+        setCustomValue('contactoTel', direccion.contactoTel);
+      }
+    },[direccion])
     
     const onSubmit:  SubmitHandler<FieldValues> = 
     async (data) => {
-      loader.onOpen();
+      //loader.onOpen();
+      console.log('sumbit')
 
-      const apiData = {
-        data: data, 
-        currentUser: currentUser, 
-        otraColoniaSelected: otraColoniaSelected}
+     const destino = {
+      ...data,
+      otraColonia: otraColoniaSelected,
+      colonia: data.colonia.label,
+      cpId: data.cp,
+      sincp: false
+     }
 
-      onClose({apiData: apiData});
+     console.log('destino', destino)
+
+      saveDestino(destino);
+      
+      //onClose({apiData: apiData});
     
      
     }
@@ -129,7 +180,7 @@
         shouldDirty: true,
         shouldTouch: true,
         shouldValidate: true
-      })
+      });
     }
 
  
@@ -138,7 +189,7 @@
       setColoniasLoading(true);
       loader.onOpen();
       //loader.onOpen();
-  
+      
       axios.post(`/api/colonias/${cp}`)
       .then((response) => {
         console.log('colonias', response.data);
@@ -151,6 +202,8 @@
           setCustomValue('municipio', response.data.codigo.municipio);
           setCustomValue('cp', cp);
           setCpError({error: false, errorMessage: ''})
+          setUsingCpFromSearch(true);
+          setCpFromSearch(cp);
 
             if(colonia) {
               setCustomValue('colonia', colonia)
@@ -175,6 +228,56 @@
       })
     }
 
+    //@ts-ignore
+    const useCp = (cp) => { 
+      setUsingCpFromSearch(true);
+      setCpFromSearch(cp.id);
+      setCustomValue('cp', cp.id);
+      getColonias(cp.id, {label: cp.col, value: cp.id});
+     }
+
+     const handleOnCancelCp =() => {
+      setUsingCpFromSearch(false);
+      setCpFromSearch(0);
+      formReset();
+      setCpActive(false);
+      saveDestino({})
+     }
+
+     const handleSinCpDialog = () => {
+      setDialogContent({
+        title: "Continuar sin Código Postal",
+        notes: "El código postal es requerido en nuestro proceso de automatización. Si continuas sin él, el tiempo de entrega de tu envío es posible que aumente 24hrs.",
+        action: "Estas seguro de borrar",
+        object: {},
+        data: {},
+        tipo: 'confirm'
+      })
+      setSinCpDialogOpen(true);
+     }
+
+     const handleConfirmSinCp = (props:any) => {
+        if(props.confirm ) {
+          if (props.tipo == 'confirm') {
+            setSinCpDialogOpen(false);
+            onCp(true);
+          } 
+        } else {
+          setSinCpDialogOpen(false);
+        }
+    }
+
+     const handleBack = () => {
+      updateActiveStep(0)
+    }
+
+    const handleNext = () => {
+      //updateActiveStep(4);
+      console.log('next');
+      handleSubmit(onSubmit)();
+      updateActiveStep(2);
+    }
+
     const addContent = (type: any) => { 
       
       return (
@@ -195,7 +298,7 @@
                         register={register}
                         placeholder={coloniaPlaceholder}
                         onChange={(val: any) => {
-              
+                          console.log(val);
                           if (val.value && val.value == 9999) {
                             setOtraColoniaSelected(true);
                             setCustomValue('isOtraColonia', true);
@@ -212,7 +315,7 @@
                         isClearable
                         options={colonias}
                         isLoading={coloniasLoading}
-                        isDisabled={!cpActive}
+                        isDisabled={!cpActive || saved}
                         classNames={{
                             control: () => 'p-2 border-2',
               
@@ -235,7 +338,7 @@
                     <Input
                           id="otraColonia"
                           label="Otra Colonia"
-                          disabled={isLoading}
+                          disabled={isLoading || saved}
                           register={register}
                           errors={errors}
                           onChange={(event: any) => {
@@ -277,7 +380,7 @@
                     <Input
                         id="calle"
                         label="Calle"
-                        disabled={isLoading}
+                        disabled={isLoading || saved}
                         register={register}
                         errors={errors}
                         required
@@ -290,7 +393,7 @@
                     <Input
                         id="numero"
                         label="Número"
-                        disabled={isLoading}
+                        disabled={isLoading ||saved}
                         register={register}
                         errors={errors}
                         required
@@ -305,7 +408,7 @@
                     <Input
                         id="interior"
                         label="Interior"
-                        disabled={isLoading}
+                        disabled={isLoading || saved}
                         register={register}
                         errors={errors}
                         maxlength={5}
@@ -318,7 +421,7 @@
                     <Input
                         id="empresa"
                         label="Empresa"
-                        disabled={isLoading}
+                        disabled={isLoading || saved}
                         register={register}
                         errors={errors}
                         onChange={(event: any) => {
@@ -330,7 +433,7 @@
                     <Input
                       id="referencias"
                       label="Referencias"
-                      disabled={isLoading}
+                      disabled={isLoading || saved}
                       register={register}
                       errors={errors}
                       onChange={(event: any) => {
@@ -341,30 +444,10 @@
               
               </div>
               <hr className="h-px my-4 bg-gray-300 border-0 dark:bg-gray-700"></hr>
-              <div className="text-sm font-bold text-gray-700">
+              <div className="text-sm font-bold text-gray-700 mb-2">
                  Datos de contacto de este domicilio
               </div>
-              <div className="flex items-center my-2">
-                <input id="default-checkbox" type="checkbox" value=""
-                className="w-4 h-4 accent-rose-500 text-rose-500 bg-gray-100 border-gray-300 rounded"
-                onChange={(event: any) => {
-                    if(event.target.checked) {
-                      setMisDatosChecked(true);
-                      //setContacto({nombre: "Javier Rubio", tel: "8115995194"});
-                      setCustomValue('contactoNombre','Javier Rubio');
-                      setCustomValue('contactoTel','8115995194');
-              
-                    } else {
-                      setMisDatosChecked(false);
-                      //setContacto({nombre: "", tel: ""});
-                      setCustomValue('contactoNombre','');
-                      setCustomValue('contactoTel','');
-                    }
-                }}
-              
-                />
-                <label htmlFor="default-checkbox" className="ml-2 text-sm font-medium text-gray-700">Usar mis datos </label>
-              </div>
+             
               <div className="
                   pr-4
                   grid
@@ -382,10 +465,14 @@
                       errors={errors}
                       required
                       onChange={(event: any) => {
+                        
                         //setContacto({...contacto,nombre: event.target.value});
                         setCustomValue('contactoNombre', event.target.value);
+                        saveDestinoKey('contactoNombre', event.target.value);
+                        
                       }}
                       />
+                  
                     <Input
                       id="contactoTel"
                       label="Teléfono contacto"
@@ -398,6 +485,7 @@
                       onChange={(event: any) => {
                         //setContacto({...contacto,tel: event.target.value});
                         setCustomValue('contactoTel', event.target.value);
+                        saveDestinoKey('contactoTel', event.target.value);
                       }}
                       />
               </div>
@@ -424,7 +512,7 @@
                 </>
               }
 
-              {tipo == 'destino' && from == 'pedido' && <div className="my-2 felx flex-row gap-2 items-center">
+              {tipo == 'destino' && from == 'pedido' && !saved && <div className="my-2 felx flex-row gap-2 items-center">
                 <Switch
                   checked={saveEnabled}
                   onChange={()=> reset()}
@@ -440,76 +528,93 @@
                 </Switch>
                 <span className="text-sm font-semibold text-neutral-700 ml-2">Guardar en mis destinos favoritos</span>
               </div>}
-              <div className="w-40 my-4">
-                <Button
-                  label={from == 'pedido' ? 'Agregar y usar' : 'Agregar'}
-                  onClick={handleSubmit(onSubmit)}
-                
-                  />
-              </div>
+              
             </div>
     )}
 
-    //@ts-ignore
-    const useCp = (cp) => { 
-      setCustomValue('cp', cp.id);
-      getColonias(cp.id, {label: cp.col, value: cp.id});
-     }
+    
   
     return (
       <>
+       <ConfirmDialog isOpen={sinCpDialogOpen} onClose={handleConfirmSinCp} dialogContent={dialogContent}/>
         <BuscarCodigoDialog onClose={onToggleBuscarCp} useCp={useCp} isOpen={openBuscarDialog}/>
         <div className="w-full  flex flex-col gap-2   py-2 ">
           <div className="text-sm font-bold text-gray-700">
               Domicilio de recolección
           </div>
-          <div className="w-56 pr-4">
-            <CpInput
-              id="cp"
-              label="Código postal"
-              disabled={coloniasLoading}
-              isLoading={coloniasLoading}
-              register={register}  
-              errors={errors}
-              required
-              type='number'
-              maxlength={5}
-              cpError={cpError.error}
-              onChange={(event: any) => {
-                  if (event.target.value.length == 5) {
-                    getColonias(event.target.value);
-
-                  } else {
-                    setColonias([]);
-                    setColoniaSelected(null);
-                    setColoniaPlaceHolder(`Colonia`)
-                    setCustomValue('municipio', null);
-                    setCustomValue('colonia', null);
-                    setCpError({error: false, errorMessage: ''})
-                    setCpActive(false);
-
-                  }
-              }}
-                    />
-            <div className="flex text-xs ml-1 text-rose-500 my-1">
-              {cpError.error ? cpError.errorMessage : ''}
+          <div className="flex flex-row items-center gap-1">
+            <div className="w-40 sm:w-56 pr-4">
+              <CpInput
+                id="cp"
+                label="Código postal"
+                disabled={coloniasLoading || saved || usingCpFromSearch}
+                isLoading={coloniasLoading}
+                register={register}
+                errors={errors}
+                required
+                type='number'
+                maxlength={5}
+                cpError={cpError.error}
+                onChange={(event: any) => {
+                    if (event.target.value.length == 5) {
+                      getColonias(event.target.value);
+                    } else {
+                      setColonias([]);
+                      setColoniaSelected(null);
+                      setColoniaPlaceHolder(`Colonia`)
+                      setCustomValue('municipio', null);
+                      setCustomValue('colonia', null);
+                      setCpError({error: false, errorMessage: ''})
+                      setCpActive(false);
+                    }
+                }}
+                />
+              <div className="flex text-xs ml-1 text-rose-500 my-1">
+                {cpError.error ? cpError.errorMessage : ''}
+              </div>
             </div>
-          </div>
-          {!cpActive && !coloniasLoading && <div className="flex flex-row items-center content-center my-1 mt-2">
+            {!usingCpFromSearch && !coloniasLoading && !saved ?
+            <div className="flex flex-row items-center content-center mb-1 ">
               <BiSearch size={16} className="text-blue-500"/>
               <div className="text-sm text-blue-500 font-medium pb-0 cursor-pointer" onClick={onToggleBuscarCp}>
-                Buscar código por colonia
+                Buscar por colonia
               </div>
-          </div>}
-          {!cpActive && !coloniasLoading && tipo == 'destino' && <div className="text-sm font-medium w-48 mt-0">
-              <Button
-                outline
-                small
-                label="Continuar sin código postal"
-                onClick={() => {}}
-                />
-          </div>}
+            </div> : 
+              <>
+                {!saved && cpFromSearch != 0 && <div className="flex ">
+                  <div className=" flex flex-row items-center gap-2 ml-2 text-white text-sm bg-blue-gray-300 rounded-sm px-2">
+                    <span>{cpFromSearch}</span>
+                    <IoMdClose size={18} onClick={handleOnCancelCp} className="hover:text-red-600"/>
+                  </div>
+                </div>}
+              </>
+            }
+          </div>
+          
+          {!cpActive && !coloniasLoading  &&
+            <div className="flex flex-row  items-center text-md text-neutral-500 mt-10 gap-2 cursor-pointer underline" 
+                onClick={handleSinCpDialog}
+              >
+              <FaInfoCircle size={16} className="text-rose-500"/>
+              <div className="text-sm font-medium text-rose-500 underline  ">
+                Continuar sin código postal
+              
+              </div>
+            </div>
+            }
+           
           {cpActive ? addContent('conCP') : ''}
+          <div className="my-4 flex flex-row items-center gap-4"> 
+            <Button 
+                outline
+                label='Atras'
+                onClick={handleBack}
+            />
+            <Button 
+                label='Siguiente'
+                onClick={handleNext}
+            />
+          </div>
         </div>
       </>
     );
@@ -519,6 +624,6 @@
 
   }
   
-  export default AgregarDireccion;
+  export default AgregarDestinoCrear;
 
 

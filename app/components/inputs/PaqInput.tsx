@@ -8,7 +8,7 @@ import {
 import { BiDollar } from "react-icons/bi";
 import {ChangeEventHandler} from 'react';
 
-interface InputProps {
+interface PaqInputProps {
   id: string;
   label: string;
   value?: string | undefined;
@@ -25,7 +25,7 @@ interface InputProps {
   maxlength?: number;
 }
 
-const Input: React.FC<InputProps> = ({
+const PaqInput: React.FC<PaqInputProps> = ({
   id,
   label,
   type = "text", 
@@ -42,22 +42,21 @@ const Input: React.FC<InputProps> = ({
   onBlur
 }) => {
   return (
-    <div className={`
-     ${width ? `w-[${width}]` : "w-full"} 
-    relative`}>
-      {formatPrice && (
-        <BiDollar
-          size={24}  
-          className="
-            text-neutral-700
-            absolute
-            top-5
-            left-2
-          "
-        />
-      )}
+    <div className={`flex flex-row items-center gap-2`}>
+      <label 
+        htmlFor={id}
+        className={`
+          w-20
+          cursor-text
+          text-xs
+          text-neutral-400
+          transition
+          ${errors[id] ? 'text-rose-500' : 'text-zinc-400'}
+        `}
+      >
+        {label}
+      </label>
       <input
-      
         id={id}
         value={value}
         disabled={disabled}
@@ -71,8 +70,8 @@ const Input: React.FC<InputProps> = ({
           peer
           w-full
           p-2
-          pt-6
-          font-medium 
+          text-md
+          font-medium
           bg-white 
           disabled:bg-neutral-200
           border-2
@@ -81,7 +80,7 @@ const Input: React.FC<InputProps> = ({
           transition
           disabled:opacity-70
           disabled:cursor-not-allowed
-          ${formatPrice ? 'pl-9' : 'pl-4'}
+          ${formatPrice ? 'pl-9' : 'pl-2'}
           ${errors[id] ? 'border-rose-500' : 'border-neutral-300'}
           ${errors[id] ? 'focus:border-rose-500' : 'focus:border-black'}
         `}
@@ -89,31 +88,9 @@ const Input: React.FC<InputProps> = ({
         onFocus={onFocus}
         onBlur={onBlur}
       />
-      <label 
-        htmlFor={id}
-        className={`
-          cursor-text
-          absolute 
-          text-sm
-          text-neutral-400
-          duration-150 
-          transform 
-          -translate-y-3 
-          top-4 
-
-          origin-[0] 
-          ${formatPrice ? 'left-9 text-md' : 'left-4'}
-          peer-placeholder-shown:scale-100
-          peer-placeholder-shown:translate-y-0 
-          peer-focus:scale-75
-          peer-focus:-translate-y-4
-          ${errors[id] ? 'text-rose-500' : 'text-zinc-400'}
-        `}
-      >
-        {label}
-      </label>
+      
     </div>
    );
 }
  
-export default Input;
+export default PaqInput;

@@ -4,6 +4,7 @@ import AgregarDireccion from "@/app/components/portal/AgregarDireccion";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination } from "swiper";
 
+
 import { IconType } from "react-icons";
 import DireccionSlideCard from "../components/DireccionSlideCard";
 import "swiper/css";
@@ -48,19 +49,20 @@ const RecoleccionStep: React.FC<RecoleccionStepProps> = ({
    const [direccion, setDireccion] = useState(null);
    
    const onSelectDireccion = (direccion: any) => {
+    console.log(direccion);
     updateDireccionSelected(direccion.id);
     //setDireccion(direccion);
     saveRecoleccion(direccion);
    }
 
-   /* useEffect(() => {
+   useEffect(() => {
     direcciones.map((val: any) => {
       if (val.default) {
         updateDireccionSelected(val.id);
-        setDireccion(val);
+        saveRecoleccion(val);
       }
     })
-   },[]) */
+   },[])
 
   return ( 
    <div className="px-2">
@@ -121,7 +123,7 @@ const RecoleccionStep: React.FC<RecoleccionStepProps> = ({
      </div>}
      <div className="my-4"> 
         <Button 
-          label='Continuar'
+          label='Siguiente'
           onClick={() => updateActiveStep(1)}
         />
      </div>

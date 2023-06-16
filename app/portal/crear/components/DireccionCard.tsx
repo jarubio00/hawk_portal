@@ -14,12 +14,19 @@ const DireccionCard: React.FC<DireccionCardProps> = ({
 
 }) => {
 
+  console.log(data);
+
   return ( 
     <div className={`mx-0 my-0 p-4 px-2  border-neutral-200 border rounded-lg shadow-md `} >
         <div className="flex flex-col ">
-          <span className="text-sm font-bold">
-             {data?.cpId}
-          </span>
+          <div className="flex flex-row justify-between items-center">
+            <span className="text-sm font-bold">
+               {data?.cpId}
+            </span>
+            <span className="text-sm text-neutral-400 font-bold uppercase">
+               {data?.nombreDireccion}
+            </span>
+          </div>
           <span className="text-xs ">
               {data?.calle} {data?.numero} {data?.numeroInt}
           </span>

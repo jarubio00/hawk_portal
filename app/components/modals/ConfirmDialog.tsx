@@ -58,7 +58,7 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-md  m-4 md:m-0 transform  rounded-2xl bg-white p-4 text-left align-middle shadow-xl transition-all ">
+                <Dialog.Panel className="w-full max-w-xl  m-4 md:m-0 transform  rounded-2xl bg-white p-4 text-left align-middle shadow-xl transition-all ">
                   <Dialog.Title
                     as="div"
                     className="flex flex-row justify-between items-center mt-1 mb-3"
@@ -71,7 +71,7 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
                    as="div"
                    className="flex flex-row  items-center text-md text-neutral-500 my-4"
                   >
-                    <FaInfoCircle size={22} className="text-blue-500"/>
+                    {dialogContent.tipo != 'confirm' &&<FaInfoCircle size={22} className="text-blue-500"/>}
                     <span className="ml-2">{dialogContent.notes}</span>
 
                   </Dialog.Description>

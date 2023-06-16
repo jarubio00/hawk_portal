@@ -19,6 +19,9 @@ import { SafeUser } from "@/app/types";
 import DireccionDrawer from "./components/DireccionDrawer";
 import DestinoStep from "./steps/Destino";
 import DestinoDrawer from "./components/DestinoDrawer";
+import PaqueteStep from "./steps/Paquete";
+import PaqueteDrawer from "./components/PaqueteDrawer";
+import ProgramacionStep from "./steps/Programacion";
 
 
 interface CrearPedidoWidgetProps {
@@ -79,6 +82,11 @@ const CrearPedidoWidget: React.FC<CrearPedidoWidgetProps> = ({
             <DestinoDrawer currentUser={currentUser} destinos={data.destinos}/>
           )
         } 
+        if(tipo == 'paquetes') {
+          return (
+            <PaqueteDrawer currentUser={currentUser} paquetesList={data.paquetes}/>
+          )
+        } 
     }
     
 
@@ -98,7 +106,13 @@ const CrearPedidoWidget: React.FC<CrearPedidoWidgetProps> = ({
               <RecoleccionStep direcciones={data.direcciones}/>
           }
           {activeStep === 1 && 
-              <DestinoStep />
+              <DestinoStep municipios={data.municipios}/>
+          }
+          {activeStep === 2 && 
+              <PaqueteStep />
+          }
+           {activeStep === 3 && 
+              <ProgramacionStep />
           }
           {activeStep === 4 && 
               <ConfirmarStep />

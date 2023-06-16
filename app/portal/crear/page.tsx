@@ -4,6 +4,7 @@ import getCurrentUser from '@/app/actions/getCurrentUser';
 import getDirecciones from "@/app/actions/getDirecciones";
 import getDestinos from "@/app/actions/getDestinos";
 import getPaquetes from "@/app/actions/getPaquetes";
+import getMunicipios from "@/app/actions/getMunicipios";
 import CrearPedidoClient from "./CrearPedido";
 
 
@@ -15,14 +16,21 @@ const CrearPedido  = async () => {
   const direcciones = await getDirecciones();
   const destinos = await getDestinos();
   const paquetes = await getPaquetes();
+  const municipiosRaw = await getMunicipios();
   
+  const municipios = municipiosRaw.map((val) => ({...val,label: val.municipio, value: val.id}));
+  const genericoIndex = municipios.map(e => e.label).indexOf('Generico');
+
+  if(genericoIndex > -1) {
+    municipios.splice(genericoIndex,1)
+  }
 
 
 
     return (
       <ClientOnly>
         
-        <CrearPedidoClient  data={{direcciones: direcciones, destinos: destinos, paquetes: paquetes}} currentUser={currentUser}/>
+        <CrearPedidoClient  data={{direcciones: direcciones, destinos: destinos, paquetes: paquetes, municipios: municipios}} currentUser={currentUser}/>
 
       </ClientOnly>
     )

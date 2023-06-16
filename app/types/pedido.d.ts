@@ -12,6 +12,7 @@ export interface Municipio {
 
 
 export interface IRecoleccion {
+    nombreDireccion: string;
     contactoNombre: string;
     contactoTel: string;
     cpId: number;
@@ -27,21 +28,41 @@ export interface IRecoleccion {
 }
 
 export interface IDestino {
-    contactoNombre: string;
-    contactoTel: string;
-    cpId: number;
-    calle: string;
-    numero: string;
+    contactoNombre?: string;
+    contactoTel?: string;
+    cpId?: number;
+    calle?: string;
+    numero?: string;
     numeroInt?: string;
-    colonia: string;
-    otraColonia: boolean;
-    municipioId: number;
+    colonia?: string;
+    otraColonia?: boolean;
+    municipioId?: number;
     empresa?: string;
     referencias?: string;
-    municipio: Municipio;
-    save: boolean;
+    municipio?: Municipio;
+    save?: boolean;
+    sincp?: boolean;
 }
 
+interface PaqTipo {
+    id: number;
+    tipo: string;
+    desc: string;
+}
+
+export interface IPaquete {
+    nombrePaquete?: string;
+    paqAlto?: number;
+    paqAncho?: number;
+    paqLargo?: number;
+    paqPeso?: number;
+    paqPesoVol?: number;
+    paqTipoId?: number;
+    paqEmpaqueId?: number;
+    paqContenido?: number;
+    tipo?: PaqTipo;
+    save?: boolean;
+}
 
 
 export interface IDrawer {
@@ -53,6 +74,9 @@ export interface IDrawer {
 export interface IPedido {
     recoleccion?: IRecoleccion;
     destino?: IDestino;
+    paquete?: IPaquete;
+    cobro?: Boolean;
+    cobroCantidad?: number;
 }
 
 
@@ -60,6 +84,7 @@ export type PedidoContextType = {
     pedido?: IPedido;
     saveRecoleccion: (recoleccion: IRecoleccion) => void;
     saveDestino: (destino: IDestino) => void;
+    saveDestinoKey: (key: string, value: any) => void;
     activeStep: number;
     updateActiveStep: (step: number) => void;
     updateDireccionSelected: (id: number) => void;
@@ -67,7 +92,9 @@ export type PedidoContextType = {
     updateDestinoSelected: (id: number) => void;
     destinoSelected: number;
     updatePaqueteSelected: (id: number) => void;
+    savePaquete: (paq: IPaquete) => void;
     paqueteSelected: number;
     drawer?: IDrawer;
     useDrawer: (props: IDrawer) => void;
+    saveCobro: (cantidad: number) => void;
 }

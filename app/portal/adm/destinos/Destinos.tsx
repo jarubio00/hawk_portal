@@ -34,6 +34,7 @@ const DestinosClient  = (props:any) => {
   const [editing,setEditing] = useState(false);
   const [editData,setEditData] = useState({});
   const [direcciones,setDirecciones] = useState(props?.data);
+  
 
 
   useEffect(() => {
@@ -167,6 +168,8 @@ const DestinosClient  = (props:any) => {
      setDirecciones(data);
     } 
   }
+
+  
   
 
 

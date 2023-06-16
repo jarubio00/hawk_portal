@@ -7,20 +7,24 @@ import Button from "@/app/components/Button";
 import { useRouter } from 'next/navigation';
 import useLoader from "@/app/hooks/useLoader";
 import StepHeading from "../components/StepHeading";
-import AgregarDireccion from "@/app/components/portal/AgregarDireccion";
+import AgregarDestinoCrear from "../components/AgregarDestinoCrear";
 import { SafeUser } from "@/app/types";
 import { FaPlus } from "react-icons/fa";
 import { IoMdClose } from "react-icons/io";
+import AgregarDestinoSinCp from "../components/AgregarDestinoSinCp";
+import { TiArrowBack } from "react-icons/ti";
 
 interface DestinoStepProps {
   title?: string;
   currentUser?: SafeUser;
+  municipios: any;
 }
 
 //se quito w-full , se agregp px-2
 const DestinoStep: React.FC<DestinoStepProps> = ({ 
   title, 
-  currentUser
+  currentUser,
+  municipios
 }) => {
 
 const {updateActiveStep , saveDestino, destinoSelected, updateDestinoSelected, pedido, useDrawer} = useContext(PedidoContext) as PedidoContextType;
@@ -29,7 +33,7 @@ const loader = useLoader();
 
 const [saved,setSaved] = useState(false);
 const [direccion,setDireccion] = useState({});
-
+const [sinCpSelected, setSinCpSelected] = useState(false);
 
 useEffect(() => {
   console.log('des sel: ', destinoSelected)
@@ -46,6 +50,15 @@ const onCancelSaved = () => {
   setSaved(false);
   setDireccion({});
   updateDestinoSelected(0);
+  saveDestino({})
+}
+
+const handleSinCp = (sincp: boolean) => {
+  if(sincp) {
+   setSinCpSelected(true);
+  } else {
+   setSinCpSelected(false);
+  }
 }
 
   return ( 
@@ -54,7 +67,7 @@ const onCancelSaved = () => {
         <div className="flex flex-col gap-2">
           <div className="flex mt-2 ">
             <div className="">
-            <div className="
+            {!sinCpSelected ? <div className="
                 text-white flex-wrap
                 font-semibold
                 text-xs
@@ -74,7 +87,30 @@ const onCancelSaved = () => {
               >
                 <FaPlus size={12} />
                 <span>Usar destino guardado</span>
-            </div>
+            </div>  :
+            <div className="
+              text-white flex-wrap
+              font-semibold
+              text-xs
+              mb-0
+              flex
+              flex-row
+              gap-1
+              items-center
+              cursor-pointer
+              bg-blue-500
+              hover:bg-blue-300
+              rounded-md
+              px-2
+              py-1
+              "
+                onClick={() => setSinCpSelected(false)}
+            >
+              <TiArrowBack size={16} />
+              <span>Volver a usar código postal</span>
+          </div>
+
+          }
           </div>
           {saved &&  <div className="flex ">
               <div className=" flex flex-row items-center gap-2 ml-2 text-white text-xs bg-blue-gray-300 rounded-sm px-2">
@@ -86,17 +122,31 @@ const onCancelSaved = () => {
         </div>
      </div>
       <div className="my-4">
-        <AgregarDireccion 
-            title="" 
-            currentUser={currentUser} 
-            onClose={onCancelSaved}
-            tipo='destino'
-            from='pedido'
-            saved={saved}
-            direccion={direccion}
-            />
+        {!sinCpSelected ? 
+          <AgregarDestinoCrear 
+              title="" 
+              currentUser={currentUser} 
+              onClose={onCancelSaved}
+              tipo='destino'
+              from='pedido'
+              saved={saved}
+              direccion={direccion}
+              onCp={handleSinCp}
+              />  :
+          <AgregarDestinoSinCp
+              title="" 
+              currentUser={currentUser} 
+              onClose={onCancelSaved}
+              tipo='destino'
+              from='pedido'
+              saved={saved}
+              direccion={direccion}
+              onCp={handleSinCp}
+              municipios={municipios}
+              />
+              } 
       </div>
-      <div className="my-4 flex flex-row items-center gap-4"> 
+      {/* <div className="my-4 flex flex-row items-center gap-4"> 
           <Button 
               outline
               label='Atras'
@@ -106,7 +156,7 @@ const onCancelSaved = () => {
               label='Sguiente'
               onClick={() => updateActiveStep(4)}
           />
-      </div>
+      </div> */}
     </div>
    );
 }

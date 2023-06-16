@@ -170,6 +170,7 @@ model Destino {
   numeroInt String
   colonia String
   otraColonia Boolean @default(false)
+  sinCp Boolean @default(false)
   municipioId Int
   empresa String?
   referencias String?

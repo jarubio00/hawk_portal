@@ -76,7 +76,8 @@ const CpInput: React.FC<InputProps> = ({
           p-2
           pt-6
           font-medium 
-          bg-white 
+          bg-white
+          disabled:bg-neutral-200
           border-2
           rounded-md
           outline-none
@@ -94,7 +95,8 @@ const CpInput: React.FC<InputProps> = ({
         className={`
           cursor-text
           absolute 
-          text-md
+          text-sm
+          text-neutral-400
           duration-150 
           transform 
           -translate-y-3 

@@ -20,14 +20,14 @@ const DireccionSlideCard: React.FC<DireccionSlideCardProps> = ({
           onClick={() => onClick(data)}>
             
         <div className="flex flex-col ">
-        <div className="flex flex-row items-center justify-between ">
-          <span className="text-sm text-neutral-400 font-bold uppercase">
+        <div className="flex flex-row items-center justify-between">
+          <span className="text-sm text-neutral-400 font-bold uppercase mr-2 md:mr-10">
               {data.nombreDireccion}
           </span>
           {data.default && <FaStar size={18} className="text-orange-500"/>}
         </div>
         <span className="text-xs truncate ">
-            {data.contactoNombre} {JSON.stringify(data.default,null,2)}
+            {data.contactoNombre}
         </span>
       
         <span className="text-xs truncate">
