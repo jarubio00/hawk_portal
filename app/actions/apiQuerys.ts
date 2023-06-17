@@ -220,3 +220,20 @@ export  async function updatePaquete(props: any) {
 
       return result;
 }
+
+export  async function serverDate(props: any) {
+  
+  const result = await axios.get(`/api/programa/now`)
+      .then((response) => {
+        const responseData:ApiResponse = {status:1,statusMessage: 'OK', response: {data: response.data} }
+        return responseData;
+      })
+      .catch((error) => {
+        const response:ApiResponse = {status:2,statusMessage: 'Error de API', response: {data: {}, error: error} }
+        return response;
+      })
+ 
+      
+
+      return result;
+}

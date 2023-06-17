@@ -8,6 +8,7 @@ import Button from "@/app/components/Button";
 import { useRouter } from 'next/navigation';
 import useLoader from "@/app/hooks/useLoader";
 import StepHeading from "../components/StepHeading";
+import { serverDate } from "@/app/actions/apiQuerys";
 import AgregarDestinoCrear from "../components/AgregarDestinoCrear";
 import { SafeUser } from "@/app/types";
 import { FaPlus } from "react-icons/fa";
@@ -34,16 +35,20 @@ const loader = useLoader();
 const clientDate = new Date();
 
 
-const serverDate = useCallback(async () => {
-  const date = await getServerDate();
+const serverDateFunction = useCallback(async () => {
+  const res = await serverDate('now');
 
-  setDatetime(date.toISOString());
+  //@ts-ignore
+  const date = res.response.data;
+
+  console.log(date);
+  setDatetime(date);
 
 }, [])
 
 useEffect(() => {
- serverDate();
-},[serverDate])
+ serverDateFunction();
+},[serverDateFunction])
 
 const [saved,setSaved] = useState(false);
 const [paquete,setPaquete] = useState({});
