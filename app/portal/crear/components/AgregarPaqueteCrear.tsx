@@ -24,7 +24,7 @@
     import { Switch } from '@headlessui/react'
     import PaqInput from "@/app/components/inputs/PaqInput";
     import { AiFillDollarCircle} from "react-icons/ai";
-    import CobrosDialog from "./CobrosDialog";
+    import CobrosDialog from "./dialogs/CobrosDialog";
 
     
     const fotoAncho = '/images/paq/paqsAncho.png';

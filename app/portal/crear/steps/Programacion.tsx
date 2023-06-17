@@ -16,6 +16,8 @@ import { IoMdClose } from "react-icons/io";
 import AgregarDestinoSinCp from "../components/AgregarDestinoSinCp";
 import { TiArrowBack } from "react-icons/ti";
 import AgregarPaqueteCrear from "../components/AgregarPaqueteCrear";
+import Datepicker from "../components/Datepicker";
+import ProgramaDialog from "../components/dialogs/ProgramaDialog";
 
 interface ProgramacionStepProps {
   title?: string;
@@ -51,6 +53,8 @@ useEffect(() => {
 },[serverDateFunction])
 
 const [saved,setSaved] = useState(false);
+const [programaDialogOpen,setProgramaDialogOpen] = useState(false);
+const [dialogState, setDialogState] = useState({tipo: '', title:'', subtitle: ''});
 const [paquete,setPaquete] = useState({});
 const [datetime,setDatetime] = useState('');
 const [clienttime,setClienttime] = useState(new Date().toString());
@@ -72,6 +76,28 @@ const handleServerDate = async () => {
   return serverdate;
 }
 
+const handleDialogRec = () => {
+  setDialogState({
+    tipo: 'rec',
+    title: 'Recolección',
+    subtitle: 'Selecciona la fecha de recolección'
+  })
+  setProgramaDialogOpen(true);
+}
+
+
+const handleDialogClose = (props: any) => {
+  if(props.confirm) {
+    
+    setProgramaDialogOpen(false)
+  } else {
+    //saveCobro(0);
+    //setResetCobro(true);
+    setProgramaDialogOpen(false)
+  }
+  
+}
+
 
 
 
@@ -80,6 +106,13 @@ const handleServerDate = async () => {
 
   return ( 
     <div className="px-2">
+      <ProgramaDialog 
+        isOpen={programaDialogOpen} 
+        onClose={handleDialogClose} 
+        tipo={dialogState.tipo}
+        title={dialogState.title}
+        subtitle={dialogState.subtitle}
+        />
         <StepHeading title="Programación" subtitle="Selecciona las fechas y horarios de recolección y entrega" />
        
      <div className="my-4">
@@ -88,6 +121,10 @@ const handleServerDate = async () => {
       <div className="my-4">
       Client: {clienttime}
       </div>
+      <div className="my-4" onClick={handleDialogRec}>
+       Recoleccion
+      </div>
+
       <div className="my-4 flex flex-row items-center gap-4"> 
               <Button 
                   outline
