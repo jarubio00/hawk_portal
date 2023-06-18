@@ -237,3 +237,22 @@ export  async function serverDate(props: any) {
 
       return result;
 }
+
+export  async function getBloques(fecha: string) {
+
+  console.log(fecha);
+  
+  const result = await axios.post(`/api/programa/bloques/${fecha}`)
+      .then((response) => {
+        const responseData:ApiResponse = {status:1,statusMessage: 'OK', response: {data: response.data} }
+        return responseData;
+      })
+      .catch((error) => {
+        const response:ApiResponse = {status:2,statusMessage: 'Error de API', response: {data: {}, error: error} }
+        return response;
+      })
+ 
+      
+
+      return result;
+}

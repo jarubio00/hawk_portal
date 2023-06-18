@@ -9,6 +9,8 @@ import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import esLocale from 'date-fns/locale/es';
 import {TextField} from '@mui/material';
+import { getBloques } from "@/app/actions/apiQuerys";
+import {format} from 'date-fns';
 
 import Button from "@/app/components/Button";
 import { useRouter } from 'next/navigation';
@@ -181,7 +183,8 @@ const disableWeekends = (date: any) => {
     const [dpOpen, setDpOpen] = useState(false);
 
     const handleDateChange = (e: any) => {
-;
+      const fechaString = format(e, `yyyy-MM-dd`);
+      const res = getBloques(fechaString);
 };
 
     return (
@@ -199,14 +202,7 @@ const disableWeekends = (date: any) => {
                 onOpen={() => setDpOpen(true)}
                 onClose={() => setDpOpen(false)}
                 disablePast
-                renderInput={(props: any) => {
-                  console.log(props);
-                  return (
-                    <div className="p-3 border rounded-lg">
-                      Selecciona
-                    </div>
-                  );
-                }}
+                slotProps={{textField: {variant: 'outlined'}}}
                 inputProps={{placeholder :'Selecciona la fecha', readOnly: true}}
                 value={fechaRecoleccionSelected}
                 closeOnSelect
