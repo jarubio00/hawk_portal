@@ -115,11 +115,26 @@ const handleDialogClose = (props: any) => {
         />
         <StepHeading title="Programación" subtitle="Selecciona las fechas y horarios de recolección y entrega" />
        
-     <div className="my-4">
-      Server: {datetime}
+      <div className="my-8 flex flex-row items-center gap-4">
+        <div className={`w-44 md:w-60 border-2 bg-rose-500 border-rose-500 text-sm md:text-base
+                  shadow-md rounded-md py-1 px-2 cursor-pointer
+        
+             `}
+        onClick={() => {}}
+         >
+          <p className=" text-white text-center">Lo antes posible</p>
+        </div>
+        <div className={`border-2 w-44 md:w-60 bg-white border-neutral-800 text-sm md:text-base
+                    shadow-md rounded-md py-1 px-2 cursor-pointer
+            
+              `}
+        onClick={() => {}}
+        >
+          <p className=" text-center">Seleccionar fechas</p>
+        </div>
       </div>
       <div className="my-4">
-      Client: {clienttime}
+     
       </div>
       <div className="my-4" onClick={handleDialogRec}>
        Recoleccion
