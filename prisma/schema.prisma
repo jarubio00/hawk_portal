@@ -336,9 +336,15 @@ enum TipoBloques {
   PM
   DIA
 }
+enum TipoFecha {
+  REC
+  ENT
+  AMBOS
+}
 
 model FechasBloqueadas {
   id        Int     @id @default(autoincrement())
   fecha DateTime
   bloque TipoBloques
+  tipo TipoFecha
 }

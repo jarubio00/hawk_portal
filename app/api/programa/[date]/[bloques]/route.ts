@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import prisma from "@/app/libs/prismadb";
 
 import getCurrentUser from "@/app/actions/getCurrentUser";
 import {format, subHours, getDay, getHours} from "date-fns"
@@ -24,13 +25,32 @@ export async function POST(
     throw new Error('Dato inválido');
   }
 
-  //console.log('fecha param',fecha);
+  const fecha = new Date(fechaQuery);
+  const hoyUTC = new Date();
+  const hoy = subHours(hoyUTC, 6);
+
+
+  const blocked = await prisma.fechasBloqueadas.findMany({
+    where: {
+      AND: [
+        {
+          tipo: 'REC'
+        },
+        {
+          fecha: {gte: hoy}
+        }
+      ]
+       
+        
+    },
+    orderBy: {
+      fecha: 'desc'
+    }
+});
+console.log(blocked);
 
   if(fechaQuery) {
-    const fecha = new Date(fechaQuery);
-    const hoyUTC = new Date();
-    const hoy = subHours(hoyUTC, 6);
-
+   
     const hoyDate = format(hoy,`yyyy-MM-dd`);
     const fechaDate = format(fecha,`yyyy-MM-dd`);
 
