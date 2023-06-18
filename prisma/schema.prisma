@@ -331,3 +331,14 @@ model CatalogoMunicipios {
   direccion Direccion[]
   destino Destino[]
 }
+enum TipoBloques {
+  AM
+  PM
+  DIA
+}
+
+model FechasBloqueadas {
+  id        Int     @id @default(autoincrement())
+  fecha DateTime
+  bloque TipoBloques
+}
