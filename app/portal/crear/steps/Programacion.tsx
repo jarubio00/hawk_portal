@@ -9,8 +9,9 @@ import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import esLocale from 'date-fns/locale/es';
 import {TextField} from '@mui/material';
-import { getBloques } from "@/app/actions/apiQuerys";
+import { getBloquesRecoleccion } from "@/app/actions/apiQuerys";
 import {format} from 'date-fns';
+import { Radio } from "@material-tailwind/react";
 
 import Button from "@/app/components/Button";
 import { useRouter } from 'next/navigation';
@@ -184,33 +185,49 @@ const disableWeekends = (date: any) => {
 
     const handleDateChange = (e: any) => {
       const fechaString = format(e, `yyyy-MM-dd`);
-      const res = getBloques(fechaString);
+      const res = getBloquesRecoleccion(fechaString);
 };
 
     return (
 
       <div className="my-4 border border-neutral-300 shadow-md rounded-lg p-4 px-6">
         <div className="flex flex-col">
-        <p className="text-lg font-bold">Recolección</p>
-        <p className="text-sm text-neutral-500">Selecciona la fecha de recolección</p>
-        <div className="mt-2">
-          <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={esLocale}>
-            <DesktopDatePicker
-            //@ts-ignore
-                inputFormat="dd/MM/yyyy"
-                open={dpOpen}
-                onOpen={() => setDpOpen(true)}
-                onClose={() => setDpOpen(false)}
-                disablePast
-                slotProps={{textField: {variant: 'outlined'}}}
-                inputProps={{placeholder :'Selecciona la fecha', readOnly: true}}
-                value={fechaRecoleccionSelected}
-                closeOnSelect
-                onChange={(newValue) => {handleDateChange(newValue)}}
-                shouldDisableDate={disableWeekends}
+          <p className="text-lg font-bold">Recolección</p>
+          <p className="text-sm text-neutral-500">Selecciona la fecha de recolección</p>
+          <div className="mt-2">
+            <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={esLocale}>
+              <DesktopDatePicker
+              //@ts-ignore
+                  inputFormat="dd/MM/yyyy"
+                  open={dpOpen}
+                  onOpen={() => setDpOpen(true)}
+                  onClose={() => setDpOpen(false)}
+                  disablePast
+                  slotProps={{textField: {variant: 'outlined'}}}
+                  inputProps={{placeholder :'Selecciona la fecha', readOnly: true}}
+                  value={fechaRecoleccionSelected}
+                  closeOnSelect
+                  onChange={(newValue) => {handleDateChange(newValue)}}
+                  shouldDisableDate={disableWeekends}
+              />
+          </LocalizationProvider>
+          </div>
+          <div className="mt-2 p-3">
+            <Radio 
+              id="am" 
+              value={1} 
+              name="type" 
+              label="10:00am - 3:00pm" 
+              onChange={(event) => console.log(event.target.value)}
             />
-        </LocalizationProvider>
-        </div>
+            <Radio 
+              id="pm" 
+              value={2} 
+              name="type" 
+              label="3:00pm - 7:00pm" 
+              onChange={(event) => console.log(event.target.value)}
+            />
+          </div>
 
 
         </div>

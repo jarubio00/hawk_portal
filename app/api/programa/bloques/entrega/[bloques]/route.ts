@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import prisma from "@/app/libs/prismadb";
 
 import getCurrentUser from "@/app/actions/getCurrentUser";
-import {format, subHours, getDay, getHours} from "date-fns"
+import {format, subHours, addDays, getDay, getHours} from "date-fns"
 
 interface IParams {
   bloques?: string;
@@ -37,7 +37,7 @@ export async function POST(
           tipo: 'REC'
         },
         {
-          fecha: {gte: hoy}
+          fecha: {lte: fecha, gte: fecha}
         }
       ]
        
@@ -47,7 +47,9 @@ export async function POST(
       fecha: 'desc'
     }
 });
-console.log(blocked);
+
+console.log(blocked)
+ 
 
   if(fechaQuery) {
    

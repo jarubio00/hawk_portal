@@ -238,11 +238,11 @@ export  async function serverDate(props: any) {
       return result;
 }
 
-export  async function getBloques(fecha: string) {
+export  async function getBloquesRecoleccion(fecha: string) {
 
   console.log(fecha);
   
-  const result = await axios.post(`/api/programa/bloques/${fecha}`)
+  const result = await axios.post(`/api/programa/bloques/recoleccion/${fecha}`)
       .then((response) => {
         const responseData:ApiResponse = {status:1,statusMessage: 'OK', response: {data: response.data} }
         return responseData;
