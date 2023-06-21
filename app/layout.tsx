@@ -9,6 +9,7 @@ import LoginModal from './components/modals/LoginModal';
 import SidebarModal from './components/modals/SidebarModal';
 import TrackModal from './components/modals/TrackModal';
 
+
 import GlobalLoader from './components/GlobalLoader';
 import BuscarCodigoModal from './components/modals/BuscarCodigoModal';
 
@@ -34,29 +35,31 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={font.className}>
+       
         <NextTopLoader
-          color="#F43F5E"
-          initialPosition={0.08}
-          crawlSpeed={200}
-          height={3}
-          crawl={true}
-          showSpinner={true}
-          easing="ease"
-          speed={200}
-        />
-        <ClientOnly>
-          <GlobalLoader />
-          <ToasterProvider />
-          <LoginModal />
-          <RegisterModal />
-          <SidebarModal />
-          <TrackModal />
-          <BuscarCodigoModal />
-          
-        </ClientOnly>
-        <div className="pb-0 pt-0">
-          {children}
-        </div>
+            color="#F43F5E"
+            initialPosition={0.08}
+            crawlSpeed={200}
+            height={3}
+            crawl={true}
+            showSpinner={true}
+            easing="ease"
+            speed={200}
+          />
+          <ClientOnly>
+            <GlobalLoader />
+            <ToasterProvider />
+            <LoginModal />
+            <RegisterModal />
+            <SidebarModal />
+            <TrackModal />
+            <BuscarCodigoModal />
+            
+          </ClientOnly>
+          <div className="pb-0 pt-0">
+            {children}
+          </div>
+      
       </body>
     </html>
   )

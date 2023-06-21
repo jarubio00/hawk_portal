@@ -10,8 +10,10 @@ import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import esLocale from 'date-fns/locale/es';
 import {TextField} from '@mui/material';
 import { getBloquesRecoleccion } from "@/app/actions/apiQuerys";
-import {format} from 'date-fns';
+import {format, isDate} from 'date-fns';
 import { Radio } from "@material-tailwind/react";
+import { PulseLoader } from "react-spinners";
+import { toast } from "react-hot-toast";
 
 import Button from "@/app/components/Button";
 import { useRouter } from 'next/navigation';
@@ -19,7 +21,7 @@ import useLoader from "@/app/hooks/useLoader";
 import StepHeading from "../components/StepHeading";
 import { serverDate } from "@/app/actions/apiQuerys";
 import AgregarDestinoCrear from "../components/AgregarDestinoCrear";
-import { SafeUser } from "@/app/types";
+import { ApiResponse, SafeUser } from "@/app/types";
 import { FaPlus } from "react-icons/fa";
 import { IoMdClose } from "react-icons/io";
 import AgregarDestinoSinCp from "../components/AgregarDestinoSinCp";
@@ -27,6 +29,14 @@ import { TiArrowBack } from "react-icons/ti";
 import AgregarPaqueteCrear from "../components/AgregarPaqueteCrear";
 import Datepicker from "../components/Datepicker";
 import ProgramaDialog from "../components/dialogs/ProgramaDialog";
+import MuiDatePicker from "../components/MuiDatePicker";
+
+
+
+
+
+
+
 
 interface ProgramacionStepProps {
   title?: string;
@@ -52,10 +62,16 @@ const serverDateFunction = useCallback(async () => {
   const res = await serverDate('now');
 
   //@ts-ignore
-  const date = res.response.data;
+  const dateString = res.response?.data;
 
-  console.log(date);
-  setDatetime(date);
+  if (dateString) {
+    console.log(dateString);
+    const date= new Date(dateString);
+    console.log(date.getHours());
+    console.log(format(date,`yyyy-MM-dd`))
+    setDatetime(date);
+  }
+  
 
 }, [])
 
@@ -67,11 +83,14 @@ const [saved,setSaved] = useState(false);
 const [programaDialogOpen,setProgramaDialogOpen] = useState(false);
 const [dialogState, setDialogState] = useState({tipo: '', title:'', subtitle: ''});
 const [paquete,setPaquete] = useState({});
-const [datetime,setDatetime] = useState('');
+const [datetime,setDatetime] = useState(new Date());
 const [clienttime,setClienttime] = useState(new Date().toString());
 const [fechaRecoleccionSelected,setfechaRecoleccionSelected] = useState(null);
 const [fechaEntregaSelected,setfechaEntregaSelected] = useState(null);
 const [bloqued, setBloqued] = useState([]);
+const [isLoading, setIsLoading] = useState(false);
+const [dpOpen, setDpOpen] = useState(false);
+const [bloquesDisponibles, setBloquesDisponibles] = useState({am: false, pm: false});
 
 
 const handleBack = () => {
@@ -82,11 +101,6 @@ const handleNext = () => {
   updateActiveStep(4);
 
   
-}
-
-const handleServerDate = async () => {
-  const serverdate = await getServerDate();
-  return serverdate;
 }
 
 const handleDialogRec = () => {
@@ -112,18 +126,22 @@ const handleDialogClose = (props: any) => {
 }
 
 const disableWeekends = (date: any) => {
+console.log(date.toISOString().slice(0, 10))
   let bMatched = false;
    if(date.getDay() === 0) {
        return true;
    } else {
-       bloqued.map((val: any) => {
-           
+       bloqued.map((val: any) => { 
            if (val == date.toISOString().slice(0, 10)) {
               bMatched = true;
-           
            }
        });
-   }
+      if (isDate(datetime) && format(datetime,`yyyy-MM-dd`) == date.toISOString().slice(0, 10)) {
+        if (datetime.getHours() >= 15 ) {
+          return true;
+        } 
+      }
+   }  
    return bMatched;
  }
 
@@ -157,7 +175,7 @@ const disableWeekends = (date: any) => {
        Recoleccion
       </div> : 
 
-      <div className="grid mx-10 md:mx-2 grid-cols-1 md:grid-cols-2  lg:grid-cols-3 gap-4">
+      <div className="grid mx-4 md:mx-2 grid-cols-1 md:grid-cols-2  lg:grid-cols-3 gap-4">
         <ProgramarRecoleccion />
         <ProgramarEntrega />
        
@@ -181,53 +199,98 @@ const disableWeekends = (date: any) => {
    );
 
    function ProgramarRecoleccion() {
-    const [dpOpen, setDpOpen] = useState(false);
 
-    const handleDateChange = (e: any) => {
+    
+    
+    const handleDateChange = async  (e: any) => {
+      console.log(e);
+      setIsLoading(true);
+      setfechaRecoleccionSelected(e);
       const fechaString = format(e, `yyyy-MM-dd`);
-      const res = getBloquesRecoleccion(fechaString);
+      const res:ApiResponse = await getBloquesRecoleccion(fechaString);
+      
+      if (res.status == 1) {
+          if(res.response?.data) {
+            setBloquesDisponibles(res.response.data);
+            console.log('responded')
+            const timer = setTimeout(() => {
+              setIsLoading(false);
+            }, 500);
+      } else {
+        toast.error(res.response?.error);
+        const timer = setTimeout(() => {
+          setIsLoading(false);
+        }, 500);
+      }
+        
+        
+      }
 };
 
     return (
 
-      <div className="my-4 border border-neutral-300 shadow-md rounded-lg p-4 px-6">
+      <div className="my-4 border border-neutral-300 shadow-md rounded-lg p-2 px-2 md:px-6">
         <div className="flex flex-col">
-          <p className="text-lg font-bold">Recolección</p>
-          <p className="text-sm text-neutral-500">Selecciona la fecha de recolección</p>
-          <div className="mt-2">
+          <p className="text-md font-bold">Recolección</p>
+          <p className="text-xs text-neutral-500">Selecciona la fecha de recolección</p>
+          <div className="mt-2 md:mt-4">
             <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={esLocale}>
-              <DesktopDatePicker
+             {/*  <DesktopDatePicker
               //@ts-ignore
                   inputFormat="dd/MM/yyyy"
                   open={dpOpen}
                   onOpen={() => setDpOpen(true)}
                   onClose={() => setDpOpen(false)}
                   disablePast
-                  slotProps={{textField: {variant: 'outlined'}}}
+                  slots={{ field: ButtonField, ...props.slots }}
+                  slotProps={{ field: { setOpen } as any }}
                   inputProps={{placeholder :'Selecciona la fecha', readOnly: true}}
                   value={fechaRecoleccionSelected}
                   closeOnSelect
                   onChange={(newValue) => {handleDateChange(newValue)}}
                   shouldDisableDate={disableWeekends}
+              /> */}
+
+              <MuiDatePicker 
+                dpOpen={dpOpen}
+                setDpOpen={(val) => setDpOpen(val)}
+                value={fechaRecoleccionSelected}
+                onChange={(newValue) => handleDateChange(newValue)}
+                bloqued={bloqued}
+                datetime={datetime}
               />
+                
           </LocalizationProvider>
           </div>
-          <div className="mt-2 p-3">
-            <Radio 
+          {isLoading ? <div className="mt-2 mx-4">
+            <PulseLoader
+              //@ts-ignore
+              size={10}
+              color="#F43F5E"
+              />
+          </div>
+          :
+          <div className="mt-2 p-3 flex flex-col">
+            {bloquesDisponibles.am && <Radio 
               id="am" 
               value={1} 
               name="type" 
-              label="10:00am - 3:00pm" 
+              label={<p className="text-sm font-semibold">10:00am - 3:00pm</p>}
               onChange={(event) => console.log(event.target.value)}
-            />
-            <Radio 
+            />}
+           { bloquesDisponibles.pm && <Radio 
               id="pm" 
               value={2} 
               name="type" 
-              label="3:00pm - 7:00pm" 
+              label={<p className="text-sm font-semibold">3:30pm  - 7:00pm</p>}
               onChange={(event) => console.log(event.target.value)}
-            />
-          </div>
+            />}
+
+             { !bloquesDisponibles.am && !bloquesDisponibles.pm && <div className="text-sm">
+                No hay horarios disponibles
+              </div>}
+
+          </div>}
 
 
         </div>

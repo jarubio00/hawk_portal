@@ -1,28 +1,28 @@
 'use client';
 
-    import { Fragment, useCallback, useContext, useEffect, useState } from "react";
-    import { 
-        FieldValues, 
-        SubmitHandler, 
-        useForm
-    } from "react-hook-form";
-    import Select from 'react-select'
-    import useLoader from "@/app/hooks/useLoader";
-    import { useRouter } from 'next/navigation';
-    import { PulseLoader } from "react-spinners";
-    import { LoadingIndicatorProps } from 'react-select';
-    import { BiSearch } from "react-icons/bi";
-    import Input from "@/app/components/inputs/Input";
-    import CpInput from "@/app/components/inputs/CpInput";
-    import Button from "@/app/components/Button";
-    import Heading from "@/app/components/Heading";
-    import axios from "axios";
-    import BuscarCodigoDialog from "@/app/components/modals/BuscarCodigoDialog";
-    import toast from "react-hot-toast";
-    import { SafeUser, ApiResponse } from "@/app/types";
-    import { addDireccion, addDestino } from "@/app/actions/apiQuerys";
-    import { Switch } from '@headlessui/react'
-    import {PedidoContext} from "@/app/portal/crear/context/PedidoContext"
+import { Fragment, useCallback, useContext, useEffect, useState } from "react";
+import { 
+    FieldValues, 
+    SubmitHandler, 
+    useForm
+} from "react-hook-form";
+import Select from 'react-select'
+import useLoader from "@/app/hooks/useLoader";
+import { useRouter } from 'next/navigation';
+import { PulseLoader } from "react-spinners";
+import { LoadingIndicatorProps } from 'react-select';
+import { BiSearch } from "react-icons/bi";
+import Input from "@/app/components/inputs/Input";
+import CpInput from "@/app/components/inputs/CpInput";
+import Button from "@/app/components/Button";
+import Heading from "@/app/components/Heading";
+import axios from "axios";
+import BuscarCodigoDialog from "@/app/components/modals/BuscarCodigoDialog";
+import toast from "react-hot-toast";
+import { SafeUser, ApiResponse } from "@/app/types";
+import { addDireccion, addDestino } from "@/app/actions/apiQuerys";
+import { Switch } from '@headlessui/react'
+import {PedidoContext} from "@/app/portal/crear/context/PedidoContext"
 import { IoMdClose } from "react-icons/io";
 import { PedidoContextType } from "@/app/types/pedido";
 import { FaInfoCircle } from "react-icons/fa";

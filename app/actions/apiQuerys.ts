@@ -223,7 +223,7 @@ export  async function updatePaquete(props: any) {
 
 export  async function serverDate(props: any) {
   
-  const result = await axios.get(`/api/programa/now`)
+  const result = await axios.get(`/api/programa/date/now`)
       .then((response) => {
         const responseData:ApiResponse = {status:1,statusMessage: 'OK', response: {data: response.data} }
         return responseData;

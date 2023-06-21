@@ -30,8 +30,14 @@ enum Status {
   error = 2
 }
 
+type Response = {
+  data: any;
+  status?: any;
+  error?: any;
+}
+
 export type ApiResponse = {
   status: Status;
   statusMessage: string;
-  response?: object; 
+  response?: Response; 
 }
