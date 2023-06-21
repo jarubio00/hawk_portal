@@ -64,6 +64,13 @@ export interface IPaquete {
     save?: boolean;
 }
 
+export interface IPrograma {
+    fechaRecoleccion?: Datetime;
+    bloqueRecoleccion?: number;
+    fechaEntrega?: Datetime;
+    bloqueEntrega?: number;
+}
+
 
 export interface IDrawer {
     open: boolean | false;
@@ -77,6 +84,7 @@ export interface IPedido {
     paquete?: IPaquete;
     cobro?: Boolean;
     cobroCantidad?: number;
+    programa?: IPrograma;
 }
 
 
@@ -97,4 +105,7 @@ export type PedidoContextType = {
     drawer?: IDrawer;
     useDrawer: (props: IDrawer) => void;
     saveCobro: (cantidad: number) => void;
+    saveProgramaKey: (key: string, value: any) => void;
+    tipoPrograma: string;
+    updateTipoPrograma: (tipo: string) => void;
 }

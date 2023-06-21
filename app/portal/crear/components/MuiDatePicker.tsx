@@ -96,7 +96,7 @@ function ButtonDatePicker(
 
 
   const disableWeekends = (date: any) => {
-    console.log(date.toISOString().slice(0, 10))
+    //console.log(date.toISOString().slice(0, 10))
       let bMatched = false;
        if(date.getDay() === 0) {
            return true;

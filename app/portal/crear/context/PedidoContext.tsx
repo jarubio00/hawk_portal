@@ -1,6 +1,6 @@
 'use client'
 
-import { IRecoleccion, IDestino, IPedido, IPaquete, PedidoContextType, IDrawer} from "@/app/types/pedido.d";
+import { IRecoleccion, IDestino, IPedido, IPaquete, PedidoContextType, IDrawer, IPrograma} from "@/app/types/pedido.d";
 import React, { useState, createContext } from "react";
 
 
@@ -16,6 +16,7 @@ const PedidoProvider: React.FC<Props> = ({children}) => {
   const [paqueteSelected, setPaqueteSelected] = useState(0);
   const [pedido, setPedido] = useState<IPedido>();
   const [recoleccion, setRecoleccion] = useState<IRecoleccion>();
+  const [tipoPrograma, setTipoPrograma] =useState('auto');
   const [drawer, setDrawer] = useState<IDrawer>({
     open: false,
     title: '',
@@ -104,6 +105,16 @@ const PedidoProvider: React.FC<Props> = ({children}) => {
     }
   }
 
+  const saveProgramaKey = async (key: string, value: any) => {
+    if(key && value && pedido) {
+      setPedido({
+        ...pedido,
+        programa: {...pedido.programa, [key]: value}
+  
+      })
+    }
+  }
+
   const updateActiveStep = (step: number) => {
     setActiveStep(step);
   }
@@ -118,6 +129,10 @@ const PedidoProvider: React.FC<Props> = ({children}) => {
 
   const updatePaqueteSelected = (id: number) => {
     setPaqueteSelected(id);
+  }
+
+  const updateTipoPrograma = (tipo: string) => {
+    setTipoPrograma(tipo);
   }
 
   const useDrawer = (props: IDrawer) => {
@@ -143,7 +158,9 @@ const PedidoProvider: React.FC<Props> = ({children}) => {
         saveCobro,
         drawer,
         useDrawer,
-
+        saveProgramaKey,
+        updateTipoPrograma,
+        tipoPrograma
       }}
     >
       {children}

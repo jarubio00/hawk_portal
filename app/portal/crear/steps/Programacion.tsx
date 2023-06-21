@@ -49,7 +49,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
   currentUser,
 }) => {
 
-const {updateActiveStep , savePaquete, paqueteSelected, updatePaqueteSelected, pedido, useDrawer} = useContext(PedidoContext) as PedidoContextType;
+const {updateActiveStep , saveProgramaKey, updateTipoPrograma, tipoPrograma, pedido} = useContext(PedidoContext) as PedidoContextType;
 const router = useRouter();
 const loader = useLoader();
 
@@ -113,15 +113,8 @@ const handleDialogRec = () => {
 }
 
 
-const handleDialogClose = (props: any) => {
-  if(props.confirm) {
-    
-    setProgramaDialogOpen(false)
-  } else {
-    //saveCobro(0);
-    //setResetCobro(true);
-    setProgramaDialogOpen(false)
-  }
+const handleProgramaSection = (tipo: string) => {
+  updateTipoPrograma(tipo);
   
 }
 
@@ -152,26 +145,26 @@ console.log(date.toISOString().slice(0, 10))
       <div className="my-8 flex flex-row items-center gap-4">
         <div className={`w-44 md:w-60 border-2 bg-rose-500 border-rose-500 text-sm md:text-base
                   shadow-md rounded-md py-1 px-2 cursor-pointer
-          ${!programarSection ? 
+          ${tipoPrograma == 'auto' ? 
             'bg-rose-500 text-white border-rose-500' 
             : 'bg-white  border-neutral-800'}
              `}
-        onClick={() => setProgramarSection(false)}
+        onClick={() => handleProgramaSection('auto')}
          >
           <p className=" text-center">Lo antes posible</p>
         </div>
         <div className={`border-2 w-44 md:w-60  text-sm md:text-base
           shadow-md rounded-md py-1 px-2 cursor-pointer
-          ${programarSection ? 
+          ${tipoPrograma == 'custom' ? 
             'bg-rose-500 text-white border-rose-500' 
             : 'bg-white  border-neutral-800'}
     `}
-        onClick={() => setProgramarSection(true)}
+        onClick={() => handleProgramaSection('custom')}
         >
           <p className=" text-center">Seleccionar fechas</p>
         </div>
       </div>
-      {!programarSection ? <div className="my-4" onClick={handleDialogRec}>
+      {tipoPrograma == 'auto' ? <div className="my-4" onClick={handleDialogRec}>
        Recoleccion
       </div> : 
 
@@ -203,16 +196,23 @@ console.log(date.toISOString().slice(0, 10))
     
     
     const handleDateChange = async  (e: any) => {
-      console.log(e);
+      saveProgramaKey('bloqueRecoleccion', 3);
+      
       setIsLoading(true);
       setfechaRecoleccionSelected(e);
+     
+      const timer = setTimeout(() => {
+        saveProgramaKey('fechaRecoleccion', e);
+      }, 500);
+      
+      
+      
       const fechaString = format(e, `yyyy-MM-dd`);
       const res:ApiResponse = await getBloquesRecoleccion(fechaString);
       
       if (res.status == 1) {
           if(res.response?.data) {
             setBloquesDisponibles(res.response.data);
-            console.log('responded')
             const timer = setTimeout(() => {
               setIsLoading(false);
             }, 500);
@@ -222,10 +222,13 @@ console.log(date.toISOString().slice(0, 10))
           setIsLoading(false);
         }, 500);
       }
-        
-        
+
       }
-};
+    };
+    
+    const handleBloqueChange = async  (b: number) => {
+      saveProgramaKey('bloqueRecoleccion', b);
+    }
 
     return (
 
@@ -254,7 +257,7 @@ console.log(date.toISOString().slice(0, 10))
               <MuiDatePicker 
                 dpOpen={dpOpen}
                 setDpOpen={(val) => setDpOpen(val)}
-                value={fechaRecoleccionSelected}
+                value={pedido?.programa?.fechaRecoleccion}
                 onChange={(newValue) => handleDateChange(newValue)}
                 bloqued={bloqued}
                 datetime={datetime}
@@ -262,6 +265,7 @@ console.log(date.toISOString().slice(0, 10))
                 
           </LocalizationProvider>
           </div>
+          {pedido?.programa?.bloqueRecoleccion}
           {isLoading ? <div className="mt-2 mx-4">
             <PulseLoader
               //@ts-ignore
@@ -271,22 +275,24 @@ console.log(date.toISOString().slice(0, 10))
           </div>
           :
           <div className="mt-2 p-3 flex flex-col">
-            {bloquesDisponibles.am && <Radio 
+            {(bloquesDisponibles.am || pedido?.programa?.bloqueRecoleccion == 1) && <Radio 
               id="am" 
               value={1} 
               name="type" 
               label={<p className="text-sm font-semibold">10:00am - 3:00pm</p>}
-              onChange={(event) => console.log(event.target.value)}
+              onChange={(event) => handleBloqueChange(parseInt(event.target.value))}
+              defaultChecked={pedido?.programa?.bloqueRecoleccion == 1}
             />}
-           { bloquesDisponibles.pm && <Radio 
+           { (bloquesDisponibles.pm || pedido?.programa?.bloqueRecoleccion == 2) && <Radio 
               id="pm" 
               value={2} 
               name="type" 
               label={<p className="text-sm font-semibold">3:30pm  - 7:00pm</p>}
-              onChange={(event) => console.log(event.target.value)}
+              onChange={(event) => handleBloqueChange(parseInt(event.target.value))}
+              defaultChecked={pedido?.programa?.bloqueRecoleccion == 2}
             />}
 
-             { !bloquesDisponibles.am && !bloquesDisponibles.pm && <div className="text-sm">
+             { (!bloquesDisponibles.am && !bloquesDisponibles.pm && pedido?.programa?.bloqueRecoleccion == 3 ) && <div className="text-sm">
                 No hay horarios disponibles
               </div>}
 
