@@ -3,7 +3,7 @@ import prisma from "@/app/libs/prismadb";
 
 import getCurrentUser from "@/app/actions/getCurrentUser";
 import {format, subHours, addHours, addDays} from "date-fns"
-import {checkIfBlockedRec} from "./utils";
+import {checkIfBlockedRec, checkIfBlockedEnt} from "./utils";
 
 interface IParams {
   auto?: string;
@@ -28,7 +28,7 @@ export async function GET(
   let entBloque;
 
 
-  const testDays = 3;
+  const testDays = 0;
   const hoyUTC = new Date();
   const hoy = addDays(subHours(hoyUTC,6),testDays);
   const hoySoloFecha =  format(hoy,`yyyy-MM-dd`);
@@ -61,7 +61,7 @@ export async function GET(
 
    console.log('date to check: ', newDate);
 
-   const check = await checkIfBlockedRec(hoy,newBloque,blocked);
+   const check = await checkIfBlockedRec(hoy,newBloque,blocked, hoyHora);
 
     if (!check) {  
       recDate = hoy;
@@ -69,24 +69,46 @@ export async function GET(
     } else {
       let free = false;
       while (!free) {
+       
         if (newBloque == 1) {
           newBloque = 2;
         } else if (newBloque == 2) {
-          newDate = addDays(hoy,1)
+          newDate = addDays(newDate,1)
           newBloque = 1;
         }
-        const recheck = await checkIfBlockedRec(newDate,newBloque,blocked);
+        const recheck = await checkIfBlockedRec(newDate,newBloque,blocked, hoyHora);
         free = !recheck ? true : false;
-  
       } //while
       recDate = newDate;
       recBloque = newBloque;
     }
+
+    console.log('final rec date: ',recDate);
+    console.log('final rec bloque: ',recBloque);
   
-   console.log('rec date: ', recDate);
-   console.log('rec bloque: ', recBloque)
+   ///ENTREGA
+    let entNewDate = newDate;
+    let entNewBloque = 1; 
+
+   if (recBloque == 1) {
+      entNewDate = newDate;
+      entNewBloque = 2;
+   } else if (newBloque == 2) {
+      entNewDate = addDays(newDate,1);
+      entNewBloque = 1;
+   }
+
+   const checkEnt = await checkIfBlockedEnt(entNewDate,entNewBloque,blocked);
+   console.log(checkEnt);
+
+    if (!checkEnt) {  
+      entDate = entNewDate;
+      entBloque = entNewBloque;
+    }
   
-  
+    console.log('final ent date: ',entDate);
+    console.log('final ent bloque: ',entBloque);
+
 
   return NextResponse.json('OK');
 }
