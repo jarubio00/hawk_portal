@@ -27,6 +27,9 @@ interface MuiDatePickerProps {
     value: any;
     bloqued: any;
     datetime: any;
+    addDisabledDay?: any;
+    startDate?: any;
+    disabled?: boolean;
   }
   
 
@@ -36,7 +39,10 @@ interface MuiDatePickerProps {
     onChange,
     value,
     bloqued,
-    datetime
+    datetime,
+    addDisabledDay,
+    startDate,
+    disabled
   }) => {
 
     interface ButtonFieldProps
@@ -61,7 +67,7 @@ function ButtonField(props: ButtonFieldProps) {
 
   return (
     <button
-    className="p-2 border-2 border-black shadow-md rounded-md"
+    className="p-2 border-2 border-black disabled:border-neutral-300 disabled:border shadow-md rounded-md text-black disabled:text-neutral-300 disabled:italic"
       id={id}
       disabled={disabled}
       ref={ref}
@@ -70,7 +76,7 @@ function ButtonField(props: ButtonFieldProps) {
       onClick={() => setDpOpen?.((prev) => !prev)}
     >
       <div className="w-44 flex flex-row justify-between items-center">
-        <p className="text-sm mr-4">{label}</p> 
+        <p className="text-sm mr-4 ">{label}</p> 
         <IoMdCalendar />
         </div>
     </button>
@@ -102,7 +108,7 @@ function ButtonDatePicker(
            return true;
        } else {
            bloqued.map((val: any) => { 
-               if (val == date.toISOString().slice(0, 10)) {
+               if (val.toISOString().slice(0, 10) == date.toISOString().slice(0, 10)) {
                   bMatched = true;
                }
            });
@@ -125,7 +131,9 @@ function ButtonDatePicker(
             disablePast
             closeOnSelect
             onChange={onChange}
+            minDate={startDate}
             shouldDisableDate={disableWeekends}
+            disabled={disabled}
         />
      );
   }

@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import prisma from "@/app/libs/prismadb";
 
 import getCurrentUser from "@/app/actions/getCurrentUser";
-import {format, subHours, addDays, getDay, getHours} from "date-fns"
+import {format, subHours, addHours} from "date-fns"
+import {utcToZonedTime} from 'date-fns-tz'
 
 interface IParams {
   bloques?: string;
@@ -25,19 +26,22 @@ export async function POST(
     throw new Error('Dato inválido');
   }
 
-  const fecha = new Date(fechaQuery);
-  const hoyUTC = new Date();
-  const hoy = subHours(hoyUTC, 6);
+  const timezone = 'America/Mexico_city';
 
+  const fechaUTC = new Date(fechaQuery);
+  const hoyUTC = new Date();
+  const fecha = addHours(fechaUTC,6);
+  const hoy = subHours(hoyUTC,6);
+ 
 
   const blocked = await prisma.fechasBloqueadas.findMany({
     where: {
       AND: [
         {
-          tipo: 'REC'
+          tipo: 'ENT'
         },
         {
-          fecha: {lte: fecha, gte: fecha}
+          fecha: {lte: fechaUTC, gte: fechaUTC}
         }
       ]
        
@@ -48,8 +52,20 @@ export async function POST(
     }
 });
 
-console.log(blocked)
- 
+  let matchAm = false;
+  let matchPm = false;
+  let amDisponible = false;
+  let pmDisponible = false;
+
+  if (blocked && blocked.length >= 1) {
+    blocked.map((val) => {
+        if(val.bloque == 'AM') {
+          matchAm = true;
+        } else if (val.bloque == 'PM') {
+          matchPm = true;
+        }
+    });
+  }
 
   if(fechaQuery) {
    
@@ -58,44 +74,40 @@ console.log(blocked)
 
     const bloque1Limit = 10;
     const bloque2Limit = 15;
-    let bloquesDisponibles;
-
-    //Bloques ids
-    // 1 = bloque 1 disponible 
-    // 2 = bloque 2 disponible
-    // 12 = bloques 1 y 2 disponibles
-    // 0 = ningun bloque disponible
-
+    
     if (hoyDate == fechaDate) {
       if (fecha.getDay() == 6 ) {
-          if (hoy.getHours() < bloque1Limit) {
-               bloquesDisponibles = 1;
-          } else {
-               bloquesDisponibles = 0;
+          if (hoyUTC.getHours() < bloque1Limit) {
+               amDisponible = true;
           }
         } else {
-           if (hoy.getHours() < bloque1Limit) {
-               bloquesDisponibles = 12;
+           if (hoyUTC.getHours() < bloque1Limit )  {
+               amDisponible = true;
+               pmDisponible = true;
+           } else if (hoyUTC.getHours() >= bloque1Limit && hoyUTC.getHours() < bloque2Limit){
+               pmDisponible = true;
            } else {
-               bloquesDisponibles = 2;
+               amDisponible = false;
+               pmDisponible = false;
            }
+           
+          
         }
       } else {
-          if (fecha.getDay() == 5 ) {
-              bloquesDisponibles = 1;
+          if (fecha.getDay() == 6 ) {
+              amDisponible = true;
           } else {
-              bloquesDisponibles = 12;
+              amDisponible = true;
+              pmDisponible = true;
           }
       }
-      console.log(fecha);
-      console.log(fecha.getDay());
-      console.log(bloquesDisponibles);
-
   }
+
+  const result = {am: matchAm ? false : amDisponible, pm: matchPm ? false :  pmDisponible}
   
 
   
-
-  return NextResponse.json('OK');
+  console.log(result);
+  return NextResponse.json(result);
 }
 

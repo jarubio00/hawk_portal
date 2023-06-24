@@ -1,6 +1,6 @@
 'use client'
 
-import { IRecoleccion, IDestino, IPedido, IPaquete, PedidoContextType, IDrawer, IPrograma} from "@/app/types/pedido.d";
+import { IRecoleccion, IDestino, IPedido, IPaquete, PedidoContextType, IDrawer, IPrograma, IProgramaState, ITimer} from "@/app/types/pedido.d";
 import React, { useState, createContext } from "react";
 
 
@@ -16,12 +16,22 @@ const PedidoProvider: React.FC<Props> = ({children}) => {
   const [paqueteSelected, setPaqueteSelected] = useState(0);
   const [pedido, setPedido] = useState<IPedido>();
   const [recoleccion, setRecoleccion] = useState<IRecoleccion>();
-  const [tipoPrograma, setTipoPrograma] =useState('auto');
+  const [tipoPrograma, setTipoPrograma] = useState('auto');
+
   const [drawer, setDrawer] = useState<IDrawer>({
     open: false,
     title: '',
     tipo: 'none',
   });
+
+  const [timer, setTimer] = useState<ITimer>({
+    isOpen: false,
+    time: null,
+  });
+
+  const [recoleccionState, setRecoleccionState] = useState<IProgramaState>()
+  const [entregaState, setEntregaState] = useState<IProgramaState>();
+  const [fechasBloqueadas, setFechasBloqueadas] = useState({});
 
   
 
@@ -78,6 +88,37 @@ const PedidoProvider: React.FC<Props> = ({children}) => {
     }});
   }
 
+  const savePrograma = (programa: IPrograma) => {
+    setPedido({...pedido, programa: {
+    fechaRecoleccion: programa.fechaRecoleccion,
+    bloqueRecoleccion: programa.bloqueRecoleccion,
+    fechaEntrega: programa.fechaEntrega,
+    bloqueEntrega: programa.bloqueEntrega
+    }});
+  }
+
+  const saveRecoleccionState = (state: IProgramaState) => {
+    setRecoleccionState({...recoleccionState,
+      am: state.am,
+      pm: state.pm,
+      show: state.show,
+      enabled: state.enabled,
+      startDate: state.startDate
+    });
+  }
+
+  const saveEntregaState = (state: IProgramaState) => {
+    setEntregaState({...entregaState,
+      am: state.am,
+      pm: state.pm,
+      show: state.show,
+      enabled: state.enabled,
+      startDate: state.startDate
+    });
+  }
+
+  
+
   const saveDestinoKey = (key: string, value: any) => {
     if(key && value) {
       setPedido({
@@ -106,6 +147,7 @@ const PedidoProvider: React.FC<Props> = ({children}) => {
   }
 
   const saveProgramaKey = async (key: string, value: any) => {
+   
     if(key && value && pedido) {
       setPedido({
         ...pedido,
@@ -139,6 +181,10 @@ const PedidoProvider: React.FC<Props> = ({children}) => {
     setDrawer(props);
   }
 
+  const useTimer = (props: ITimer) => {
+    setTimer(props);
+  }
+
   return (
     <PedidoContext.Provider
       value={{
@@ -159,8 +205,15 @@ const PedidoProvider: React.FC<Props> = ({children}) => {
         drawer,
         useDrawer,
         saveProgramaKey,
+        savePrograma,
+        saveRecoleccionState,
+        saveEntregaState,
+        entregaState,
+        recoleccionState,
         updateTipoPrograma,
-        tipoPrograma
+        tipoPrograma,
+        useTimer,
+        timer
       }}
     >
       {children}

@@ -240,7 +240,6 @@ export  async function serverDate(props: any) {
 
 export  async function getBloquesRecoleccion(fecha: string) {
 
-  console.log(fecha);
   
   const result = await axios.post(`/api/programa/bloques/recoleccion/${fecha}`)
       .then((response) => {
@@ -254,5 +253,40 @@ export  async function getBloquesRecoleccion(fecha: string) {
  
       
 
+      return result;
+}
+
+export  async function getBloquesEntrega(fecha: string) {
+
+  
+  const result = await axios.post(`/api/programa/bloques/entrega/${fecha}`)
+      .then((response) => {
+        const responseData:ApiResponse = {status:1,statusMessage: 'OK', response: {data: response.data} }
+        return responseData;
+      })
+      .catch((error) => {
+        const response:ApiResponse = {status:2,statusMessage: 'Error de API', response: {data: {}, error: error} }
+        return response;
+      })
+ 
+      
+
+      return result;
+}
+
+export  async function autoPrograma() {
+
+  
+  const result = await axios.get(`/api/programa/auto/now`)
+      .then((response) => {
+        const responseData:ApiResponse = {status:1,statusMessage: 'OK', response: {data: response.data} }
+        return responseData;
+      })
+      .catch((error) => {
+        const response:ApiResponse = {status:2,statusMessage: 'Error de API', response: {data: {}, error: error} }
+        return response;
+      })
+ 
+      
       return result;
 }

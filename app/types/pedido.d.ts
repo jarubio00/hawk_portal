@@ -78,6 +78,19 @@ export interface IDrawer {
     tipo?: string;
 }
 
+export interface ITimer {
+    isOpen: boolean | false;
+    time?: any;
+}
+
+export interface IProgramaState {
+    am?: boolean | false;
+    pm?: boolean | false;
+    show?: boolean | false;
+    enabled?: boolean;
+    startDate?: any;
+}
+
 export interface IPedido {
     recoleccion?: IRecoleccion;
     destino?: IDestino;
@@ -106,6 +119,13 @@ export type PedidoContextType = {
     useDrawer: (props: IDrawer) => void;
     saveCobro: (cantidad: number) => void;
     saveProgramaKey: (key: string, value: any) => void;
+    savePrograma: (programa: IPrograma) => void;
     tipoPrograma: string;
     updateTipoPrograma: (tipo: string) => void;
+    saveRecoleccionState: (state: IProgramaState) => void;
+    saveEntregaState: (state: IProgramaState) => void;
+    entregaState?: IProgramaState;
+    recoleccionState?: IProgramaState;
+    useTimer: (props: ITimer) => void;
+    timer?: ITimer;
 }

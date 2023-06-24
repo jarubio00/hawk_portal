@@ -3,14 +3,11 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import {PedidoContext} from "@/app/portal/crear/context/PedidoContext"
 import {PedidoContextType} from "@/app/types/pedido"
-import getServerDate from "@/app/actions/getServerDate";
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
-import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers'
 import esLocale from 'date-fns/locale/es';
-import {TextField} from '@mui/material';
-import { getBloquesRecoleccion } from "@/app/actions/apiQuerys";
-import {format, isDate} from 'date-fns';
+import { getBloquesRecoleccion, getBloquesEntrega, autoPrograma } from "@/app/actions/apiQuerys";
+import {addDays, format} from 'date-fns';
 import { Radio } from "@material-tailwind/react";
 import { PulseLoader } from "react-spinners";
 import { toast } from "react-hot-toast";
@@ -20,36 +17,43 @@ import { useRouter } from 'next/navigation';
 import useLoader from "@/app/hooks/useLoader";
 import StepHeading from "../components/StepHeading";
 import { serverDate } from "@/app/actions/apiQuerys";
-import AgregarDestinoCrear from "../components/AgregarDestinoCrear";
 import { ApiResponse, SafeUser } from "@/app/types";
-import { FaPlus } from "react-icons/fa";
-import { IoMdClose } from "react-icons/io";
-import AgregarDestinoSinCp from "../components/AgregarDestinoSinCp";
-import { TiArrowBack } from "react-icons/ti";
-import AgregarPaqueteCrear from "../components/AgregarPaqueteCrear";
-import Datepicker from "../components/Datepicker";
-import ProgramaDialog from "../components/dialogs/ProgramaDialog";
 import MuiDatePicker from "../components/MuiDatePicker";
-
-
-
-
-
-
+import ProgramaTimer from '../components/ProgramaTimer';
 
 
 interface ProgramacionStepProps {
-  title?: string;
+  data?: any;
   currentUser?: SafeUser;
 }
 
 //se quito w-full , se agregp px-2
 const ProgramacionStep: React.FC<ProgramacionStepProps> = ({ 
-  title, 
+  data, 
   currentUser,
 }) => {
 
-const {updateActiveStep , saveProgramaKey, updateTipoPrograma, tipoPrograma, pedido} = useContext(PedidoContext) as PedidoContextType;
+const {updateActiveStep, 
+        saveProgramaKey, 
+        savePrograma, 
+        saveRecoleccionState, 
+        saveEntregaState, 
+        recoleccionState, 
+        entregaState,
+        updateTipoPrograma, 
+        tipoPrograma, 
+        useTimer,
+        pedido} = useContext(PedidoContext) as PedidoContextType;
+
+useEffect(() => {
+  if (tipoPrograma == 'auto') {
+    console.log('auto selected');
+    const autoDates = autoPrograma();
+  }
+
+},[tipoPrograma])
+
+
 const router = useRouter();
 const loader = useLoader();
 
@@ -65,32 +69,23 @@ const serverDateFunction = useCallback(async () => {
   const dateString = res.response?.data;
 
   if (dateString) {
-    console.log(dateString);
     const date= new Date(dateString);
-    console.log(date.getHours());
-    console.log(format(date,`yyyy-MM-dd`))
     setDatetime(date);
   }
   
-
 }, [])
 
 useEffect(() => {
  serverDateFunction();
 },[serverDateFunction])
 
-const [saved,setSaved] = useState(false);
-const [programaDialogOpen,setProgramaDialogOpen] = useState(false);
-const [dialogState, setDialogState] = useState({tipo: '', title:'', subtitle: ''});
-const [paquete,setPaquete] = useState({});
+
 const [datetime,setDatetime] = useState(new Date());
-const [clienttime,setClienttime] = useState(new Date().toString());
-const [fechaRecoleccionSelected,setfechaRecoleccionSelected] = useState(null);
-const [fechaEntregaSelected,setfechaEntregaSelected] = useState(null);
 const [bloqued, setBloqued] = useState([]);
-const [isLoading, setIsLoading] = useState(false);
-const [dpOpen, setDpOpen] = useState(false);
-const [bloquesDisponibles, setBloquesDisponibles] = useState({am: false, pm: false});
+const [isRecLoading, setIsRecLoading] = useState(false);
+const [dpRecOpen, setDpRecOpen] = useState(false);
+const [isEntLoading, setIsEntLoading] = useState(false);
+const [dpEntOpen, setDpEntOpen] = useState(false);
 
 
 const handleBack = () => {
@@ -103,14 +98,7 @@ const handleNext = () => {
   
 }
 
-const handleDialogRec = () => {
-  setDialogState({
-    tipo: 'rec',
-    title: 'Recolección',
-    subtitle: 'Selecciona la fecha de recolección'
-  })
-  setProgramaDialogOpen(true);
-}
+
 
 
 const handleProgramaSection = (tipo: string) => {
@@ -118,30 +106,22 @@ const handleProgramaSection = (tipo: string) => {
   
 }
 
-const disableWeekends = (date: any) => {
-console.log(date.toISOString().slice(0, 10))
-  let bMatched = false;
-   if(date.getDay() === 0) {
-       return true;
-   } else {
-       bloqued.map((val: any) => { 
-           if (val == date.toISOString().slice(0, 10)) {
-              bMatched = true;
-           }
-       });
-      if (isDate(datetime) && format(datetime,`yyyy-MM-dd`) == date.toISOString().slice(0, 10)) {
-        if (datetime.getHours() >= 15 ) {
-          return true;
-        } 
-      }
-   }  
-   return bMatched;
- }
+const handleTimerOn = () => {
+  const timeToClose = new Date();
+  timeToClose.setSeconds(timeToClose.getSeconds() +15); // 10 minutes timer
+  useTimer({isOpen: true, time: timeToClose})
+}
+
+const handleTimerOff = () => {
+  useTimer({isOpen: false, time: null})
+}
+
+
 
   return ( 
     <div className="px-2">
-        <StepHeading title="Programación" subtitle="Selecciona las fechas y horarios de recolección y entrega" />
-       
+      <StepHeading title="Programación" subtitle="Selecciona las fechas y horarios de recolección y entrega" />
+
       <div className="my-8 flex flex-row items-center gap-4">
         <div className={`w-44 md:w-60 border-2 bg-rose-500 border-rose-500 text-sm md:text-base
                   shadow-md rounded-md py-1 px-2 cursor-pointer
@@ -158,15 +138,24 @@ console.log(date.toISOString().slice(0, 10))
           ${tipoPrograma == 'custom' ? 
             'bg-rose-500 text-white border-rose-500' 
             : 'bg-white  border-neutral-800'}
-    `}
-        onClick={() => handleProgramaSection('custom')}
-        >
+           `}
+          onClick={() => handleProgramaSection('custom')}
+          >
           <p className=" text-center">Seleccionar fechas</p>
         </div>
       </div>
-      {tipoPrograma == 'auto' ? <div className="my-4" onClick={handleDialogRec}>
-       Recoleccion
-      </div> : 
+
+      {tipoPrograma == 'auto' ? 
+      <div className="flex flex-row gap-8">
+        <div className="my-4 cursor-pointer" onClick={handleTimerOn} >
+         Timer On
+        </div>
+        <div className="my-4 cursor-pointer" onClick={handleTimerOff} >
+         Timer Off
+        </div>
+      </div>
+      
+      : 
 
       <div className="grid mx-4 md:mx-2 grid-cols-1 md:grid-cols-2  lg:grid-cols-3 gap-4">
         <ProgramarRecoleccion />
@@ -192,34 +181,28 @@ console.log(date.toISOString().slice(0, 10))
    );
 
    function ProgramarRecoleccion() {
-
-    
     
     const handleDateChange = async  (e: any) => {
-      saveProgramaKey('bloqueRecoleccion', 3);
-      
-      setIsLoading(true);
-      setfechaRecoleccionSelected(e);
+ 
+      setIsRecLoading(true);
+
+      saveRecoleccionState({...recoleccionState,am: false, pm: false})
+      saveEntregaState({...entregaState, am: false, pm: false , show: false, enabled: false})
+      savePrograma({...pedido?.programa, fechaEntrega: null, bloqueEntrega: 3,bloqueRecoleccion: 3, fechaRecoleccion: e});
      
-      const timer = setTimeout(() => {
-        saveProgramaKey('fechaRecoleccion', e);
-      }, 500);
-      
-      
-      
       const fechaString = format(e, `yyyy-MM-dd`);
       const res:ApiResponse = await getBloquesRecoleccion(fechaString);
       
       if (res.status == 1) {
           if(res.response?.data) {
-            setBloquesDisponibles(res.response.data);
+            saveRecoleccionState({...recoleccionState, ...res.response.data})
             const timer = setTimeout(() => {
-              setIsLoading(false);
+              setIsRecLoading(false);
             }, 500);
       } else {
         toast.error(res.response?.error);
         const timer = setTimeout(() => {
-          setIsLoading(false);
+          setIsRecLoading(false);
         }, 500);
       }
 
@@ -227,7 +210,15 @@ console.log(date.toISOString().slice(0, 10))
     };
     
     const handleBloqueChange = async  (b: number) => {
-      saveProgramaKey('bloqueRecoleccion', b);
+     savePrograma({...pedido?.programa, fechaEntrega: null, bloqueEntrega: 3, bloqueRecoleccion: b});
+     handleTimerOn();
+
+        if (b == 2 ){
+          const entStartDate = addDays(pedido?.programa?.fechaRecoleccion,1);
+          saveEntregaState({...entregaState, am: false, pm: false, show: false, enabled: true, startDate: entStartDate})
+        } else {
+          saveEntregaState({...entregaState, am: false, pm: false, show: false, enabled: true, startDate: pedido?.programa?.fechaRecoleccion})
+        }
     }
 
     return (
@@ -235,38 +226,21 @@ console.log(date.toISOString().slice(0, 10))
       <div className="my-4 border border-neutral-300 shadow-md rounded-lg p-2 px-2 md:px-6">
         <div className="flex flex-col">
           <p className="text-md font-bold">Recolección</p>
-          <p className="text-xs text-neutral-500">Selecciona la fecha de recolección</p>
+          <p className="text-xs text-neutral-500">Selecciona la fecha y horario de recolección</p>
           <div className="mt-2 md:mt-4">
             <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={esLocale}>
-             {/*  <DesktopDatePicker
-              //@ts-ignore
-                  inputFormat="dd/MM/yyyy"
-                  open={dpOpen}
-                  onOpen={() => setDpOpen(true)}
-                  onClose={() => setDpOpen(false)}
-                  disablePast
-                  slots={{ field: ButtonField, ...props.slots }}
-                  slotProps={{ field: { setOpen } as any }}
-                  inputProps={{placeholder :'Selecciona la fecha', readOnly: true}}
-                  value={fechaRecoleccionSelected}
-                  closeOnSelect
-                  onChange={(newValue) => {handleDateChange(newValue)}}
-                  shouldDisableDate={disableWeekends}
-              /> */}
-
               <MuiDatePicker 
-                dpOpen={dpOpen}
-                setDpOpen={(val) => setDpOpen(val)}
+                dpOpen={dpRecOpen}
+                setDpOpen={(val) => setDpRecOpen(val)}
                 value={pedido?.programa?.fechaRecoleccion}
                 onChange={(newValue) => handleDateChange(newValue)}
-                bloqued={bloqued}
+                bloqued={data.bloquedRec}
                 datetime={datetime}
-              />
                 
+              />
           </LocalizationProvider>
           </div>
-          {pedido?.programa?.bloqueRecoleccion}
-          {isLoading ? <div className="mt-2 mx-4">
+          {isRecLoading ? <div className="mt-2 mx-4">
             <PulseLoader
               //@ts-ignore
               size={10}
@@ -275,24 +249,24 @@ console.log(date.toISOString().slice(0, 10))
           </div>
           :
           <div className="mt-2 p-3 flex flex-col">
-            {(bloquesDisponibles.am || pedido?.programa?.bloqueRecoleccion == 1) && <Radio 
-              id="am" 
+            {(recoleccionState?.am || pedido?.programa?.bloqueRecoleccion == 1) && <Radio 
+              id="RecAm" 
               value={1} 
-              name="type" 
+              name="recoleccion" 
               label={<p className="text-sm font-semibold">10:00am - 3:00pm</p>}
               onChange={(event) => handleBloqueChange(parseInt(event.target.value))}
               defaultChecked={pedido?.programa?.bloqueRecoleccion == 1}
             />}
-           { (bloquesDisponibles.pm || pedido?.programa?.bloqueRecoleccion == 2) && <Radio 
-              id="pm" 
+           { (recoleccionState?.pm || pedido?.programa?.bloqueRecoleccion == 2) && <Radio 
+              id="RecPm" 
               value={2} 
-              name="type" 
+              name="recoleccion" 
               label={<p className="text-sm font-semibold">3:30pm  - 7:00pm</p>}
               onChange={(event) => handleBloqueChange(parseInt(event.target.value))}
               defaultChecked={pedido?.programa?.bloqueRecoleccion == 2}
             />}
 
-             { (!bloquesDisponibles.am && !bloquesDisponibles.pm && pedido?.programa?.bloqueRecoleccion == 3 ) && <div className="text-sm">
+             { (!recoleccionState?.am && !recoleccionState?.pm && pedido?.programa?.bloqueRecoleccion == 3 ) && <div className="text-sm">
                 No hay horarios disponibles
               </div>}
 
@@ -307,38 +281,115 @@ console.log(date.toISOString().slice(0, 10))
    }
 
    function ProgramarEntrega() {
-    const [dpOpen, setDpOpen] = useState(false);
-  
-    const handleDateChange = (e: any) => {
-  ;
-  };
-  
+    
+    const handleDateChange = async  (e: any) => {
+      //setBloquesEntShow(true);
+
+      console.log('fecha rec: ', pedido?.programa?.fechaRecoleccion.toISOString().slice(0, 10));
+      console.log('fehcaServer: ', e.toISOString().slice(0, 10));
+      if (pedido?.programa?.fechaRecoleccion.toISOString().slice(0, 10) == e.toISOString().slice(0, 10)) {console.log('match')}
+
+      saveEntregaState({...entregaState, show: true})
+      setIsEntLoading(true);
+      savePrograma({...pedido?.programa,bloqueEntrega: 3, fechaEntrega: e});
+     
+      const fechaString = format(e, `yyyy-MM-dd`);
+      const res:ApiResponse = await getBloquesEntrega(fechaString);
+      
+      if (res.status == 1) {
+          if(res.response?.data) {
+            let bloques = res.response.data;
+            const fechaRec = pedido?.programa?.fechaRecoleccion.toISOString().slice(0, 10);
+            const fechaSel = e.toISOString().slice(0, 10);
+            const bloqueRec = pedido?.programa?.bloqueRecoleccion;
+
+            if (fechaRec == fechaSel && bloqueRec == 1) {
+              bloques = {...bloques, am: false}
+            } else if ( fechaRec == fechaSel && bloqueRec == 2) {
+              bloques = {...bloques, am: false, pm: false}
+              
+            }
+
+
+
+            saveEntregaState({...entregaState, ...bloques})
+            
+            const timer = setTimeout(() => {
+              setIsEntLoading(false);
+            }, 500);
+      } else {
+        toast.error(res.response?.error);
+        const timer = setTimeout(() => {
+          setIsEntLoading(false);
+        }, 500);
+      }
+
+      }
+    };
+    
+    const handleBloqueChange = async  (b: number) => {
+      saveProgramaKey('bloqueEntrega', b);
+    }
+
     return (
-  
-      <div className="my-4 border border-neutral-300 shadow-md rounded-lg p-4 px-6">
+
+      <div className="my-4 border border-neutral-300 shadow-md rounded-lg p-2 px-2 md:px-6">
         <div className="flex flex-col">
-        <p className="text-lg font-bold">Entrega</p>
-        <p className="text-sm text-neutral-500">Selecciona la fecha de entrega</p>
-        <div className="mt-2">
-          <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={esLocale}>
-            <DesktopDatePicker
-            //@ts-ignore
-                inputFormat="dd/MM/yyyy"
-                open={dpOpen}
-                onOpen={() => setDpOpen(true)}
-                onClose={() => setDpOpen(false)}
-                disablePast
-                renderInput={(props: any) => <TextField  fullWidth {...props} onClick={(e) => setDpOpen(true)} />}
-                inputProps={{placeholder :'Selecciona la fecha', readOnly: true}}
-                value={fechaEntregaSelected}
-                closeOnSelect
-                onChange={(newValue) => {handleDateChange(newValue)}}
-                shouldDisableDate={disableWeekends}
-            />
-        </LocalizationProvider>
-        </div>
-  
-  
+          <p className="text-md font-bold">Entrega</p>
+          <p className="text-xs text-neutral-500">Selecciona la fecha y horario de entrega</p>
+          <div className="mt-2 md:mt-4">
+            <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={esLocale}>
+              <MuiDatePicker 
+                dpOpen={dpEntOpen}
+                setDpOpen={(val) => setDpEntOpen(val)}
+                value={pedido?.programa?.fechaEntrega}
+                onChange={(newValue) => handleDateChange(newValue)}
+                bloqued={data.bloquedEnt}
+                datetime={datetime}
+                startDate={entregaState?.startDate}
+                disabled={!entregaState?.enabled}
+              />
+          </LocalizationProvider>
+          </div>
+          {isEntLoading ? <div className="mt-2 mx-4">
+            <PulseLoader
+              //@ts-ignore
+              size={10}
+              color="#F43F5E"
+              />
+          </div>
+          :
+          <div className="mt-2 p-3 flex flex-col">
+            {(entregaState?.am || pedido?.programa?.bloqueEntrega == 1) && <Radio 
+              id="EntAm" 
+              value={1} 
+              name="entrega" 
+              label={<p className="text-sm font-semibold">10:00am - 3:00pm</p>}
+              onChange={(event) => handleBloqueChange(parseInt(event.target.value))}
+              defaultChecked={pedido?.programa?.bloqueEntrega == 1}
+            />}
+           { (entregaState?.pm || pedido?.programa?.bloqueEntrega == 2) && <Radio 
+              id="EntPm" 
+              value={2} 
+              name="entrega" 
+              label={<p className="text-sm font-semibold">3:30pm  - 7:00pm</p>}
+              onChange={(event) => handleBloqueChange(parseInt(event.target.value))}
+              defaultChecked={pedido?.programa?.bloqueEntrega == 2}
+            />}
+            {!entregaState?.show ? 
+
+              <div></div> :
+
+              (!entregaState?.am && !entregaState?.pm && pedido?.programa?.bloqueEntrega == 3 ) && <div className="text-sm">
+                No hay horarios disponibles
+              </div>
+
+              }  
+            
+
+          </div>}
+
+
         </div>
         
         

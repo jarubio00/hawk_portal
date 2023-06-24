@@ -22,6 +22,8 @@ import DestinoDrawer from "./components/DestinoDrawer";
 import PaqueteStep from "./steps/Paquete";
 import PaqueteDrawer from "./components/PaqueteDrawer";
 import ProgramacionStep from "./steps/Programacion";
+import ProgramaTimer from "./components/ProgramaTimer";
+import TimerDialog from "@/app/components/modals/TimerDialog";
 
 
 interface CrearPedidoWidgetProps {
@@ -41,8 +43,9 @@ const CrearPedidoWidget: React.FC<CrearPedidoWidgetProps> = ({
     //console.log('isSm:', sm);
     const router = useRouter();
     const loader = useLoader();
-    const {activeStep, drawer} = useContext(PedidoContext) as PedidoContextType;
+    const {activeStep, drawer, timer, useTimer, saveRecoleccionState, saveEntregaState, savePrograma, updateActiveStep} = useContext(PedidoContext) as PedidoContextType;
     const [confirmSalirOpen, setConfirmSalirOpen] = useState(false);
+    const [timerConfirmOpen, setTimerConfirmOpen] = useState(false);
     const [openDrawer, setOpenDrawer] = useState(false);
     const [drawerContent, setDrawerContent] = useState();
 
@@ -89,16 +92,34 @@ const CrearPedidoWidget: React.FC<CrearPedidoWidgetProps> = ({
         } 
     }
     
-
+    const timeToClose = new Date();
+    timeToClose.setSeconds(timeToClose.getSeconds() + 10); // 10 minutes timer
 
     const handleCloseCrear = () => {
 
     };
 
+    const handleOnExpireTimer = () => {
+      console.log('expired......................')
+      useTimer({isOpen: false, time: null})
+      setTimerConfirmOpen(true);
+    };
+
+    const handleOnCloseTimerConfirm = () => {
+      setTimerConfirmOpen(false);
+      updateActiveStep(3);
+      saveRecoleccionState({})
+      saveEntregaState({});
+      savePrograma({})
+    }
+
+
   return ( 
     <>
       <ConfirmDialog isOpen={confirmSalirOpen} onClose={handleConfirmSalir} dialogContent={dialogContent}/>
+      <TimerDialog isOpen={timerConfirmOpen} onClose={handleOnCloseTimerConfirm} />
       <UtilDrawer props={drawer} onClose={() => setOpenDrawer(false)} size={sm ? 700 : 1050}  content={handleDrawerComponent(drawer?.tipo)}/>
+      {timer?.time && <ProgramaTimer expiryTimestamp={timer?.time} onExpire={handleOnExpireTimer} isOpen={timer?.isOpen}/>}
       <CrearNavbar  onClose={() => setConfirmSalirOpen(true)} />
       <div className="w-full md:w-3/4 py-4 px-1 md:px-8 mx-auto">
         <div className="mt-16 ">
@@ -112,7 +133,7 @@ const CrearPedidoWidget: React.FC<CrearPedidoWidgetProps> = ({
               <PaqueteStep />
           }
            {activeStep === 3 && 
-              <ProgramacionStep />
+              <ProgramacionStep data={data.bloquedDates} />
           }
           {activeStep === 4 && 
               <ConfirmarStep />

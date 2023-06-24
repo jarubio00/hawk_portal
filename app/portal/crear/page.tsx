@@ -6,6 +6,7 @@ import getDestinos from "@/app/actions/getDestinos";
 import getPaquetes from "@/app/actions/getPaquetes";
 import getMunicipios from "@/app/actions/getMunicipios";
 import CrearPedidoClient from "./CrearPedido";
+import getBloquedDates from "@/app/actions/getBloquedDates";
 
 
 const CrearPedido  = async () => {
@@ -17,6 +18,7 @@ const CrearPedido  = async () => {
   const destinos = await getDestinos();
   const paquetes = await getPaquetes();
   const municipiosRaw = await getMunicipios();
+  const bloquedDates = await getBloquedDates();
   
   const municipios = municipiosRaw.map((val) => ({...val,label: val.municipio, value: val.id}));
   const genericoIndex = municipios.map(e => e.label).indexOf('Generico');
@@ -30,7 +32,15 @@ const CrearPedido  = async () => {
     return (
       <ClientOnly>
         
-        <CrearPedidoClient  data={{direcciones: direcciones, destinos: destinos, paquetes: paquetes, municipios: municipios}} currentUser={currentUser}/>
+        <CrearPedidoClient  
+          data={{
+              direcciones: direcciones, 
+              destinos: destinos, 
+              paquetes: paquetes, 
+              municipios: municipios, 
+              bloquedDates: bloquedDates}} 
+          currentUser={currentUser}
+        />
 
       </ClientOnly>
     )
