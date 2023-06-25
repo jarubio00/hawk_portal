@@ -47,32 +47,36 @@ const {updateActiveStep,
 
 useEffect(() => {
   if (tipoPrograma == 'auto') {
-    console.log('auto selected');
-    const autoDates = autoPrograma();
+    setIsAutoLoading(true);
+    getAutoDates();
   }
 
 },[tipoPrograma])
 
+const getAutoDates = useCallback(async () => {
+  const autoDates = await autoPrograma();
+  console.log('auto dates: ',autoDates);
 
-const router = useRouter();
-const loader = useLoader();
+  const data = autoDates?.response?.data;
 
-const clientDate = new Date();
-
-const [programarSection, setProgramarSection] = useState(false);
+  savePrograma({ 
+    fechaRecoleccion: data.recDate,
+    bloqueRecoleccion: data.recBloque, 
+    fechaEntrega: data.entDate, 
+    bloqueEntrega: data.entBloque,
+  });
+  setIsAutoLoading(false);
+}, [])
 
 
 const serverDateFunction = useCallback(async () => {
   const res = await serverDate('now');
-
   //@ts-ignore
   const dateString = res.response?.data;
-
   if (dateString) {
     const date= new Date(dateString);
     setDatetime(date);
   }
-  
 }, [])
 
 useEffect(() => {
@@ -85,6 +89,7 @@ const [bloqued, setBloqued] = useState([]);
 const [isRecLoading, setIsRecLoading] = useState(false);
 const [dpRecOpen, setDpRecOpen] = useState(false);
 const [isEntLoading, setIsEntLoading] = useState(false);
+const [isAutoLoading, setIsAutoLoading] = useState(false);
 const [dpEntOpen, setDpEntOpen] = useState(false);
 
 
@@ -97,9 +102,6 @@ const handleNext = () => {
 
   
 }
-
-
-
 
 const handleProgramaSection = (tipo: string) => {
   updateTipoPrograma(tipo);
@@ -146,21 +148,28 @@ const handleTimerOff = () => {
       </div>
 
       {tipoPrograma == 'auto' ? 
-      <div className="flex flex-row gap-8">
+     /*  <div className="flex flex-row gap-8">
         <div className="my-4 cursor-pointer" onClick={handleTimerOn} >
          Timer On
         </div>
         <div className="my-4 cursor-pointer" onClick={handleTimerOff} >
          Timer Off
         </div>
+      </div> */
+      <div className="grid mx-4 md:mx-2 grid-cols-1 md:grid-cols-2  lg:grid-cols-3 gap-4">
+        {/* <ProgramarAuto 
+          tipo='Recolección'
+          data={{fecha: pedido?.programa?.fechaRecoleccion,bloque: pedido?.programa?.bloqueRecoleccion || 1 }}
+         
+           /> */}
+        <ProgramarEntrega />
       </div>
-      
+
       : 
 
       <div className="grid mx-4 md:mx-2 grid-cols-1 md:grid-cols-2  lg:grid-cols-3 gap-4">
         <ProgramarRecoleccion />
         <ProgramarEntrega />
-       
       </div>
       
       }
@@ -393,6 +402,31 @@ const handleTimerOff = () => {
         </div>
         
         
+      </div>
+    );
+   }
+
+   function ProgramarAuto(tipo: string, data: any) {
+    
+    return (
+
+      <div className="my-4 border border-neutral-300 shadow-md rounded-lg p-2 px-2 md:px-6">
+        <div className="flex flex-col">
+          <p className="text-md font-bold">{tipo}</p>
+          
+          {isAutoLoading ? <div className="mt-2 mx-4">
+            <PulseLoader
+              //@ts-ignore
+              size={10}
+              color="#F43F5E"
+              />
+          </div>
+          :
+          <div className="mt-2 p-3 flex flex-col">
+            <p className="text-xs text-neutral-500">{data?.fecha?.toISOString()}</p>
+            <p className="text-xs text-neutral-500">Bloque: {data?.bloque}</p>
+          </div>}
+        </div>
       </div>
     );
    }

@@ -104,12 +104,29 @@ export async function GET(
     if (!checkEnt) {  
       entDate = entNewDate;
       entBloque = entNewBloque;
+    } else {
+      let free = false;
+      while (!free) {
+       
+        if (entNewBloque == 1) {
+          entNewBloque = 2;
+        } else if (newBloque == 2) {
+          entNewDate = addDays(entNewDate,1)
+          entNewBloque = 1;
+        }
+        const recheck = await checkIfBlockedEnt(entNewDate,entNewBloque,blocked);
+        free = !recheck ? true : false;
+      } //while
+      entDate = entNewDate;
+      entBloque = entNewBloque;
     }
   
     console.log('final ent date: ',entDate);
     console.log('final ent bloque: ',entBloque);
 
+    const response = {recDate: recDate, recBloque: recBloque, entDate: entDate, entBloque: entBloque}
 
-  return NextResponse.json('OK');
+
+  return NextResponse.json(response);
 }
 
