@@ -34,7 +34,7 @@ export  async function checkIfBlockedRec(date: any, bloque: number, blocked: any
     if (date.getDay() == 6 && hoyHora >= 10) {
       result=true;
     }
-    //console.log(date+' -- '+bloque+' -- '+result);
+    console.log(date+' -- '+bloque+' -- '+result);
     return result;
   }
 
@@ -72,7 +72,7 @@ export  async function checkIfBlockedEnt(date: any, bloque: number, blocked: any
   if (date.getDay() == 6 && bloque == 2) {
     result=true;
   }
-  //console.log(date+' -- '+bloque+' -- '+result);
+  console.log(date+' -- '+bloque+' -- '+result);
   return result;
 }
 

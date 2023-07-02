@@ -20,6 +20,7 @@ import { serverDate } from "@/app/actions/apiQuerys";
 import { ApiResponse, SafeUser } from "@/app/types";
 import MuiDatePicker from "../components/MuiDatePicker";
 import ProgramaTimer from '../components/ProgramaTimer';
+import {namedDate, namedDateString} from '@/app/components/utils/helpers';
 
 
 interface ProgramacionStepProps {
@@ -46,9 +47,14 @@ const {updateActiveStep,
         pedido} = useContext(PedidoContext) as PedidoContextType;
 
 useEffect(() => {
+  
   if (tipoPrograma == 'auto') {
-    setIsAutoLoading(true);
-    getAutoDates();
+    
+    if (!pedido?.programa?.fechaRecoleccion) {
+      setIsAutoLoading(true);
+      getAutoDates();
+    }
+    
   }
 
 },[tipoPrograma])
@@ -104,8 +110,8 @@ const handleNext = () => {
 }
 
 const handleProgramaSection = (tipo: string) => {
+  savePrograma({});
   updateTipoPrograma(tipo);
-  
 }
 
 const handleTimerOn = () => {
@@ -157,12 +163,9 @@ const handleTimerOff = () => {
         </div>
       </div> */
       <div className="grid mx-4 md:mx-2 grid-cols-1 md:grid-cols-2  lg:grid-cols-3 gap-4">
-        {/* <ProgramarAuto 
-          tipo='Recolección'
-          data={{fecha: pedido?.programa?.fechaRecoleccion,bloque: pedido?.programa?.bloqueRecoleccion || 1 }}
-         
-           /> */}
-        <ProgramarEntrega />
+        <ProgramarAutoRec />
+        <ProgramarAutoEnt />
+        
       </div>
 
       : 
@@ -238,7 +241,7 @@ const handleTimerOff = () => {
           <p className="text-xs text-neutral-500">Selecciona la fecha y horario de recolección</p>
           <div className="mt-2 md:mt-4">
             <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={esLocale}>
-              <MuiDatePicker 
+              {tipoPrograma == 'custom' && <MuiDatePicker 
                 dpOpen={dpRecOpen}
                 setDpOpen={(val) => setDpRecOpen(val)}
                 value={pedido?.programa?.fechaRecoleccion}
@@ -246,7 +249,7 @@ const handleTimerOff = () => {
                 bloqued={data.bloquedRec}
                 datetime={datetime}
                 
-              />
+              />}
           </LocalizationProvider>
           </div>
           {isRecLoading ? <div className="mt-2 mx-4">
@@ -406,13 +409,11 @@ const handleTimerOff = () => {
     );
    }
 
-   function ProgramarAuto(tipo: string, data: any) {
-    
+   function ProgramarAutoRec() {
     return (
-
-      <div className="my-4 border border-neutral-300 shadow-md rounded-lg p-2 px-2 md:px-6">
+      <div className="my-2 border border-neutral-300 shadow-md rounded-lg p-2 px-2 md:px-6">
         <div className="flex flex-col">
-          <p className="text-md font-bold">{tipo}</p>
+          <p className="text-md font-bold">Recolección</p>
           
           {isAutoLoading ? <div className="mt-2 mx-4">
             <PulseLoader
@@ -422,9 +423,38 @@ const handleTimerOff = () => {
               />
           </div>
           :
-          <div className="mt-2 p-3 flex flex-col">
-            <p className="text-xs text-neutral-500">{data?.fecha?.toISOString()}</p>
-            <p className="text-xs text-neutral-500">Bloque: {data?.bloque}</p>
+          <div className="mt-1 flex flex-col">
+            {pedido?.programa?.fechaRecoleccion && <p className="text-xs text-neutral-500">{namedDateString(pedido?.programa?.fechaRecoleccion)}</p>}
+            {pedido?.programa?.bloqueRecoleccion && <p className="text-xs text-blue-500">
+                {pedido?.programa?.bloqueRecoleccion == 1 ? '10:00am - 3:00pm' : '3:00pm - 7:00pm'}
+              
+              </p>}
+          </div>}
+        </div>
+      </div>
+    );
+   }
+
+   function ProgramarAutoEnt() {
+    return (
+      <div className="my-2 border border-neutral-300 shadow-md rounded-lg p-2 px-2 md:px-6">
+        <div className="flex flex-col">
+          <p className="text-md font-bold">Entrega</p>
+          
+          {isAutoLoading ? <div className="mt-2 mx-4">
+            <PulseLoader
+              //@ts-ignore
+              size={10}
+              color="#F43F5E"
+              />
+          </div>
+          :
+          <div className="mt-1 flex flex-col">
+            {pedido?.programa?.fechaEntrega && <p className="text-xs text-neutral-500">{namedDateString(pedido?.programa?.fechaEntrega)}</p>}
+            {pedido?.programa?.bloqueEntrega && <p className="text-xs text-blue-500">
+                {pedido?.programa?.bloqueEntrega == 1 ? '10:00am - 3:00pm' : '3:00pm - 7:00pm'}
+              
+              </p>}
           </div>}
         </div>
       </div>

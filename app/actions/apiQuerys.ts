@@ -3,6 +3,7 @@ import getCurrentUser from "./getCurrentUser";
 import useLoader from "@/app/hooks/useLoader";
 import { SafeUser, ApiResponse } from "@/app/types";
 import axios from "axios";
+import { ICotizaParams, IPedido } from "@/app/types/pedido";
 
 export  async function addDireccion(props: any) {
 
@@ -288,5 +289,59 @@ export  async function autoPrograma() {
       })
  
       
+      return result;
+}
+
+export  async function cotizaPaqueteById(props: ICotizaParams) {
+
+  const result = await axios.post(`/api/cotiza/tipoId`, props)
+      .then((response) => {
+        const responseData:ApiResponse = {status:1,statusMessage: 'OK', response: {data: response.data} }
+        return responseData;
+      })
+      .catch((error) => {
+        const response:ApiResponse = {status:2,statusMessage: 'Error de API', response: {data: {}, error: error} }
+        return response;
+      })
+ 
+      
+      return result;
+}
+
+export  async function uploadFile(props: FormData) {
+
+ 
+  
+  const result = await axios.post(`/api/upload`, props)
+      .then((response) => {
+        const responseData:ApiResponse = {status:1,statusMessage: 'OK', response: {data: response.data} }
+        return responseData;
+      })
+      .catch((error) => {
+        const response:ApiResponse = {status:2,statusMessage: 'Error de API', response: {data: {}, error: error} }
+        return response;
+      })
+ 
+      
+
+      return result;
+}
+
+export  async function crearPedido(pedido: IPedido) {
+
+ 
+  
+  const result = await axios.post(`/api/pedido`, pedido)
+      .then((response) => {
+        const responseData:ApiResponse = {status:1,statusMessage: 'OK', response: {data: response.data} }
+        return responseData;
+      })
+      .catch((error) => {
+        const response:ApiResponse = {status:2,statusMessage: 'Error de API', response: {data: {}, error: error} }
+        return response;
+      })
+ 
+      
+
       return result;
 }

@@ -95,7 +95,7 @@ import ConfirmDialog from "@/app/components/modals/ConfirmDialog";
         municipio: '',
         calle: '',
         numero: '',
-        interior: '',
+        numeroInt: '',
         empresa: '',
         referencias: '',
         contactoNombre:  '',
@@ -216,14 +216,14 @@ import ConfirmDialog from "@/app/components/modals/ConfirmDialog";
                   </div>
                   <div className="col-span-2 md:col-span-1">
                     <Input
-                        id="interior"
+                        id="numeroInt"
                         label="Interior"
                         disabled={isLoading || saved}
                         register={register}
                         errors={errors}
                         maxlength={5}
                         onChange={(event: any) => {
-                          setCustomValue('interior', event.target.value);
+                          setCustomValue('numeroInt', event.target.value);
                         }}
                         />
                   </div>

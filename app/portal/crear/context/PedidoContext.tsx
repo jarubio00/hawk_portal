@@ -1,6 +1,6 @@
 'use client'
 
-import { IRecoleccion, IDestino, IPedido, IPaquete, PedidoContextType, IDrawer, IPrograma, IProgramaState, ITimer} from "@/app/types/pedido.d";
+import { IRecoleccion, IDestino, IPedido, IPaquete, PedidoContextType, IDrawer, IPrograma, IProgramaState, ITimer, IMetodoPago, ICotizaItem} from "@/app/types/pedido.d";
 import React, { useState, createContext } from "react";
 
 
@@ -13,10 +13,12 @@ const PedidoProvider: React.FC<Props> = ({children}) => {
   const [activeStep, setActiveStep] = useState(0);
   const [direccionSelected, setDireccionSelected] = useState(0);
   const [destinoSelected, setDestinoSelected] = useState(0);
+  const [destinoCaptured, setDestinoCaptured] = useState(false);
   const [paqueteSelected, setPaqueteSelected] = useState(0);
   const [pedido, setPedido] = useState<IPedido>();
   const [recoleccion, setRecoleccion] = useState<IRecoleccion>();
   const [tipoPrograma, setTipoPrograma] = useState('auto');
+  const [tipoPago, setTipoPago] = useState('efectivo');
 
   const [drawer, setDrawer] = useState<IDrawer>({
     open: false,
@@ -31,7 +33,14 @@ const PedidoProvider: React.FC<Props> = ({children}) => {
 
   const [recoleccionState, setRecoleccionState] = useState<IProgramaState>()
   const [entregaState, setEntregaState] = useState<IProgramaState>();
+  const [cotizacion, setCotizacion] = useState<ICotizaItem>();
+  const [metodoPago, setMetodoPago] = useState<IMetodoPago>({
+    formaPagoId: 1,
+    passed: true,
+    comprobante: false
+  });
   const [fechasBloqueadas, setFechasBloqueadas] = useState({});
+
 
   
 
@@ -54,6 +63,7 @@ const PedidoProvider: React.FC<Props> = ({children}) => {
   }
 
   const saveDestino = (dest: IDestino) => {
+    console.log('save: ', dest.save);
     setPedido({...pedido,destino: {
       contactoNombre: dest.contactoNombre,
       contactoTel: dest.contactoTel,
@@ -68,7 +78,8 @@ const PedidoProvider: React.FC<Props> = ({children}) => {
       referencias: dest.referencias,
       municipio: dest.municipio,
       save: dest.save,
-      sincp: dest.sincp
+      sincp: dest.sincp,
+      coloniasList: dest.coloniasList
     }});
   }
 
@@ -120,11 +131,11 @@ const PedidoProvider: React.FC<Props> = ({children}) => {
   
 
   const saveDestinoKey = (key: string, value: any) => {
+    console.log('sav dest key',key,value)
     if(key && value) {
       setPedido({
         ...pedido,
         destino: {...pedido?.destino, [key]: value}
-  
       })
     }
     
@@ -157,6 +168,29 @@ const PedidoProvider: React.FC<Props> = ({children}) => {
     }
   }
 
+  const saveCotizacion = (cotiza: ICotizaItem) => {
+    setPedido({...pedido, cotizacion: {
+      sku: cotiza.sku,
+      descripcion: cotiza.descripcion,
+      precio: cotiza.precio,
+      cantidad: cotiza.cantidad
+    }});
+  }
+
+  const saveMetodoPago = (metodo: IMetodoPago) => {
+    setPedido({...pedido, metodoPago: {
+      formaPagoId: metodo.formaPagoId,
+      estatusPagoId: metodo.estatusPagoId,
+      comprobante: metodo.comprobante,
+      comprobanteUrl: metodo.comprobanteUrl,
+      comprobanteString: metodo.comprobanteString,
+      comprobanteFileType: metodo.comprobanteFileType,
+      passed: metodo.passed
+    }});
+  }
+
+  
+
   const updateActiveStep = (step: number) => {
     setActiveStep(step);
   }
@@ -169,12 +203,20 @@ const PedidoProvider: React.FC<Props> = ({children}) => {
     setDestinoSelected(id);
   }
 
+  const updateDestinoCaptured = (value: boolean) => {
+    setDestinoCaptured(value);
+  }
+
   const updatePaqueteSelected = (id: number) => {
     setPaqueteSelected(id);
   }
 
   const updateTipoPrograma = (tipo: string) => {
     setTipoPrograma(tipo);
+  }
+
+  const updateTipoPago = (tipo: string) => {
+    setTipoPago(tipo);
   }
 
   const useDrawer = (props: IDrawer) => {
@@ -198,6 +240,8 @@ const PedidoProvider: React.FC<Props> = ({children}) => {
         direccionSelected,
         updateDestinoSelected,
         destinoSelected,
+        destinoCaptured,
+        updateDestinoCaptured,
         updatePaqueteSelected,
         paqueteSelected,
         savePaquete,
@@ -213,7 +257,12 @@ const PedidoProvider: React.FC<Props> = ({children}) => {
         updateTipoPrograma,
         tipoPrograma,
         useTimer,
-        timer
+        timer,
+        saveMetodoPago,
+        updateTipoPago,
+        metodoPago,
+        tipoPago,
+        saveCotizacion
       }}
     >
       {children}

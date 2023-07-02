@@ -39,6 +39,7 @@ import ConfirmDialog from "@/app/components/modals/ConfirmDialog";
     saved?: boolean;
     direccion?: any;
     onCp: (value: boolean) => void;
+    onMove: (value: any) => void;
   }
 
   const AgregarDestinoCrear: React.FC<AgregarDestinoCrearProps> = ({
@@ -49,7 +50,8 @@ import ConfirmDialog from "@/app/components/modals/ConfirmDialog";
     from,
     saved = false,
     direccion,
-    onCp
+    onCp,
+    onMove
   }) => {
     const loader = useLoader();
     const router = useRouter();
@@ -73,7 +75,7 @@ import ConfirmDialog from "@/app/components/modals/ConfirmDialog";
     const [sinCpDialogOpen, setSinCpDialogOpen] = useState(false);
     const [dialogContent, setDialogContent] = useState({});
 
-    const {updateActiveStep,saveDestino, saveDestinoKey, pedido} = useContext(PedidoContext) as PedidoContextType;
+    const {updateActiveStep,saveDestino, saveDestinoKey, pedido, updateDestinoCaptured, destinoCaptured} = useContext(PedidoContext) as PedidoContextType;
 
 
     const { 
@@ -93,7 +95,7 @@ import ConfirmDialog from "@/app/components/modals/ConfirmDialog";
         municipio: '',
         calle: '',
         numero: '',
-        interior: '',
+        numeroInt: '',
         empresa: '',
         referencias: '',
         contactoNombre:  '',
@@ -124,13 +126,33 @@ import ConfirmDialog from "@/app/components/modals/ConfirmDialog";
         setCustomValue('municipio', direccion.municipio)
         setCustomValue('calle', direccion.calle);
         setCustomValue('numero', direccion.numero);
-        setCustomValue('interior', direccion.interior);
+        setCustomValue('numeroInt', direccion.numeroInt);
         setCustomValue('empresa', direccion.empresa);
         setCustomValue('referencias', direccion.referencias);
         setCustomValue('contactoNombre', direccion.contactoNombre);
         setCustomValue('contactoTel', direccion.contactoTel);
       }
     },[direccion])
+
+    useEffect(() => {
+      if(pedido?.destino) {
+        setCpActive(true);
+        setCustomValue('cp', pedido.destino.cpId);
+        setCustomValue('colonia', {label: pedido.destino.colonia, value: pedido.destino.colonia});
+        setCustomValue('municipio', pedido.destino.municipio)
+        setCustomValue('calle', pedido.destino.calle);
+        setCustomValue('numero', pedido.destino.numero);
+        setCustomValue('numeroInt', pedido.destino.numeroInt);
+        setCustomValue('empresa', pedido.destino.empresa);
+        setCustomValue('referencias', pedido.destino.referencias);
+        setCustomValue('contactoNombre', pedido.destino.contactoNombre);
+        setCustomValue('contactoTel', pedido.destino.contactoTel);
+        setSaveEnabled(pedido?.destino.save || false);
+        setCpFromSearch(pedido?.destino.cpId || 0);
+        setUsingCpFromSearch(true);
+        setColonias(pedido?.destino.coloniasList || [])
+      }
+    },[destinoCaptured])
     
     const onSubmit:  SubmitHandler<FieldValues> = 
     async (data) => {
@@ -142,14 +164,18 @@ import ConfirmDialog from "@/app/components/modals/ConfirmDialog";
       otraColonia: otraColoniaSelected,
       colonia: data.colonia.label,
       cpId: data.cp,
-      sincp: false
+      sincp: false,
+      save: saveEnabled,
+      coloniasList: colonias
      }
 
      console.log('destino', destino)
 
       saveDestino(destino);
-      
+      updateDestinoCaptured(true);
+      updateActiveStep(2);
       //onClose({apiData: apiData});
+      //onMove('destino');
     
      
     }
@@ -274,8 +300,17 @@ import ConfirmDialog from "@/app/components/modals/ConfirmDialog";
     const handleNext = () => {
       //updateActiveStep(4);
       console.log('next');
-      handleSubmit(onSubmit)();
-      updateActiveStep(2);
+      if (!saved) {
+        handleSubmit(onSubmit)();
+      } else {
+        updateActiveStep(2);
+      }
+      
+      //updateActiveStep(2);
+    }
+
+    const handleSaveDireccion = (event: any) => {
+      setSaveEnabled(event);
     }
 
     const addContent = (type: any) => { 
@@ -406,14 +441,14 @@ import ConfirmDialog from "@/app/components/modals/ConfirmDialog";
                   </div>
                   <div className="col-span-2 md:col-span-1">
                     <Input
-                        id="interior"
+                        id="numeroInt"
                         label="Interior"
                         disabled={isLoading || saved}
                         register={register}
                         errors={errors}
                         maxlength={5}
                         onChange={(event: any) => {
-                          setCustomValue('interior', event.target.value);
+                          setCustomValue('numeroInt', event.target.value);
                         }}
                         />
                   </div>
@@ -515,7 +550,7 @@ import ConfirmDialog from "@/app/components/modals/ConfirmDialog";
               {tipo == 'destino' && from == 'pedido' && !saved && <div className="my-2 felx flex-row gap-2 items-center">
                 <Switch
                   checked={saveEnabled}
-                  onChange={()=> reset()}
+                  onChange={(event)=> handleSaveDireccion(event)}
                   className={`${
                     saveEnabled ? 'bg-rose-500' : 'bg-gray-400'
                   } relative inline-flex h-4 w-7 items-center rounded-full`}

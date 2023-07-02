@@ -105,17 +105,22 @@ export async function GET(
       entDate = entNewDate;
       entBloque = entNewBloque;
     } else {
+      let counter = 0;
       let free = false;
       while (!free) {
        
         if (entNewBloque == 1) {
           entNewBloque = 2;
-        } else if (newBloque == 2) {
+        } else if (entNewBloque == 2) {
           entNewDate = addDays(entNewDate,1)
           entNewBloque = 1;
         }
         const recheck = await checkIfBlockedEnt(entNewDate,entNewBloque,blocked);
         free = !recheck ? true : false;
+        counter++;
+        if (counter == 10) {
+          free = true;
+        }
       } //while
       entDate = entNewDate;
       entBloque = entNewBloque;

@@ -27,7 +27,7 @@ const DestinoStep: React.FC<DestinoStepProps> = ({
   municipios
 }) => {
 
-const {updateActiveStep , saveDestino, destinoSelected, updateDestinoSelected, pedido, useDrawer} = useContext(PedidoContext) as PedidoContextType;
+const {updateActiveStep , saveDestino,  destinoSelected, updateDestinoSelected, pedido, useDrawer} = useContext(PedidoContext) as PedidoContextType;
 const router = useRouter();
 const loader = useLoader();
 
@@ -60,6 +60,16 @@ const handleSinCp = (sincp: boolean) => {
    setSinCpSelected(false);
   }
 }
+
+const handleMoveStep = (destino: any) => {
+  if (pedido?.destino) {
+   updateDestinoSelected(9999)
+   
+  }
+ 
+}
+
+
 
   return ( 
     <div className="px-2">
@@ -132,6 +142,7 @@ const handleSinCp = (sincp: boolean) => {
               saved={saved}
               direccion={direccion}
               onCp={handleSinCp}
+              onMove={handleMoveStep}
               />  :
           <AgregarDestinoSinCp
               title="" 

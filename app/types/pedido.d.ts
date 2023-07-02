@@ -42,6 +42,7 @@ export interface IDestino {
     municipio?: Municipio;
     save?: boolean;
     sincp?: boolean;
+    coloniasList?: []
 }
 
 interface PaqTipo {
@@ -98,6 +99,32 @@ export interface IPedido {
     cobro?: Boolean;
     cobroCantidad?: number;
     programa?: IPrograma;
+    metodoPago?: IMetodoPago;
+    cotizacion?: ICotizaItem;
+}
+
+export interface ICotizaParams {
+    tipoProductoId?: number;
+    municipioRecoleccionId?: number;
+    municipioEntregaId?: number;
+    paqPesoVol?: number;
+  }
+
+export interface ICotizaItem {
+    sku?: string;
+    descripcion?: string;
+    precio?: number;
+    cantidad?: number;
+}
+
+export interface IMetodoPago {
+    formaPagoId?: number;
+    estatusPagoId?: number;
+    comprobante?: boolean;
+    comprobanteUrl?: string;
+    comprobanteString?: string;
+    comprobanteFileType?: string;
+    passed?: boolean;
 }
 
 
@@ -112,6 +139,8 @@ export type PedidoContextType = {
     direccionSelected: number;
     updateDestinoSelected: (id: number) => void;
     destinoSelected: number;
+    destinoCaptured?: boolean;
+    updateDestinoCaptured: (value: boolean) => void;
     updatePaqueteSelected: (id: number) => void;
     savePaquete: (paq: IPaquete) => void;
     paqueteSelected: number;
@@ -128,4 +157,9 @@ export type PedidoContextType = {
     recoleccionState?: IProgramaState;
     useTimer: (props: ITimer) => void;
     timer?: ITimer;
+    saveMetodoPago: (metodo: IMetodoPago) => void;
+    updateTipoPago: (tipo: string) => void;
+    metodoPago?: IMetodoPago 
+    tipoPago?: string;
+    saveCotizacion: (cotiza: ICotizaItem) => void;
 }
