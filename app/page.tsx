@@ -4,7 +4,9 @@ import getCurrentUser from "@/app/actions/getCurrentUser";
 import ClientOnly from "./components/ClientOnly";
 import Container from "@/app/components/Container";
 import Navbar from "./components/navbar/Navbar";
-
+import MainDrawer from './components/drawer/MainDrawer';
+import SectionBanner from "./components/homePage/SectionBanner";
+import SectionCTA from "./components/homePage/SectionCTA";
 interface HomeProps {
   searchParams: any
 };
@@ -17,7 +19,12 @@ const Home = async ({ searchParams }: HomeProps) => {
 
   return (
     <ClientOnly>
+      <MainDrawer />
       <Navbar currentUser={currentUser}/>
+      <div className="pt-40">
+        <SectionBanner />
+        <SectionCTA />
+      </div>
     </ClientOnly>
     
   )

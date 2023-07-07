@@ -2,6 +2,7 @@
 import { useCallback, useState } from "react";
 import { BiSearch } from 'react-icons/bi';
 import useTrackModal from "@/app/hooks/useTrackModal";
+import {HiLocationMarker} from 'react-icons/hi'
 
 
 const Search = () => {
@@ -52,13 +53,13 @@ const Search = () => {
                 p-2 
                 mr-2
                 bg-rose-500 
-                rounded-full 
+                rounded-full
                 text-white
                 hidden
                 md:block
               "
             >
-              <BiSearch size={18} />
+              <HiLocationMarker size={18} />
             </div>
 
           </div>

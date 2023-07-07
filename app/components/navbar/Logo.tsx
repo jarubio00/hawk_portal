@@ -10,14 +10,14 @@ const Logo = () => {
     <div>
       <img
         onClick={() => router.push('/')}
-        className="hidden h-10 md:block cursor-pointer" 
-        src="/images/lmpink-c.png" 
+        className="hidden h-12 md:block cursor-pointer" 
+        src="/images/lmmx-light.png" 
         
       />
       <img
         onClick={() => router.push('/')}
-        className="block w-12  md:hidden cursor-pointer" 
-        src="/images/lmpink-m.png" 
+        className="block h-10  md:hidden cursor-pointer" 
+        src="/images/lmmx-light.png" 
         
       />
     </div>
