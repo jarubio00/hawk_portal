@@ -50,7 +50,7 @@ const CpInput: React.FC<InputProps> = ({
       {isLoading && (
         <PulseLoader
           size={7}
-          color="#F43F5E"
+          color="#FF6B00"
           className="
             text-neutral-700
             absolute
@@ -85,8 +85,8 @@ const CpInput: React.FC<InputProps> = ({
           disabled:opacity-70
           disabled:cursor-not-allowed
           ${formatPrice ? 'pl-9' : 'pl-4'}
-          ${errors[id] || cpError ? 'border-rose-500' : 'border-neutral-300'}
-          ${errors[id] || cpError ? 'focus:border-rose-500' : 'focus:border-black'}
+          ${errors[id] || cpError ? 'border-red-500' : 'border-neutral-300'}
+          ${errors[id] || cpError ? 'focus:border-red-500' : 'focus:border-black'}
         `}
         onChange={onChange}
       />
@@ -108,7 +108,7 @@ const CpInput: React.FC<InputProps> = ({
           peer-placeholder-shown:translate-y-0 
           peer-focus:scale-75
           peer-focus:-translate-y-4
-          ${errors[id] ? 'text-rose-500' : 'text-zinc-400'}
+          ${errors[id] ? 'text-red-500' : 'text-zinc-400'}
         `}
       >
         {label}

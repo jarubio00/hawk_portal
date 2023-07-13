@@ -23,12 +23,12 @@ const PaquetesCardDrawer: React.FC<PaquetesCardDrawerProps> = ({
             onClick={() => onSelect(paquete)}
         >
        <div >
-            <div className="text-md font-bold text-gray-400 uppercase">
+            <div className="text-md font-bold  uppercase">
               {paquete.nombrePaquete}
             </div>
             <div className="flex flex-row items-center text-xs">
               
-              <div className="font-light text-white text-xs bg-gray-400 rounded-sm hover:bg-blue-400 px-1 py-0  uppercase">
+              <div className=" text-white text-xs bg-neutral-700 rounded-sm hover:bg-blue-400 px-1 py-0  uppercase">
                 {paquete.tipo?.tipo}
               </div>
             </div>

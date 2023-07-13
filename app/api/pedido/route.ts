@@ -4,6 +4,7 @@ import prisma from "@/app/libs/prismadb";
 import getCurrentUser from "@/app/actions/getCurrentUser";
 import { IPedido } from "@/app/types/pedido";
 import { Pedido } from "@prisma/client";
+import { PedidoContext } from "@/app/portal/crear/context/PedidoContext";
 
 export async function POST(
   request: Request, 
@@ -23,7 +24,7 @@ export async function POST(
       bloqueEntrega: p.programa?.bloqueEntrega,
       entregaContactoNombre: p.destino?.contactoNombre,
       entregaContactoTel: p.destino?.contactoTel,
-      entregaCpId: p.destino?.cpId,
+      entregaCpId: parseInt(p.destino?.cpId),
       entregaCalle: p.destino?.calle,
       entregaNumero: p.destino?.numero,
       entregaNumeroInt: p.destino?.numeroInt,
@@ -42,10 +43,11 @@ export async function POST(
       precioVenta: p.cotizacion?.precio,
       formaPagoId: p.metodoPago?.formaPagoId,
       comprobante: p.metodoPago?.comprobante,
+      comprobanteUrl: p.metodoPago?.comprobanteUrl,
       cobroDestino: p.cobro,
     }
 
-    console.log(p.programa.fechaRecoleccion);
+    //console.log(p.programa.fechaRecoleccion);
      recoleccion = await prisma.recoleccion.create({
       data: {
           clienteId: 1, 
@@ -53,7 +55,7 @@ export async function POST(
           bloque: p.programa?.bloqueRecoleccion,
           contactoNombre: p.recoleccion?.contactoNombre,
           contactoTel: p.recoleccion?.contactoTel,
-          cpId: p.recoleccion?.cpId,
+          cpId: parseInt(p.recoleccion?.cpId),
           calle: p.recoleccion?.calle,
           numero: p.recoleccion?.numero,
           numeroInt: p.recoleccion?.numeroInt || '',
@@ -79,11 +81,69 @@ export async function POST(
         }
       }
     });
+
+    const pedidoId = recoleccion.pedidos[0].id;
+    
+    let cobroAdd;
+    if (p.cobro) {
+      cobroAdd = await prisma.cobrosDestino.create({
+        data: {
+          clienteId: 1,
+          pedidoId: pedidoId,
+          cantidad: parseFloat(p.cobroCantidad)
+        }
+      })
+    }
+
+    console.log(pedidoId,cobroAdd);
+
+    let destinoSave;
+  if (p.destino.save) {
+    destinoSave = await prisma.destino.create({
+      //@ts-ignore
+      data: {
+          clienteId: 1, 
+          contactoNombre: p.destino?.contactoNombre, 
+          contactoTel: p.destino?.contactoTel, 
+          cpId: parseInt(p.destino?.cpId), 
+          calle: p.destino?.calle, 
+          numero: p.destino?.numero, 
+          numeroInt: p.destino?.numeroInt, 
+          colonia: p.recoleccion?.colonia,
+          municipioId: p.destino?.municipioId, 
+          empresa: p.destino?.empresa, 
+          referencias: p.destino?.referencias, 
+          otraColonia: p.destino?.otraColonia
+      }
+    });
   }
+
+    let paqueteSave;
+    if (p.paquete.save) {
+      paqueteSave = await prisma.paquete.create({
+        //@ts-ignore
+        data: {
+          clienteId: 1, 
+          paqAncho: parseFloat(p.paquete?.paqAncho),
+          paqAlto: parseFloat(p.paquete?.paqAlto),
+          paqLargo: parseFloat(p.paquete?.paqLargo),
+          paqPeso: parseFloat(p.paquete?.paqPeso),
+          paqContenido: p.paquete?.paqContenido,
+          paqTipoId: p.paquete?.paqTipoId,
+          paqPesoVol: parseFloat(p.paquete?.paqPesoVol),
+          nombrePaquete: p.paquete?.nombrePaquete
+        }
+      });
+    }
+    console.log(recoleccion?.id,','+pedidoId+','+destinoSave?.id+','+paqueteSave?.id)
+  }
+
   
 
  
- console.log('Agregado! ->', recoleccion);
+
+  
+ //console.log('Agregado! ->', recoleccion);
 
 
   return NextResponse.json(recoleccion);

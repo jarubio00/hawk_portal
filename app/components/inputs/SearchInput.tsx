@@ -39,7 +39,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
         <FaSearch
           size={20}  
           className="
-            text-rose-500
+            text-red-500
             absolute
             top-4
             left-4

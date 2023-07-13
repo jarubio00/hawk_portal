@@ -12,6 +12,7 @@ import MetodoPagoCard from "../components/MetodoPagoCard";
 import {ICotizaParams, ICotizaItem} from "@/app/types/pedido";
 import { cotizaPaqueteById, crearPedido } from "@/app/actions/apiQuerys";
 import { PulseLoader } from "react-spinners";
+import useCreandoPedidoModal from "@/app/hooks/useCreandoPedidoModal";
 
 
 interface ConfirmarStepProps {
@@ -22,7 +23,9 @@ interface ConfirmarStepProps {
 const ConfirmarStep: React.FC<ConfirmarStepProps> = ({ 
   title, 
 }) => {
-  const {updateActiveStep , pedido, saveCotizacion} = useContext(PedidoContext) as PedidoContextType;
+  const creandoModal = useCreandoPedidoModal();
+
+  const {updateActiveStep , pedido, saveCotizacion, saveMetodoPago} = useContext(PedidoContext) as PedidoContextType;
   const [isLoading,setIsLoading] = useState(false);
   const [cotiza,setCotiza] = useState<ICotizaItem>({})
 
@@ -72,10 +75,20 @@ const handleBack = () => {
 }
 
 const handleNext = async () => {
-  if (pedido) {
+  if (!pedido?.metodoPago?.passed) {
+    saveMetodoPago({
+      ...pedido?.metodoPago,
+      comprobanteError: true,
+      comprobanteErrorMessage: 'Es necesario cargar tu comprobante de pago.'
+      })
+      return 
+  }
+  
+  creandoModal.onOpen();
+  /* if (pedido) {
     const pedidoResult = await crearPedido(pedido);
     console.log(pedidoResult);
-  }
+  } */
    
 }
   return ( 
@@ -90,7 +103,7 @@ const handleNext = async () => {
               <PulseLoader
               //@ts-ignore
               size={10}
-              color="#F43F5E"
+              color="#FF6B00"
               className="ml-4 mt-2"
               />  
             </div>
@@ -112,8 +125,8 @@ const handleNext = async () => {
           </p>
         </div>
         <div className=" my-4 ml-4 flex flex-row gap-6">
-          <Button outline label="Anterior" onClick={handleBack}  />
-          <Button label="Terminar" onClick={handleNext}  />
+          <Button outline label="Anterior" onClick={handleBack} disabled={isLoading} />
+          <Button label="Terminar" onClick={handleNext}  disabled={isLoading} />
         </div>
     </div>
    );

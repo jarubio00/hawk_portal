@@ -12,7 +12,7 @@ const Loader = () => {
       >
         <PulseLoader
           size={25}
-          color="#F43F5E"
+          color="#FF6B00"
         />
       </div>
    );

@@ -110,6 +110,8 @@ const handleNext = () => {
 }
 
 const handleProgramaSection = (tipo: string) => {
+  saveEntregaState({...entregaState, am: false, pm: false , show: false, enabled: false})
+  saveRecoleccionState({...entregaState, am: false, pm: false , show: false, enabled: false})
   savePrograma({});
   updateTipoPrograma(tipo);
 }
@@ -131,7 +133,7 @@ const handleTimerOff = () => {
       <StepHeading title="Programación" subtitle="Selecciona las fechas y horarios de recolección y entrega" />
 
       <div className="my-8 flex flex-row items-center gap-4">
-        <div className={`w-44 md:w-60 border-2 bg-rose-500 border-rose-500 text-sm md:text-base
+        <div className={`w-44 md:w-60 border-2 bg-rose-500 border-rose-500 text-sm 
                   shadow-md rounded-md py-1 px-2 cursor-pointer
           ${tipoPrograma == 'auto' ? 
             'bg-rose-500 text-white border-rose-500' 
@@ -139,9 +141,9 @@ const handleTimerOff = () => {
              `}
         onClick={() => handleProgramaSection('auto')}
          >
-          <p className=" text-center">Lo antes posible</p>
+          <p className=" text-center text">Lo antes posible</p>
         </div>
-        <div className={`border-2 w-44 md:w-60  text-sm md:text-base
+        <div className={`border-2 w-44 md:w-60  text-sm 
           shadow-md rounded-md py-1 px-2 cursor-pointer
           ${tipoPrograma == 'custom' ? 
             'bg-rose-500 text-white border-rose-500' 
@@ -182,10 +184,20 @@ const handleTimerOff = () => {
                   outline
                   label='Atras'
                   onClick={handleBack}
+                  disabled={isAutoLoading}
               />
               <Button 
                   label='Siguiente'
                   onClick={handleNext}
+                  /* disabled={
+                    isAutoLoading || 
+                    isRecLoading || 
+                    isEntLoading || 
+                    !pedido?.programa?.fechaRecoleccion || 
+                    pedido?.programa?.bloqueRecoleccion == 3 ||
+                    !pedido?.programa?.fechaEntrega || 
+                    pedido?.programa?.bloqueEntrega == 3
+                  } */
               />
             </div>
    
@@ -223,7 +235,7 @@ const handleTimerOff = () => {
     
     const handleBloqueChange = async  (b: number) => {
      savePrograma({...pedido?.programa, fechaEntrega: null, bloqueEntrega: 3, bloqueRecoleccion: b});
-     handleTimerOn();
+     //handleTimerOn();
 
         if (b == 2 ){
           const entStartDate = addDays(pedido?.programa?.fechaRecoleccion,1);
@@ -256,7 +268,7 @@ const handleTimerOff = () => {
             <PulseLoader
               //@ts-ignore
               size={10}
-              color="#F43F5E"
+              color="#FF6B00"
               />
           </div>
           :
@@ -367,7 +379,7 @@ const handleTimerOff = () => {
             <PulseLoader
               //@ts-ignore
               size={10}
-              color="#F43F5E"
+              color="#FF6B00"
               />
           </div>
           :
@@ -419,7 +431,7 @@ const handleTimerOff = () => {
             <PulseLoader
               //@ts-ignore
               size={10}
-              color="#F43F5E"
+              color="#FF6B00"
               />
           </div>
           :
@@ -445,7 +457,7 @@ const handleTimerOff = () => {
             <PulseLoader
               //@ts-ignore
               size={10}
-              color="#F43F5E"
+              color="#FF6B00"
               />
           </div>
           :

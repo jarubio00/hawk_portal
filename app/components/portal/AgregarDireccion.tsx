@@ -108,7 +108,7 @@
           <PulseLoader 
             //@ts-ignore
             size={10}
-            color="#F43F5E"
+            color="#FF6B00"
           {...props}  />
        
       );

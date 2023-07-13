@@ -124,7 +124,11 @@ export interface IMetodoPago {
     comprobanteUrl?: string;
     comprobanteString?: string;
     comprobanteFileType?: string;
+    comprobanteSelected?: boolean;
+    comprobanteImageFile?: File;
     passed?: boolean;
+    comprobanteError?: Boolean;
+    comprobanteErrorMessage?: String;
 }
 
 
@@ -139,6 +143,8 @@ export type PedidoContextType = {
     direccionSelected: number;
     updateDestinoSelected: (id: number) => void;
     destinoSelected: number;
+    updateDestinoSinCp: (value: boolean) => void;
+    destinoSinCp: boolean;
     destinoCaptured?: boolean;
     updateDestinoCaptured: (value: boolean) => void;
     updatePaqueteSelected: (id: number) => void;

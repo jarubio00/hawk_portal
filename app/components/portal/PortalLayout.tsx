@@ -74,7 +74,7 @@ const PortalLayout: React.FC<PortalLayoutProps> = ({ children }) => {
   return (
     <>
       {!loaded ?  (
-        <div className="mx-auto pl-96 pt-28 ">Loading...</div>
+        <div className="mx-auto pl-96 pt-36 ">Loading...</div>
       ) : (
         <div className="pt-0">
           <GlobalLoader />

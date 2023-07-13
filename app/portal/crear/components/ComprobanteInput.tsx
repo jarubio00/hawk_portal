@@ -46,16 +46,32 @@ const handleInputFile = async (event: any) => {
         fileType = 'pdf';
     } else {
       setErrorMessage('Formato no soportado');
+      saveMetodoPago({
+        ...pedido?.metodoPago,
+        comprobanteError: true,
+        comprobanteErrorMessage: 'Formato no soportado'
+        })
+      
     }
 
     if (file) {
-      const fileMb = file.size /1024 ** 2;
+      const fileMb = file.size /1024 ** 10;
 
       if (fileMb >= 2) {
-        setErrorMessage('El archivo excede el tamaño máximo (2Mb)');
+        setErrorMessage('El archivo excede el tamaño máximo (10Mb)');
+        saveMetodoPago({
+          ...pedido?.metodoPago,
+          comprobanteError: true,
+          comprobanteErrorMessage: 'El archivo excede el tamaño máximo (10Mb)'
+          })
         return
       } else {
         setErrorMessage('')
+        saveMetodoPago({
+          ...pedido?.metodoPago,
+          comprobanteError: false,
+          comprobanteErrorMessage: ''
+          })
       }
     }
 
@@ -64,12 +80,13 @@ const handleInputFile = async (event: any) => {
       setImage(URL.createObjectURL(file))
       setImageName(file.name);
       setFileSelected(true);
+      
     } else if (fileType == 'pdf') {
       console.log('usando pdf')
       setFileType('pdf');
       setImage(pdfPlaceholder);
       setImageName(file.name);
-      setFileSelected(true);
+      setFileSelected(true);   
     }
     
 
@@ -80,30 +97,44 @@ const handleInputFile = async (event: any) => {
       formaPagoId: 2,
       passed: true,
       comprobante: true,
-      comprobanteUrl: 'http://pagina.com/comprobante.jpg',
+      comprobanteUrl: '',
       comprobanteFileType:  fileType,
-      comprobanteString: ''
+      comprobanteSelected: true,
+      comprobanteString: fileType == 'imagen' ? URL.createObjectURL(file) : pdfPlaceholder,
+      comprobanteImageFile: file
       })
+
 }
 
 
 
 const handleQuitarFile = () => {
   setFileSelected(false);
+  saveMetodoPago({
+    ...pedido?.metodoPago,
+    comprobanteSelected: false,
+    passed: false
+    })
   setImage('');
   setErrorMessage('');
+  saveMetodoPago({
+    ...pedido?.metodoPago,
+    comprobanteError: false,
+    comprobanteErrorMessage: ''
+    })
 }
 
 const handleUploadFile = async () => {
   
+console.log('up file',pedido?.metodoPago?.comprobanteImageFile);
 
-  if (imageFile) {
+  if (pedido?.metodoPago?.comprobanteImageFile) {
    
-   const base64 = await toBase64(imageFile);
-   console.log(base64);
+   const base64 = await toBase64(pedido?.metodoPago?.comprobanteImageFile);
+   //console.log(base64);
 
    let formData = new FormData();
-   formData.append('file',imageFile);
+   formData.append('file',pedido?.metodoPago?.comprobanteImageFile);
    formData.append('fileName',imageName);
    formData.append('pedido','768909');
 
@@ -123,16 +154,16 @@ const handleUploadFile = async () => {
   return ( 
     <div className="">
         <p className="my-1 text-xs text-neutral-500">Carga tu comprobante de pago</p>
-        {!fileSelected && <label htmlFor="file">
+        {!pedido?.metodoPago?.comprobanteSelected && <label htmlFor="file">
             <input id="file" type='file' accept="image/*, application/pdf" name='file' className="hidden" onChange={handleInputFile}></input>
-             <div className="cursor-pointer w-32 p-2 text-sm  flex flex-row items-center gap-1 ">
-                <GrCloudUpload  size={18} />
+             <div className="cursor-pointer w-32 p-2 text-sm  flex flex-row items-center gap-1 text-blue-500">
+                <GrCloudUpload className='text-blue-500' size={18} />
                 <p>Seleccionar</p>
              </div>
-             <p className="text-xs text-red-600 m-2">{errorMessage}</p>
+             <p className="text-xs text-red-600 m-2">{pedido?.metodoPago?.comprobanteErrorMessage}</p>
         </label>}
-        { fileSelected && image != '' && <div className="my-2 mx-3 flex flex-col">
-                  <Image src={image} width={100} height={150} alt='Comprobante'/>
+        { pedido?.metodoPago?.comprobanteSelected && pedido?.metodoPago?.comprobanteString != '' && <div className="my-2 mx-3 flex flex-col">
+                  <Image src={pedido?.metodoPago?.comprobanteString ? pedido?.metodoPago?.comprobanteString : pdfPlaceholder} width={100} height={150} alt='Comprobante'/>
                   <p className="text-xs text-blue-500">{imageName}</p>
                   <div className="flex flex-row gap-2 mt-2">
                       <div>
@@ -146,8 +177,7 @@ const handleUploadFile = async () => {
                   <p className="text-xs text-red-600 mt-2">{errorMessage}</p>
              </div>}
 
-            <button onClick={handleUploadFile}>Cargar archivo</button>
-             Progress: {progressUpload}
+           {/*  <button onClick={handleUploadFile}>Cargar archivo</button> */}
       
     </div>
    );

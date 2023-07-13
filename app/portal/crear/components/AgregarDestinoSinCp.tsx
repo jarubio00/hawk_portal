@@ -75,7 +75,7 @@ import ConfirmDialog from "@/app/components/modals/ConfirmDialog";
     const [sinCpDialogOpen, setSinCpDialogOpen] = useState(false);
     const [dialogContent, setDialogContent] = useState({});
 
-    const {updateActiveStep,saveDestino, saveDestinoKey, pedido} = useContext(PedidoContext) as PedidoContextType;
+    const {updateActiveStep,saveDestino, saveDestinoKey, pedido, updateDestinoCaptured, destinoCaptured} = useContext(PedidoContext) as PedidoContextType;
 
 
     const { 
@@ -106,6 +106,28 @@ import ConfirmDialog from "@/app/components/modals/ConfirmDialog";
     });
     const formReset = reset;
 
+    useEffect(() => {
+      if(pedido?.destino && destinoCaptured) {
+        setCpActive(true);
+        setCustomValue('cp', pedido.destino.cpId);
+        setCustomValue('colonia', pedido.destino.colonia);
+        setCustomValue('municipio', pedido.destino.municipio)
+        setCustomValue('calle', pedido.destino.calle);
+        setCustomValue('numero', pedido.destino.numero);
+        setCustomValue('numeroInt', pedido.destino.numeroInt);
+        setCustomValue('empresa', pedido.destino.empresa);
+        setCustomValue('referencias', pedido.destino.referencias);
+        setCustomValue('contactoNombre', pedido.destino.contactoNombre);
+        setCustomValue('contactoTel', pedido.destino.contactoTel);
+        setSaveEnabled(pedido?.destino.save || false);
+        setCpFromSearch(pedido?.destino.cpId || 0);
+        setUsingCpFromSearch(true);
+        setColonias(pedido?.destino.coloniasList || [])
+      } else {
+        reset();
+      }
+    },[destinoCaptured])
+
     const onSubmit:  SubmitHandler<FieldValues> = 
     async (data) => {
       //loader.onOpen();
@@ -122,7 +144,7 @@ import ConfirmDialog from "@/app/components/modals/ConfirmDialog";
      
 
       saveDestino(destino);
-
+      updateDestinoCaptured(true);
       updateActiveStep(2);
       //onClose({apiData: apiData});
     
@@ -134,7 +156,7 @@ import ConfirmDialog from "@/app/components/modals/ConfirmDialog";
           <PulseLoader 
             //@ts-ignore
             size={10}
-            color="#F43F5E"
+            color="#FF6B00"
           {...props}  />
        
       );

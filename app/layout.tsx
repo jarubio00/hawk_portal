@@ -37,7 +37,7 @@ export default async function RootLayout({
       <body className={font.className}>
        
         <NextTopLoader
-            color="#F43F5E"
+            color="#FF6B00"
             initialPosition={0.08}
             crawlSpeed={200}
             height={3}

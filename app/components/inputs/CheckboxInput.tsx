@@ -50,8 +50,8 @@ const CheckboxInput: React.FC<CheckboxInputProps> = ({
         type={type}
         className={`
           w-4 h-4 p-1  m-2 text-blue-500 bg-gray-100 rounded cursor-pointer 
-          ${errors[id] ? 'ring-2 ring-rose-500 ring-offset-2' : 'ring-0'}
-          ${errors[id] ? 'focus:ring-rose-500' : 'focus:ring-0'}
+          ${errors[id] ? 'ring-2 ring-red-500 ring-offset-2' : 'ring-0'}
+          ${errors[id] ? 'focus:ring-red-500' : 'focus:ring-0'}
         `}
         onChange={onChange}
         onFocus={onFocus}
