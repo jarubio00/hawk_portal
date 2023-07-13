@@ -35,6 +35,10 @@ const [paquete,setPaquete] = useState({});
 const [sinCpSelected, setSinCpSelected] = useState(false);
 
 useEffect(() => {
+  window.scrollTo(0,0);
+},[])
+
+useEffect(() => {
 
   if (paqueteSelected && paqueteSelected != 0 && pedido?.paquete) {
     setSaved(true);
