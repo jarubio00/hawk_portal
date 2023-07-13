@@ -18,9 +18,9 @@ export const metadata: Metadata = {
     siteName: 'Hawk',
     images: [
       {
-        url: 'https://firebasestorage.googleapis.com/v0/b/hawk-admin.appspot.com/o/webimages%2FogLm.png?alt=media&token=677649ae-a87f-47b1-abf2-64435b998223',
-        width: 400,
-        height: 600,
+        url: 'https://firebasestorage.googleapis.com/v0/b/hawk-admin.appspot.com/o/webimages%2FogLm2.jpg?alt=media&token=f9955908-5485-450c-be30-d3fdd1543d73',
+        width: 100,
+        height: 100,
       },
     ],
     locale: 'en_US',
