@@ -133,7 +133,7 @@ const handleTimerOff = () => {
       <StepHeading title="Programación" subtitle="Selecciona las fechas y horarios de recolección y entrega" />
 
       <div className="my-8 flex flex-row items-center gap-4">
-        <div className={`w-44 md:w-60 border-2 bg-rose-500 border-rose-500 text-sm 
+        <div className={`w-44 md:w-60 border-2 bg-rose-500 border-rose-500 text-xs 
                   shadow-md rounded-md py-1 px-2 cursor-pointer
           ${tipoPrograma == 'auto' ? 
             'bg-rose-500 text-white border-rose-500' 
@@ -143,7 +143,7 @@ const handleTimerOff = () => {
          >
           <p className=" text-center text">Lo antes posible</p>
         </div>
-        <div className={`border-2 w-44 md:w-60  text-sm 
+        <div className={`border-2 w-44 md:w-60  text-xs 
           shadow-md rounded-md py-1 px-2 cursor-pointer
           ${tipoPrograma == 'custom' ? 
             'bg-rose-500 text-white border-rose-500' 

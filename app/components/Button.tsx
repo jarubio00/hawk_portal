@@ -9,6 +9,7 @@ interface ButtonProps {
   outline?: boolean;
   small?: boolean;
   icon?: IconType;
+  full?: boolean;
 }
 
 //se quito w-full , se agregp px-2
@@ -19,6 +20,8 @@ const Button: React.FC<ButtonProps> = ({
   outline,
   small,
   icon: Icon,
+  full
+  
 }) => {
   return ( 
     <button
@@ -42,6 +45,7 @@ const Button: React.FC<ButtonProps> = ({
         ${small ? 'py-1' : 'px-3'}
         ${small ? 'font-light' : 'font-normal'}
         ${small ? 'border-[1px]' : 'border-2'}
+        ${full && 'w-full'}
       `}
     >
       <div className="flex flex-row gap-3 items-center justify-center text-sm">

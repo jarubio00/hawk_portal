@@ -7,6 +7,7 @@ import {PedidoContextType, IDrawer} from "@/app/types/pedido"
 import {Drawer} from "@material-tailwind/react";
 import Button from "@/app/components/Button";
 import { IoMdClose } from "react-icons/io";
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 interface UtilDrawerProps {
   props?: IDrawer;
@@ -33,16 +34,18 @@ const {useDrawer} = useContext(PedidoContext) as PedidoContextType;
         className="p-4 z-[9996]"
         size={size}
       >
-        <div className="mb-0 flex items-center justify-between">
-          <span className="text-md font-semibold">
-            {props.title}
-          </span>
-          <div className="p-2 cursor-pointer" onClick={() => useDrawer({open: false})}><IoMdClose size={26}/></div>
-        </div>
-        <hr className="my-2"/>
-        <div className="py-1">
-            {content}
-        </div>
+        <ScrollArea className="w-full h-full">
+          <div className="mb-0 flex items-center justify-between">
+            <span className="text-md font-semibold">
+              {props.title}
+            </span>
+            <div className="p-2 cursor-pointer" onClick={() => useDrawer({open: false})}><IoMdClose size={26}/></div>
+          </div>
+          <hr className="my-2"/>
+          <div className="py-1">
+              {content}
+          </div>
+        </ScrollArea>
       </Drawer>
    );
 }

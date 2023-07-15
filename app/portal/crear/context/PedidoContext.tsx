@@ -45,6 +45,21 @@ const PedidoProvider: React.FC<Props> = ({children}) => {
 
 
   
+  const resetContext = () => {
+    setPedido({});
+    setActiveStep(0);
+    setDireccionSelected(0);
+    setDestinoSelected(0);
+    setDestinoSinCp(false);
+    setDestinoCaptured(false);
+    setPaqueteSelected(0);
+    setTipoPrograma('auto');
+    setTipoPago('efectivo');
+    setTimer({isOpen: false, time: null});
+    setRecoleccionState({})
+    setEntregaState({})
+    setMetodoPago({formaPagoId:1, passed: true, comprobante: false, comprobanteSelected: false});
+  }
 
   const saveRecoleccion = (rec: IRecoleccion) => {
     setPedido({...pedido,recoleccion: {
@@ -171,6 +186,7 @@ const PedidoProvider: React.FC<Props> = ({children}) => {
   }
 
   const saveCotizacion = (cotiza: ICotizaItem) => {
+    console.log('context cotiza ', cotiza)
     setPedido({...pedido, cotizacion: {
       sku: cotiza.sku,
       descripcion: cotiza.descripcion,
@@ -236,11 +252,13 @@ const PedidoProvider: React.FC<Props> = ({children}) => {
   const useTimer = (props: ITimer) => {
     setTimer(props);
   }
+  
 
   return (
     <PedidoContext.Provider
       value={{
         pedido,
+        resetContext,
         saveRecoleccion,
         saveDestino,
         saveDestinoKey,

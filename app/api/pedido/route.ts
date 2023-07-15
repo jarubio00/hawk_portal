@@ -4,7 +4,8 @@ import prisma from "@/app/libs/prismadb";
 import getCurrentUser from "@/app/actions/getCurrentUser";
 import { IPedido } from "@/app/types/pedido";
 import { Pedido } from "@prisma/client";
-import { PedidoContext } from "@/app/portal/crear/context/PedidoContext";
+import PedidoProvider, { PedidoContext } from "@/app/portal/crear/context/PedidoContext";
+import {format, subHours} from "date-fns"
 
 export async function POST(
   request: Request, 
@@ -15,13 +16,24 @@ export async function POST(
     return NextResponse.error();
   }
 
+  const serverDateUTC = new Date();
+  const serverDate = subHours(serverDateUTC, 6);
+
+  console.log('utc: '+serverDateUTC)
+  console.log('-6: '+serverDate);
+
   const p = await request.json();
   let recoleccion;
+  let pedidoId = 0;
+  let destinoSaveId = 0;
+  let cobroAddId = 0;
+  let paqueteSaveId = 0;
+
   if (p) {
     const pedidoCrear = {
       clienteId: 1,
       fechaEntrega: p.programa.fechaEntrega,
-      bloqueEntrega: p.programa?.bloqueEntrega,
+      bloqueEntrega: parseInt(p.programa?.bloqueEntrega),
       entregaContactoNombre: p.destino?.contactoNombre,
       entregaContactoTel: p.destino?.contactoTel,
       entregaCpId: parseInt(p.destino?.cpId),
@@ -33,15 +45,15 @@ export async function POST(
       entregaMunicipioId: p.destino?.municipioId,
       entregaEmpresa: p.destino?.empresa,
       entregaReferencias: p.destino?.referencias,
-      paqTipoId: p.paquete?.paqTipoId,
-      paqAncho: p.paquete?.paqAncho,
-      paqLargo: p.paquete?.paqLargo,
-      paqAlto: p.paquete?.paqAlto,
-      paqPeso: p.paquete?.paqPeso,
+      paqTipoId: parseInt(p.paquete?.paqTipoId),
+      paqAncho: parseFloat(p.paquete?.paqAncho),
+      paqLargo: parseFloat(p.paquete?.paqLargo),
+      paqAlto: parseFloat(p.paquete?.paqAlto),
+      paqPeso: parseFloat(p.paquete?.paqPeso),
       paqContenido: p.paquete?.paqContenido,
-      paqPesoVol: p.paquete?.paqPesoVol,
-      precioVenta: p.cotizacion?.precio,
-      formaPagoId: p.metodoPago?.formaPagoId,
+      paqPesoVol: parseFloat(p.paquete?.paqPesoVol),
+      precioVenta: parseFloat(p.cotizacion?.precio),
+      formaPagoId: parseInt(p.metodoPago?.formaPagoId),
       comprobante: p.metodoPago?.comprobante,
       comprobanteUrl: p.metodoPago?.comprobanteUrl,
       cobroDestino: p.cobro,
@@ -50,9 +62,9 @@ export async function POST(
     //console.log(p.programa.fechaRecoleccion);
      recoleccion = await prisma.recoleccion.create({
       data: {
-          clienteId: 1, 
+          clienteId: 1,
           fecha: p.programa?.fechaRecoleccion,
-          bloque: p.programa?.bloqueRecoleccion,
+          bloque: parseInt(p.programa?.bloqueRecoleccion),
           contactoNombre: p.recoleccion?.contactoNombre,
           contactoTel: p.recoleccion?.contactoTel,
           cpId: parseInt(p.recoleccion?.cpId),
@@ -61,7 +73,7 @@ export async function POST(
           numeroInt: p.recoleccion?.numeroInt || '',
           colonia: p.recoleccion?.colonia,
           otraColonia: p.recoleccion?.otraColonia,
-          municipioId: p.recoleccion?.municipioId,
+          municipioId: parseInt(p.recoleccion?.municipioId),
           empresa: p.recoleccion?.empresa || '',
           referencias: p.recoleccion?.referencias || '',
           pedidos: {
@@ -82,24 +94,25 @@ export async function POST(
       }
     });
 
-    const pedidoId = recoleccion.pedidos[0].id;
+    pedidoId = recoleccion.pedidos[0].id;
     
-    let cobroAdd;
+    
     if (p.cobro) {
-      cobroAdd = await prisma.cobrosDestino.create({
+      const cobroAdd = await prisma.cobrosDestino.create({
         data: {
           clienteId: 1,
           pedidoId: pedidoId,
           cantidad: parseFloat(p.cobroCantidad)
         }
       })
+      cobroAddId = cobroAdd ? cobroAdd.id : cobroAddId;
     }
 
-    console.log(pedidoId,cobroAdd);
+   
 
-    let destinoSave;
+    
   if (p.destino.save) {
-    destinoSave = await prisma.destino.create({
+    const destinoSave = await prisma.destino.create({
       //@ts-ignore
       data: {
           clienteId: 1, 
@@ -109,18 +122,19 @@ export async function POST(
           calle: p.destino?.calle, 
           numero: p.destino?.numero, 
           numeroInt: p.destino?.numeroInt, 
-          colonia: p.recoleccion?.colonia,
+          colonia: p.destino?.colonia,
           municipioId: p.destino?.municipioId, 
           empresa: p.destino?.empresa, 
           referencias: p.destino?.referencias, 
           otraColonia: p.destino?.otraColonia
       }
     });
+    destinoSaveId = destinoSave ? destinoSave.id : destinoSaveId;
   }
 
-    let paqueteSave;
+    
     if (p.paquete.save) {
-      paqueteSave = await prisma.paquete.create({
+      const paqueteSave = await prisma.paquete.create({
         //@ts-ignore
         data: {
           clienteId: 1, 
@@ -134,17 +148,21 @@ export async function POST(
           nombrePaquete: p.paquete?.nombrePaquete
         }
       });
+      paqueteSaveId = paqueteSave ? paqueteSave.id : paqueteSaveId;
     }
-    console.log(recoleccion?.id,','+pedidoId+','+destinoSave?.id+','+paqueteSave?.id)
+    
+
+    
   }
 
-  
+  const response = {recoleccionId: recoleccion?.id, pedidoId: pedidoId, cobroAddId: cobroAddId, destinoSaveId: destinoSaveId, paqueteSaveId: paqueteSaveId}
 
+  console.log(response);
  
 
   
  //console.log('Agregado! ->', recoleccion);
 
 
-  return NextResponse.json(recoleccion);
+  return NextResponse.json(response);
 }

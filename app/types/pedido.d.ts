@@ -134,6 +134,7 @@ export interface IMetodoPago {
 
 export type PedidoContextType = {
     pedido?: IPedido;
+    resetContext: () => void;
     saveRecoleccion: (recoleccion: IRecoleccion) => void;
     saveDestino: (destino: IDestino) => void;
     saveDestinoKey: (key: string, value: any) => void;

@@ -23,6 +23,7 @@ import EditarDireccion from "@/app/components/portal/EditarDireccion";
 import ListSearch from "@/app/components/ListSearch";
 import PaquetesCard from "@/app/components/portal/PaquetesCard";
 import EditarPaquete from "@/app/components/portal/EditarPaquete";
+import PrintManager from "./PrintManager";
 
 
 const PedidosClient  = (props:any) => {
@@ -84,6 +85,7 @@ const PedidosClient  = (props:any) => {
               adding={adding}
               disabled = {false}
             />
+            <PrintManager />
          
          
            
