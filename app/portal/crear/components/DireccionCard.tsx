@@ -33,9 +33,8 @@ const DireccionCard: React.FC<DireccionCardProps> = ({
           <span className="text-xs">
               Col. {data?.colonia} , {data?.municipio.municipio}
           </span>
-          {data.empresa && <div className="">
-            <span className=" flex-wrap text-white text-xs bg-blue-gray-300 rounded-sm hover:bg-blue-300 px-2">{data.empresa}</span>
-          </div>}
+          {data.empresa && <span className=" flex-wrap text-blue-500 text-xs ">{data.empresa}</span>
+          }
           {data.referencias && <div className="flex flex-col mt-1">
             <span className="text-xs font-semibold">Referencias:</span>
             <span className="text-xs">{data.referencias}</span>

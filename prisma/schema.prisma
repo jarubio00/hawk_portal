@@ -79,7 +79,7 @@ model Recoleccion {
   updatedAt            DateTime? @db.DateTime @default(dbgenerated("NOW() ON UPDATE NOW()"))
   updatedBy            Int?
   pedidos              Pedido[]
-  user                 User     @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  user                 User?     @relation(fields: [clienteId], references: [id], onDelete: Cascade)
 
   @@index([clienteId], map: "Recolecciones_clienteId_fkey")
   @@map("Recolecciones")
@@ -125,10 +125,10 @@ model Pedido {
   createdAt             DateTime            @default(dbgenerated("NOW()")) @db.DateTime
   updatedAt             DateTime?            @db.DateTime @default(dbgenerated("NOW() ON UPDATE NOW()"))
   updatedBy             Int? @default(1)
-  user                  User                @relation(fields: [clienteId], references: [id], onDelete: Cascade)
-  estatusPago           CatalogoEstatusPago @relation(fields: [estatusPagoId], references: [id], onDelete: Cascade)
-  formaPago             CatalogoMetodosPago @relation(fields: [formaPagoId], references: [id], onDelete: Cascade)
-  recoleccion           Recoleccion         @relation(fields: [recoleccionId], references: [id], onDelete: Cascade)
+  user                  User?                @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  estatusPago           CatalogoEstatusPago? @relation(fields: [estatusPagoId], references: [id], onDelete: Cascade)
+  formaPago             CatalogoMetodosPago? @relation(fields: [formaPagoId], references: [id], onDelete: Cascade)
+  recoleccion           Recoleccion?        @relation(fields: [recoleccionId], references: [id], onDelete: Cascade)
 
   @@index([clienteId], map: "Pedidos_clienteId_fkey")
   @@index([estatusPagoId], map: "Pedidos_estatusPagoId_fkey")

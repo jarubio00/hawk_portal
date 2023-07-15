@@ -13,6 +13,7 @@ const PedidoProvider: React.FC<Props> = ({children}) => {
   const [activeStep, setActiveStep] = useState(0);
   const [direccionSelected, setDireccionSelected] = useState(0);
   const [destinoSelected, setDestinoSelected] = useState(0);
+  const [destinoSinCp, setDestinoSinCp] = useState(false);
   const [destinoCaptured, setDestinoCaptured] = useState(false);
   const [paqueteSelected, setPaqueteSelected] = useState(0);
   const [pedido, setPedido] = useState<IPedido>();
@@ -37,12 +38,28 @@ const PedidoProvider: React.FC<Props> = ({children}) => {
   const [metodoPago, setMetodoPago] = useState<IMetodoPago>({
     formaPagoId: 1,
     passed: true,
-    comprobante: false
+    comprobante: false,
+    comprobanteSelected: false
   });
   const [fechasBloqueadas, setFechasBloqueadas] = useState({});
 
 
   
+  const resetContext = () => {
+    setPedido({});
+    setActiveStep(0);
+    setDireccionSelected(0);
+    setDestinoSelected(0);
+    setDestinoSinCp(false);
+    setDestinoCaptured(false);
+    setPaqueteSelected(0);
+    setTipoPrograma('auto');
+    setTipoPago('efectivo');
+    setTimer({isOpen: false, time: null});
+    setRecoleccionState({})
+    setEntregaState({})
+    setMetodoPago({formaPagoId:1, passed: true, comprobante: false, comprobanteSelected: false});
+  }
 
   const saveRecoleccion = (rec: IRecoleccion) => {
     setPedido({...pedido,recoleccion: {
@@ -169,6 +186,7 @@ const PedidoProvider: React.FC<Props> = ({children}) => {
   }
 
   const saveCotizacion = (cotiza: ICotizaItem) => {
+    console.log('context cotiza ', cotiza)
     setPedido({...pedido, cotizacion: {
       sku: cotiza.sku,
       descripcion: cotiza.descripcion,
@@ -183,8 +201,12 @@ const PedidoProvider: React.FC<Props> = ({children}) => {
       estatusPagoId: metodo.estatusPagoId,
       comprobante: metodo.comprobante,
       comprobanteUrl: metodo.comprobanteUrl,
-      comprobanteString: metodo.comprobanteString,
+      comprobanteString: metodo.comprobanteString ,
       comprobanteFileType: metodo.comprobanteFileType,
+      comprobanteSelected: metodo.comprobanteSelected,
+      comprobanteImageFile: metodo.comprobanteImageFile,
+      comprobanteError: metodo.comprobanteError,
+      comprobanteErrorMessage: metodo.comprobanteErrorMessage,
       passed: metodo.passed
     }});
   }
@@ -201,6 +223,10 @@ const PedidoProvider: React.FC<Props> = ({children}) => {
 
   const updateDestinoSelected = (id: number) => {
     setDestinoSelected(id);
+  }
+
+  const updateDestinoSinCp = (value: boolean) => {
+    setDestinoSinCp(value);
   }
 
   const updateDestinoCaptured = (value: boolean) => {
@@ -226,11 +252,13 @@ const PedidoProvider: React.FC<Props> = ({children}) => {
   const useTimer = (props: ITimer) => {
     setTimer(props);
   }
+  
 
   return (
     <PedidoContext.Provider
       value={{
         pedido,
+        resetContext,
         saveRecoleccion,
         saveDestino,
         saveDestinoKey,
@@ -239,6 +267,8 @@ const PedidoProvider: React.FC<Props> = ({children}) => {
         updateDireccionSelected,
         direccionSelected,
         updateDestinoSelected,
+        updateDestinoSinCp,
+        destinoSinCp,
         destinoSelected,
         destinoCaptured,
         updateDestinoCaptured,

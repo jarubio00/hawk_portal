@@ -109,6 +109,7 @@ import ConfirmDialog from "@/app/components/modals/ConfirmDialog";
 
     //console.log('agr dir:', direccion)
     useEffect(() => {
+      console.log('saved', saved)
       if(!saved) {
         reset();
         setCpActive(false);
@@ -135,7 +136,7 @@ import ConfirmDialog from "@/app/components/modals/ConfirmDialog";
     },[direccion])
 
     useEffect(() => {
-      if(pedido?.destino) {
+      if(pedido?.destino && destinoCaptured) {
         setCpActive(true);
         setCustomValue('cp', pedido.destino.cpId);
         setCustomValue('colonia', {label: pedido.destino.colonia, value: pedido.destino.colonia});
@@ -170,7 +171,7 @@ import ConfirmDialog from "@/app/components/modals/ConfirmDialog";
      }
 
      console.log('destino', destino)
-
+      //@ts-ignore
       saveDestino(destino);
       updateDestinoCaptured(true);
       updateActiveStep(2);
@@ -185,7 +186,7 @@ import ConfirmDialog from "@/app/components/modals/ConfirmDialog";
           <PulseLoader 
             //@ts-ignore
             size={10}
-            color="#F43F5E"
+            color="#FF6B00"
           {...props}  />
        
       );

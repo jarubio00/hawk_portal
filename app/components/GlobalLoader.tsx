@@ -17,7 +17,7 @@ const GlobalLoader = () => {
       >
         <PulseLoader
           size={18}
-          color="#F43F5E"
+          color="#FF6B00"
         />
       </div>}
     </>

@@ -12,6 +12,7 @@ import MetodoPagoCard from "../components/MetodoPagoCard";
 import {ICotizaParams, ICotizaItem} from "@/app/types/pedido";
 import { cotizaPaqueteById, crearPedido } from "@/app/actions/apiQuerys";
 import { PulseLoader } from "react-spinners";
+import useCreandoPedidoModal from "@/app/hooks/useCreandoPedidoModal";
 
 
 interface ConfirmarStepProps {
@@ -22,11 +23,14 @@ interface ConfirmarStepProps {
 const ConfirmarStep: React.FC<ConfirmarStepProps> = ({ 
   title, 
 }) => {
-  const {updateActiveStep , pedido, saveCotizacion} = useContext(PedidoContext) as PedidoContextType;
+  const creandoModal = useCreandoPedidoModal();
+
+  const {updateActiveStep , pedido, saveCotizacion, saveMetodoPago, updateTipoPago, tipoPago} = useContext(PedidoContext) as PedidoContextType;
   const [isLoading,setIsLoading] = useState(false);
   const [cotiza,setCotiza] = useState<ICotizaItem>({})
 
   const getCotizaServer = useCallback(async (props: ICotizaParams) => {
+
     const params:ICotizaParams = {
       tipoProductoId: props.tipoProductoId,
       municipioRecoleccionId: props.municipioRecoleccionId,
@@ -43,19 +47,18 @@ const ConfirmarStep: React.FC<ConfirmarStepProps> = ({
         precio: c.precio,
         cantidad: 1
       });
+      
     }
-    
-
-
     setIsLoading(false);
-
+    
   }, [])
 
   useEffect(() => {
     setIsLoading(true);
     
     if (pedido?.recoleccion && pedido.destino && pedido.paquete) {
-      getCotizaServer({
+      console.log('cotizando');
+       getCotizaServer({
         tipoProductoId: pedido.paquete.paqTipoId,
         municipioRecoleccionId: pedido.recoleccion.municipioId,
         municipioEntregaId: pedido.destino.municipioId
@@ -66,16 +69,38 @@ const ConfirmarStep: React.FC<ConfirmarStepProps> = ({
    
   },[])
 
+  useEffect(()=>{
+    if (pedido?.cotizacion && tipoPago == 'efectivo') {
+
+        saveMetodoPago({
+          formaPagoId: 1,
+          passed: true,
+          comprobante: false,
+          })
+      
+    }
+  },[pedido?.cotizacion])
+
 
 const handleBack = () => {
   updateActiveStep(3)
 }
 
 const handleNext = async () => {
-  if (pedido) {
+  if (!pedido?.metodoPago?.passed) {
+    saveMetodoPago({
+      ...pedido?.metodoPago,
+      comprobanteError: true,
+      comprobanteErrorMessage: 'Es necesario cargar tu comprobante de pago.'
+      })
+      return 
+  }
+  
+  creandoModal.onOpen();
+  /* if (pedido) {
     const pedidoResult = await crearPedido(pedido);
     console.log(pedidoResult);
-  }
+  } */
    
 }
   return ( 
@@ -90,7 +115,7 @@ const handleNext = async () => {
               <PulseLoader
               //@ts-ignore
               size={10}
-              color="#F43F5E"
+              color="#FF6B00"
               className="ml-4 mt-2"
               />  
             </div>
@@ -103,17 +128,17 @@ const handleNext = async () => {
           }
         </div>
         <div className="my-0">
-          <MetodoPagoCard />
+          {!isLoading && <MetodoPagoCard />}
         </div>
         <div className="mt-10">
           <span className="text-md font-bold">Pedido data:</span>
-          <p className="text-xs">
+          <pre className="text-xs">
               {JSON.stringify(pedido,null,2)}
-          </p>
+          </pre>
         </div>
         <div className=" my-4 ml-4 flex flex-row gap-6">
-          <Button outline label="Anterior" onClick={handleBack}  />
-          <Button label="Terminar" onClick={handleNext}  />
+          <Button outline label="Anterior" onClick={handleBack} disabled={isLoading} />
+          <Button label="Terminar" onClick={handleNext}  disabled={isLoading} />
         </div>
     </div>
    );

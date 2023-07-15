@@ -51,7 +51,7 @@ const PaqInput: React.FC<PaqInputProps> = ({
           text-xs
           text-neutral-400
           transition
-          ${errors[id] ? 'text-rose-500' : 'text-zinc-400'}
+          ${errors[id] ? 'text-red-500' : 'text-zinc-400'}
         `}
       >
         {label}
@@ -81,8 +81,8 @@ const PaqInput: React.FC<PaqInputProps> = ({
           disabled:opacity-70
           disabled:cursor-not-allowed
           ${formatPrice ? 'pl-9' : 'pl-2'}
-          ${errors[id] ? 'border-rose-500' : 'border-neutral-300'}
-          ${errors[id] ? 'focus:border-rose-500' : 'focus:border-black'}
+          ${errors[id] ? 'border-red-500' : 'border-neutral-300'}
+          ${errors[id] ? 'focus:border-red-500' : 'focus:border-black'}
         `}
         onChange={onChange}
         onFocus={onFocus}

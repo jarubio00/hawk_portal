@@ -280,6 +280,7 @@ export  async function autoPrograma() {
   
   const result = await axios.get(`/api/programa/auto/now`)
       .then((response) => {
+        console.log('paso api')
         const responseData:ApiResponse = {status:1,statusMessage: 'OK', response: {data: response.data} }
         return responseData;
       })
@@ -312,7 +313,7 @@ export  async function uploadFile(props: FormData) {
 
  
   
-  const result = await axios.post(`/api/upload`, props)
+  const result = await axios.post(`/api/upload`, props )
       .then((response) => {
         const responseData:ApiResponse = {status:1,statusMessage: 'OK', response: {data: response.data} }
         return responseData;
@@ -337,7 +338,7 @@ export  async function crearPedido(pedido: IPedido) {
         return responseData;
       })
       .catch((error) => {
-        const response:ApiResponse = {status:2,statusMessage: 'Error de API', response: {data: {}, error: error} }
+        const response:ApiResponse = {status:2,statusMessage: error.message , response: {data: {}, error: error} }
         return response;
       })
  

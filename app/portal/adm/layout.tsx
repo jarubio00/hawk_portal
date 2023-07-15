@@ -19,7 +19,7 @@ export default async function RootLayout({
           <GlobalLoader />
           <Navbar currentUser={currentUser}/>
         </ClientOnly>
-        <div className="pb-0 pt-0">
+        <div className="pb-0 pt-24">
           {children}
         </div>
     </>

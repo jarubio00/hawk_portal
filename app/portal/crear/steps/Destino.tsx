@@ -27,7 +27,15 @@ const DestinoStep: React.FC<DestinoStepProps> = ({
   municipios
 }) => {
 
-const {updateActiveStep , saveDestino,  destinoSelected, updateDestinoSelected, pedido, useDrawer} = useContext(PedidoContext) as PedidoContextType;
+const {updateActiveStep, 
+  saveDestino,  
+  destinoSelected, 
+  updateDestinoSelected, 
+  destinoSinCp,
+  updateDestinoSinCp,
+  pedido, 
+  updateDestinoCaptured,
+  useDrawer} = useContext(PedidoContext) as PedidoContextType;
 const router = useRouter();
 const loader = useLoader();
 
@@ -53,11 +61,20 @@ const onCancelSaved = () => {
   saveDestino({})
 }
 
-const handleSinCp = (sincp: boolean) => {
-  if(sincp) {
-   setSinCpSelected(true);
+const handleSinCp = (value: boolean) => {
+  if(value) {
+   //setSinCpSelected(true);
+   updateDestinoSinCp(value);
   } else {
-   setSinCpSelected(false);
+   //setSinCpSelected(false);
+   console.log('aqui fue')
+    updateDestinoSinCp(value);
+    
+    setDireccion({});
+    updateDestinoSelected(0);
+    saveDestino({})
+    setSaved(false);
+    updateDestinoCaptured(false);
   }
 }
 
@@ -77,7 +94,7 @@ const handleMoveStep = (destino: any) => {
         <div className="flex flex-col gap-2">
           <div className="flex mt-2 ">
             <div className="">
-            {!sinCpSelected ? <div className="
+            {!destinoSinCp ? <div className="
                 text-white flex-wrap
                 font-semibold
                 text-xs
@@ -114,7 +131,7 @@ const handleMoveStep = (destino: any) => {
               px-2
               py-1
               "
-                onClick={() => setSinCpSelected(false)}
+                onClick={() => handleSinCp(false)}
             >
               <TiArrowBack size={16} />
               <span>Volver a usar código postal</span>
@@ -132,7 +149,7 @@ const handleMoveStep = (destino: any) => {
         </div>
      </div>
       <div className="my-4">
-        {!sinCpSelected ? 
+        {!destinoSinCp ? 
           <AgregarDestinoCrear 
               title="" 
               currentUser={currentUser} 

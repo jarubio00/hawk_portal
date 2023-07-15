@@ -33,7 +33,7 @@ const DireccionesCardDrawer: React.FC<DireccionesCardDrawerProps> = ({
               <div className="font-bold">
                 {direccion.contactoNombre}
               </div>
-              <div className="font-light text-white text-xs bg-gray-400 rounded-sm hover:bg-blue-400 px-1 py-0 ml-2">
+              <div className=" text-blue-500 text-xs ml-2">
                 {direccion.empresa}
               </div>
             </div>

@@ -24,6 +24,7 @@ import PaqueteDrawer from "./components/PaqueteDrawer";
 import ProgramacionStep from "./steps/Programacion";
 import ProgramaTimer from "./components/ProgramaTimer";
 import TimerDialog from "@/app/components/modals/TimerDialog";
+import CreandoPedidoModal from "@/app/components/modals/CreandoPedidoModal";
 
 
 interface CrearPedidoWidgetProps {
@@ -119,6 +120,7 @@ const CrearPedidoWidget: React.FC<CrearPedidoWidgetProps> = ({
       <ConfirmDialog isOpen={confirmSalirOpen} onClose={handleConfirmSalir} dialogContent={dialogContent}/>
       <TimerDialog isOpen={timerConfirmOpen} onClose={handleOnCloseTimerConfirm} />
       <UtilDrawer props={drawer} onClose={() => setOpenDrawer(false)} size={sm ? 700 : 1050}  content={handleDrawerComponent(drawer?.tipo)}/>
+      <CreandoPedidoModal />
       {timer?.time && <ProgramaTimer expiryTimestamp={timer?.time} onExpire={handleOnExpireTimer} isOpen={timer?.isOpen}/>}
       <CrearNavbar  onClose={() => setConfirmSalirOpen(true)} />
       <div className="w-full md:w-3/4 py-4 px-1 md:px-8 mx-auto">

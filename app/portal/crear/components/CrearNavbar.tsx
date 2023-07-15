@@ -32,7 +32,7 @@ const CrearNavbar: React.FC<CrearNavbarProps> = ({
 
   const router = useRouter();
   return ( 
-    <div className="fixed w-full bg-white z-50 shadow-sm">
+    <div className="fixed w-full bg-white z-40 shadow-sm">
       <div
         className="
           py-4 
@@ -50,7 +50,7 @@ const CrearNavbar: React.FC<CrearNavbarProps> = ({
             md:gap-0
           "
         >
-            <div className="" onClick={onClose}><IoMdClose size={24} /></div>
+            <div className="cursor-pointer" onClick={onClose}><IoMdClose size={24} /></div>
             <div className="w-full md:w-3/4 py-0 pl-2">
                 <Stepper
                 activeStep={activeStep}

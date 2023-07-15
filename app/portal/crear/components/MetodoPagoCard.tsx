@@ -40,7 +40,8 @@ const MetodoPagoCard: React.FC<MetodoPagoCardProps> = ({
             comprobante: false,
             comprobanteUrl: '',
             comprobanteFileType: '',
-            comprobanteString: ''
+            comprobanteString: '',
+            comprobanteSelected: false
             })
         } else if (tipo == 'transfer') {
             saveMetodoPago({
@@ -50,7 +51,8 @@ const MetodoPagoCard: React.FC<MetodoPagoCardProps> = ({
                 comprobante: false,
                 comprobanteUrl: '',
                 comprobanteFileType: '',
-                comprobanteString: ''
+                comprobanteString: '',
+                comprobanteSelected: false
                 })
         }
       }
