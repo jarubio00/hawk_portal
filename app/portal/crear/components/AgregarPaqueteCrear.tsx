@@ -165,7 +165,7 @@
         save: saveEnabled
       }
       savePaquete(paquete);
-      //updateActiveStep(3);
+      updateActiveStep(3);
      
     }
 
@@ -206,7 +206,7 @@
     }
     
     const handleNext = () => {
-      updateActiveStep(3);
+      //updateActiveStep(3);
       handleSubmit(onSubmit)();
       
     }

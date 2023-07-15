@@ -301,7 +301,7 @@ export  async function cotizaPaqueteById(props: ICotizaParams) {
         return responseData;
       })
       .catch((error) => {
-        const response:ApiResponse = {status:2,statusMessage: 'Error de API', response: {data: {}, error: error} }
+        const response:ApiResponse = {status:2,statusMessage: error.message, response: {data: {}, error: error} }
         return response;
       })
  

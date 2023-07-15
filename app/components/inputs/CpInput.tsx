@@ -64,12 +64,12 @@ const CpInput: React.FC<InputProps> = ({
         id={id}
         value={value}
         disabled={disabled}
-        {...register(id, { required })}
+        {...register(id, { required: 'este campo es requerido'})}
         placeholder=" "
         type={type}
         //@ts-ignore
-        onInput={(event)=>event.target.value=event.target.value.slice(0,event.target.maxLength)} 
-        maxLength={maxlength}
+        //onInput={(event)=>event.target.value=event.target.value.slice(0,event.target.maxLength)} 
+        //maxLength={maxlength}
         className={`
           peer
           w-full

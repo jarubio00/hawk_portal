@@ -16,7 +16,7 @@ interface InputSingleProps {
   disabled?: boolean;
   formatPrice?: boolean;
   required?: boolean;
-  errors?: FieldErrors;
+  errors: FieldErrors;
   width?: string;
   onChange?: ChangeEventHandler<HTMLInputElement>;
   onFocus?: () => void;

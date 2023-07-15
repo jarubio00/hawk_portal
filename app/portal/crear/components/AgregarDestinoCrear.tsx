@@ -27,7 +27,7 @@ import { IoMdClose } from "react-icons/io";
 import { PedidoContextType } from "@/app/types/pedido";
 import { FaInfoCircle } from "react-icons/fa";
 import ConfirmDialog from "@/app/components/modals/ConfirmDialog";
-    
+import { ErrorMessage } from "@hookform/error-message"   
 
 
   interface AgregarDestinoCrearProps {
@@ -71,7 +71,7 @@ import ConfirmDialog from "@/app/components/modals/ConfirmDialog";
     const [saveEnabled, setSaveEnabled] = useState(false);
     const [cpFromSearch, setCpFromSearch] = useState(0);
     const [usingCpFromSearch, setUsingCpFromSearch] = useState(false);
-    const [axiosString, setAxiosString] = useState('');
+    const [axiosString, setAxiosString] = useState({});
     const [sinCpDialogOpen, setSinCpDialogOpen] = useState(false);
     const [dialogContent, setDialogContent] = useState({});
 
@@ -158,7 +158,7 @@ import ConfirmDialog from "@/app/components/modals/ConfirmDialog";
     const onSubmit:  SubmitHandler<FieldValues> = 
     async (data) => {
       //loader.onOpen();
-      console.log('sumbit')
+      
 
      const destino = {
       ...data,
@@ -170,7 +170,7 @@ import ConfirmDialog from "@/app/components/modals/ConfirmDialog";
       coloniasList: colonias
      }
 
-     console.log('destino', destino)
+    
       //@ts-ignore
       saveDestino(destino);
       updateDestinoCaptured(true);
@@ -302,6 +302,7 @@ import ConfirmDialog from "@/app/components/modals/ConfirmDialog";
       //updateActiveStep(4);
       console.log('next');
       if (!saved) {
+        setCustomValue('cp',cpFromSearch)
         handleSubmit(onSubmit)();
       } else {
         updateActiveStep(2);
@@ -578,6 +579,7 @@ import ConfirmDialog from "@/app/components/modals/ConfirmDialog";
           <div className="text-sm font-bold text-gray-700">
               Domicilio de recolección
           </div>
+         
           <div className="flex flex-row items-center gap-1">
             <div className="w-40 sm:w-56 pr-4">
               <CpInput
@@ -594,12 +596,13 @@ import ConfirmDialog from "@/app/components/modals/ConfirmDialog";
                 onChange={(event: any) => {
                     if (event.target.value.length == 5) {
                       getColonias(event.target.value);
+                      
                     } else {
                       setColonias([]);
                       setColoniaSelected(null);
                       setColoniaPlaceHolder(`Colonia`)
                       setCustomValue('municipio', null);
-                      setCustomValue('colonia', null);
+                      setCustomValue('colonia', null);   
                       setCpError({error: false, errorMessage: ''})
                       setCpActive(false);
                     }

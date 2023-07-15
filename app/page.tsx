@@ -25,7 +25,7 @@ const Home = async ({ searchParams }: HomeProps) => {
       <div className="pt-40">
         <SectionBanner />
         <SectionCTA />
-        <SectionCotizar />
+        {/* <SectionCotizar /> */}
       </div>
     </ClientOnly>
     

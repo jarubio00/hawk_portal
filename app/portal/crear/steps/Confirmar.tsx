@@ -28,6 +28,8 @@ const ConfirmarStep: React.FC<ConfirmarStepProps> = ({
   const {updateActiveStep , pedido, saveCotizacion, saveMetodoPago, updateTipoPago, tipoPago} = useContext(PedidoContext) as PedidoContextType;
   const [isLoading,setIsLoading] = useState(false);
   const [cotiza,setCotiza] = useState<ICotizaItem>({})
+  const [error,setError] = useState(false);
+  const [errorMessage,setErrorMessage] = useState('');
 
   const getCotizaServer = useCallback(async (props: ICotizaParams) => {
 
@@ -37,19 +39,23 @@ const ConfirmarStep: React.FC<ConfirmarStepProps> = ({
       municipioEntregaId: props.municipioEntregaId
     }
     const cotizacion = await cotizaPaqueteById(params);
-    console.log(cotizacion?.response?.data);
+    
     const c = cotizacion?.response?.data;
-
-    if (c) {
+    console.log(cotizacion.status);
+    if (cotizacion.status == 1) {
       saveCotizacion({
         descripcion: c.descripcion,
         sku: c.nombre,
         precio: c.precio,
         cantidad: 1
       });
-      
+      setIsLoading(false);
+    } else {
+      setError(true);
+      setErrorMessage(cotizacion.statusMessage);
+      setIsLoading(false);
     }
-    setIsLoading(false);
+    
     
   }, [])
 
@@ -64,7 +70,9 @@ const ConfirmarStep: React.FC<ConfirmarStepProps> = ({
         municipioEntregaId: pedido.destino.municipioId
       });
     } else {
-      console.log('falta informacion');
+      setError(true);
+      setErrorMessage('Error de validación');
+      setIsLoading(false);
     }
    
   },[])
@@ -120,15 +128,20 @@ const handleNext = async () => {
               />  
             </div>
             :
-            <div className="flex flex-col">
-              
-             {pedido?.cotizacion && <CotizaCard data={pedido?.cotizacion}/>}
-
-            </div>        
+            <div>
+              {!error ? <div className="flex flex-col">
+              {pedido?.cotizacion && <CotizaCard data={pedido?.cotizacion}/>}
+              </div> :
+              <div className="flex flex-col">
+                <p className="text-xs text-red-500">Algo salió mal</p>
+                <p className="text-xs text-red-500">{errorMessage}</p>
+              </div>
+              }
+            </div>       
           }
         </div>
         <div className="my-0">
-          {!isLoading && <MetodoPagoCard />}
+          {!isLoading && !error &&  <MetodoPagoCard />}
         </div>
         <div className="mt-10">
           <span className="text-md font-bold">Pedido data:</span>
