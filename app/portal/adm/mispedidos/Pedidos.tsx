@@ -1,8 +1,5 @@
 'use client';
 
-
-import PortalLayout from "@/app/components/portal/PortalLayout";
-
 import { useRouter } from 'next/navigation';
 import useLoader from "@/app/hooks/useLoader";
 import ClientOnly from "@/app/components/ClientOnly";
@@ -13,17 +10,12 @@ import {
     } from 'react-icons/bs'
 import { FaPlus, FaTimes } from "react-icons/fa";
 import { useEffect, useState } from "react";
-import AgregarPaquete from "@/app/components/portal/AgregarPaquete";
 import { SafeDireccion,SafeDestino, SafeUser, SafePaquete} from "@/app/types";
 import DireccionesCard from "@/app/components/portal/DireccionesCard";
-import { deleteDireccion, deletePaquete, markDireccion, updateDireccion, updatePaquete } from "@/app/actions/apiQuerys";
 import ConfirmDialog from "@/app/components/modals/ConfirmDialog";
 import toast from "react-hot-toast";
-import EditarDireccion from "@/app/components/portal/EditarDireccion";
-import ListSearch from "@/app/components/ListSearch";
-import PaquetesCard from "@/app/components/portal/PaquetesCard";
-import EditarPaquete from "@/app/components/portal/EditarPaquete";
-import PrintManager from "./PrintManager";
+import DashSection from './components/DashSection';
+import TabSection from './components/TabSection';
 
 
 const PedidosClient  = (props:any) => {
@@ -33,7 +25,7 @@ const PedidosClient  = (props:any) => {
 
   const [isLoading,setIsLoading] = useState(false);
   const [adding, setAdding] = useState(false);
-  const [subtitle, setSubtitle] = useState('Administra tus paquetes favoritos')
+  const [subtitle, setSubtitle] = useState('Consulta tus envios realizados')
   const [confirmDialogOpen,setConfirmDialogOpen] = useState(false);
   const [dialogContent, setDialogContent] = useState({});
   const [editing,setEditing] = useState(false);
@@ -42,6 +34,7 @@ const PedidosClient  = (props:any) => {
 
 
   useEffect(() => {
+    console.log(props.data)
     setPaquetes(props.data);
     }, [props]) 
 
@@ -70,31 +63,26 @@ const PedidosClient  = (props:any) => {
   }
 
  
-    return (
-      <ClientOnly>
-
-        <PortalLayout>
-            <PageHeader 
-              title="Mis envíos"
-              subtitle={subtitle}
-              icon={BsFillBoxSeamFill}
-              buttonIcon={FaPlus}
-              buttonAction={onButtonClick}
-              cancelIcon={FaTimes}
-              cancelAction={onButtonClick}
-              adding={adding}
-              disabled = {false}
-            />
-            <PrintManager />
-         
-         
-           
-
-            
-        
-        </PortalLayout>
-      </ClientOnly>
-    )
+  return (
+    <ClientOnly>
+      <div className='flex flex-col gap-4'>
+        <PageHeader
+          title="Mis envíos"
+          subtitle={subtitle}
+          icon={BsFillBoxSeamFill}
+          buttonIcon={FaPlus}
+          buttonAction={onButtonClick}
+          cancelIcon={FaTimes}
+          cancelAction={onButtonClick}
+          adding={adding}
+          disabled = {false}
+        />
+        <DashSection />
+        <TabSection />
+      </div>
+          
+    </ClientOnly>
+  )
   }
 
 

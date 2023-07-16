@@ -34,7 +34,7 @@ const Navbar: React.FC<NavbarProps> = ({
       <div className="flex flex-col gap-1 pb-2">
         <div className="w-full bg-gray-900">
           <div className=" flex flex-row mx-auto justify-between items-center
-               text-white text-xs font-normal w-full lg:w-4/6 py-2 gap-3 px-4 md:px-0">
+               text-white text-xs font-normal w-full py-2 gap-3 px-4 md:px-0">
               <div className="p-1 bg-gray-900 rounded-md  w-36 text-xs text-white-500 text-center">
                 <div className="flex flex-row items-center gap-2 justify-center">
                     <FaPhoneAlt size={12}/>
@@ -68,7 +68,7 @@ const Navbar: React.FC<NavbarProps> = ({
             gap-3
             md:gap-0
             w-full
-            lg:w-4/6
+          
             mx-auto
             mt-3
             px-4

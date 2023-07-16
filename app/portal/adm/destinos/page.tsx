@@ -20,7 +20,6 @@ const Destinos  = async () => {
     return (
       <ClientOnly>
         <DestinosClient  data={destinos} currentUser={currentUser}/>
-
       </ClientOnly>
     )
   }

@@ -1,9 +1,8 @@
 
 import ClientOnly from "@/app/components/ClientOnly";
 
-import getDirecciones from "@/app/actions/getDirecciones";
 import getCurrentUser from '@/app/actions/getCurrentUser';
-import getPaquetes from '@/app/actions/getPaquetes';
+import getPedidos from '@/app/actions/getPedidos';
 
 import PedidosClient from "./Pedidos";
 
@@ -11,15 +10,14 @@ import PedidosClient from "./Pedidos";
 const Pedidos  = async () => {
 
 
-  const direcciones = await getDirecciones();
+  const pedidos = await getPedidos();
   const currentUser = await getCurrentUser();
-  const paquetes = await getPaquetes();
+
 
 
     return (
       <ClientOnly>
-        <PedidosClient  data={paquetes} currentUser={currentUser}/>
-
+        <PedidosClient  data={pedidos} currentUser={currentUser}/>
       </ClientOnly>
     )
   }

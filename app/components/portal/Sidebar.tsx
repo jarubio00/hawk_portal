@@ -4,7 +4,7 @@ import { forwardRef, useRef } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { BiSearch, BiCurrentLocation } from 'react-icons/bi';
-
+import usePortalDrawer from "@/app/hooks/usePortalDrawer";
 import {
   BsFillBoxSeamFill
   } from 'react-icons/bs'
@@ -19,7 +19,7 @@ import Button from "../Button";
 
 
 interface SidebarProps {
-    showNav: boolean;
+    showNav?: boolean;
 }
 
 export type Ref = HTMLButtonElement;
@@ -27,20 +27,22 @@ export type Ref = HTMLButtonElement;
 const SideBar = forwardRef<Ref, SidebarProps>((showNav, ref) => {
   const router = useRouter();
   const pathname = usePathname();
+  const drawer = usePortalDrawer();
 
   return (
     // @ts-ignore
-    <div ref={ref} className="fixed pt-16 z-40 w-56 h-full bg-white shadow-sm">
+    <div ref={ref} className="w-full h-full bg-white shadow-sm">
         <div className="flex flex-col h-[92vh] pt-8 justify-between">    
             <div className='grow my-0'>
-              <div className="flex mx-auto px-6 w-full justify-center items-end mb-6 rounded-lg">
-              <Link href={`/portal/crear`}>
-                  <Button 
-                    label="Programar envío"
-                    onClick={() => {}}
-                    icon={FaPlus}
-                    />
-              </Link>
+              <div className="flex mx-auto px-2 w-full justify-center items-end mb-6 rounded-lg">
+                <Link href={`/portal/crear`}>
+                    <Button 
+                      label="Programar envío"
+                      onClick={() => {}}
+                      icon={FaPlus}
+                      small
+                      />
+                </Link>
               </div>
                 {data.map((group,index) => (
                     <div key={index} className='my-2' >
@@ -59,6 +61,7 @@ const SideBar = forwardRef<Ref, SidebarProps>((showNav, ref) => {
                                                 ? "text-black-800 font-bold text-sm"
                                                 : "text-neutral-600 hover:bg-gray-100 hover:text-gray-600 text-md"
                                             }`}
+                                            onClick={() => drawer.onClose()}
                                             >
                                                 <div className="mr-2">
                                                     <div 

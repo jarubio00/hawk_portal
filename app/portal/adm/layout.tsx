@@ -2,7 +2,8 @@
 import ClientOnly from '@/app/components/ClientOnly';
 import GlobalLoader from '@/app/components/GlobalLoader';
 import getCurrentUser from "@/app/actions/getCurrentUser";
-import Navbar from "@/app/components/navbar/Navbar";
+import NavbarPortal from "@/app/components/navbarPortal/NavbarPortal";
+import SideBar from '@/app/components/portal/Sidebar';
 
 
 export default async function RootLayout({
@@ -17,10 +18,18 @@ export default async function RootLayout({
     <>
         <ClientOnly>
           <GlobalLoader />
-          <Navbar currentUser={currentUser}/>
+          <NavbarPortal currentUser={currentUser}/>
         </ClientOnly>
-        <div className="pb-0 pt-24">
-          {children}
+        <div className="flex flex-row ">
+          <div className='hidden md:block h-full w-64'>
+            <SideBar />
+          </div>
+          <div className='w-full bg-neutral-100 p-2'>
+            <div className='w-full bg-white rounded-lg p-2'>
+              {children}
+            </div>
+           
+          </div>
         </div>
     </>
   )

@@ -174,7 +174,6 @@ const MisdireccionesClient  = (props:any) => {
     return (
       <ClientOnly>
         <ConfirmDialog isOpen={confirmDialogOpen} onClose={handleConfirm} dialogContent={dialogContent}/>
-        <PortalLayout>
             <PageHeader 
               title="Mis direcciones"
               subtitle={subtitle}
@@ -249,7 +248,6 @@ const MisdireccionesClient  = (props:any) => {
 
             
         
-        </PortalLayout>
       </ClientOnly>
     )
   }

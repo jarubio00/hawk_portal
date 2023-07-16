@@ -6,26 +6,22 @@ export default async function getDirecciones() {
         const currentUser = await getCurrentUser();
         //console.log(currentUser);
 
-        const listings = await prisma.direccion.findMany({
+        const recolecciones = await prisma.recoleccion.findMany({
             where: {
                 clienteId: currentUser?.id,
             },
             include: {
               //@ts-ignore
-              municipio: true
+              pedidos: true
             },
           orderBy: {
             createdAt: 'desc'
           }
         });
     
-        const safeListings = listings.map((listing) => ({
-          ...listing,
-          createdAt: listing.createdAt.toISOString(),
-          default: listing.id == currentUser?.direccionDefaultId ? true : false
-        }));
+        
     
-        return safeListings;
+        return recolecciones;
       } catch (error: any) {
         throw new Error(error);
       }

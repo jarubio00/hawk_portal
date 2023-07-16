@@ -95,8 +95,8 @@ const PortalLayout: React.FC<PortalLayoutProps> = ({ children }) => {
               sidebar.isOpen && !isMobile ? "pl-56" : ""
             }`}
             >
-          <div className="p-2 md:p-4 pt-6 md:pt-10  bg-gray-50 min-h-[98vh] overflow-y-auto">
-            <div className="mt-16 bg-white rounded-lg pb-4 shadow-md">
+          <div className="p-2 md:p-4 pt-1 md:pt-2  bg-gray-50 min-h-[98vh] overflow-y-auto">
+            <div className=" bg-white rounded-lg pb-4 shadow-md">
               {children}
             </div>
             

@@ -59,7 +59,7 @@ const CrearPedidoWidget: React.FC<CrearPedidoWidgetProps> = ({
     const handleConfirmSalir = async (props: any) => {
    
       if(props.confirm ) {
-        loader.onOpen();
+        //loader.onOpen();
         setConfirmSalirOpen(false);
         router.push('/portal/adm/mispedidos');
         //loader.onClose();

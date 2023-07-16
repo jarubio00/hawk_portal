@@ -176,7 +176,6 @@ const DestinosClient  = (props:any) => {
     return (
       <ClientOnly>
         <ConfirmDialog isOpen={confirmDialogOpen} onClose={handleConfirm} dialogContent={dialogContent}/>
-        <PortalLayout>
             <PageHeader 
               title="Destinos favoritos"
               subtitle={subtitle}
@@ -248,11 +247,6 @@ const DestinosClient  = (props:any) => {
                   }
                 </>  
               }
-           
-
-            
-        
-        </PortalLayout>
       </ClientOnly>
     )
   }

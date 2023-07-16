@@ -59,7 +59,7 @@ interface PageHeaderProps {
                         <div className={`text-xs md:text-md ${adding ? "text-blue-500" : "text-neutral-500"} `}>
                             {subtitle}
                         </div>
-                        <ScreenSizeUtil />
+                        {/* <ScreenSizeUtil /> */}
                     </div>
                 </div>
                 <div className="hidden md:block ">

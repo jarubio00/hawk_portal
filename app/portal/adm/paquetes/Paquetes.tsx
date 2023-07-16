@@ -156,7 +156,6 @@ const PaquetesClient  = (props:any) => {
     return (
       <ClientOnly>
         <ConfirmDialog isOpen={confirmDialogOpen} onClose={handleConfirm} dialogContent={dialogContent}/>
-        <PortalLayout>
             <PageHeader 
               title="Paquetes favoritos"
               subtitle={subtitle}
@@ -226,11 +225,6 @@ const PaquetesClient  = (props:any) => {
                   }
                 </>  
               }
-           
-
-            
-        
-        </PortalLayout>
       </ClientOnly>
     )
   }
