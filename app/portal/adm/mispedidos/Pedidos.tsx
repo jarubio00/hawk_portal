@@ -4,16 +4,13 @@ import { useRouter } from 'next/navigation';
 import useLoader from "@/app/hooks/useLoader";
 import ClientOnly from "@/app/components/ClientOnly";
 import PageHeader from "@/app/components/portal/PageHeader";
-
+import { MisPedidosContext, MisPedidosContextType } from "./context/MisPedidosContext";
 import {
     BsFillBoxSeamFill
     } from 'react-icons/bs'
 import { FaPlus, FaTimes } from "react-icons/fa";
-import { useEffect, useState } from "react";
-import { SafeDireccion,SafeDestino, SafeUser, SafePaquete} from "@/app/types";
-import DireccionesCard from "@/app/components/portal/DireccionesCard";
-import ConfirmDialog from "@/app/components/modals/ConfirmDialog";
-import toast from "react-hot-toast";
+import { useContext, useEffect, useState } from "react";
+
 import DashSection from './components/DashSection';
 import TabSection from './components/TabSection';
 
@@ -21,21 +18,19 @@ import TabSection from './components/TabSection';
 const PedidosClient  = (props:any) => {
   const router = useRouter();
   const loader = useLoader();
-  
+  const {saveRecolecciones, savePedidos} = useContext(MisPedidosContext) as MisPedidosContextType;
 
   const [isLoading,setIsLoading] = useState(false);
   const [adding, setAdding] = useState(false);
   const [subtitle, setSubtitle] = useState('Consulta tus envios realizados')
-  const [confirmDialogOpen,setConfirmDialogOpen] = useState(false);
-  const [dialogContent, setDialogContent] = useState({});
-  const [editing,setEditing] = useState(false);
-  const [editData,setEditData] = useState({});
-  const [paquetes,setPaquetes] = useState(props?.data);
 
+
+  saveRecolecciones(props.data.recolecciones);
+ 
+  savePedidos(props.data.pedidos);
 
   useEffect(() => {
-    console.log(props.data)
-    setPaquetes(props.data);
+    //console.log(props.data)
     }, [props]) 
 
   useEffect(() => {
@@ -65,21 +60,23 @@ const PedidosClient  = (props:any) => {
  
   return (
     <ClientOnly>
-      <div className='flex flex-col gap-4'>
-        <PageHeader
-          title="Mis envíos"
-          subtitle={subtitle}
-          icon={BsFillBoxSeamFill}
-          buttonIcon={FaPlus}
-          buttonAction={onButtonClick}
-          cancelIcon={FaTimes}
-          cancelAction={onButtonClick}
-          adding={adding}
-          disabled = {false}
-        />
-        <DashSection />
-        <TabSection />
-      </div>
+     
+        <div className='flex flex-col gap-4'>
+          <PageHeader
+            title="Mis envíos"
+            subtitle={subtitle}
+            icon={BsFillBoxSeamFill}
+            buttonIcon={FaPlus}
+            buttonAction={onButtonClick}
+            cancelIcon={FaTimes}
+            cancelAction={onButtonClick}
+            adding={adding}
+            disabled = {false}
+          />
+          <DashSection />
+          <TabSection />
+        </div>
+    
           
     </ClientOnly>
   )

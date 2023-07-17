@@ -17,3 +17,14 @@ export function namedDateString(dateString) {
     }
 return result;
 }
+
+export function bloqueToString(bloque) {
+    let result = ''
+    if (bloque === 1) {
+        result = '10:00am - 3:00pm'
+    } else if (bloque === 2) {
+        result = '3:00pm - 8:00pm'
+    }
+return result;
+}
+

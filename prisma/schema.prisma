@@ -80,6 +80,9 @@ model Recoleccion {
   updatedBy            Int?
   pedidos              Pedido[]
   user                 User?     @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  estatus CatalogoEstatusRecolecciones? @relation(fields: [estatusRecoleccionId], references: [id], onDelete: Cascade)
+  municipio CatalogoMunicipios? @relation(fields: [municipioId], references: [id], onDelete: Cascade)
+
 
   @@index([clienteId], map: "Recolecciones_clienteId_fkey")
   @@map("Recolecciones")
@@ -270,6 +273,7 @@ model CatalogoEstatusRecolecciones {
   id      Int     @id @default(autoincrement())
   estatus String
   desc    String?
+  recolecciones Recoleccion[]
 }
 
 model CatalogoEstatusPedidos {
@@ -347,6 +351,7 @@ model CatalogoMunicipios {
   colonias  CatalogoCodigosPostales[]
   destino   Destino[]
   direccion Direccion[]
+  recolecciones Recoleccion[]
 }
 
 model CatalogoProductos {
