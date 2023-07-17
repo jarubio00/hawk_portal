@@ -8,7 +8,7 @@ const RecoleccionesTab: React.FC<RecoleccionesTabProps> = ({
   data
 }) => {
   return ( 
-    <div className="h-96 bg-neutral-100 w-full p-4">
+    <div className="h-96 w-full p-4">
         Recolecciones
     </div>
    );
