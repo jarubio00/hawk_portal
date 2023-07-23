@@ -169,7 +169,7 @@ const {
           {(isLoading ) && <p className="m-3"><LoaderSingle /></p>}
           {(isFetchingNextPage) && <p className="mb-2 mt-1 mx-3"><LoaderSingle /></p>}
           
-          <SheetContent side='bottom' className="h-screen p-0 m-0 md:p-4">
+          <SheetContent side='bottom' className="h-[85vh] p-0 m-0 md:p-4">
             <div className="flex flex-col py-2">
               {pedidoSelected && <EnvioView data={pedidoSelected} />}
             </div>

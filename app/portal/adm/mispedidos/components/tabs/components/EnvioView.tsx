@@ -17,6 +17,7 @@ import { MdViewInAr } from "react-icons/md";
 
 import Link from "next/link";
 import ComprobanteDialog from "./ComprobanteDialog";
+import EnvioViewGuia from "./EnvioViewGuia";
 
 interface EnvioViewProps {
  data: SafePedido;
@@ -145,7 +146,7 @@ const EnvioView: React.FC<EnvioViewProps> = ({
             
               </TabsContent>
               <TabsContent value={"guia"} className="m-0 p-0">
-                hola
+                <EnvioViewGuia data={data}/>
               </TabsContent>
             </Tabs>
             
