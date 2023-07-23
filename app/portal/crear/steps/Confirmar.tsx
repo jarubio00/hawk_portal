@@ -17,15 +17,19 @@ import useCreandoPedidoModal from "@/app/hooks/useCreandoPedidoModal";
 
 interface ConfirmarStepProps {
   title?: string;
+  append?: boolean;
+  recoleccion?: any;
 }
 
 //se quito w-full , se agregp px-2
 const ConfirmarStep: React.FC<ConfirmarStepProps> = ({ 
   title, 
+  append,
+  recoleccion
 }) => {
   const creandoModal = useCreandoPedidoModal();
 
-  const {updateActiveStep , pedido, saveCotizacion, saveMetodoPago, updateTipoPago, tipoPago} = useContext(PedidoContext) as PedidoContextType;
+  const {updateActiveStep , pedido, saveCotizacion, saveMetodoPago, updateTipoPago, tipoPago, saveAppend} = useContext(PedidoContext) as PedidoContextType;
   const [isLoading,setIsLoading] = useState(false);
   const [cotiza,setCotiza] = useState<ICotizaItem>({})
   const [error,setError] = useState(false);
@@ -55,12 +59,12 @@ const ConfirmarStep: React.FC<ConfirmarStepProps> = ({
       setErrorMessage(cotizacion.statusMessage);
       setIsLoading(false);
     }
-    
-    
+
   }, [])
 
   useEffect(() => {
     setIsLoading(true);
+   
     
     if (pedido?.recoleccion && pedido.destino && pedido.paquete) {
       console.log('cotizando');
@@ -103,7 +107,7 @@ const handleNext = async () => {
       })
       return 
   }
-  
+
   creandoModal.onOpen();
   /* if (pedido) {
     const pedidoResult = await crearPedido(pedido);

@@ -54,7 +54,13 @@ const CrearPedidoClient  = (props:any) => {
     return (
       <ClientOnly>
         <PedidoProvider>
-          <CrearPedidoWidget data={props.data} sm={breakpoints.isSm} currentUser={props.currentUser}/>
+          <CrearPedidoWidget 
+            data={props.data} 
+            sm={breakpoints.isSm} 
+            currentUser={props.currentUser} 
+            append={props.append ? props.append : false }
+            recoleccion={props.recoleccion  ? props.recoleccion : null}
+            />
         </PedidoProvider>
       </ClientOnly>
     )

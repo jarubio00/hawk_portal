@@ -9,6 +9,7 @@ export default async function getRecolecciones() {
         const recolecciones = await prisma.recoleccion.findMany({
             where: {
                 clienteId: currentUser?.id,
+                estatusRecoleccionId: 1
             },
             include: {
               pedidos: {

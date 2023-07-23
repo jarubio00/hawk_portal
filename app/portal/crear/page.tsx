@@ -7,12 +7,25 @@ import getPaquetes from "@/app/actions/getPaquetes";
 import getMunicipios from "@/app/actions/getMunicipios";
 import CrearPedidoClient from "./CrearPedido";
 import getBloquedDates from "@/app/actions/getBloquedDates";
+import getRecoleccion from "@/app/actions/getRecoleccion";
+import ErrorFullScreen from "./components/ErrorFullScreen";
 
 
-const CrearPedido  = async () => {
+interface CrearPedidoProps {
+  searchParams: any
+};
 
+const CrearPedido  = async ({ searchParams }: CrearPedidoProps) => {
+ 
+  const {append, rec} = searchParams;
+ 
+  let recoleccion;
 
+  if (append && append==1 && rec) {  
+    recoleccion = await getRecoleccion(rec);
+  }
 
+  
   const currentUser = await getCurrentUser();
   const direcciones = await getDirecciones();
   const destinos = await getDestinos();
@@ -32,7 +45,7 @@ const CrearPedido  = async () => {
     return (
       <ClientOnly>
         
-        <CrearPedidoClient  
+        {Object.keys(searchParams).length < 1 ? <CrearPedidoClient  
           data={{
               direcciones: direcciones, 
               destinos: destinos, 
@@ -41,6 +54,27 @@ const CrearPedido  = async () => {
               bloquedDates: bloquedDates}} 
           currentUser={currentUser}
         />
+            : 
+          <>
+
+            { (append && append == 1 && rec && recoleccion?.status == 1) ? <CrearPedidoClient  
+                data={{
+                    direcciones: direcciones, 
+                    destinos: destinos, 
+                    paquetes: paquetes, 
+                    municipios: municipios, 
+                    bloquedDates: bloquedDates}}
+                currentUser={currentUser}
+                append={true}
+                recoleccion={recoleccion?.data}
+
+              />
+              :
+              <ErrorFullScreen data={recoleccion?.statusMessage || 'Datos inválidos'} />}
+          </>
+            
+         
+        }
 
       </ClientOnly>
     )

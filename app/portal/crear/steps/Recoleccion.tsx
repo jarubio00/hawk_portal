@@ -26,6 +26,8 @@ interface RecoleccionStepProps {
   small?: boolean;
   icon?: IconType;
   direcciones: any;
+  append?: boolean;
+  recoleccion?: any;
 }
 
 const RecoleccionStep: React.FC<RecoleccionStepProps> = ({ 
@@ -35,7 +37,9 @@ const RecoleccionStep: React.FC<RecoleccionStepProps> = ({
   outline,
   small,
   icon: Icon,
-  direcciones
+  direcciones,
+  append = false,
+  recoleccion
 }) => {
 
   const {updateActiveStep, 
@@ -45,6 +49,7 @@ const RecoleccionStep: React.FC<RecoleccionStepProps> = ({
     useDrawer,
     direccionSelected} = useContext(PedidoContext) as PedidoContextType;
 
+    console.log(append);
  
    const [direccion, setDireccion] = useState(null);
    
@@ -64,11 +69,15 @@ const RecoleccionStep: React.FC<RecoleccionStepProps> = ({
     })
    },[])
 
+   useEffect(() => {
+   
+   },[])
+
   return ( 
    <div className="px-2">
-    <StepHeading title="Recolección" subtitle="Selecciona la dirección de recolección" />
+    <StepHeading title="Recolección" subtitle={!append ?"Selecciona la dirección de recolección" : "No se puede modificar la dirección de recolección"} />
     <div className="flex mt-2">
-       <div className="
+       {!append && <div className="
           text-white flex-wrap
           font-semibold
           text-xs
@@ -88,9 +97,9 @@ const RecoleccionStep: React.FC<RecoleccionStepProps> = ({
         >
           <FaPlus size={12} />
           <span>Agregar nueva dirección de recolección</span>
-       </div>
+       </div>}
      </div>
-    <Swiper
+    {!append && <Swiper
         slidesPerView={2.5}
         spaceBetween={10}
         pagination={{
@@ -116,10 +125,10 @@ const RecoleccionStep: React.FC<RecoleccionStepProps> = ({
               </SwiperSlide>
           )
         })}   
-     </Swiper>
+     </Swiper>}
      
      {pedido?.recoleccion && <div className="my-0 ">
-        <DireccionCard data={pedido?.recoleccion}/>
+        <DireccionCard data={pedido?.recoleccion} append={append}/>
      </div>}
      <div className="my-4"> 
         <Button 

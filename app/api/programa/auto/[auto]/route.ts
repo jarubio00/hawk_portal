@@ -41,12 +41,13 @@ export async function GET(
   console.log('hora: ',hoyHora);
   console.log('hoy search: ', hoySearch);
 
+
   const blocked = await prisma.fechasBloqueadas.findMany({
     where: {
       fecha: {lte: blockedLimit, gte: hoySearch}
       }
     });
-  //console.log(blocked)
+  console.log('blocked: ',blocked)
  
   let newDate = hoy;
   let newBloque = 1; 
@@ -64,8 +65,8 @@ export async function GET(
    const check = await checkIfBlockedRec(hoy,newBloque,blocked, hoyHora);
 
     if (!check) {  
-      recDate = hoy;
-      recBloque = 1;
+      recDate = newDate;
+      recBloque = newBloque;
     } else {
       let free = false;
       while (!free) {

@@ -18,20 +18,16 @@ import TabSection from './components/TabSection';
 const PedidosClient  = (props:any) => {
   const router = useRouter();
   const loader = useLoader();
-  const {saveRecolecciones, savePedidos} = useContext(MisPedidosContext) as MisPedidosContextType;
+  //const {saveRecolecciones, savePedidos} = useContext(MisPedidosContext) as MisPedidosContextType;
 
   const [isLoading,setIsLoading] = useState(false);
   const [adding, setAdding] = useState(false);
   const [subtitle, setSubtitle] = useState('Consulta tus envios realizados')
 
 
-  saveRecolecciones(props.data.recolecciones);
+  //saveRecolecciones(props.data.recolecciones);
  
-  savePedidos(props.data.pedidos);
-
-  useEffect(() => {
-    //console.log(props.data)
-    }, [props]) 
+  //savePedidos(props.data.pedidos);
 
   useEffect(() => {
     loader.isOpen && loader.onClose;
@@ -72,6 +68,7 @@ const PedidosClient  = (props:any) => {
             cancelAction={onButtonClick}
             adding={adding}
             disabled = {false}
+            noButton
           />
           <DashSection />
           <TabSection />

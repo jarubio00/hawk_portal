@@ -6,24 +6,24 @@ import getPedidos from '@/app/actions/getPedidos';
 import getRecolecciones from "@/app/actions/getRecolecciones";
 
 import PedidosClient from "./Pedidos";
-
+import QueryWrapper from "@/app/wrapper/query-wrapper";
 
 
 const Pedidos  = async () => {
  
 
-  const pedidos = await getPedidos();
+  //const pedidos = await getPedidos();
   const currentUser = await getCurrentUser();
-  const recolecciones = await getRecolecciones();
-  const data = {recolecciones: recolecciones, pedidos: pedidos}
+  //const recolecciones = await getRecolecciones();
+  //const data = {recolecciones: recolecciones, pedidos: pedidos}
 
   
 
     return (
       <ClientOnly>
-        <MisPedidosProvider>
-          <PedidosClient data={data}  currentUser={currentUser}/>
-        </MisPedidosProvider>
+        <QueryWrapper>
+          <PedidosClient  currentUser={currentUser}/>
+        </QueryWrapper>
       </ClientOnly>
     )
   }

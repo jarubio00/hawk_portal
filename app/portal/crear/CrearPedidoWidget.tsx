@@ -24,7 +24,9 @@ import PaqueteDrawer from "./components/PaqueteDrawer";
 import ProgramacionStep from "./steps/Programacion";
 import ProgramaTimer from "./components/ProgramaTimer";
 import TimerDialog from "@/app/components/modals/TimerDialog";
-import CreandoPedidoModal from "@/app/components/modals/CreandoPedidoModal";
+import CreandoPedidoModal from "@/app/portal/crear/components/CreandoPedidoModal";
+import { bloqueToString, namedDateString } from "@/app/components/utils/helpers";
+import { calcularTipoPaquete } from "@/app/actions/utils";
 
 
 interface CrearPedidoWidgetProps {
@@ -32,23 +34,44 @@ interface CrearPedidoWidgetProps {
   data?: any
   sm?: boolean;
   currentUser?: SafeUser;
+  append?: boolean;
+  recoleccion?: any;
 }
 
 const CrearPedidoWidget: React.FC<CrearPedidoWidgetProps> = ({ 
  title,
  data,
  sm,
- currentUser
+ currentUser,
+ append = false,
+ recoleccion
 }) => {
 
     //console.log('isSm:', sm);
     const router = useRouter();
     const loader = useLoader();
-    const {activeStep, drawer, timer, useTimer, saveRecoleccionState, saveEntregaState, savePrograma, updateActiveStep} = useContext(PedidoContext) as PedidoContextType;
+    const {activeStep, 
+      drawer, 
+      timer, 
+      useTimer, 
+      saveRecoleccionState, 
+      saveEntregaState, 
+      savePrograma, 
+      updateActiveStep, 
+      saveAppend,
+      saveRecoleccion,
+      pedido,
+      savePedidoInitial,
+      tipoPrograma
+      } = useContext(PedidoContext) as PedidoContextType;
+
     const [confirmSalirOpen, setConfirmSalirOpen] = useState(false);
     const [timerConfirmOpen, setTimerConfirmOpen] = useState(false);
     const [openDrawer, setOpenDrawer] = useState(false);
     const [drawerContent, setDrawerContent] = useState();
+
+    //console.log(append);
+    //console.log(recoleccion);
 
     const dialogContent ={
       title: "Estas seguro de salir?",
@@ -69,10 +92,27 @@ const CrearPedidoWidget: React.FC<CrearPedidoWidgetProps> = ({
     }
 
     useEffect(() => {
-      if(drawer?.tipo == 'addDireccion') {
-       
+      if(append && recoleccion) {
+
+        const appendInital = {enabled: true,recoleccion: recoleccion}
+        const programaInitial = {fechaRecoleccion: recoleccion.fecha,bloqueRecoleccion: recoleccion.bloque,fechaEntrega: null,bloqueEntrega: 3 }
+        const recoleccionInitial = recoleccion
+
+        savePedidoInitial(
+          appendInital,
+          programaInitial,
+          recoleccionInitial
+        );
+
+        saveRecoleccionState({
+          am: true, 
+          pm: true,
+          show: true, enabled: true
+        })
+
+        updateActiveStep(1);
       }
-    },[drawer])
+    },[append])
 
     const handleDrawerComponent = (tipo: string | undefined) => {
 
@@ -96,9 +136,6 @@ const CrearPedidoWidget: React.FC<CrearPedidoWidgetProps> = ({
     const timeToClose = new Date();
     timeToClose.setSeconds(timeToClose.getSeconds() + 10); // 10 minutes timer
 
-    const handleCloseCrear = () => {
-
-    };
 
     const handleOnExpireTimer = () => {
       console.log('expired......................')
@@ -123,10 +160,19 @@ const CrearPedidoWidget: React.FC<CrearPedidoWidgetProps> = ({
       <CreandoPedidoModal />
       {timer?.time && <ProgramaTimer expiryTimestamp={timer?.time} onExpire={handleOnExpireTimer} isOpen={timer?.isOpen}/>}
       <CrearNavbar  onClose={() => setConfirmSalirOpen(true)} />
+        {append && <div className=" pt-16 bg-neutral-800 w-full">
+          <div className="w-full md:w-3/4 py-2 px-1 md:px-8 mx-auto">
+              <p className="text-sm text-white ">Agregando pedido a recolección en {recoleccion.calle} {recoleccion.numero}</p>
+              <p className="text-xs text-white">{namedDateString(recoleccion.fecha)} ({bloqueToString(recoleccion.bloque)})</p>
+              <p className="text-xs text-red-500">{tipoPrograma} - {pedido?.programa?.fechaEntrega && namedDateString(pedido?.programa?.fechaEntrega)} </p>
+          </div>
+        </div>}
       <div className="w-full md:w-3/4 py-4 px-1 md:px-8 mx-auto">
-        <div className="mt-16 ">
+      
+        <div className={`${append ? 'pt-0' : 'pt-16'}`}>
+       
           {activeStep === 0 && 
-              <RecoleccionStep direcciones={data.direcciones}/>
+              <RecoleccionStep direcciones={data.direcciones} append={append} recoleccion={recoleccion}/>
           }
           {activeStep === 1 && 
               <DestinoStep municipios={data.municipios}/>
@@ -135,10 +181,10 @@ const CrearPedidoWidget: React.FC<CrearPedidoWidgetProps> = ({
               <PaqueteStep />
           }
            {activeStep === 3 && 
-              <ProgramacionStep data={data.bloquedDates} />
+              <ProgramacionStep data={data.bloquedDates} append={append} recoleccion={recoleccion}/>
           }
           {activeStep === 4 && 
-              <ConfirmarStep />
+              <ConfirmarStep append={append} recoleccion={recoleccion}/>
           }
         </div>
         {/* <Button label="Drawer" outline onClick={() => setOpenDrawer(true)}/> */}

@@ -1,6 +1,6 @@
 'use client'
 
-import { IRecoleccion, IDestino, IPedido, IPaquete, PedidoContextType, IDrawer, IPrograma, IProgramaState, ITimer, IMetodoPago, ICotizaItem} from "@/app/types/pedido.d";
+import { IRecoleccion, IDestino, IPedido, IPaquete, PedidoContextType, IDrawer, IPrograma, IProgramaState, ITimer, IMetodoPago, ICotizaItem, IAppend} from "@/app/types/pedido.d";
 import React, { useState, createContext } from "react";
 
 
@@ -18,7 +18,9 @@ const PedidoProvider: React.FC<Props> = ({children}) => {
   const [paqueteSelected, setPaqueteSelected] = useState(0);
   const [pedido, setPedido] = useState<IPedido>();
   const [recoleccion, setRecoleccion] = useState<IRecoleccion>();
+  const [append, setAppend] = useState<IAppend>();
   const [tipoPrograma, setTipoPrograma] = useState('auto');
+  const [programaRun,setProgramaRun] = useState(1);
   const [tipoPago, setTipoPago] = useState('efectivo');
 
   const [drawer, setDrawer] = useState<IDrawer>({
@@ -148,7 +150,6 @@ const PedidoProvider: React.FC<Props> = ({children}) => {
   
 
   const saveDestinoKey = (key: string, value: any) => {
-    console.log('sav dest key',key,value)
     if(key && value) {
       setPedido({
         ...pedido,
@@ -185,8 +186,9 @@ const PedidoProvider: React.FC<Props> = ({children}) => {
     }
   }
 
+ 
+
   const saveCotizacion = (cotiza: ICotizaItem) => {
-    console.log('context cotiza ', cotiza)
     setPedido({...pedido, cotizacion: {
       sku: cotiza.sku,
       descripcion: cotiza.descripcion,
@@ -211,7 +213,20 @@ const PedidoProvider: React.FC<Props> = ({children}) => {
     }});
   }
 
-  
+  const saveAppend =  (append: IAppend) => {
+    setPedido({...pedido, append: {
+      enabled: append.enabled,
+      recoleccion: append.recoleccion
+    }});
+  }
+
+  const savePedidoInitial =  (append: IAppend, programa: IPrograma, recoleccion: IRecoleccion) => {
+    setPedido({...pedido,
+    append: append,
+    programa: programa, 
+    recoleccion: recoleccion
+    })
+}
 
   const updateActiveStep = (step: number) => {
     setActiveStep(step);
@@ -292,7 +307,11 @@ const PedidoProvider: React.FC<Props> = ({children}) => {
         updateTipoPago,
         metodoPago,
         tipoPago,
-        saveCotizacion
+        saveCotizacion,
+        saveAppend, 
+        savePedidoInitial, 
+        setProgramaRun, 
+        programaRun,
       }}
     >
       {children}

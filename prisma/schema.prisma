@@ -57,9 +57,9 @@ model Account {
 }
 
 model Recoleccion {
-  id                   Int      @id @default(autoincrement())
+  id                   Int                          @id @default(autoincrement())
   clienteId            Int
-  estatusRecoleccionId Int      @default(1)
+  estatusRecoleccionId Int                          @default(1)
   fecha                DateTime
   bloque               Int
   contactoNombre       String
@@ -69,22 +69,23 @@ model Recoleccion {
   numero               String
   numeroInt            String
   colonia              String
-  otraColonia          Boolean  @default(false)
+  otraColonia          Boolean                      @default(false)
   municipioId          Int
   empresa              String?
   referencias          String?
   lat                  String?
   lng                  String?
-  createdAt            DateTime @default(dbgenerated("NOW()")) @db.DateTime
-  updatedAt            DateTime? @db.DateTime @default(dbgenerated("NOW() ON UPDATE NOW()"))
+  createdAt            DateTime                     @default(now()) @db.DateTime(0)
+  updatedAt            DateTime?                    @default(now()) @db.DateTime(0)
   updatedBy            Int?
   pedidos              Pedido[]
-  user                 User?     @relation(fields: [clienteId], references: [id], onDelete: Cascade)
-  estatus CatalogoEstatusRecolecciones? @relation(fields: [estatusRecoleccionId], references: [id], onDelete: Cascade)
-  municipio CatalogoMunicipios? @relation(fields: [municipioId], references: [id], onDelete: Cascade)
-
+  user                 User                         @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  estatus              CatalogoEstatusRecolecciones @relation(fields: [estatusRecoleccionId], references: [id], onDelete: Cascade)
+  municipio            CatalogoMunicipios           @relation(fields: [municipioId], references: [id], onDelete: Cascade)
 
   @@index([clienteId], map: "Recolecciones_clienteId_fkey")
+  @@index([estatusRecoleccionId], map: "Recolecciones_estatusRecoleccionId_fkey")
+  @@index([municipioId], map: "Recolecciones_municipioId_fkey")
   @@map("Recolecciones")
 }
 
@@ -92,7 +93,7 @@ model Pedido {
   id                    Int                 @id @default(autoincrement())
   clienteId             Int
   recoleccionId         Int
-  estatusPedidoId       Int @default(1)
+  estatusPedidoId       Int                 @default(1)
   fechaEntrega          DateTime
   bloqueEntrega         Int
   entregaContactoNombre String?
@@ -125,13 +126,13 @@ model Pedido {
   printMCorte           Int?
   comprobante           Boolean             @default(false)
   comprobanteUrl        String?
-  createdAt             DateTime            @default(dbgenerated("NOW()")) @db.DateTime
-  updatedAt             DateTime?            @db.DateTime @default(dbgenerated("NOW() ON UPDATE NOW()"))
-  updatedBy             Int? @default(1)
-  user                  User?                @relation(fields: [clienteId], references: [id], onDelete: Cascade)
-  estatusPago           CatalogoEstatusPago? @relation(fields: [estatusPagoId], references: [id], onDelete: Cascade)
-  formaPago             CatalogoMetodosPago? @relation(fields: [formaPagoId], references: [id], onDelete: Cascade)
-  recoleccion           Recoleccion?        @relation(fields: [recoleccionId], references: [id], onDelete: Cascade)
+  createdAt             DateTime            @default(now()) @db.DateTime(0)
+  updatedAt             DateTime?           @default(now()) @db.DateTime(0)
+  updatedBy             Int?                @default(1)
+  user                  User                @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  estatusPago           CatalogoEstatusPago @relation(fields: [estatusPagoId], references: [id], onDelete: Cascade)
+  formaPago             CatalogoMetodosPago @relation(fields: [formaPagoId], references: [id], onDelete: Cascade)
+  recoleccion           Recoleccion         @relation(fields: [recoleccionId], references: [id], onDelete: Cascade)
 
   @@index([clienteId], map: "Pedidos_clienteId_fkey")
   @@index([estatusPagoId], map: "Pedidos_estatusPagoId_fkey")
@@ -157,8 +158,8 @@ model Direccion {
   referencias     String?
   lat             String?
   lng             String?
-  createdAt       DateTime           @default(dbgenerated("NOW()")) @db.DateTime
-  updatedAt       DateTime?         @db.DateTime @default(dbgenerated("NOW() ON UPDATE NOW()"))
+  createdAt       DateTime           @default(now()) @db.DateTime(0)
+  updatedAt       DateTime?          @default(now()) @db.DateTime(0)
   updatedBy       Int?
   user            User               @relation(fields: [clienteId], references: [id], onDelete: Cascade)
   municipio       CatalogoMunicipios @relation(fields: [municipioId], references: [id], onDelete: Cascade)
@@ -184,8 +185,8 @@ model Destino {
   referencias    String?
   lat            String?
   lng            String?
-  createdAt      DateTime           @default(dbgenerated("NOW()")) @db.DateTime
-  updatedAt      DateTime?          @db.DateTime @default(dbgenerated("NOW() ON UPDATE NOW()"))
+  createdAt      DateTime           @default(now()) @db.DateTime(0)
+  updatedAt      DateTime?          @default(now()) @db.DateTime(0)
   updatedBy      Int?
   sinCp          Boolean            @default(false)
   user           User               @relation(fields: [clienteId], references: [id], onDelete: Cascade)
@@ -208,8 +209,8 @@ model Paquete {
   paqPeso       Float
   paqContenido  String?
   paqPesoVol    Float
-  createdAt     DateTime              @default(dbgenerated("NOW()")) @db.DateTime
-  updatedAt     DateTime?             @db.DateTime @default(dbgenerated("NOW() ON UPDATE NOW()"))
+  createdAt     DateTime              @default(now()) @db.DateTime(0)
+  updatedAt     DateTime?             @default(now()) @db.DateTime(0)
   user          User                  @relation(fields: [clienteId], references: [id], onDelete: Cascade)
   tipo          CatalogoTiposPaquetes @relation(fields: [paqTipoId], references: [id], onDelete: Cascade)
 
@@ -232,7 +233,7 @@ model CobrosDestino {
   retornoFormaId     Int       @default(1)
   retornoAt          DateTime?
   retornoBy          Int?
-  createdAt          DateTime  @default(dbgenerated("NOW()")) @db.DateTime
+  createdAt          DateTime  @default(now()) @db.DateTime(0)
   createdBy          Int?
 }
 
@@ -270,9 +271,9 @@ model CatalogoTiposClientes {
 }
 
 model CatalogoEstatusRecolecciones {
-  id      Int     @id @default(autoincrement())
-  estatus String
-  desc    String?
+  id            Int           @id @default(autoincrement())
+  estatus       String
+  desc          String?
   recolecciones Recoleccion[]
 }
 
@@ -343,14 +344,14 @@ model CatalogoColonias {
 }
 
 model CatalogoMunicipios {
-  id        Int                       @id @default(autoincrement())
-  municipio String
-  abrev     String?
-  estado    String                    @default("Nuevo León")
-  pais      String                    @default("México")
-  colonias  CatalogoCodigosPostales[]
-  destino   Destino[]
-  direccion Direccion[]
+  id            Int                       @id @default(autoincrement())
+  municipio     String
+  abrev         String?
+  estado        String                    @default("Nuevo León")
+  pais          String                    @default("México")
+  colonias      CatalogoCodigosPostales[]
+  destino       Destino[]
+  direccion     Direccion[]
   recolecciones Recoleccion[]
 }
 

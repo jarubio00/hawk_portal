@@ -13,13 +13,21 @@ import {MdErrorOutline} from "react-icons/md";
 import useCreandoPedidoModal from "@/app/hooks/useCreandoPedidoModal";
 import useLoader from "@/app/hooks/useLoader";
 
-import { crearPedido } from "@/app/actions/apiQuerys";
+import { appendPedido, crearPedido } from "@/app/actions/apiQuerys";
 import { PulseLoader } from "react-spinners";
 
 
-import Button from "../Button";
+import Button from "../../../components/Button";
 import ModalCreando from "./ModalCreando";
 import GuiaShare from "@/app/portal/crear/components/GuiaShare";
+import { uploadFile } from "@/app/actions/apiQuerys";
+
+type UploadFile = {
+  file: File;
+  fileName: string;
+  pedidoId: number;
+ 
+}
 
 const CreandoPedidoModal = () => {
   const router = useRouter();
@@ -39,7 +47,17 @@ const CreandoPedidoModal = () => {
       setCreated(false);
       setGuiaBox(false);
       setIsLoading(true);
-      handleCrearPedido();
+      if (pedido?.append?.enabled) {
+        if (pedido.append.recoleccion) {
+          handleAppendPedido(pedido.append.recoleccion.id);
+        } else {
+          console.log('Error en la recoleccion')
+        }
+       
+      } else  {
+        handleCrearPedido();
+      }
+      
     } else {
       setCreated(false);
       setGuiaBox(false);
@@ -54,6 +72,7 @@ const CreandoPedidoModal = () => {
     resetContext();
     router.replace('/portal/adm/mispedidos')
     router.refresh();
+    CreandoPedidoModal.onClose();
   }
 
   const handleCrearPedido = async () => {
@@ -62,6 +81,19 @@ const CreandoPedidoModal = () => {
     console.log(pedidoResult);
 
     if (pedidoResult.status == 1) {
+      if (pedido.metodoPago?.formaPagoId == 2) {
+        if (pedido?.metodoPago?.comprobanteImageFile && pedidoResult?.response?.data.pedidoId) {
+          const file:UploadFile = {
+            file: pedido?.metodoPago?.comprobanteImageFile,
+            fileName: pedido?.metodoPago?.comprobanteImageFile?.name,
+            pedidoId: pedidoResult?.response?.data.pedidoId,
+          } 
+          const upload = await handleuploadFile(file);
+          
+        } else {
+          console.log('algo salio mal');
+        }
+      }
       setPedidoCreado(pedidoResult?.response?.data);
       const timer = setTimeout(() => {
         setIsLoading(false);
@@ -76,12 +108,63 @@ const CreandoPedidoModal = () => {
     
   }
   }
+
+  const handleAppendPedido = async (recoleccionId: number) => {
+    if (pedido) {
+   const pedidoResult = await appendPedido(pedido,recoleccionId);
+   console.log(pedidoResult);
+
+   if (pedidoResult.status == 1) {
+     if (pedido.metodoPago?.formaPagoId == 2) {
+       if (pedido?.metodoPago?.comprobanteImageFile && pedidoResult?.response?.data.pedidoId) {
+         const file:UploadFile = {
+           file: pedido?.metodoPago?.comprobanteImageFile,
+           fileName: pedido?.metodoPago?.comprobanteImageFile?.name,
+           pedidoId: pedidoResult?.response?.data.pedidoId,
+         } 
+         const upload = await handleuploadFile(file);
+         
+       } else {
+         console.log('algo salio mal');
+       }
+     }
+     setPedidoCreado(pedidoResult?.response?.data);
+     const timer = setTimeout(() => {
+       setIsLoading(false);
+       setGuiaBox(true);
+       setCreated(true);
+       }, 1500);
+   } else if (pedidoResult.status == 2) {
+       setError(true);
+       setErrorMessage(pedidoResult.statusMessage)
+       setIsLoading(false);
+   }
+   
+ }
+ }
+
   
 
+  const handleuploadFile = async (file: UploadFile) => {
+    
+      if (pedido?.metodoPago?.comprobanteImageFile) {
+      
+       let formData = new FormData();
+       formData.append('file',file?.file);
+       formData.append('fileName',file?.fileName);
+       formData.append('pedido', `${file.pedidoId}`);
+    
+        const up = await uploadFile(formData);
+       
+        }
+      }
+
+  
   const bodyContent = (
     <div className="flex flex-col h-full gap-2 justify-center items-center">
      <div className="mt-4 mx-auto">
-        {isLoading && <p className="text-lg font-bold">Generando envío...</p>}
+        {isLoading && !pedido?.append?.enabled && <p className="text-lg font-bold">Generando envío...</p>}
+        {isLoading && pedido?.append?.enabled && <p className="text-lg font-bold">Agregando envío a recolección {pedido.append.recoleccion?.id}...</p>}
      </div>
      <div className="w-40 h-28 flex items-center justify-center mx-auto">
         {isLoading ? <PulseLoader

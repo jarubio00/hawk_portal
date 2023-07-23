@@ -1,12 +1,12 @@
 'use client';
 
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import {PedidoContext} from "@/app/portal/crear/context/PedidoContext"
 import {PedidoContextType} from "@/app/types/pedido"
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import esLocale from 'date-fns/locale/es';
-import { getBloquesRecoleccion, getBloquesEntrega, autoPrograma } from "@/app/actions/apiQuerys";
+import { getBloquesRecoleccion, getBloquesEntrega, autoPrograma, autoAppend } from "@/app/actions/apiQuerys";
 import {addDays, format} from 'date-fns';
 import { Radio } from "@material-tailwind/react";
 import { PulseLoader } from "react-spinners";
@@ -26,13 +26,20 @@ import {namedDate, namedDateString} from '@/app/components/utils/helpers';
 interface ProgramacionStepProps {
   data?: any;
   currentUser?: SafeUser;
+  append?: boolean;
+  recoleccion?: any;
 }
 
 //se quito w-full , se agregp px-2
 const ProgramacionStep: React.FC<ProgramacionStepProps> = ({ 
   data, 
   currentUser,
+  append = false,
+  recoleccion
 }) => {
+
+  console.log(append);
+  console.log(recoleccion);
 
 const {updateActiveStep, 
         saveProgramaKey, 
@@ -44,18 +51,54 @@ const {updateActiveStep,
         updateTipoPrograma, 
         tipoPrograma, 
         useTimer,
+        setProgramaRun,
+        programaRun,
         pedido} = useContext(PedidoContext) as PedidoContextType;
 
+  const isInitialMount = useRef(true);
+
 useEffect(() => {
-  
-  if (tipoPrograma == 'auto') {
+  console.log('entering tipoPrograma');
+
+    if (programaRun == 1) {
+      if (tipoPrograma == 'custom' && append && recoleccion) {
+        console.log('entering custom')
+        savePrograma({ 
+          fechaRecoleccion: recoleccion.fecha, 
+          bloqueRecoleccion: recoleccion.bloque,
+          fechaEntrega: null, 
+          bloqueEntrega: 3});
     
-    if (!pedido?.programa?.fechaRecoleccion) {
-      setIsAutoLoading(true);
-      getAutoDates();
+        saveRecoleccionState({
+          am: true, 
+          pm: true,
+          show: true, enabled: true
+        })
+        saveEntregaState({
+          ...entregaState, 
+          show: false, 
+          enabled: true,
+          startDate: recoleccion.bloque == 2 ? addDays(recoleccion.fecha,1) : recoleccion.fecha
+        })
+        setProgramaRun(2);
+      }
+    
+      if (tipoPrograma == 'auto') {
+        console.log('entering auto')
+        if (append && recoleccion) {
+          setIsAutoLoading(true);
+          getAutoAppend();
+          setProgramaRun(2);
+        } else {
+          if (!pedido?.programa?.fechaRecoleccion) {
+            setIsAutoLoading(true);
+            getAutoDates();
+            setProgramaRun(2);
+          }
+        }
+      }
     }
-    
-  }
+
 
 },[tipoPrograma])
 
@@ -65,6 +108,23 @@ const getAutoDates = useCallback(async () => {
 
   const data = autoDates?.response?.data;
 
+  
+  savePrograma({ 
+    fechaRecoleccion: data.recDate,
+    bloqueRecoleccion: data.recBloque, 
+    fechaEntrega: data.entDate, 
+    bloqueEntrega: data.entBloque,
+  });
+  setIsAutoLoading(false);
+}, [])
+
+const getAutoAppend = useCallback(async () => {
+  const autoDates = await autoAppend({fecha: recoleccion.fecha, bloque: recoleccion.bloque});
+  console.log('append dates: ',autoDates);
+
+  const data = autoDates?.response?.data;
+
+  
   savePrograma({ 
     fechaRecoleccion: data.recDate,
     bloqueRecoleccion: data.recBloque, 
@@ -105,15 +165,17 @@ const handleBack = () => {
 
 const handleNext = () => {
   updateActiveStep(4);
-
-  
 }
 
 const handleProgramaSection = (tipo: string) => {
-  saveEntregaState({...entregaState, am: false, pm: false , show: false, enabled: false})
-  saveRecoleccionState({...entregaState, am: false, pm: false , show: false, enabled: false})
-  savePrograma({});
-  updateTipoPrograma(tipo);
+ 
+    saveEntregaState({...entregaState, am: false, pm: false , show: false, enabled: false})
+    saveRecoleccionState({...entregaState, am: false, pm: false , show: false, enabled: false})
+    savePrograma({});
+    updateTipoPrograma(tipo);
+    setProgramaRun(1);
+  
+ 
 }
 
 const handleTimerOn = () => {
@@ -125,6 +187,8 @@ const handleTimerOn = () => {
 const handleTimerOff = () => {
   useTimer({isOpen: false, time: null})
 }
+
+
 
 
 
@@ -156,22 +220,11 @@ const handleTimerOff = () => {
       </div>
 
       {tipoPrograma == 'auto' ? 
-     /*  <div className="flex flex-row gap-8">
-        <div className="my-4 cursor-pointer" onClick={handleTimerOn} >
-         Timer On
-        </div>
-        <div className="my-4 cursor-pointer" onClick={handleTimerOff} >
-         Timer Off
-        </div>
-      </div> */
       <div className="grid mx-4 md:mx-2 grid-cols-1 md:grid-cols-2  lg:grid-cols-3 gap-4">
         <ProgramarAutoRec />
         <ProgramarAutoEnt />
-        
       </div>
-
-      : 
-
+      :
       <div className="grid mx-4 md:mx-2 grid-cols-1 md:grid-cols-2  lg:grid-cols-3 gap-4">
         <ProgramarRecoleccion />
         <ProgramarEntrega />
@@ -205,6 +258,9 @@ const handleTimerOff = () => {
    );
 
    function ProgramarRecoleccion() {
+
+    
+    console.log(pedido?.programa?.fechaRecoleccion)
     
     const handleDateChange = async  (e: any) => {
  
@@ -260,7 +316,7 @@ const handleTimerOff = () => {
                 onChange={(newValue) => handleDateChange(newValue)}
                 bloqued={data.bloquedRec}
                 datetime={datetime}
-                
+                disabled={append ? append : false}
               />}
           </LocalizationProvider>
           </div>
@@ -280,6 +336,7 @@ const handleTimerOff = () => {
               label={<p className="text-sm font-semibold">10:00am - 3:00pm</p>}
               onChange={(event) => handleBloqueChange(parseInt(event.target.value))}
               defaultChecked={pedido?.programa?.bloqueRecoleccion == 1}
+              disabled={append ? append : false}
             />}
            { (recoleccionState?.pm || pedido?.programa?.bloqueRecoleccion == 2) && <Radio 
               id="RecPm" 
@@ -288,6 +345,7 @@ const handleTimerOff = () => {
               label={<p className="text-sm font-semibold">3:30pm  - 7:00pm</p>}
               onChange={(event) => handleBloqueChange(parseInt(event.target.value))}
               defaultChecked={pedido?.programa?.bloqueRecoleccion == 2}
+              disabled={append ? append : false}
             />}
 
              { (!recoleccionState?.am && !recoleccionState?.pm && pedido?.programa?.bloqueRecoleccion == 3 ) && <div className="text-sm">
@@ -391,6 +449,7 @@ const handleTimerOff = () => {
               label={<p className="text-sm font-semibold">10:00am - 3:00pm</p>}
               onChange={(event) => handleBloqueChange(parseInt(event.target.value))}
               defaultChecked={pedido?.programa?.bloqueEntrega == 1}
+              
             />}
            { (entregaState?.pm || pedido?.programa?.bloqueEntrega == 2) && <Radio 
               id="EntPm" 
@@ -399,6 +458,7 @@ const handleTimerOff = () => {
               label={<p className="text-sm font-semibold">3:30pm  - 7:00pm</p>}
               onChange={(event) => handleBloqueChange(parseInt(event.target.value))}
               defaultChecked={pedido?.programa?.bloqueEntrega == 2}
+
             />}
             {!entregaState?.show ? 
 
@@ -427,7 +487,7 @@ const handleTimerOff = () => {
         <div className="flex flex-col">
           <p className="text-md font-bold">Recolección</p>
           
-          {isAutoLoading ? <div className="mt-2 mx-4">
+          {isAutoLoading && !append ? <div className="mt-2 mx-4">
             <PulseLoader
               //@ts-ignore
               size={10}

@@ -1,4 +1,4 @@
-import { Direccion, Destino, User, Paquete } from "@prisma/client";
+import { Direccion, Destino, User, Paquete, Recoleccion, Pedido } from "@prisma/client";
 
 export type SafeDireccion = Omit<Direccion, "createdAt"> & {
   createdAt: string;
@@ -40,3 +40,23 @@ export type ApiResponse = {
   statusMessage: string;
   response?: Response; 
 }
+
+export type SafeRecoleccion = Omit<
+  Recoleccion, 
+   "pedidos"
+> & {
+  id: number;
+  estatus: any;
+  pedidos: Pedido;
+  municipio: any;
+};
+
+export type SafePedido = Omit<
+  Pedido, 
+   "pedidos"
+> & {
+  id: number;
+  estatus: any;
+  municipio: any;
+  recoleccion: SafeRecoleccion;
+};

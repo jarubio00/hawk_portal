@@ -1,4 +1,5 @@
 import React from "react";
+import { SafeRecoleccion } from ".";
 
 
 export interface Municipio {
@@ -101,6 +102,7 @@ export interface IPedido {
     programa?: IPrograma;
     metodoPago?: IMetodoPago;
     cotizacion?: ICotizaItem;
+    append?: IAppend;
 }
 
 export interface ICotizaParams {
@@ -129,6 +131,11 @@ export interface IMetodoPago {
     passed?: boolean;
     comprobanteError?: Boolean;
     comprobanteErrorMessage?: String;
+}
+
+export interface IAppend {
+    enabled?: boolean;
+    recoleccion?: SafeRecoleccion;
 }
 
 
@@ -169,4 +176,8 @@ export type PedidoContextType = {
     metodoPago?: IMetodoPago 
     tipoPago?: string;
     saveCotizacion: (cotiza: ICotizaItem) => void;
+    saveAppend: (append: IAppend) => void;
+    savePedidoInitial: (append: IAppend, programa: IPrograma, recoleccion: IRecoleccion) => void;
+    setProgramaRun: (val: number) => void;
+    programaRun: number;
 }

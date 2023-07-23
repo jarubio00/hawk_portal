@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import getCurrentUser from "@/app/actions/getCurrentUser";
 import axios from "axios";
 import { ApiResponse } from "@/app/types";
+import prisma from "@/app/libs/prismadb";
 
 export async function POST(
   request: Request, 
@@ -12,30 +13,10 @@ export async function POST(
     return NextResponse.error();
   }
 
-  const body = await request.formData()
-  
-  /* const { 
-    data
-   } = body; */
+  const body = await request.formData();
 
- /*  Object.keys(body).forEach((value: any) => {
-    if (!body[value]) {
-      NextResponse.error();
-    }
-  }); */
+  const pedidoId = body.get('pedido')?.toString() || '';
 
-  //console.log(body);
-
-  /* const result = await axios.post(`https://hawkapi.lamensajeria.mx/api/v1/portal/uploadfile/3535`, )
-      .then((response) => {
-        const responseData:ApiResponse = {status:1,statusMessage: 'OK', response: {data: response.data} }
-        return responseData;
-      })
-      .catch((error) => {
-        const response:ApiResponse = {status:2,statusMessage: 'Error de API', response: {data: {}, error: error} }
-        return response;
-      }) */
-  
       const result = await axios({
         method: "post",
         url: "https://hawkapi.lamensajeria.mx/api/v1/portal/uploadfile/3535",
@@ -43,21 +24,32 @@ export async function POST(
         headers: { "Content-Type": "multipart/form-data" },
       })
       .then((response) => {
-        const responseData:ApiResponse = {status:1,statusMessage: 'OK', response: {data: response.data} }
-        return responseData;
+        
+        return response.data;
       })
       .catch(function (error) {
         const response:ApiResponse = {status:2,statusMessage: 'Error de API', response: {data: {}, error: error} }
         return response;
    });
 
-  console.log(result);
+   let response;
 
+    if (result.status == 1 && result.downloadUrl.length >10) {
 
+        const updatePedido = await prisma.pedido.update({
+          where: {
+            id: parseInt(pedidoId),
+          },
+          data: {
+            comprobanteUrl: result.downloadUrl
+          }
+        });
 
-  
+        response = {status: 1, statusMessage: 'OK'}
 
-  
+    } else {
+      response = {status: 2, statusMessage: 'No se pudo cargar el comprobante'}
+    }
 
-  return NextResponse.json('OK');
+  return NextResponse.json(response);
 }

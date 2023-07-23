@@ -293,6 +293,24 @@ export  async function autoPrograma() {
       return result;
 }
 
+export  async function autoAppend(data: any) {
+
+  
+  const result = await axios.post(`/api/programa/append/now`, data)
+      .then((response) => {
+        console.log('paso api')
+        const responseData:ApiResponse = {status:1,statusMessage: 'OK', response: {data: response.data} }
+        return responseData;
+      })
+      .catch((error) => {
+        const response:ApiResponse = {status:2,statusMessage: 'Error de API', response: {data: {}, error: error} }
+        return response;
+      })
+ 
+      
+      return result;
+}
+
 export  async function cotizaPaqueteById(props: ICotizaParams) {
 
   const result = await axios.post(`/api/cotiza/tipoId`, props)
@@ -333,6 +351,25 @@ export  async function crearPedido(pedido: IPedido) {
  
   
   const result = await axios.post(`/api/pedido`, pedido)
+      .then((response) => {
+        const responseData:ApiResponse = {status:1,statusMessage: 'OK', response: {data: response.data} }
+        return responseData;
+      })
+      .catch((error) => {
+        const response:ApiResponse = {status:2,statusMessage: error.message , response: {data: {}, error: error} }
+        return response;
+      })
+ 
+      
+
+      return result;
+}
+
+export  async function appendPedido(pedido: IPedido, recoleccion: number) {
+
+ 
+  
+  const result = await axios.post(`/api/pedido/append/`, {p: pedido, r: recoleccion})
       .then((response) => {
         const responseData:ApiResponse = {status:1,statusMessage: 'OK', response: {data: response.data} }
         return responseData;

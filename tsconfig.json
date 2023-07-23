@@ -23,6 +23,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/portal/crear/components/Datepicker.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/portal/crear/components/Datepicker.js", "app/portal/adm/mispedidos/components/tabs/components/PdfConverterClient.js"],
   "exclude": ["node_modules"]
 }

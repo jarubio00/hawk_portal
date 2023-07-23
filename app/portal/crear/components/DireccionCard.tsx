@@ -6,11 +6,13 @@ import { IconType } from "react-icons";
 
 interface DireccionCardProps {
   data: any;
+  append?: boolean;
 }
 
 //se quito w-full , se agregp px-2
 const DireccionCard: React.FC<DireccionCardProps> = ({ 
   data, 
+  append = false
 
 }) => {
 
@@ -39,13 +41,14 @@ const DireccionCard: React.FC<DireccionCardProps> = ({
             <span className="text-xs font-semibold">Referencias:</span>
             <span className="text-xs">{data.referencias}</span>
           </div>}
-          <span className="text-xs font-semibold mt-4 ">Datos de contacto</span>
-          <span className="text-xs text-neutral-500 font-base  mb-2">Puedes cambiarlos para esta recolección</span>
+          <span className="text-xs font-semibold mt-4 mb-2">Datos de contacto</span>
+          {!append && <span className="text-xs text-neutral-500 font-base  mb-2">Puedes cambiarlos para esta recolección</span>}
           <div className="  grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 md:grid-cols-2 gap-4">
             <div className="my-0">
               <InputSingle
                 id='nombre'
                 label="Nombre"
+                disabled={append}
                 value={data?.contactoNombre}
                 onChange={() => {}}
                 errors={{}}
@@ -55,6 +58,7 @@ const DireccionCard: React.FC<DireccionCardProps> = ({
               <InputSingle
                 id='telefono'
                 label="Telefono"
+                disabled={append}
                 value={data?.contactoTel}
                 onChange={() => {}}
                 errors={{}}

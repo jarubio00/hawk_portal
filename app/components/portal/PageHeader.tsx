@@ -16,6 +16,7 @@ interface PageHeaderProps {
     cancelAction: () => void;
     disabled?: boolean;
     adding: boolean;
+    noButton?: boolean;
   }
 
   const PageHeader: React.FC<PageHeaderProps> = ({ 
@@ -29,6 +30,7 @@ interface PageHeaderProps {
     cancelIcon,
     cancelAction,
     adding,
+    noButton = false
 
   }) => {
    
@@ -62,6 +64,8 @@ interface PageHeaderProps {
                         {/* <ScreenSizeUtil /> */}
                     </div>
                 </div>
+                {!noButton && 
+                <>
                 <div className="hidden md:block ">
                     <Button 
                         label={adding ? "Cancelar" : "Crear"}
@@ -77,7 +81,7 @@ interface PageHeaderProps {
                         onClick={() => adding ? cancelAction() : buttonAction()}
                         disabled={disabled}
                     />
-                </div>
+                </div></>}
             </div>
             <div className="my-0 px-4">
                 <hr />

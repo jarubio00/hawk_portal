@@ -9,17 +9,17 @@ const DashSection: React.FC<DashSectionProps> = ({
 }) => {
   return ( 
     <div className=" w-full">
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-8">
-            <div className="h-20 border border-neutral-300 shadow-md rounded-md">
+        <div className="flex flex-row md:grid md:grid-cols-4 gap-4 md:gap-8 overflow-x-auto touch-auto no-scrollbar">
+            <div className="h-12 w-56 md:h-20 md:w-auto border border-neutral-300 shadow-md rounded-md">
 
             </div>
-            <div className="h-20 border border-neutral-300 shadow-md rounded-md">
+            <div className="h-12 w-56 md:h-20 md:w-auto border border-neutral-300 shadow-md rounded-md">
 
             </div>
-            <div className="h-20 border border-neutral-300 shadow-md rounded-md">
+            <div className="h-12 w-28 md:h-20 md:w-auto border border-neutral-300 shadow-md rounded-md">
 
             </div>
-            <div className="h-20 border border-neutral-300 shadow-md rounded-md">
+            <div className="h-12 w-28 md:h-20 md:w-auto border border-neutral-300 shadow-md rounded-md">
 
             </div>
 
