@@ -1,6 +1,6 @@
 'use client';
 
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import { SafePedido } from "@/app/types";
 import {
     Document,
@@ -18,6 +18,11 @@ import {
     Font
   } from "@react-pdf/renderer";
 
+  import {guiaDoc} from "./pdf/pdfDocument";
+  import axios from "axios";
+
+import {createZpl} from '@/app/components/utils/zplUtils';
+
 interface EnvioViewGuiaProps {
  data?: SafePedido;
 }
@@ -26,41 +31,38 @@ const EnvioViewGuia: React.FC<EnvioViewGuiaProps> = ({
  data
 }) => {
 
-    const styles = StyleSheet.create({
-        page: {
-            backgroundColor: '#fff',
-            fontSize: 11,
-            paddingTop: 0,
-            paddingLeft: 0,
-            paddingRight: 0,
-            lineHeight: 1.5,
-            flexDirection: 'column',
-            width: 200
+    useEffect(() => {
+        zplToImage()
+    },[])
+
+    const [image,setImage] = useState();
+
+   const zpl = createZpl(data);
+    
+   
+
+   const zplToImage = async () => {
+    let formData = new FormData();
+    formData.append('file',zpl);
+
+    const axiosConfig = {
+        headers: {
+            "Access-Control-Allow-Headers": "Content-Type",
+            "Accept": 'application/pdf',
+            "Content-Type": 'application/x-www-form-urlencoded'
         },
-        container: {
-            flexWrap: 'wrap',
-            marginLeft: 40,
-            paddingLeft: 2,
-            marginTop: 24,
-            marginRight: 5,
-            borderLeftWidth: 3,
-            borderColor: '#A6A6A6',
-        }
-    })
-
-    const handleCallback = async (val: any) => {
-
+        data: formData
     }
-    const guiaDoc = (
-        <Document onRender={(blob) => handleCallback('renderizado...')}>
-            <Page size="LETTER" style={styles.page}  key={1}>
-                <View style={styles.container}>
-                                                
-                    <Text >Guia PDF</Text>
-                </View>
-            </Page>
-        </Document>
-    );
+
+    const result = await axios.post(`http://api.labelary.com/v1/printers/8dpmm/labels/4x3/0/`, axiosConfig)
+    .then((response) => {
+      return response;
+    })
+    .catch((error) => {
+      return error.message
+    })
+    setImage(result);
+   }
 
     const GuiaDocument = () => (
         guiaDoc
@@ -70,9 +72,10 @@ const EnvioViewGuia: React.FC<EnvioViewGuiaProps> = ({
  return (
   <div className='m-4'>
     hola
-     <PDFViewer style={{width: '100%', height: '95vh'}} showToolbar={false}>
+    <img src={image} />
+     {/* <PDFViewer style={{width: '100%', height: '95vh'}} showToolbar={false}>
         <GuiaDocument />
-    </PDFViewer>
+    </PDFViewer> */}
   </div>
  );
 }
