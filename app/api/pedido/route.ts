@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
-
+import axios from "axios";
 import prisma from "@/app/libs/prismadb";
 import getCurrentUser from "@/app/actions/getCurrentUser";
 import { IPedido } from "@/app/types/pedido";
 import { Pedido } from "@prisma/client";
 import PedidoProvider, { PedidoContext } from "@/app/portal/crear/context/PedidoContext";
 import {format, subHours} from "date-fns"
+import { createZpl } from "@/app/components/utils/zplUtils";
 
 export async function POST(
   request: Request, 
@@ -151,7 +152,7 @@ export async function POST(
       paqueteSaveId = paqueteSave ? paqueteSave.id : paqueteSaveId;
     }
     
-
+    const zpl = createZpl(p);
     
   }
 
