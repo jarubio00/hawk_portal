@@ -46,21 +46,25 @@ const EnvioViewGuia: React.FC<EnvioViewGuiaProps> = ({
     formData.append('file',zpl);
 
     const axiosConfig = {
-        headers: {
-            "Access-Control-Allow-Headers": "Content-Type",
-            "Accept": 'application/pdf',
-            "Content-Type": 'application/x-www-form-urlencoded'
-        },
         data: formData
     }
 
-    const result = await axios.post(`http://api.labelary.com/v1/printers/8dpmm/labels/4x3/0/`, axiosConfig)
+    const result = await axios.post(`http://api.labelary.com/v1/printers/8dpmm/labels/4x6/0/`, zpl)
     .then((response) => {
-      return response;
+      
+   
+      return response.data;
     })
     .catch((error) => {
       return error.message
     })
+
+
+    //const imageBlob = await result.blob();
+    var binaryData = []
+    binaryData.push(result);
+    const resultFile = new File(binaryData, 'image.png');
+    const imageObjectURL = URL.createObjectURL(resultFile);
     setImage(result);
    }
 
@@ -72,7 +76,7 @@ const EnvioViewGuia: React.FC<EnvioViewGuiaProps> = ({
  return (
   <div className='m-4'>
     hola
-    <img src={image} />
+    {image && <img src={image} />}
      {/* <PDFViewer style={{width: '100%', height: '95vh'}} showToolbar={false}>
         <GuiaDocument />
     </PDFViewer> */}
