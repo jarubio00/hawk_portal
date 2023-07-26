@@ -79,7 +79,6 @@ export async function GET(req: Request){
    metaData: {
      lastCursor: null,
      hasNextPage: false,
-     isEmpty: true,
    },
     }), { status: 200 });
   }
@@ -119,7 +118,6 @@ export async function GET(req: Request){
     data: result, metaData: {
     lastCursor: cursor,
     hasNextPage: nextPage.length > 0,
-    isEmpty: false
       }
     };
 
