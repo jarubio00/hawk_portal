@@ -17,7 +17,7 @@ export async function GET(req: Request){
 
   let result = await prisma.pedido.findMany({
     where: {
-        clienteId: currentUser.id,
+        clienteId: 2,
         //OR : filtros
     },
     include: {
