@@ -13,6 +13,11 @@
     box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
     margin: 1em;
   }
+
+  .Example__container__document2 .react-pdf__Page {
+    max-width: calc(100% - 2em);
+    margin: 1em;
+  }
   
   .Example__container__document .react-pdf__Page canvas {
     max-width: 100%;

@@ -6,6 +6,7 @@ import { IPedido } from "@/app/types/pedido";
 import { Pedido } from "@prisma/client";
 import PedidoProvider, { PedidoContext } from "@/app/portal/crear/context/PedidoContext";
 import {format, subHours} from "date-fns"
+import { generateLabels } from "@/app/actions/utils";
 
 export async function POST(
   request: Request, 
@@ -35,7 +36,7 @@ export async function POST(
 
   if (p) {
     const pedidoCrear = {
-      clienteId: 1,
+      clienteId: currentUser.id,
       recoleccionId: r,
       fechaEntrega: p.programa.fechaEntrega,
       bloqueEntrega: parseInt(p.programa?.bloqueEntrega),
@@ -75,7 +76,7 @@ export async function POST(
     if (p.cobro) {
       const cobroAdd = await prisma.cobrosDestino.create({
         data: {
-          clienteId: 1,
+          clienteId: currentUser.id,
           pedidoId: pedidoId,
           cantidad: parseFloat(p.cobroCantidad)
         }
@@ -90,7 +91,7 @@ export async function POST(
     const destinoSave = await prisma.destino.create({
       //@ts-ignore
       data: {
-          clienteId: 1, 
+          clienteId: currentUser.id, 
           contactoNombre: p.destino?.contactoNombre, 
           contactoTel: p.destino?.contactoTel, 
           cpId: parseInt(p.destino?.cpId), 
@@ -112,7 +113,7 @@ export async function POST(
       const paqueteSave = await prisma.paquete.create({
         //@ts-ignore
         data: {
-          clienteId: 1, 
+          clienteId: currentUser.id, 
           paqAncho: parseFloat(p.paquete?.paqAncho),
           paqAlto: parseFloat(p.paquete?.paqAlto),
           paqLargo: parseFloat(p.paquete?.paqLargo),
@@ -128,6 +129,20 @@ export async function POST(
     
 
     
+  }
+
+  const labels = await generateLabels({p: p, pedidoId: pedidoId});
+
+  if (labels && labels.image && labels.pdf) {
+    const updatePedido = await prisma.pedido.update({
+      where: {
+        id: pedidoId,
+      },
+      data: {
+        labelImageUrl: labels.image,
+        labelPdfUrl: labels.pdf
+      }
+    });
   }
 
   const response = {pedidoId: pedidoId, cobroAddId: cobroAddId, destinoSaveId: destinoSaveId, paqueteSaveId: paqueteSaveId}

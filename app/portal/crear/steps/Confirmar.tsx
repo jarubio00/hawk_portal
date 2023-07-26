@@ -147,12 +147,12 @@ const handleNext = async () => {
         <div className="my-0">
           {!isLoading && !error &&  <MetodoPagoCard />}
         </div>
-        <div className="mt-10">
+       {/*  <div className="mt-10">
           <span className="text-md font-bold">Pedido data:</span>
           <pre className="text-xs">
               {JSON.stringify(pedido,null,2)}
           </pre>
-        </div>
+        </div> */}
         <div className=" my-4 ml-4 flex flex-row gap-6">
           <Button outline label="Anterior" onClick={handleBack} disabled={isLoading} />
           <Button label="Terminar" onClick={handleNext}  disabled={isLoading} />

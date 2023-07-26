@@ -351,8 +351,8 @@
                     if(event.target.checked) {
                       setMisDatosChecked(true);
                       //setContacto({nombre: "Javier Rubio", tel: "8115995194"});
-                      setCustomValue('contactoNombre','Javier Rubio');
-                      setCustomValue('contactoTel','8115995194');
+                      setCustomValue('contactoNombre',currentUser?.nombre);
+                      setCustomValue('contactoTel',currentUser?.celular);
               
                     } else {
                       setMisDatosChecked(false);

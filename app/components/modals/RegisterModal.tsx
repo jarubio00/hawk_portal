@@ -32,16 +32,27 @@ const RegisterModal= () => {
   const { 
     register, 
     handleSubmit,
+    setValue,
+      watch,
     formState: {
       errors,
     },
   } = useForm<FieldValues>({
     defaultValues: {
-      name: '',
+      nombre: '',
       email: '',
-      password: ''
+      password: '',
+      celular: ''
     },
   });
+
+  const setCustomValue = (id: string, value: any) => {
+    setValue(id, value, {
+      shouldDirty: true,
+      shouldTouch: true,
+      shouldValidate: true
+    })
+  }
 
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
     setIsLoading(true);
@@ -76,7 +87,7 @@ const RegisterModal= () => {
       if (callback?.ok) {
         toast.success('Logged in');
         router.refresh();
-        router.push('/portal/mispedidos')
+        router.push('/portal/adm/mispedidos')
         loginModal.onClose();
       }
       
@@ -105,6 +116,9 @@ const RegisterModal= () => {
         register={register}
         errors={errors}
         required
+        onChange={(event: any) => {
+          setCustomValue('email', event.target.value);
+        }}
       />
       <Input
         id="nombre"
@@ -113,6 +127,9 @@ const RegisterModal= () => {
         register={register}
         errors={errors}
         required
+        onChange={(event: any) => {
+          setCustomValue('nombre', event.target.value);
+        }}
       />
       <Input
         id="password"
@@ -122,6 +139,21 @@ const RegisterModal= () => {
         register={register}
         errors={errors}
         required
+        onChange={(event: any) => {
+          setCustomValue('password', event.target.value);
+        }}
+      />
+       <Input
+        id="celular"
+        label="Celular"
+        type='number'
+        disabled={isLoading}
+        register={register}  
+        errors={errors}
+        required
+        onChange={(event: any) => {
+          setCustomValue('celular', event.target.value);
+        }}
       />
     </div>
   )
@@ -129,20 +161,7 @@ const RegisterModal= () => {
   const footerContent = (
     <div className="flex flex-col gap-4 mt-3">
       <hr />
-      <Button 
-        outline 
-        label="Continuar con Google"
-        icon={FcGoogle}
-        //onClick={() => signIn('google')} 
-        onClick={() => {}} 
-      />
-      <Button 
-        outline 
-        label="Continue con Facebook"
-        icon={AiFillGithub}
-        //onClick={() => signIn('github')}
-        onClick={() => {}}
-      />
+
       <div 
         className="
           text-neutral-500 

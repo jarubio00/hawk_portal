@@ -59,4 +59,7 @@ export type SafePedido = Omit<
   estatus: any;
   municipio: any;
   recoleccion: SafeRecoleccion;
+  tipoPaquete: any;
+  formaPago: any;
+  estatusPedido: any;
 };

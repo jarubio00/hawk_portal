@@ -58,9 +58,9 @@ const EnviosCards = forwardRef<Ref, EnviosCardsProps>((props, ref)  => {
                 
                   <Badge variant='outline' className="text-xs font-bold rounded-md px-1">
                     <div className='flex flex-row items-center'>
-                      <HiCheckCircle size={14} className={`text-neutral-300`} />
-                      <HiCheckCircle size={14} className={`text-neutral-300`} />
-                      <p className="ml-1">Efectivo</p>
+                      <HiCheckCircle size={14} className={`${data.formaPagoId == 2 || data.estatusPagoId == 2 || data.estatusPagoId == 3 ? 'text-green-500':'text-neutral-300'}`} />
+                      <HiCheckCircle size={14} className={`${data.estatusPagoId == 3 ? 'text-green-500':'text-neutral-300'}`} />
+                      <p className="ml-1">{data.formaPago.tipo}</p>
                     </div>
                   </Badge>
               </div>
@@ -69,7 +69,7 @@ const EnviosCards = forwardRef<Ref, EnviosCardsProps>((props, ref)  => {
             <div className='flex flex-col gap-1 justify-end items-end '>
               <div className='flex flex-row gap-1 items-center'>
                   <MdViewInAr size={20} className="text-rose-500" />
-                  <p className="text-xs font-bold text-black">MINI</p>
+                  <p className="text-xs font-bold text-black uppercase">{data.tipoPaquete.tipo}</p>
               </div>
               
             </div>

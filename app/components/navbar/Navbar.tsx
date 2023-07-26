@@ -23,7 +23,7 @@ const Navbar: React.FC<NavbarProps> = ({
   const drawer = useMainDrawer();
   const router = useRouter();
   return (
-    <div className="fixed w-full bg-white z-50 shadow-sm">
+    <div className="fixed w-full bg-white z-[9998] shadow-sm">
     <div
       className="
         pt-0

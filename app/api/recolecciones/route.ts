@@ -1,11 +1,19 @@
+import { NextResponse } from "next/server";
 import prisma from "@/app/libs/prismadb";
 import { Prisma } from "@prisma/client";
-
+import getCurrentUser from "@/app/actions/getCurrentUser";
 
 
 export async function GET(req: Request){
  try {
   // get page and lastCursor from query
+  const currentUser = await getCurrentUser();
+
+  if (!currentUser) {
+    return NextResponse.error();
+  }
+
+ 
   const url = new URL(req.url);
 
   const take = url.searchParams.get("take");
@@ -16,7 +24,7 @@ export async function GET(req: Request){
 
   let result = await prisma.recoleccion.findMany({
     where: {
-        clienteId: 1,
+        clienteId: currentUser.id,
         estatusRecoleccionId: 3
     },
     include: {
@@ -69,7 +77,7 @@ export async function GET(req: Request){
   const nextPage = await prisma.recoleccion.findMany({
     // Same as before, limit the number of events returned by this query.
     where: {
-        clienteId: 1,
+        clienteId: currentUser.id,
         estatusRecoleccionId: 3
     },
     include: {

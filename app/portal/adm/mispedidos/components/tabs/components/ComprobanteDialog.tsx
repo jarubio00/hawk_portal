@@ -29,23 +29,21 @@ const ComprobanteDialog: React.FC<ComprobanteDialogProps> = ({
  return (
     <AlertDialog open={open} onOpenChange={setOpen}>
         <div onClick={() => setOpen(true)}>
-            <p className="text-xs text-blue-500 px-1 my-2 ring-0 ring-offset-0 focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus:shadow-none">Ver comprobante</p>
+            <p className="text-xs text-blue-500 px-1 my-2 ring-0 ring-offset-0 focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus:shadow-none cursor-pointer">Ver comprobante</p>
         </div>
-        <AlertDialogContent className="focus:outline-none ring-0 ring-offset-0 focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus:shadow-none focus-visible:shadow-none">
+        <AlertDialogContent className="max-h-[90vh] focus:outline-none ring-0 ring-offset-0 focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus:shadow-none focus-visible:shadow-none">
             <AlertDialogHeader>
                 <AlertDialogTitle>Comprobante de pago de envío {pedidoId}</AlertDialogTitle>
             </AlertDialogHeader>
-            <div className="ring-0 ring-offset-0 focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus:shadow-none">
+            <div className="h-[60vh] relative">
                 {url && 
                 <>
                     {url.toLowerCase().includes('.pdf') ? 
                     <PdfImageView url={url}/>
                     :
                     <Image src={url} 
-                        width={0}
-                        height={0}
-                        sizes="100vw"
-                        style={{ width: '100%', height: 'auto' }}
+                        fill
+                        style={{ objectFit: 'contain'}}
                         alt='Comprobante'
                         />}
                    </> 

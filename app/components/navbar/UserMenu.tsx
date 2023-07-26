@@ -93,12 +93,13 @@ const UserMenu: React.FC<UserMenuProps> = ({
             rounded-xl 
             shadow-md
             w-[40vw]
-            md:w-3/4 
+            md:w-full 
             bg-white 
             overflow-hidden 
             right-0 
             top-12 
             text-sm
+            z-[9999]
           "
         >
           <div className="flex flex-col cursor-pointer">
@@ -108,7 +109,7 @@ const UserMenu: React.FC<UserMenuProps> = ({
                   label="Mi Panel" 
                   onClick={() => router.push('/portal/adm/mispedidos')}
                 />
-                <MenuItem 
+                {/* <MenuItem 
                   label="Mi Perfil" 
                   onClick={() => router.push('/favorites')}
                 />
@@ -119,7 +120,7 @@ const UserMenu: React.FC<UserMenuProps> = ({
                 <MenuItem 
                   label="Ayuda" 
                   onClick={() => router.push('/properties')}
-                />
+                /> */}
                
                 <hr />
                 <MenuItem 

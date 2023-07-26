@@ -34,11 +34,11 @@ const SideBar = forwardRef<Ref, SidebarProps>((showNav, ref) => {
     <div ref={ref} className="w-full h-full bg-white shadow-sm">
         <div className="flex flex-col h-[92vh] pt-8 justify-between">    
             <div className='grow my-0'>
-              <div className="flex mx-auto px-2 w-full justify-center items-end mb-6 rounded-lg">
+              <div className="flex px-2 w-full justify-center items-end mb-6 rounded-lg">
                 <Link href={`/portal/crear`}>
                     <Button 
                       label="Programar envío"
-                      onClick={() => {}}
+                      onClick={() => drawer.onClose()}
                       icon={FaPlus}
                       small
                       />
@@ -69,11 +69,10 @@ const SideBar = forwardRef<Ref, SidebarProps>((showNav, ref) => {
                                                             p-1 
                                                             mr-1
                                                             ${pathname == `${item.route}`
-                                                                    ? "bg-rose-500 "
-                                                                    : "text-neutral-600 hover:bg-gray-200 hover:text-gray-600"
+                                                                    ? "bg-rose-500 text-white"
+                                                                    : "text-neutral-600 "
                                                                 }
                                                             rounded-full 
-                                                            text-white
                                                         `}
                                                         >
                                                         <item.icon size={20} />

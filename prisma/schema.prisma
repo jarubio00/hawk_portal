@@ -12,6 +12,8 @@ model User {
   nombre             String?
   email              String?       @unique
   correoVerificado   DateTime?
+  celular            String?
+  whatsappEnabled     Boolean?    @default(false)
   imagen             String?
   hashedPassword     String?
   nivel              Int           @default(1)
@@ -20,7 +22,7 @@ model User {
   tipo               Int           @default(0)
   credito            Boolean       @default(false)
   limiteCredito      Float         @default(0)
-  cobros             Boolean       @default(false)
+  cobrosPermitidos             Boolean       @default(false)
   direccionDefaultId Int?
   loggedIn           Boolean       @default(false)
   createdAt          DateTime      @default(now())
@@ -32,6 +34,7 @@ model User {
   paquetes           Paquete[]
   pedidos            Pedido[]
   recolecciones      Recoleccion[]
+  cobros             CobrosDestino[]
 
   @@map("Clientes")
 }
@@ -126,6 +129,8 @@ model Pedido {
   printMCorte           Int?
   comprobante           Boolean             @default(false)
   comprobanteUrl        String?
+  labelImageUrl         String?
+  labelPdfUrl           String?
   createdAt             DateTime            @default(now()) @db.DateTime(0)
   updatedAt             DateTime?           @default(now()) @db.DateTime(0)
   updatedBy             Int?                @default(1)
@@ -133,12 +138,41 @@ model Pedido {
   estatusPago           CatalogoEstatusPago @relation(fields: [estatusPagoId], references: [id], onDelete: Cascade)
   formaPago             CatalogoMetodosPago @relation(fields: [formaPagoId], references: [id], onDelete: Cascade)
   recoleccion           Recoleccion         @relation(fields: [recoleccionId], references: [id], onDelete: Cascade)
+  municipio             CatalogoMunicipios @relation(fields: [entregaMunicipioId], references: [id], onDelete: Cascade)
+  tipoPaquete           CatalogoTiposPaquetes @relation(fields: [paqTipoId], references: [id], onDelete: Cascade)
+  estatusPedido         CatalogoEstatusPedidos @relation(fields: [estatusPedidoId], references: [id], onDelete: Cascade)
+  operaciones Operaciones[]
+
 
   @@index([clienteId], map: "Pedidos_clienteId_fkey")
   @@index([estatusPagoId], map: "Pedidos_estatusPagoId_fkey")
   @@index([formaPagoId], map: "Pedidos_formaPagoId_fkey")
   @@index([recoleccionId], map: "Pedidos_recoleccionId_fkey")
   @@map("Pedidos")
+}
+
+model Operaciones {
+  id              Int                @id @default(autoincrement())
+  pedidoId        Int              @unique
+  punteoRecoleccion Boolean?
+  punteoRecoleccionAt DateTime?
+  punteoRecoleccionBy Int?
+   recolectadoAt DateTime?
+  recolectado Boolean?
+  recolectadoBy Int?
+  recolectadoFrom String?
+  reciboAt DateTime?
+  recibo Boolean?
+  reciboBy Int?
+  punteoEntregaAt DateTime?
+  punteoEntrega Boolean?
+  punteoEntregaBy Int?
+  entregadoAt DateTime?
+  entregado Boolean?
+  entregadoBy Int?
+  entregadoFrom String?
+  pedido Pedido @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+
 }
 
 model Direccion {
@@ -233,8 +267,13 @@ model CobrosDestino {
   retornoFormaId     Int       @default(1)
   retornoAt          DateTime?
   retornoBy          Int?
+  retornoComprobanteUrl String? 
   createdAt          DateTime  @default(now()) @db.DateTime(0)
   createdBy          Int?
+  cliente           User  @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  estatusCobro      CatalogoEstatusCobros  @relation(fields: [estatusCobroId], references: [id], onDelete: Cascade)
+  estatusPagoCobro  CatalogoEstatusPagoCobros @relation(fields: [estatusPagoCobroId], references: [id], onDelete: Cascade)
+  retornoForma      CatalogoTiposRetornoCobros @relation(fields: [retornoFormaId], references: [id], onDelete: Cascade)
 }
 
 model CatalogoMetodosPago {
@@ -281,6 +320,7 @@ model CatalogoEstatusPedidos {
   id      Int     @id @default(autoincrement())
   estatus String
   desc    String?
+  pedidos Pedido[]
 }
 
 model CatalogoTiposPaquetes {
@@ -289,6 +329,7 @@ model CatalogoTiposPaquetes {
   desc     String?
   producto CatalogoProductos[]
   paquetes Paquete[]
+  pedidos Pedido[]
 }
 
 model CatalogoEmpaquesPaquetes {
@@ -301,18 +342,21 @@ model CatalogoEstatusCobros {
   id      Int     @id @default(autoincrement())
   estatus String
   desc    String?
+  cobros  CobrosDestino[]
 }
 
 model CatalogoEstatusPagoCobros {
   id      Int     @id @default(autoincrement())
   estatus String
   desc    String?
+  cobros  CobrosDestino[]
 }
 
 model CatalogoTiposRetornoCobros {
   id   Int     @id @default(autoincrement())
   tipo String
   desc String?
+  cobros  CobrosDestino[]
 }
 
 model CatalogoCodigosPostales {
@@ -353,6 +397,7 @@ model CatalogoMunicipios {
   destino       Destino[]
   direccion     Direccion[]
   recolecciones Recoleccion[]
+  pedidos   Pedido[]
 }
 
 model CatalogoProductos {
@@ -387,6 +432,7 @@ model FechasBloqueadas {
   bloque TipoBloques
   tipo   TipoFecha
 }
+
 
 enum TipoBloques {
   AM

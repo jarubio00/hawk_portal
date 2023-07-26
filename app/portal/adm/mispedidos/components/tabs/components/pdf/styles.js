@@ -11,13 +11,57 @@ export const styles = StyleSheet.create({
         flexDirection: 'column',
         width: 200
     },
+    logo: {
+        width: 70,
+        marginBottom: 0
+      },
     container: {
         flexWrap: 'wrap',
-        marginLeft: 40,
+    },
+    rowContainer:{
+        flexDirection: 'row',
+        padding: 0, 
+        justifyContent: 'space-between',
+        width: '100%'
+    },
+    columnContainer:{
+        flexDirection: 'column',
+        padding: 0, 
+        justifyContent: 'flex-start',
+        width: '100%'
+    },
+    simpleRow:{
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        paddingLeft: 0,
+        paddingTop: 0, 
+    },
+    addrText: {
         paddingLeft: 2,
-        marginTop: 24,
-        marginRight: 5,
-        borderLeftWidth: 3,
-        borderColor: '#A6A6A6',
+        fontSize: 8,
+        lineHeight: 1.1,
+        fontWeight: 600,
+    },
+    addrTextRef: {
+        paddingLeft: 2,
+        fontSize: 7,
+        lineHeight: 1.1,
+        fontWeight: 400,
+    },
+    guiaHeader: {
+        flexDirection: 'column',
+        paddingRight: 0, 
+        justifyContent: 'flex-start',
+        alignItems: 'flex-end',
+        width: '100%'
+    }, 
+    guiaNumber: {
+        fontSize: 10,
+        paddingHorizontal: 2,
+        paddingTop: 4,
+        backgroundColor: '#000000',
+        color: '#FFFFFF',
+        justifyContent: 'center',
     }
+
 })

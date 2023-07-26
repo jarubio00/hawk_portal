@@ -23,6 +23,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/portal/crear/components/Datepicker.js", "app/portal/adm/mispedidos/components/tabs/components/PdfConverterClient.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/portal/crear/components/Datepicker.js", "app/portal/adm/mispedidos/components/tabs/components/PdfConverterClient.js", "app/portal/adm/mispedidos/components/tabs/components/GuiaPrint.js"],
   "exclude": ["node_modules"]
 }

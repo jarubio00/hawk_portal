@@ -46,7 +46,7 @@ export async function GET(req: Request){
   let result = await prisma.pedido.findMany({
     where: {
         clienteId: currentUser.id,
-        OR : filtros
+        //OR : filtros
     },
     include: {
       recoleccion : {
@@ -91,7 +91,7 @@ export async function GET(req: Request){
     // Same as before, limit the number of events returned by this query.
     where: {
       clienteId: currentUser.id,
-      OR : filtros
+      //OR : filtros
     },
     include: {
         recoleccion : {

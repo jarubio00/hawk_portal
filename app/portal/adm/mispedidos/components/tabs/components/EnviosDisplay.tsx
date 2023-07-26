@@ -32,6 +32,7 @@ import {
     TabsList,
     TabsTrigger,
   } from "@/components/ui/tabs"
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 type UserQueryParams = {
     take?: number;
@@ -94,8 +95,10 @@ const {
     },
   });
 
-
-
+   /*  useEffect(() => {
+      console.log(data?.pages[0].metaData.isEmpty);
+     }, [data]); */
+    
   /* useEffect(() => {
  
         if (inView && hasNextPage) {
@@ -143,11 +146,11 @@ const {
          
 
      
-         {isSuccess &&
+         {isSuccess && 
             data?.pages.map((page) =>
               page.data.map((pedido: SafePedido, index: number) => {
                 //console.log(rec);
-                if (page.data.length === index + 1) {
+               if (page.data.length === index + 1) {
                   return (
                     <div ref={ref} key={pedido.id} onClick={() => handlePedidoClick(pedido)}>
                         <EnviosCard
@@ -165,11 +168,14 @@ const {
                   );
                 }
               })
-            )}
+            ) 
+             
+            }
           {(isLoading ) && <p className="m-3"><LoaderSingle /></p>}
           {(isFetchingNextPage) && <p className="mb-2 mt-1 mx-3"><LoaderSingle /></p>}
+          <ScrollArea>
+          <SheetContent side='bottom' className="h-[85vh] p-0 m-0 md:p-4 overflow-y-scroll">
           
-          <SheetContent side='bottom' className="h-[85vh] p-0 m-0 md:p-4">
             <div className="flex flex-col py-2">
               {pedidoSelected && <EnvioView data={pedidoSelected} />}
             </div>
@@ -178,7 +184,9 @@ const {
                     Cerrar
                 </SheetClose>
             </SheetFooter>
+            
         </SheetContent>
+        </ScrollArea>
      </Sheet>
       
   </div>

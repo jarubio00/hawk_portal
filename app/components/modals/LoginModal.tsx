@@ -119,24 +119,14 @@ const LoginModal = () => {
           setCustomValue('password', event.target.value);
         }}
       />
+      
     </div>
   )
 
   const footerContent = (
     <div className="flex flex-col gap-4 mt-3">
       <hr />
-      <Button 
-        outline 
-        label="Continuar con Google"
-        icon={FcGoogle}
-        onClick={() => loader.onOpen()}
-      />
-      <Button 
-        outline 
-        label="Continuar con Facebook"
-        icon={BsFacebook}
-        onClick={() => loader.onClose()}
-      />
+     
       <div className="
       text-neutral-500 text-center mt-4 font-light">
         <p>No tienes cuenta aún?
@@ -158,7 +148,7 @@ const LoginModal = () => {
       disabled={isLoading}
       isOpen={loginModal.isOpen}
       title="Entrar"
-      actionLabel="Continuar"
+      actionLabel="Entrar"
       onClose={loginModal.onClose}
       onSubmit={handleSubmit(onSubmit)}
       body={bodyContent}

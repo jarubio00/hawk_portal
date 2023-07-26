@@ -6,7 +6,9 @@ import { IPedido } from "@/app/types/pedido";
 import { Pedido } from "@prisma/client";
 import PedidoProvider, { PedidoContext } from "@/app/portal/crear/context/PedidoContext";
 import {format, subHours} from "date-fns"
-import { createZpl } from "@/app/components/utils/zplUtils";
+import { createPdfZpl, createZpl } from "@/app/components/utils/zplUtils";
+import { ApiResponse } from "@/app/types";
+import { generateLabels } from "@/app/actions/utils";
 
 export async function POST(
   request: Request, 
@@ -29,10 +31,12 @@ export async function POST(
   let destinoSaveId = 0;
   let cobroAddId = 0;
   let paqueteSaveId = 0;
+  let labelResult = '';
+  let labelPdfResult = '';
 
   if (p) {
     const pedidoCrear = {
-      clienteId: 1,
+      clienteId: currentUser.id,
       fechaEntrega: p.programa.fechaEntrega,
       bloqueEntrega: parseInt(p.programa?.bloqueEntrega),
       entregaContactoNombre: p.destino?.contactoNombre,
@@ -63,7 +67,7 @@ export async function POST(
     //console.log(p.programa.fechaRecoleccion);
      recoleccion = await prisma.recoleccion.create({
       data: {
-          clienteId: 1,
+          clienteId: currentUser.id,
           fecha: p.programa?.fechaRecoleccion,
           bloque: parseInt(p.programa?.bloqueRecoleccion),
           contactoNombre: p.recoleccion?.contactoNombre,
@@ -101,7 +105,7 @@ export async function POST(
     if (p.cobro) {
       const cobroAdd = await prisma.cobrosDestino.create({
         data: {
-          clienteId: 1,
+          clienteId: currentUser.id,
           pedidoId: pedidoId,
           cantidad: parseFloat(p.cobroCantidad)
         }
@@ -116,7 +120,7 @@ export async function POST(
     const destinoSave = await prisma.destino.create({
       //@ts-ignore
       data: {
-          clienteId: 1, 
+          clienteId: currentUser.id, 
           contactoNombre: p.destino?.contactoNombre, 
           contactoTel: p.destino?.contactoTel, 
           cpId: parseInt(p.destino?.cpId), 
@@ -138,7 +142,7 @@ export async function POST(
       const paqueteSave = await prisma.paquete.create({
         //@ts-ignore
         data: {
-          clienteId: 1, 
+          clienteId: currentUser.id,
           paqAncho: parseFloat(p.paquete?.paqAncho),
           paqAlto: parseFloat(p.paquete?.paqAlto),
           paqLargo: parseFloat(p.paquete?.paqLargo),
@@ -151,19 +155,34 @@ export async function POST(
       });
       paqueteSaveId = paqueteSave ? paqueteSave.id : paqueteSaveId;
     }
-    
-    const zpl = createZpl(p);
-    
+
   }
 
-  const response = {recoleccionId: recoleccion?.id, pedidoId: pedidoId, cobroAddId: cobroAddId, destinoSaveId: destinoSaveId, paqueteSaveId: paqueteSaveId}
+  const labels = await generateLabels({p: p, pedidoId: pedidoId});
+
+  if (labels && labels.image && labels.pdf) {
+    const updatePedido = await prisma.pedido.update({
+      where: {
+        id: pedidoId,
+      },
+      data: {
+        labelImageUrl: labels.image,
+        labelPdfUrl: labels.pdf
+      }
+    });
+  }
+  //labelUrl:labels.image, 
+    //labelPdfUrl: labels.pdf
+
+  const response = {
+    recoleccionId: recoleccion?.id, 
+    pedidoId: pedidoId, 
+    cobroAddId: cobroAddId, 
+    destinoSaveId: destinoSaveId, 
+    paqueteSaveId: paqueteSaveId, 
+  }
 
   console.log(response);
- 
-
-  
- //console.log('Agregado! ->', recoleccion);
-
 
   return NextResponse.json(response);
 }

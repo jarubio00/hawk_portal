@@ -6,11 +6,12 @@ import { Document, Page, pdfjs } from "react-pdf";
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 import "./PdfConverter.css"
+import ReactToPrint from 'react-to-print';
 
 
 export default function Converter({url}) {
   const [isLoading,setIsLoading] = useState(true);
-
+  const componentRef = useRef();
 
   function onDocumentLoadSuccess({ numPages }) {
     console.log("object: pdf");
@@ -21,7 +22,11 @@ export default function Converter({url}) {
     return (
       <div>
          {isLoading && <LoaderSingle />}
-        <div className="Example__container__document">
+         <ReactToPrint
+            trigger={() => <button>Print this out!</button>}
+            content={() => componentRef.current}
+          />
+        <div ref={componentRef} className="Example__container__document">
           <Document
             options={{ workerSrc: "/pdf.worker.js" }}
             file={{url: url}}

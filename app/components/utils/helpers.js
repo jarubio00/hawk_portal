@@ -21,6 +21,15 @@ export function namedDateString(dateString) {
 return result;
 }
 
+export function namedDateStringFull(dateString) {
+    const date = new Date(dateString);
+    let result = 'No hay fecha'
+    if (isDate(date)) {
+        result = format(date, `EEEE, d 'de' MMMM 'de' yyyy  HH:mm:ss`, {locale: esLocale});
+    }
+return result;
+}
+
 export function dateString(dateString) {
     const date = new Date(dateString);
     let result = 'No hay fecha'
@@ -52,17 +61,17 @@ export function statusIdToString(status, size) {
                 <MdAccessTimeFilled size={small ? 14 : 20} className="text-blue-500"/>
                 <p className={`font-semibold text-foreground ${small ? 'text-xs' : 'text-sm'}`}>Programado</p>
             </div>
-        case 2:
+        case 8:
             return <div className='flex flex-row gap-1 items-center'>
                 <IoIosWarning size={small ? 14 : 20} className="text-amber-700"/>
                 <p className={`font-semibold text-foreground ${small ? 'text-xs' : 'text-sm'}`}>Incidencia</p>
             </div>
-        case 3:
+        case 4:
             return <div className='flex flex-row gap-1 items-center'>
                 <HiCheckCircle size={small ? 14 : 20} className="text-green-500"/>
                 <p className={`font-semibold text-foreground ${small ? 'text-xs' : 'text-sm'}`}>Entregado</p>
             </div>
-        case 4:
+        case 5:
             return <div className='flex flex-row gap-1 items-center'>
                 <MdCancel size={small ? 14 : 20} className="text-red-500"/>
                 <p className={`font-semibold text-foreground ${small ? 'text-xs' : 'text-sm'}`}>Cancelado</p>

@@ -78,7 +78,7 @@ const Modal: React.FC<ModalProps> = ({
           overflow-y-auto 
           fixed 
           inset-0 
-          z-40 
+          z-[9999] 
           outline-none 
           focus:outline-none
           bg-neutral-800/70
@@ -151,11 +151,11 @@ const Modal: React.FC<ModalProps> = ({
                 </div>
               </div>
               {/*body*/}
-              <div className="relative p-6 flex-auto">
+              <div className="relative pt-6 px-6 pb-2 ">
                 {body}
               </div>
               {/*footer*/}
-              <div className="flex flex-col gap-2 p-6">
+              <div className="flex flex-col gap-2 px-6 pt-2 pb-2">
                 <div 
                   className="
                     flex 
@@ -174,8 +174,9 @@ const Modal: React.FC<ModalProps> = ({
                     />  
                   )}
                   <Button 
+                    full
                     disabled={disabled} 
-                    label={actionLabel} 
+                    label={actionLabel}
                     onClick={handleSubmit}
                   />
                 </div>

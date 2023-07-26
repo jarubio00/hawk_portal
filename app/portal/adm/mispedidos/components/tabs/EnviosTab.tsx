@@ -42,28 +42,12 @@ const EnviosTab: React.FC<EnviosTabProps> = ({
           Activos
         </Badge>
         <Badge 
-          variant={filter == '2' ? 'default' : 'secondary'} 
-          className="cursor-pointer  gap-1"
-          onClick={() => changeFilter('3')}
-          >
-          <HiCheckCircle />
-          Completados
-        </Badge>
-        <Badge 
-          variant={filter == '3' ? 'default' : 'secondary'} 
-          className="cursor-pointer  gap-1"
-          onClick={() => changeFilter('4')}
-          >
-          <MdCancel />
-          Cancelados
-        </Badge>
-        <Badge 
           variant={filter == '4' ? 'default' : 'secondary'} 
           className="cursor-pointer  gap-1"
           onClick={() => changeFilter('4')}
           >
-          <MdCancel />
-          Otras
+          <HiCheckCircle />
+          Completados
         </Badge>
         <Badge 
           variant={filter == '5' ? 'default' : 'secondary'} 
@@ -71,7 +55,15 @@ const EnviosTab: React.FC<EnviosTabProps> = ({
           onClick={() => changeFilter('5')}
           >
           <MdCancel />
-          mas
+          Cancelados
+        </Badge>
+        <Badge 
+          variant={filter == '7' ? 'default' : 'secondary'} 
+          className="cursor-pointer  gap-1"
+          onClick={() => changeFilter('7')}
+          >
+          <MdCancel />
+          Incidencias
         </Badge>
         
       </div>

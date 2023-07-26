@@ -10,10 +10,16 @@ import {
 import RecoleccionesTab from "./tabs/RecoleccionesTab";
 import EnviosTab from "./tabs/EnviosTab";
 import HistorialTab from "./tabs/HistorialTab";
-import { FaHome, FaHistory, FaTicketAlt } from 'react-icons/fa';
+import { FaHome, FaHistory, FaTicketAlt, } from 'react-icons/fa';
+import { FaCircleDollarToSlot } from 'react-icons/fa6';
+
+
+
+import {RiMoneyDollarBoxFill} from 'react-icons/ri';
 import {
   BsFillBoxSeamFill
   } from 'react-icons/bs'
+import CobrosTab from "./tabs/CobrosTab";
 
 
 interface TabSectionProps {
@@ -39,10 +45,10 @@ const TabSection: React.FC<TabSectionProps> = ({
                 Envíos
               </div>
             </Tab>
-            <Tab  value={'recolecciones'} className="w-36 text-sm font-semibold py-1 pb-2">
+            <Tab  value={'cobros'} className="w-36 text-sm font-semibold py-1 pb-2">
               <div className="flex items-center gap-2">
-                {React.createElement(FaHome, { className: "w-4 h-4" })}
-                Recolecciones
+                {React.createElement(FaCircleDollarToSlot, { className: "w-4 h-4" })}
+                Cobros
               </div>
             </Tab>
             <Tab  value={'tickets'} className="w-36 text-sm font-semibold py-1 pb-2">
@@ -57,8 +63,8 @@ const TabSection: React.FC<TabSectionProps> = ({
             <TabPanel value={"envios"} className="m-0 p-0">
               <EnviosTab />
             </TabPanel>
-            <TabPanel value="recolecciones" className="m-0 p-0">
-              <RecoleccionesTab />
+            <TabPanel value="cobros" className="m-0 p-0">
+              <CobrosTab />
             </TabPanel>
             <TabPanel value={"tickets"} className="m-0 p-0">
               <HistorialTab />
