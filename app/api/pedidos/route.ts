@@ -72,6 +72,9 @@ export async function GET(req: Request){
   }
   );
 
+  console.log('first query...');
+  console.log(result);
+
 
   if (result.length == 0) {
     return new Response(JSON.stringify({
@@ -114,12 +117,18 @@ export async function GET(req: Request){
       }
       });
 
+      console.log('first query...');
+      console.log(nextPage);
+
   const data = {
     data: result, metaData: {
     lastCursor: cursor,
     hasNextPage: nextPage.length > 0,
       }
     };
+
+    console.log('data...')
+    console.log(data);
 
   return new Response(JSON.stringify(data), { status: 200 });
    } catch (error: any) {
