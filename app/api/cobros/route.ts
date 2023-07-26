@@ -19,21 +19,6 @@ export async function GET(req: Request){
     where: {
         clienteId: 2,
         //OR : filtros
-    },
-    include: {
-      recoleccion : {
-        include: {
-          municipio: true
-        }
-      },
-      municipio : true,
-      formaPago: true,
-      tipoPaquete: true,
-      estatusPedido: true
-    },
-    take: 10,
-    orderBy: {
-        createdAt: Prisma.SortOrder.desc 
     }
   }
   );
