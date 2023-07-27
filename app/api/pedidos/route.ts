@@ -8,11 +8,11 @@ export async function GET(req: Request){
  try {
   // get page and lastCursor from query
 
-  const currentUser = await getCurrentUser();
+  /* const currentUser = await getCurrentUser();
 
   if (!currentUser) {
     return NextResponse.error();
-  }
+  } */
   
 
 
@@ -45,7 +45,7 @@ export async function GET(req: Request){
 
   let result = await prisma.pedido.findMany({
     where: {
-        clienteId: currentUser.id,
+        clienteId: 2,
         OR : filtros
     },
     include: {
