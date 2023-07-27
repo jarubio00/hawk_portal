@@ -10,13 +10,16 @@ import Activas from "./components/Activas";
 import Completadas from "./components/Completadas";
 import Canceladas from "./components/Canceladas";
 import EnviosDisplay from "./components/EnviosDisplay";
+import { SafePedido } from "@/app/types";
 
 interface EnviosTabProps {
 data?: any;
+onView: (open: boolean, p: SafePedido) => void;
 }
 
 const EnviosTab: React.FC<EnviosTabProps> = ({
-  data
+  data,
+  onView
 }) => {
   const [filter, setFilter] = useState('1');
   const [completadasOrder, setCompletadasOrder] = useState('desc');
@@ -67,7 +70,7 @@ const EnviosTab: React.FC<EnviosTabProps> = ({
         </Badge>
         
       </div>
-      <EnviosDisplay filter={filter}/>
+      <EnviosDisplay filter={filter} onView={onView}/>
     </div>
    );
 }

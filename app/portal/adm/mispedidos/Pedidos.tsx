@@ -13,7 +13,12 @@ import { useContext, useEffect, useState } from "react";
 
 import DashSection from './components/DashSection';
 import TabSection from './components/TabSection';
-
+import Drawer from 'react-modern-drawer'
+import 'react-modern-drawer/dist/index.css'
+import { SafePedido } from '@/app/types';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import EnvioView from './components/tabs/components/EnvioView';
+import {GrClose} from 'react-icons/gr';
 
 const PedidosClient  = (props:any) => {
   const router = useRouter();
@@ -23,8 +28,8 @@ const PedidosClient  = (props:any) => {
   const [isLoading,setIsLoading] = useState(false);
   const [adding, setAdding] = useState(false);
   const [subtitle, setSubtitle] = useState('Consulta tus envios realizados')
-
-
+  const [drawerPedido, setDrawerPedido] = useState<SafePedido>()
+  const [sheetOpen, setSheetOpen] = useState(false);
   //saveRecolecciones(props.data.recolecciones);
  
   //savePedidos(props.data.pedidos);
@@ -53,11 +58,35 @@ const PedidosClient  = (props:any) => {
 
   }
 
+  const handleDrawerPedido = (open: boolean, p: SafePedido) => {
+    setDrawerPedido(p);
+    setSheetOpen(true);
+  }
+
  
   return (
     <ClientOnly>
-     
-        <div className='flex flex-col gap-4'>
+        <Drawer
+            open={sheetOpen}
+            onClose={() => setSheetOpen(false)}
+            direction='bottom'
+            style={{height: '90%', width: '100%', overflowY: 'scroll'}}
+            lockBackgroundScroll
+
+            >
+              <div className='flex w-full '>
+                  <div className='flex flex-col w-full relative'>
+                    <div className='absolute top-5 left-4 ' onClick={() => setSheetOpen(false)}>
+                      <GrClose size={18}/>
+                    </div>
+                    <div className="flex flex-col w-full">
+                
+                      {drawerPedido && <EnvioView data={drawerPedido} />}
+                    </div>
+                  </div>
+              </div>
+        </Drawer>
+        <div className='flex flex-col gap-4 z-40'>
           <PageHeader
             title="Mis envíos"
             subtitle={subtitle}
@@ -71,7 +100,7 @@ const PedidosClient  = (props:any) => {
             noButton
           />
           <DashSection />
-          <TabSection />
+          <TabSection onView={handleDrawerPedido}/>
         </div>
     
           

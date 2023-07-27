@@ -30,17 +30,18 @@ const EnvioView: React.FC<EnvioViewProps> = ({
  data
 }) => {
  return (
- 
-    <div className='flex flex-col items-center mt-2  '>
+    
+    <div className='flex flex-col items-center mt-2 w-full overflow-y-scroll '>
+        
     <div className=" w-full md:w-3/5 md:border md:border-neutral-300 md:rounded-md md:p-4">
-        <div className="flex flex-row items-center justify-between px-2 py-0">
+        <div className="flex flex-row items-center justify-between px-2 py-2">
             <p className="font-semibold text-foreground text-lg ml-10">{data.id}</p>
             <div className="flex ">
                 {statusIdToString(data.estatusPedidoId)}
             </div>
         </div>
         <hr className="my-2 mb-2"></hr>
-        <Tabs defaultValue="info" className="mt-2 p-2">
+        <Tabs defaultValue="info" className="mt-2 p-2 w-full">
             <TabsList className="grid grid-cols-4">
                 <TabsTrigger value="info">Info</TabsTrigger>
                 <TabsTrigger value="rastreo">Rastreo</TabsTrigger>
@@ -66,6 +67,7 @@ const EnvioView: React.FC<EnvioViewProps> = ({
         
         
     </div>
+    
     </div>
  
  );

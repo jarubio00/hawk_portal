@@ -20,18 +20,21 @@ import {
   BsFillBoxSeamFill
   } from 'react-icons/bs'
 import CobrosTab from "./tabs/CobrosTab";
+import { SafePedido } from "@/app/types";
 
 
 interface TabSectionProps {
 data?: any
+onView: (open: boolean, p: SafePedido) => void;
 }
 
 const TabSection: React.FC<TabSectionProps> = ({
- data
+ data,
+ onView
 }) => {
   return ( 
     <div>
-      <Tabs value="envios" className="w-full">
+      <Tabs value="envios" className="w-full z-40">
         <TabsHeader 
           className="rounded-none border-b border-blue-gray-50 bg-transparent p-0 text-xs"
           indicatorProps={{
@@ -61,7 +64,7 @@ const TabSection: React.FC<TabSectionProps> = ({
           <TabsBody className="m-0 p-0">
            
             <TabPanel value={"envios"} className="m-0 p-0">
-              <EnviosTab />
+              <EnviosTab onView={onView}/>
             </TabPanel>
             <TabPanel value="cobros" className="m-0 p-0">
               <CobrosTab />

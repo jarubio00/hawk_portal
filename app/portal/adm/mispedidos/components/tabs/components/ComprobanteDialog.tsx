@@ -31,7 +31,7 @@ const ComprobanteDialog: React.FC<ComprobanteDialogProps> = ({
         <div onClick={() => setOpen(true)}>
             <p className="text-xs text-blue-500 px-1 my-2 ring-0 ring-offset-0 focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus:shadow-none cursor-pointer">Ver comprobante</p>
         </div>
-        <AlertDialogContent className="max-h-[90vh] focus:outline-none ring-0 ring-offset-0 focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus:shadow-none focus-visible:shadow-none">
+        <AlertDialogContent className="z-[9999] max-h-[90vh] focus:outline-none ring-0 ring-offset-0 focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus:shadow-none focus-visible:shadow-none">
             <AlertDialogHeader>
                 <AlertDialogTitle>Comprobante de pago de envío {pedidoId}</AlertDialogTitle>
             </AlertDialogHeader>

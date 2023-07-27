@@ -22,7 +22,6 @@ import {
     SheetTitle,
     SheetTrigger,
     } from "@/components/ui/sheet"
-import Drawer from 'react-modern-drawer'
 
 import LoaderSingle from "@/app/components/LoaderSingle";
 import {BiSort} from 'react-icons/bi';
@@ -55,13 +54,11 @@ type UserQueryParams = {
 interface EnviosDisplayProps {
 filter?: string;
 search?: string;
-onView: (open: boolean, p: SafePedido) => void;
 }
 
 const EnviosDisplay: React.FC<EnviosDisplayProps> = ({
    filter = '1',
-   search,
-   onView
+   search
    
 }) => {
 
@@ -123,10 +120,8 @@ const {
     }
 
     const handlePedidoClick = (pedido: SafePedido) => {
-        //setPedidoSelected(pedido);
-        //setSheetOpen(true);
-          onView(true,pedido);
-       
+        setPedidoSelected(pedido);
+        setSheetOpen(true);
 
     }
 
@@ -147,7 +142,7 @@ const {
         </div>
     </div>
    
-  
+    <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
          
 
      
@@ -178,20 +173,21 @@ const {
             }
           {(isLoading ) && <p className="m-3"><LoaderSingle /></p>}
           {(isFetchingNextPage) && <p className="mb-2 mt-1 mx-3"><LoaderSingle /></p>}
-
-          <Drawer
-            open={sheetOpen}
-            onClose={() => setSheetOpen(false)}
-            direction='bottom'
-            style={{height: '90%', zIndex: 9999}}
+          <ScrollArea>
+          <SheetContent side='bottom' className="h-screen p-0 m-0 md:p-4 overflow-y-scroll">
           
-            >
-              <ScrollArea>
-                <div className="flex flex-col py-2">
-                  {pedidoSelected && <EnvioView data={pedidoSelected} />}
-                </div>
-              </ScrollArea>
-              </Drawer>
+            <div className="flex flex-col py-2">
+              {pedidoSelected && <EnvioView data={pedidoSelected} />}
+            </div>
+            <SheetFooter>
+                <SheetClose asChild>
+                    Cerrar
+                </SheetClose>
+            </SheetFooter>
+            
+        </SheetContent>
+        </ScrollArea>
+     </Sheet>
       
   </div>
  );

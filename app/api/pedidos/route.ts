@@ -1,14 +1,12 @@
 import prisma from "@/app/libs/prismadb";
 import { Prisma } from "@prisma/client";
-import getCurrentUser from "@/app/actions/getCurrentUser";
+//import getCurrentUser from "@/app/actions/getCurrentUser";
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 
 
-export async function getSession() {
-  return await getServerSession(authOptions)
-}
+
 
 export async function GET(req: Request){
  try {
@@ -20,25 +18,12 @@ export async function GET(req: Request){
     return NextResponse.error();
   } */
 
-  const session = await getSession();
-
-  if (!session?.user?.email) {
-    return null;
-  }
-
-  if (!session?.user?.email) {
-    return null;
-  }
-
-  const currentUser = await prisma.user.findUnique({
-    where: {
-      email: session.user.email as string,
-    }
-  });
+  const currentUser = await getCurrentUser();
 
   if (!currentUser) {
-    return null;
-  }
+    return NextResponse.error();
+  } 
+  
   
 
 
@@ -98,10 +83,6 @@ export async function GET(req: Request){
   }
   );
 
-  console.log('first query...');
-  console.log(result);
-
-
   if (result.length == 0) {
     return new Response(JSON.stringify({
    data: [],
@@ -143,9 +124,6 @@ export async function GET(req: Request){
       }
       });
 
-      console.log('first query...');
-      console.log(nextPage);
-
   const data = {
     data: result, metaData: {
     lastCursor: cursor,
@@ -153,11 +131,38 @@ export async function GET(req: Request){
       }
     };
 
-    console.log('data...')
-    console.log(data);
+
 
   return new Response(JSON.stringify(data), { status: 200 });
    } catch (error: any) {
   return new Response(JSON.stringify(JSON.stringify({ error: error.message })), { status: 403 });
    }
+}
+
+export async function getSession() {
+  return await getServerSession(authOptions)
+}
+
+export async function getCurrentUser() {
+  const session = await getSession();
+
+  if (!session?.user?.email) {
+    return null;
+  }
+
+  if (!session?.user?.email) {
+    return null;
+  }
+
+  const currentUser = await prisma.user.findUnique({
+    where: {
+      email: session.user.email as string,
+    }
+  });
+
+  if (!currentUser) {
+    return null;
+  }
+
+  return currentUser;
 }
