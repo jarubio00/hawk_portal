@@ -2,7 +2,13 @@ import prisma from "@/app/libs/prismadb";
 import { Prisma } from "@prisma/client";
 import getCurrentUser from "@/app/actions/getCurrentUser";
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth/next"
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
 
+
+export async function getSession() {
+  return await getServerSession(authOptions)
+}
 
 export async function GET(req: Request){
  try {
@@ -13,6 +19,26 @@ export async function GET(req: Request){
   if (!currentUser) {
     return NextResponse.error();
   } */
+
+  const session = await getSession();
+
+  if (!session?.user?.email) {
+    return null;
+  }
+
+  if (!session?.user?.email) {
+    return null;
+  }
+
+  const currentUser = await prisma.user.findUnique({
+    where: {
+      email: session.user.email as string,
+    }
+  });
+
+  if (!currentUser) {
+    return null;
+  }
   
 
 
@@ -45,7 +71,7 @@ export async function GET(req: Request){
 
   let result = await prisma.pedido.findMany({
     where: {
-        clienteId: 2,
+        clienteId: currentUser.id,
         OR : filtros
     },
     include: {
@@ -92,7 +118,7 @@ export async function GET(req: Request){
   const nextPage = await prisma.pedido.findMany({
     // Same as before, limit the number of events returned by this query.
     where: {
-      clienteId: 2,
+      clienteId: currentUser.id,
       OR : filtros
     },
     include: {
