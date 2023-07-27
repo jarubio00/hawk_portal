@@ -92,7 +92,7 @@ export async function GET(req: Request){
   const nextPage = await prisma.pedido.findMany({
     // Same as before, limit the number of events returned by this query.
     where: {
-      clienteId: currentUser.id,
+      clienteId: 2,
       OR : filtros
     },
     include: {
