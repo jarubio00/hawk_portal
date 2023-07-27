@@ -8,6 +8,12 @@ export async function GET(req: Request){
  try {
   // get page and lastCursor from query
 
+  const currentUser = await getCurrentUser();
+
+  if (!currentUser) {
+    return NextResponse.error();
+  }
+  
 
   let result = await prisma.pedido.findMany({
     where: {
