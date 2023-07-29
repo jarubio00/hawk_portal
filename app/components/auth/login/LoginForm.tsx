@@ -87,7 +87,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
       }
 
       const onToggle = useCallback(() => {
-        
+        router.push("/auth/register");
       }, [])
 
       const loadingTest = 
@@ -153,15 +153,15 @@ const LoginForm: React.FC<LoginFormProps> = ({
       <Button variant={'ghost'} className="px-2 font-bold ">Olvidé mi contraseña</Button>
       <div className="
       text-neutral-400 text-center mt-0">
-        <p>No tienes cuenta aún?
+        <p>No tienes cuenta?
           <span 
             onClick={onToggle} 
             className="
-              text-neutral-800
+              text-blue-500
               cursor-pointer 
               hover:underline
             "
-            > Crear cuenta</span>
+            > Registrate</span>
         </p>
       </div>
     </div>
