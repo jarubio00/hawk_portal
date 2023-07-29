@@ -3,7 +3,7 @@
 import { PulseLoader } from "react-spinners";
 
 interface LoaderSingleProps {
- size?: string;
+ size?: number;
 }
 
 const LoaderSingle: React.FC<LoaderSingleProps> = ({
