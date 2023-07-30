@@ -8,15 +8,23 @@ import {
 import { BiDollar } from "react-icons/bi";
 import {ChangeEventHandler} from 'react';
 
+type RegisterForm = {
+  email: string;
+  nombre: string;
+  password: string;
+  confirmPassword: string;
+  celular: string;
+}
+
 interface InputProps {
-  id: string;
+  id: any;
   label: string;
   value?: string | undefined;
   type?: string;
   disabled?: boolean;
   formatPrice?: boolean;
   required?: boolean;
-  register: UseFormRegister<FieldValues>,
+  register: UseFormRegister<RegisterForm>,
   errors: FieldErrors;
   width?: string;
   onChange?: ChangeEventHandler<HTMLInputElement>;

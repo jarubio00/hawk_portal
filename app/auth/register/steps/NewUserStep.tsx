@@ -14,8 +14,10 @@ import Button from "@/app/components/Button";
 
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
-import { et } from "date-fns/locale";
-
+import * as Yup from 'yup';
+import {yupResolver} from '@hookform/resolvers/yup';
+import {RegisterFormType} from '@/app/types'
+import FormInput from "@/app/components/inputs/FormInput";
 
 
 interface NewUserStepProps {
@@ -25,6 +27,21 @@ interface NewUserStepProps {
 const NewUserStep: React.FC<NewUserStepProps> = ({
  data
 }) => {
+
+  const validationSchema = Yup.object().shape({
+    email: Yup.string().required('El correo es requerido')
+      .email('El correo es inválido'),
+    nombre: Yup.string().required('El nombre completo es requerido'),
+    password: Yup.string().required('La contrseña no puede estar vacía')
+      .min(8, "La contraseña debe contener mínimo 8 caractéres")
+      .matches(/[a-z]+/, "Debe contener al menos una letra minúscula")
+      .matches(/[A-Z]+/, "Debe contener al menos una letra mayúscula")
+      .matches(/\d+/, "Debe contener al menos un número"),
+    confirmPassword: Yup.string()
+      .required('Confirmar la contraseña es requerido')
+      .oneOf([Yup.ref('password'), ''], 'Las contraseñas no coinciden'),
+      celular: Yup.string().required('El número de celular es requerido'),
+  });
 
     const {
         saveConfirmation, 
@@ -45,16 +62,18 @@ const NewUserStep: React.FC<NewUserStepProps> = ({
     formState: {
       errors,
     },
-  } = useForm<FieldValues>({
+  } = useForm<RegisterFormType>({
+    resolver: yupResolver(validationSchema),
     defaultValues: {
       nombre: '',
       email: '',
       password: '',
+      confirmPassword: '',
       celular: ''
     },
   });
 
-  const setCustomValue = (id: string, value: any) => {
+  const setCustomValue = (id: any, value: any) => {
     setValue(id, value, {
       shouldDirty: true,
       shouldTouch: true,
@@ -62,9 +81,11 @@ const NewUserStep: React.FC<NewUserStepProps> = ({
     })
   }
 
-  const onSubmit: SubmitHandler<FieldValues> = (data) => {
-    setIsLoading(true);
-
+  const onSubmit: SubmitHandler<RegisterFormType> = (data: RegisterFormType) => {
+    //setIsLoading(true);
+    console.log('submit')
+    console.log(data);
+    //updateActiveStep(1)
   }
 
 
@@ -84,7 +105,7 @@ const NewUserStep: React.FC<NewUserStepProps> = ({
           setCustomValue('email', event.target.value);
         }}
       />
-      <Input
+      <FormInput
         id="nombre"
         label="Nombre"
         disabled={isLoading}
@@ -108,38 +129,42 @@ const NewUserStep: React.FC<NewUserStepProps> = ({
         }}
       />
        <Input
-        id="celular"
-        label="Celular"
-        type='number'
+        id="confirmPassword"
+        label="Confirmar contraseña"
+        type='password'
         disabled={isLoading}
         register={register}  
         errors={errors}
         required
         onChange={(event: any) => {
-          setCustomValue('celular', event.target.value);
+          setCustomValue('confirmPassword', event.target.value);
         }}
       />
 
       <PhoneInput
+       
         inputClass="!py-7 !w-full !pl-20 !border-2"
         buttonClass="!w-16  !p-2 !border-2"
         country={'mx'}
         preferredCountries={['mx','us']}
         value={registration?.newUser?.celular}
         onBlur={(e) => {
-         
+          
           console.log(e.target.value);
 
         }}
         enableAreaCodeStretch
         areaCodes={{mx: ['81', '55']}}
+        countryCodeEditable={false}
         placeholder='Celular / whatsapp'
-        onChange={() => {}}
+        onChange={(value) => {
+          setValue('celular',value);
+        }}
       />
        <div className="my-4"> 
         <Button 
           label='Siguiente'
-          onClick={() => updateActiveStep(1)}
+          onClick={handleSubmit(onSubmit)}
         />
      </div>
   </div>

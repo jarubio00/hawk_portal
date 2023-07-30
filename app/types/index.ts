@@ -63,3 +63,11 @@ export type SafePedido = Omit<
   formaPago: any;
   estatusPedido: any;
 };
+
+export type RegisterFormType = {
+  email: string;
+  nombre: string;
+  password: string;
+  confirmPassword: string;
+  celular: string;
+}
