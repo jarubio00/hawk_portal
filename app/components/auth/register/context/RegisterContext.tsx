@@ -11,7 +11,7 @@ interface Props {
 }
 const RegisterProvider: React.FC<Props> = ({children}) => {
   const [activeStep, setActiveStep] = useState(0);
-  const [register, setRegister] = useState<Register>();
+  const [registration, setRegistration] = useState<Register>();
   const [newUser, setNewUser] = useState<NewUser>();
   const [confirmation, setConfirmation] = useState<PhoneConfirmation>();
 
@@ -22,14 +22,14 @@ const RegisterProvider: React.FC<Props> = ({children}) => {
 
   
   const resetContext = () => {
-    setRegister({});
+    setRegistration({});
     setActiveStep(0);
     setConfirmation({});
     setNewUser({});
   }
 
   const saveNewUser = (user: NewUser) => {
-    setRegister({...register,newUser: {
+    setRegistration({...registration,newUser: {
       correo: user.correo,
       nombre: user.nombre,
       password: user.password,
@@ -39,7 +39,7 @@ const RegisterProvider: React.FC<Props> = ({children}) => {
   }
 
   const saveConfirmation = (confirmation: PhoneConfirmation) => {
-    setRegister({...register,confirmation: {
+    setRegistration({...registration,confirmation: {
         type: confirmation.type,
         status: confirmation.status,
         code: confirmation.code
@@ -53,7 +53,7 @@ const RegisterProvider: React.FC<Props> = ({children}) => {
   return (
     <RegisterContext.Provider
       value={{
-        register,
+        registration,
         resetContext,
         updateActiveStep,
         activeStep,

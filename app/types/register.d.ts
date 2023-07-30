@@ -31,7 +31,7 @@ export interface Register{
 }
 
 export type RegisterContextType = {
-    register?: Register;
+    registration?: Register;
     saveNewUser?: (user: NewUser) => void;
     newUser?: NewUser;
     saveConfirmation?: (confirmation: PhoneConfirmation) => void;

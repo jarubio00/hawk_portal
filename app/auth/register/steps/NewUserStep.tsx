@@ -12,6 +12,10 @@ import {
 import { useRouter } from "next/navigation";
 import Button from "@/app/components/Button";
 
+import PhoneInput from 'react-phone-input-2'
+import 'react-phone-input-2/lib/style.css'
+import { et } from "date-fns/locale";
+
 
 
 interface NewUserStepProps {
@@ -25,6 +29,7 @@ const NewUserStep: React.FC<NewUserStepProps> = ({
     const {
         saveConfirmation, 
         saveNewUser,
+        registration,
         updateActiveStep, 
         activeStep,
     } = useContext(RegisterContext) as RegisterContextType;
@@ -113,6 +118,23 @@ const NewUserStep: React.FC<NewUserStepProps> = ({
         onChange={(event: any) => {
           setCustomValue('celular', event.target.value);
         }}
+      />
+
+      <PhoneInput
+        inputClass="!py-7 !w-full !pl-20 !border-2"
+        buttonClass="!w-16  !p-2 !border-2"
+        country={'mx'}
+        preferredCountries={['mx','us']}
+        value={registration?.newUser?.celular}
+        onBlur={(e) => {
+         
+          console.log(e.target.value);
+
+        }}
+        enableAreaCodeStretch
+        areaCodes={{mx: ['81', '55']}}
+        placeholder='Celular / whatsapp'
+        onChange={() => {}}
       />
        <div className="my-4"> 
         <Button 
