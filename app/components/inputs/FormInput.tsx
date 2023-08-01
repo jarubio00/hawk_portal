@@ -16,12 +16,13 @@ interface FormInputProps {
     formatPrice?: boolean;
     required?: boolean;
     register: UseFormRegister<RegisterFormType>,
-    errors: FieldErrors;
+    errors?: string;
     width?: string;
     onChange?: ChangeEventHandler<HTMLInputElement>;
     onFocus?: () => void;
-    onBlur?: () => void;
+    onBlur?: (event: any) => void;
     maxlength?: number;
+    notes?: string;
   }
 
 const FormInput: React.FC<FormInputProps> = ({
@@ -39,11 +40,12 @@ const FormInput: React.FC<FormInputProps> = ({
     maxlength,
     value,
     onFocus,
-    onBlur
+    onBlur,
+    notes
 }) => {
  return (
   <div className='flex flex-col gap-1 relative'>
-      <Label htmlFor={id}>{label}</Label>
+      <Label htmlFor={id} className="text-xs text-neutral-400">{label}</Label>
       <Input 
         {...register(id, {required})}
         value={value}
@@ -51,26 +53,14 @@ const FormInput: React.FC<FormInputProps> = ({
         type={type} 
         id={id} 
         placeholder={placeholder} 
-        className={`${errors && 'border-red-500'}`}
+        className={`${errors && 'border-red-500 border-2'}`}
         onChange={onChange}
         onBlur={onBlur}
         onFocus={onFocus}
         />
-        {Object.keys(errors).map((key: any) => {
-
-            if (key === id) {
-                console.log('key match')
-                
-                return (
-                    <p className="text-[11px] text-red">{key.message}</p>
-                )
-            } else {
-                return (
-                    <p className="text-[11px] text-red">{' '}</p>
-                )
-            }
-            
-        })}
+        <p className="text-[11px] text-blue-500">{notes}</p>
+        <p className="text-[11px] text-red-500">{errors}</p>
+       
     
   </div>
  );

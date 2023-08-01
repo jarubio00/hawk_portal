@@ -1,23 +1,16 @@
+import { ConfirmationType, CodeStatus } from "./constants";
+
 export interface NewUser {
-    correo?: string;
+    email?: string;
     nombre?: string;
     password?: string;
     countryCode?: string;
     celular?: string;
+    type?: ConfirmationType;
+    status?: CodeStatus;
+    code?: number;
 }
 
-enum ConfirmationType {
-    sms,
-    whatsapp,
-    email
-  }
-
-enum CodeStatus {
-    pending,
-    sent,
-    confirmed
-    
-}
 
 export interface PhoneConfirmation {
     type?: ConfirmationType;
@@ -32,9 +25,9 @@ export interface Register{
 
 export type RegisterContextType = {
     registration?: Register;
-    saveNewUser?: (user: NewUser) => void;
+    saveNewUser: (user: NewUser) => void;
     newUser?: NewUser;
-    saveConfirmation?: (confirmation: PhoneConfirmation) => void;
+    saveConfirmation: (confirmation: PhoneConfirmation) => void;
     confirmation?: PhoneConfirmation;
     updateActiveStep: (step: number) => void;
     activeStep: number;

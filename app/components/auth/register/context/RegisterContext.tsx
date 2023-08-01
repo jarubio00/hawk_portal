@@ -1,6 +1,6 @@
 'use client'
 
-import { CodeStatus, ConfirmationType, NewUser, PhoneConfirmation, Register, RegisterContextType} from "@/app/types/register.d";
+import { NewUser, PhoneConfirmation, Register, RegisterContextType} from "@/app/types/register.d";
 import React, { useState, createContext } from "react";
 
 
@@ -30,11 +30,14 @@ const RegisterProvider: React.FC<Props> = ({children}) => {
 
   const saveNewUser = (user: NewUser) => {
     setRegistration({...registration,newUser: {
-      correo: user.correo,
+      email: user.email,
       nombre: user.nombre,
       password: user.password,
       countryCode: user.countryCode,
-      celular: user.celular
+      celular: user.celular,
+      type: user.type,
+      status: user.status,
+      code: user.code
     }});
   }
 
