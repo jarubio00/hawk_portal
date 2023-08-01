@@ -1,4 +1,5 @@
 import { Direccion, Destino, User, Paquete, Recoleccion, Pedido } from "@prisma/client";
+import { CodeStatus, ConfirmationType } from "./constants";
 
 export type SafeDireccion = Omit<Direccion, "createdAt"> & {
   createdAt: string;
@@ -70,4 +71,7 @@ export type RegisterFormType = {
   password: string;
   confirmPassword: string;
   celular: string;
+  type?: string;
+  status?: string;
+  code?: number;
 }

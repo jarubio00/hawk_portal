@@ -45,7 +45,7 @@ const FormInput: React.FC<FormInputProps> = ({
 }) => {
  return (
   <div className='flex flex-col gap-1 relative'>
-      <Label htmlFor={id} className="text-xs text-neutral-400">{label}</Label>
+      <Label htmlFor={id} className="text-xs text-neutral-400 w-full">{label}</Label>
       <Input 
         {...register(id, {required})}
         value={value}
@@ -53,7 +53,7 @@ const FormInput: React.FC<FormInputProps> = ({
         type={type} 
         id={id} 
         placeholder={placeholder} 
-        className={`${errors && 'border-red-500 border-2'}`}
+        className={`${errors && 'border-red-500 border-2'} text-base`}
         onChange={onChange}
         onBlur={onBlur}
         onFocus={onFocus}

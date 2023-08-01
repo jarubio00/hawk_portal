@@ -6,8 +6,8 @@ export interface NewUser {
     password?: string;
     countryCode?: string;
     celular?: string;
-    type?: ConfirmationType;
-    status?: CodeStatus;
+    type?: string;
+    status?: string;
     code?: number;
 }
 

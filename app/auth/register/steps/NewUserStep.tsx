@@ -47,6 +47,9 @@ const NewUserStep: React.FC<NewUserStepProps> = ({
       .required('Confirmar la contraseña es requerido')
       .oneOf([Yup.ref('password'), ''], 'Las contraseñas no coinciden'),
       celular: Yup.string().required('El número de celular es requerido'),
+      //type: Yup.string().required('El tipo de confirmación es requerido'),
+      //status: Yup.string().required(),
+      //code: Yup.number().required()
   });
 
     const {
@@ -76,7 +79,11 @@ const NewUserStep: React.FC<NewUserStepProps> = ({
       email: 'javier@segpak.com',
       password: 'L1nux2020',
       confirmPassword: 'L1nux2020',
-      celular: '8115995194'
+      celular: '+528115995194',
+      type: 'whatsapp',
+      status: 'pending',
+      code: 0
+
     },
   });
 
@@ -89,20 +96,13 @@ const NewUserStep: React.FC<NewUserStepProps> = ({
   }
 
   const onSubmit: SubmitHandler<RegisterFormType> = (data: RegisterFormType) => {
-    //setIsLoading(true);
-    console.log('submit')
-    console.log(data);
-    var code = Math.floor(1000 + Math.random() * 9000);
 
-    const saveDate = {
-      ...data,
-      type: ConfirmationType.whatsapp,
-      code: code,
-      status: CodeStatus.sent
-    }
+    
+
+   
 
     if (data) {
-      saveNewUser(saveDate);
+      saveNewUser(data);
     }
 
     
@@ -127,8 +127,8 @@ const NewUserStep: React.FC<NewUserStepProps> = ({
 
 
  return (
-  <div className='flex flex-col gap-4'>
-    <div className=" text-neutral-400 my-4 text-center text-sm">
+  <div className='flex flex-col gap-2'>
+    <div className=" text-neutral-400 mt-2 text-center text-sm">
         Ingresa tus datos para el registro de tu cuenta
     </div>
     <FormInput
@@ -185,11 +185,12 @@ const NewUserStep: React.FC<NewUserStepProps> = ({
           setCustomValue('confirmPassword', event.target.value);
         }}
       />
-      <div>
+      
         <Label htmlFor="sms" className="text-xs text-neutral-400">Número de celular</Label>
+        <div>
         <PhoneInput
-          inputClass="!py-4 !w-full !pl-20 !border-input"
-          buttonClass="!w-16  !p-2 !border-input"
+          inputClass="!py-4 !w-full !pl-20 !border-input !text-base"
+          buttonClass="!w-16 !p-2 !py-4   !border-input"
           country={'mx'}
           preferredCountries={['mx','us']}
           value={registration?.newUser?.celular ? registration?.newUser?.celular : '528115995194' }
@@ -207,14 +208,14 @@ const NewUserStep: React.FC<NewUserStepProps> = ({
       </div>
       <div className="w-full flex flex-col gap-3 mt-2">
         <p className="text-xs text-neutral-400">Enviar código de confirmación por: </p>
-        <RadioGroup defaultValue="whatsapp" className="gap-3">
+        <RadioGroup defaultValue="whatsapp" className="gap-3" id="type" {...register('type')} onValueChange={(val) => console.log(val)}>
           <div className="flex items-center space-x-2">
-            <RadioGroupItem value="whatsapp" id="whatsapp" />
-            <Label htmlFor="whatsapp" className="text-xs">Mensaje de Whatsapp</Label>
+            <RadioGroupItem value="whatsapp"/>
+            <Label htmlFor="whatsapp" className="text-xs w-full">Mensaje de Whatsapp</Label>
           </div>
           <div className="flex items-center space-x-2">
-            <RadioGroupItem value="sms" id="sms" />
-            <Label htmlFor="sms" className="text-xs">Mensaje de texto (SMS)</Label>
+            <RadioGroupItem value="sms"/>
+            <Label htmlFor="sms" className="text-xs w-full">Mensaje de texto (SMS)</Label>
           </div>
         </RadioGroup>
       </div>
