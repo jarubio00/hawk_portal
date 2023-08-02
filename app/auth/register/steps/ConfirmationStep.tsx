@@ -1,12 +1,17 @@
 'use client';
 import { RegisterContext } from "@/app/components/auth/register/context/RegisterContext";
 import { RegisterContextType } from "@/app/types/register";
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import Button from "@/app/components/Button";
 import OtpInput from 'react-otp-input';
 import "@/app/components/auth/register/OtpInput.css"
+import {BsCheckCircle} from "react-icons/bs"
+import {MdErrorOutline} from "react-icons/md";
+import OtpTimer from '@/app/components/auth/register/OtpTimer';
+import { timeClockClasses } from "@mui/x-date-pickers";
+import {sendOtpSms} from '@/app/actions/apiQuerys';
 
 interface ConfirmationStepProps {
  data?: string;
@@ -19,10 +24,12 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
     const [validating, setValidating] = useState(false);
     const [otp, setOtp] = useState('');
     const [code,setCode] = useState(0);
-     const onChange = (value: string) => console.log(value);
-     const [codeValidation, setCodeValidation] = useState('pendiente');
-     const [otpEnabled, setOtpEnabled] = useState(true);
-    
+    const onChange = (value: string) => console.log(value);
+    const [codeValidation, setCodeValidation] = useState('pendiente');
+    const [otpEnabled, setOtpEnabled] = useState(true);
+    const [errorMessage,setErrorMessage] = useState('');
+    const [resendTimer, setResendTimer] = useState<Date>();
+     
     const {
         saveConfirmation, 
         saveNewUser,
@@ -36,18 +43,32 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
     useEffect(() => {
       const number = generateCode();
       setCode(number);
+      handleSendOtpBySms(number);
+      startTimer();
     },[])
 
-    /* const saveDate = {
-      ...data,
-      type: ConfirmationType.whatsapp,
-      code: code,
-      status: CodeStatus.sent
-    } */
+    const handleSendOtpBySms = useCallback(async (otpCode: number) => {
+      setIsLoading(true);
+      setErrorMessage('');
+     const result = await  sendOtpSms({code: otpCode, celular: registration?.newUser?.celular});
+     console.log(result);
+     if (result.status == 1) {
+      setIsLoading(false);
+     } else {
+      setErrorMessage('Error al enviar el código por mensaje SMS');
+     }
+     
+    }, [])
 
     const generateCode = () => {
       var code = Math.floor(1000 + Math.random() * 9000);
       return code;
+    }
+
+    const startTimer = () => {
+      const timeToClose = new Date();
+      timeToClose.setSeconds(timeToClose.getSeconds() +3);
+      setResendTimer(timeToClose);
     }
 
 
@@ -60,25 +81,29 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
       }
 
     const handleOtp = (val: string) => {
-        console.log(val);
+        setErrorMessage('');
         setOtp(val);
 
         if (val.length === 4 && code.toString().length === 4) {
             setOtpEnabled(false);
             if (parseInt(val) === code) {
-              setCodeValidation('Código correcto!')
+              setCodeValidation('correcto')
             } else {
-              setCodeValidation('Código incorrecto!')
+              setCodeValidation('incorrecto')
+              setErrorMessage('Código incorrecto');
+              const timer = setTimeout(() => {
+                setOtp('');
+                setOtpEnabled(true);
+                }, 1000);
             }
           
-          //setValidating(true)
-          const timer = setTimeout(() => {
-            setOtp('');
-            //setValidating(true);
-            //setValidating(false);
-            setOtpEnabled(true);
-            }, 5000);
         }
+    }
+
+    const handleResendCode = () => {
+      const number = generateCode();
+      setCode(number);
+      handleSendOtpBySms(number);
     }
 
  return (
@@ -87,27 +112,40 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
         Ingresa el código que hemos enviado a tu celular
     </div>
     <div className="my-8 w-full flex flex-col justify-center items-center mx-auto">
-      {!validating ? <OtpInput
-        shouldAutoFocus={otpEnabled} 
-        value={otp}
-        onChange={(val) => handleOtp(val)}
-        numInputs={4}
-        renderSeparator={<span className="mx-1">-</span>}
-        renderInput={(props) => <input {...props} 
-          disabled={!otpEnabled} 
-          className="!w-12 h-12 md:!w-16 md:h-16 text-2xl text-black border border-input disabled:bg-neutral-200 disabled:text-neutral-400 rounded-md" />}
-        inputStyle="inputStyle"
-        inputType="tel"
-        
-      />
-        :
-        <p>Validando</p>
-    }
-    <div  className="my-4">
-      <p>{codeValidation}</p>
+      <div className="flex flex-row items-center gap-2">
+        <OtpInput
+          shouldAutoFocus={otpEnabled}
+          value={otp}
+          onChange={(val) => handleOtp(val)}
+          numInputs={4}
+          renderSeparator={<span className="mx-1">-</span>}
+          renderInput={(props) => {
+          console.log('props',props)
+          return (<input {...props}
+            disabled={!otpEnabled || isLoading}
+            className="!w-12 h-12 md:!w-16 md:h-16 text-2xl text-black border border-input 
+            disabled:bg-neutral-200 disabled:text-neutral-400 rounded-md" />)}}
+          inputStyle="inputStyle"
+          inputType="tel"
+        />
+        <BsCheckCircle 
+          size={40} 
+          className={`${codeValidation == 'correcto' ? 'text-green-500' : 'text-neutral-200'}`} />
+      </div>
+      <p className="mt-2 text-xs text-red-500 text-left">{errorMessage}</p>
+    <div  className="my-4 w-full">
+      <div className="flex flex-row items-center justify-between">
+        <p></p>
+        {resendTimer && codeValidation != 'correcto' && <OtpTimer 
+          expiryTimestamp={resendTimer} 
+          onResendCode={handleResendCode}
+          celular={registration?.newUser?.celular}
+          />}
+      </div>
+      {/* <p>{codeValidation}</p>
       <pre className="w-48 text-xs">
           {JSON.stringify(registration,null,2)}
-      </pre>
+      </pre> */}
       <p>Code: {code}</p>
     </div>
     </div>
@@ -122,6 +160,7 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
               <Button 
                   label='Siguiente'
                   onClick={handleNext}
+                  disabled={codeValidation != 'correcto'}
                   /* disabled={
                     isAutoLoading || 
                     isRecLoading || 

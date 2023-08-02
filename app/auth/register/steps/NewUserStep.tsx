@@ -96,24 +96,9 @@ const NewUserStep: React.FC<NewUserStepProps> = ({
   }
 
   const onSubmit: SubmitHandler<RegisterFormType> = (data: RegisterFormType) => {
-
-    
-
-   
-
     if (data) {
       saveNewUser(data);
-    }
-
-    
-    /* if (code) {
-      saveConfirmation({
-        
-        code: code
-      })
-    } */  
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+    }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
     updateActiveStep(1)
   }
 
@@ -124,6 +109,8 @@ const NewUserStep: React.FC<NewUserStepProps> = ({
       setError('email', {type: 'custom', message: 'El correo ya está registrado'});
     }
   }
+
+
 
 
  return (
@@ -208,7 +195,17 @@ const NewUserStep: React.FC<NewUserStepProps> = ({
       </div>
       <div className="w-full flex flex-col gap-3 mt-2">
         <p className="text-xs text-neutral-400">Enviar código de confirmación por: </p>
-        <RadioGroup defaultValue="whatsapp" className="gap-3" id="type" {...register('type')} onValueChange={(val) => console.log(val)}>
+        <RadioGroup 
+          defaultValue="whatsapp" 
+          className="gap-3" id="type" 
+          {...register('type')} 
+          onValueChange={(e) => {
+            setValue('type', e);
+          }}
+          
+          >
+
+
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="whatsapp"/>
             <Label htmlFor="whatsapp" className="text-xs w-full">Mensaje de Whatsapp</Label>

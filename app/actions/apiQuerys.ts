@@ -330,8 +330,8 @@ export  async function cotizaPaqueteById(props: ICotizaParams) {
 export  async function uploadFile(props: FormData) {
 
  
-  
-  const result = await axios.post(`/api/upload`, props )
+  const timer = setTimeout(async () => {
+    const result = await axios.post(`/api/upload`, props )
       .then((response) => {
         const responseData:ApiResponse = {status:1,statusMessage: 'OK', response: {data: response.data} }
         return responseData;
@@ -344,6 +344,8 @@ export  async function uploadFile(props: FormData) {
       
 
       return result;
+    }, 3000);
+  
 }
 
 export  async function crearPedido(pedido: IPedido) {
@@ -381,5 +383,21 @@ export  async function appendPedido(pedido: IPedido, recoleccion: number) {
  
       
 
+      return result;
+}
+
+export  async function sendOtpSms(props: any) {
+
+  const result = await axios.post(`/api/otp/sms`, props)
+      .then((response) => {
+        const responseData:ApiResponse = {status:1,statusMessage: 'OK', response: {data: response.data} }
+        return responseData;
+      })
+      .catch((error) => {
+        const response:ApiResponse = {status:2,statusMessage: error.message, response: {data: {}, error: error} }
+        return response;
+      })
+ 
+      
       return result;
 }
