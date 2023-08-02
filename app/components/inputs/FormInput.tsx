@@ -15,7 +15,7 @@ interface FormInputProps {
     disabled?: boolean;
     formatPrice?: boolean;
     required?: boolean;
-    register: UseFormRegister<RegisterFormType>,
+    register: any,
     errors?: string;
     width?: string;
     onChange?: ChangeEventHandler<HTMLInputElement>;

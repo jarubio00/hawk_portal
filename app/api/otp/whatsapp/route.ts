@@ -13,27 +13,17 @@ export async function POST(
   const {code, celular} = body;
   console.log(code);
   console.log(celular);
-  var data = {
-      "credentials":{"apiKey":"Lxak42z6d2","apiSecret":"a7fcdrqbme"},
-      "destination":[`${celular.substring(1)}`],
-      "message":{"msg":`Tú código de verificación de LaMensajeria.Mx es: ${code}`},
-      "senderId":"remitente",
-      "encoding":"unicode"
-    };
-
-    console.log(data);
-
-    /* var data = {
-      "token": "nn07ocxik12qzh9n",
-      "to": celular,
-      "body": `Tú código de verificación de LaMensajeria.Mx es: ${code}`
-  }; */
+  var data = qs.stringify({
+        "token": "nn07ocxik12qzh9n",
+        "to": celular,
+        "body": `Tú código de verificación de LaMensajeria.Mx es: ${code}`
+    });
 
   var config = {
       method: 'post',
-      url: 'https://www.altiria.net:8443/apirest/ws/sendSms',
+      url: 'https://api.ultramsg.com/instance56455/messages/chat',
       headers: {  
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/x-www-form-urlencoded'
       },
       data : data
     };

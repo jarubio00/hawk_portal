@@ -401,3 +401,19 @@ export  async function sendOtpSms(props: any) {
       
       return result;
 }
+
+export  async function sendOtpWhatsapp(props: any) {
+
+  const result = await axios.post(`/api/otp/whatsapp`, props)
+      .then((response) => {
+        const responseData:ApiResponse = {status:1,statusMessage: 'OK', response: {data: response.data} }
+        return responseData;
+      })
+      .catch((error) => {
+        const response:ApiResponse = {status:2,statusMessage: error.message, response: {data: {}, error: error} }
+        return response;
+      })
+ 
+      
+      return result;
+}

@@ -3,17 +3,19 @@ import { useCallback, useState } from "react";
 import { toast } from "react-hot-toast";
 import { signIn } from 'next-auth/react';
 import { 
-  FieldValues, 
   SubmitHandler, 
   useForm
 } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import LoaderSingle from "@/app/components/LoaderSingle";
 
-import Input from "../../inputs/Input";
+import FormInput from "../../inputs/FormInput";
 import Heading from "../../Heading";
 import { Button } from "@/components/ui/button";
 import PulseLoader from "react-spinners/PulseLoader";
+import * as Yup from 'yup';
+import {yupResolver} from '@hookform/resolvers/yup';
+import { LoginFormType } from "@/app/types";
 
 
 
@@ -24,6 +26,14 @@ interface LoginFormProps {
 const LoginForm: React.FC<LoginFormProps> = ({
  data
 }) => {
+
+  const validationSchema = Yup.object().shape({
+    email: Yup.string().required('El correo es requerido')
+      .email('El correo es inválido'),
+    password: Yup.string().required('La contrseña no puede estar vacía'),
+  });
+
+
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
     const [loginSuccess, setLoginSuccess] = useState(false);
@@ -37,21 +47,22 @@ const LoginForm: React.FC<LoginFormProps> = ({
       formState: {
         errors,
       },
-    } = useForm<FieldValues>({
+    } = useForm<LoginFormType>({
+      resolver: yupResolver(validationSchema),
       defaultValues: {
         email: '',
         password: ''
       },
     });
 
-    const setCustomValue = (id: string, value: any) => {
+    const setCustomValue = (id: any, value: any) => {
         setValue(id, value, {
           shouldDirty: true,
           shouldTouch: true,
           shouldValidate: true
         })
       }
-      const onSubmit: SubmitHandler<FieldValues> = 
+      const onSubmit: SubmitHandler<LoginFormType> = 
       (data) => {
         setIsLoading(true);
     
@@ -108,25 +119,27 @@ const LoginForm: React.FC<LoginFormProps> = ({
       <div className=" text-neutral-400 mt-2 text-center">
         Entra a tu panel con tu correo y contraseña
       </div>
-      <Input
+      <FormInput
         id="email"
         label="correo"
+        placeholder="Ingresa tu correo registrado"
         disabled={isLoading}
         register={register}  
-        errors={errors}
+        errors={errors.email?.message as string}
         required
         onChange={(event: any) => {
           setCustomValue('email', event.target.value);
           setError('');
         }}
       />
-      <Input
+      <FormInput
         id="password"
         label="contraseña"
+        placeholder="Ingresa tu contraseña"
         type="password"
         disabled={isLoading}
         register={register}
-        errors={errors}
+        errors={errors.password?.message as string}
         required
         onChange={(event: any) => {
           setCustomValue('password', event.target.value);

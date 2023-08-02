@@ -41,11 +41,11 @@ function OtpTimer({ expiryTimestamp, onResendCode, celular }) {
     return num;
   }
 
-  const handleOnClick = () =>{
-    onResendCode();
+  const handleOnClick = (type) =>{
+    onResendCode(type);
     setEnabledButton(false);
     const timeToClose = new Date();
-    timeToClose.setSeconds(timeToClose.getSeconds() +3);
+    timeToClose.setSeconds(timeToClose.getSeconds() +10);
     restart(timeToClose)
   }
 
@@ -65,10 +65,10 @@ function OtpTimer({ expiryTimestamp, onResendCode, celular }) {
         <DropdownMenuLabel>Reenviar código por:</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem className="cursor-pointer text-xs" onClick={() => handleOnClick()}>
+          <DropdownMenuItem className="cursor-pointer text-xs" onClick={() => handleOnClick('whatsapp')}>
             Mensaje de Whatsapp
           </DropdownMenuItem>
-          <DropdownMenuItem className="cursor-pointer text-xs" onClick={() => handleOnClick()}>
+          <DropdownMenuItem className="cursor-pointer text-xs" onClick={() => handleOnClick('sms')}>
             Mensaje de texto (SMS)
           </DropdownMenuItem>
         </DropdownMenuGroup>

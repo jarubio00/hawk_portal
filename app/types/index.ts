@@ -75,3 +75,8 @@ export type RegisterFormType = {
   status?: string;
   code?: number;
 }
+
+export type LoginFormType = {
+  email: string;
+  password: string;
+}

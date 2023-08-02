@@ -1,7 +1,7 @@
 'use client';
 import { RegisterContext } from "@/app/components/auth/register/context/RegisterContext";
 import { RegisterContextType } from "@/app/types/register";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import Button from "@/app/components/Button";
@@ -11,7 +11,7 @@ import {BsCheckCircle} from "react-icons/bs"
 import {MdErrorOutline} from "react-icons/md";
 import OtpTimer from '@/app/components/auth/register/OtpTimer';
 import { timeClockClasses } from "@mui/x-date-pickers";
-import {sendOtpSms} from '@/app/actions/apiQuerys';
+import {sendOtpSms, sendOtpWhatsapp} from '@/app/actions/apiQuerys';
 
 interface ConfirmationStepProps {
  data?: string;
@@ -29,7 +29,9 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
     const [otpEnabled, setOtpEnabled] = useState(true);
     const [errorMessage,setErrorMessage] = useState('');
     const [resendTimer, setResendTimer] = useState<Date>();
-     
+    
+
+
     const {
         saveConfirmation, 
         saveNewUser,
@@ -43,14 +45,29 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
     useEffect(() => {
       const number = generateCode();
       setCode(number);
-      handleSendOtpBySms(number);
+      if (registration?.newUser?.type) {
+        handleSendOtp(registration?.newUser?.type, number);
+      }
+      
       startTimer();
     },[])
 
-    const handleSendOtpBySms = useCallback(async (otpCode: number) => {
+    const handleSendOtp = useCallback(async (type: string ,otpCode: number) => {
       setIsLoading(true);
       setErrorMessage('');
-     const result = await  sendOtpSms({code: otpCode, celular: registration?.newUser?.celular});
+      let result;
+      switch(type) {
+        case 'whatsapp':
+          result = await  sendOtpWhatsapp({code: otpCode, celular: registration?.newUser?.celular});
+          //result = {status: 1}
+          break;
+        case 'sms':
+          result = await  sendOtpSms({code: otpCode, celular: registration?.newUser?.celular});
+          //result = {status: 1}
+        default: 
+        return
+      }
+      
      console.log(result);
      if (result.status == 1) {
       setIsLoading(false);
@@ -87,7 +104,7 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
         if (val.length === 4 && code.toString().length === 4) {
             setOtpEnabled(false);
             if (parseInt(val) === code) {
-              setCodeValidation('correcto')
+              setCodeValidation('correcto');
             } else {
               setCodeValidation('incorrecto')
               setErrorMessage('Código incorrecto');
@@ -100,10 +117,12 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
         }
     }
 
-    const handleResendCode = () => {
+
+
+    const handleResendCode = (type: string) => {
       const number = generateCode();
       setCode(number);
-      handleSendOtpBySms(number);
+      handleSendOtp(type,number);
     }
 
  return (
@@ -112,26 +131,27 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
         Ingresa el código que hemos enviado a tu celular
     </div>
     <div className="my-8 w-full flex flex-col justify-center items-center mx-auto">
-      <div className="flex flex-row items-center gap-2">
-        <OtpInput
+      
+        {codeValidation != 'correcto' ? <OtpInput
           shouldAutoFocus={otpEnabled}
           value={otp}
           onChange={(val) => handleOtp(val)}
           numInputs={4}
           renderSeparator={<span className="mx-1">-</span>}
-          renderInput={(props) => {
-          console.log('props',props)
-          return (<input {...props}
+          renderInput={(props) => <input {...props}
+            autoComplete="one-time-code"
             disabled={!otpEnabled || isLoading}
             className="!w-12 h-12 md:!w-16 md:h-16 text-2xl text-black border border-input 
-            disabled:bg-neutral-200 disabled:text-neutral-400 rounded-md" />)}}
+            disabled:bg-neutral-200 disabled:text-neutral-400 rounded-md" />}
           inputStyle="inputStyle"
           inputType="tel"
-        />
+        /> : 
         <BsCheckCircle 
           size={40} 
           className={`${codeValidation == 'correcto' ? 'text-green-500' : 'text-neutral-200'}`} />
-      </div>
+        }
+        
+  
       <p className="mt-2 text-xs text-red-500 text-left">{errorMessage}</p>
     <div  className="my-4 w-full">
       <div className="flex flex-row items-center justify-between">
@@ -147,6 +167,7 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
           {JSON.stringify(registration,null,2)}
       </pre> */}
       <p>Code: {code}</p>
+
     </div>
     </div>
       
