@@ -370,7 +370,7 @@
                   xl:grid-cols-4
                   md:grid-cols-2
                   gap-4">
-                  <div className="col-span-1">
+                  <div className="col-span-1 md:col-span-2">
                     <Select
                       placeholder="Tipo del paquete"
                       //@ts-ignore

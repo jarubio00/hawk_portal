@@ -31,10 +31,14 @@ export async function POST(
         id: parseInt(cpId),
     },
     include: {
-        colonias: true,
+        colonias: {
+          orderBy: {
+            colonia: 'asc'
+          }
+        },
          //@ts-ignore
         municipio: true,
-    }
+    },
   }); 
 
   if (!codigopostal) {

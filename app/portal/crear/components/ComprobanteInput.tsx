@@ -152,7 +152,16 @@ console.log('up file',pedido?.metodoPago?.comprobanteImageFile);
     });
 
   return ( 
-    <div className="">
+    <div className="flex flex-col">
+
+        <div className="my-2 ">
+          <p className="text-2xl text-rose-500 font-bold mb-1">BANREGIO</p>
+
+          <p className="text-sm font-semibold">Eslo Regiomontana S.A. DE C.V.</p>
+          <p className="text-sm text-neutral-400">4721 4556 3454 8900</p>
+          <p className="text-sm text-neutral-400">CLABE: 018000 3454 898762 873</p>
+
+        </div>
         <p className="my-1 text-xs text-neutral-500">Carga tu comprobante de pago</p>
         {!pedido?.metodoPago?.comprobanteSelected && <label htmlFor="file">
             <input id="file" type='file' accept="image/*, application/pdf" name='file' className="hidden" onChange={handleInputFile}></input>

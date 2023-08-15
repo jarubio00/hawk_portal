@@ -6,6 +6,13 @@ import {
     SubmitHandler, 
     useForm
 } from "react-hook-form";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from "@/components/ui/tooltip"
+import * as TooltipPrimitive from '@radix-ui/react-tooltip';
 import Select from 'react-select'
 import useLoader from "@/app/hooks/useLoader";
 import { useRouter } from 'next/navigation';
@@ -28,6 +35,7 @@ import { PedidoContextType } from "@/app/types/pedido";
 import { FaInfoCircle } from "react-icons/fa";
 import ConfirmDialog from "@/app/components/modals/ConfirmDialog";
 import { ErrorMessage } from "@hookform/error-message"   
+import { MdInfo } from "react-icons/md";
 
 
   interface AgregarDestinoCrearProps {
@@ -74,6 +82,7 @@ import { ErrorMessage } from "@hookform/error-message"
     const [axiosString, setAxiosString] = useState({});
     const [sinCpDialogOpen, setSinCpDialogOpen] = useState(false);
     const [dialogContent, setDialogContent] = useState({});
+    const [coloniaTooltip, setColoniaTooltip] = useState(false);
 
     const {updateActiveStep,saveDestino, saveDestinoKey, pedido, updateDestinoCaptured, destinoCaptured} = useContext(PedidoContext) as PedidoContextType;
 
@@ -327,54 +336,70 @@ import { ErrorMessage } from "@hookform/error-message"
                   xl:grid-cols-4
                   md:grid-cols-2
                   gap-4">
+
+                  <TooltipProvider>
+                    <Tooltip open={coloniaTooltip}>
+                      <TooltipTrigger asChild>
+                        <div className={`${otraColoniaSelected ? "col-span-2 md:col-span-1" : "col-span-2"}`}>
+                          <Select
+                              id="colonia"
+                              //@ts-ignore
+                              register={register}
+                              onFocus={() => setColoniaTooltip(true)}
+                              onBlur={() => setColoniaTooltip(false)}
+                              placeholder={coloniaPlaceholder}
+                              onChange={(val: any) => {
+                                console.log(val);
+                                if (val.value && val.value == 9999) {
+                                  setOtraColoniaSelected(true);
+                                  setCustomValue('isOtraColonia', true);
+                                  setCustomValue('colonia', val)
+                                } else {
+                                  setOtraColoniaSelected(false);
+                                  setCustomValue('isOtraColonia', false);
+                                  setCustomValue('otraColonia', '');
+                                  setCustomValue('colonia', val)
+                                }
+                    
+                              }}
+                              value={colonia ? colonia : null}
+                              isClearable
+                              options={colonias}
+                              isLoading={coloniasLoading}
+                              isDisabled={!cpActive || saved}
+                              classNames={{
+                                  control: () => 'p-2 border-2',
+                    
+                                  input: () => 'text-lg',
+                                  option: () => 'text-lg'
+                                  }}
+                              theme={(theme) => ({
+                              ...theme,
+                              borderRadius: 6,
+                              colors: {
+                                  ...theme.colors,
+                                  primary: 'black',
+                                  primary25: '#ffe4e6'
+                              }
+                              })}
+                              components={{ LoadingIndicator }}
+                          />
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <div className="flex flex-col w-72 p-2">
+                          <p>Si tu colonia no aparece en la lista selecciona la opción OTRA COLONIA e ingresa el nombre de tu colonia.</p>
+                        </div>
+                        <TooltipPrimitive.Arrow width={11} height={5} />
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
               
-                  <div className={`${otraColoniaSelected ? "col-span-2 md:col-span-1" : "col-span-2"}`}>
-                    <Select
-                        id="colonia"
-                        //@ts-ignore
-                        register={register}
-                        placeholder={coloniaPlaceholder}
-                        onChange={(val: any) => {
-                          console.log(val);
-                          if (val.value && val.value == 9999) {
-                            setOtraColoniaSelected(true);
-                            setCustomValue('isOtraColonia', true);
-                            setCustomValue('colonia', val)
-                          } else {
-                            setOtraColoniaSelected(false);
-                            setCustomValue('isOtraColonia', false);
-                            setCustomValue('otraColonia', '');
-                            setCustomValue('colonia', val)
-                          }
-              
-                        }}
-                        value={colonia ? colonia : null}
-                        isClearable
-                        options={colonias}
-                        isLoading={coloniasLoading}
-                        isDisabled={!cpActive || saved}
-                        classNames={{
-                            control: () => 'p-2 border-2',
-              
-                            input: () => 'text-lg',
-                            option: () => 'text-lg'
-                            }}
-                        theme={(theme) => ({
-                        ...theme,
-                        borderRadius: 6,
-                        colors: {
-                            ...theme.colors,
-                            primary: 'black',
-                            primary25: '#ffe4e6'
-                        }
-                        })}
-                        components={{ LoadingIndicator }}
-                    />
-                  </div>
+                  
                   <div className={`${otraColoniaSelected ? "block col-span-2" : "hidden"}`}>
                     <Input
                           id="otraColonia"
-                          label="Otra Colonia"
+                          label="Ingresa el nombre de la colonia"
                           disabled={isLoading || saved}
                           register={register}
                           errors={errors}
@@ -383,36 +408,37 @@ import { ErrorMessage } from "@hookform/error-message"
                           }}
                           />
                   </div>
+                  
+                 
                   <div className="col-span-2 md:col-span-1">
-                    <Select
-                        placeholder="Municipio"
-                        //@ts-ignore
-                        register={register}
-                        isClearable
-                        //@ts-ignore
-                        value={municipio ? {label: municipio.municipio, value: municipio.id} : null}
-                        //@ts-ignore
-                        options={municipio ? [{label: municipio.municipio, value: municipio.id}] : null}
-                        isDisabled
-                        isLoading={coloniasLoading}
-                        classNames={{
-                            control: () => 'p-2 border-2',
-                            input: () => 'text-lg',
-                            option: () => 'text-lg'
-                            }}
-                        theme={(theme) => ({
-                        ...theme,
-                        borderRadius: 6,
-                        colors: {
-                            ...theme.colors,
-                            primary: 'black',
-                            primary25: '#ffe4e6'
-                        }
-                        })}
-                        components={{ LoadingIndicator }}
-                    />
-                  </div>
-              
+                        <Select
+                            placeholder="Municipio"
+                            //@ts-ignore
+                            register={register}
+                            isClearable
+                            //@ts-ignore
+                            value={municipio ? {label: municipio.municipio, value: municipio.id} : null}
+                            //@ts-ignore
+                            options={municipio ? [{label: municipio.municipio, value: municipio.id}] : null}
+                            isDisabled
+                            isLoading={coloniasLoading}
+                            classNames={{
+                                control: () => 'p-2 border-2',
+                                input: () => 'text-lg',
+                                option: () => 'text-lg'
+                                }}
+                            theme={(theme) => ({
+                            ...theme,
+                            borderRadius: 6,
+                            colors: {
+                                ...theme.colors,
+                                primary: 'black',
+                                primary25: '#ffe4e6'
+                            }
+                            })}
+                            components={{ LoadingIndicator }}
+                        />
+                      </div>
                   <div className="col-span-2">
                     <Input
                         id="calle"
@@ -434,8 +460,7 @@ import { ErrorMessage } from "@hookform/error-message"
                         register={register}
                         errors={errors}
                         required
-                        type='number'
-                        maxlength={6}
+                        maxlength={10}
                         onChange={(event: any) => {
                           setCustomValue('numero', event.target.value);
                         }}
@@ -469,7 +494,7 @@ import { ErrorMessage } from "@hookform/error-message"
                   <div className="col-span-2">
                     <Input
                       id="referencias"
-                      label="Referencias"
+                      label="Referencias / entre calles"
                       disabled={isLoading || saved}
                       register={register}
                       errors={errors}

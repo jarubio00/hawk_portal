@@ -44,7 +44,7 @@ export function bloqueToString(bloque) {
     if (bloque === 1) {
         result = '10:00am - 3:00pm'
     } else if (bloque === 2) {
-        result = '3:00pm - 8:00pm'
+        result = '5:00pm - 9:00pm'
     }
 return result;
 }

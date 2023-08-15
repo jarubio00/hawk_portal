@@ -498,7 +498,7 @@ const handleTimerOff = () => {
           <div className="mt-1 flex flex-col">
             {pedido?.programa?.fechaRecoleccion && <p className="text-xs text-neutral-500">{namedDateString(pedido?.programa?.fechaRecoleccion)}</p>}
             {pedido?.programa?.bloqueRecoleccion && <p className="text-xs text-blue-500">
-                {pedido?.programa?.bloqueRecoleccion == 1 ? '10:00am - 3:00pm' : '3:00pm - 7:00pm'}
+                {pedido?.programa?.bloqueRecoleccion == 1 ? '10:00am - 3:00pm' : '4:00pm - 9:00pm'}
               
               </p>}
           </div>}
@@ -524,7 +524,7 @@ const handleTimerOff = () => {
           <div className="mt-1 flex flex-col">
             {pedido?.programa?.fechaEntrega && <p className="text-xs text-neutral-500">{namedDateString(pedido?.programa?.fechaEntrega)}</p>}
             {pedido?.programa?.bloqueEntrega && <p className="text-xs text-blue-500">
-                {pedido?.programa?.bloqueEntrega == 1 ? '10:00am - 3:00pm' : '3:00pm - 7:00pm'}
+                {pedido?.programa?.bloqueEntrega == 1 ? '10:00am - 3:00pm' : '4:00pm - 9:00pm'}
               
               </p>}
           </div>}
