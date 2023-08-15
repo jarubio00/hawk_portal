@@ -5,16 +5,23 @@ import ClientOnly from "../../components/ClientOnly";
 import Container from "@/app/components/Container";
 import LoginForm from "@/app/components/auth/login/LoginForm";
 import Logo from "@/app/components/navbar/Logo";
+import {useRouter} from "next/navigation";
 
 interface HomeProps {
   searchParams: any
 };
 
 const Home = async ({ searchParams }: HomeProps) => {
-
+  const router = useRouter();
   const currentUser = await getCurrentUser();
+  let redirectUrl = "https://hawkportal.lamensajeria.mx/portal/adm/mispedidos";
 
 
+  if (currentUser) {
+    const url = new URL(location.href);
+    redirectUrl = url.searchParams.get("callbackUrl") || redirectUrl;
+    router.push(redirectUrl);
+  }
   //className="flex flex-col min-h-screen w-full bg-gradient-to-b from-neutral-100 via-neutral-100 to-neutral-50 justify-center items-center gap-16">
 
   return (
