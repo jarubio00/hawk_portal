@@ -50,7 +50,7 @@ useEffect(() => {
   <div className='my-2 p-2 border border-neutral-200 rounded-md shadow-md w-full xl:w-4/6'>
         <p className="text-xs font-bold mb-2">Recolecciones activas</p>
         <hr className="my-1"></hr>
-        {isSuccess && data.data.length >=1 && 
+        {isSuccess && data.data?.length >=1 && 
         <>
            <div>
                 {data.data.map((rec: SafeRecoleccion, index: number ) => {
