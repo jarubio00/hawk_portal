@@ -69,8 +69,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
         const timer = setTimeout(() => {
           signIn('credentials', { 
             ...data, 
-            redirect: false,
-            //callbackUrl: '/portal/adm/mispedidos'
+            callbackUrl: '/portal/adm/mispedidos'
           })
           .then((callback) => {
             console.log(callback);
