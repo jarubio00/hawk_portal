@@ -15,10 +15,12 @@ import DashSection from './components/DashSection';
 import TabSection from './components/TabSection';
 import Drawer from 'react-modern-drawer'
 import 'react-modern-drawer/dist/index.css'
-import { SafePedido } from '@/app/types';
+import { SafeCobro, SafePedido } from '@/app/types';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import EnvioView from './components/tabs/components/EnvioView';
 import {GrClose} from 'react-icons/gr';
+import RecoleccionesSection from './components/RecoleccionesSection';
+import CobroView from './components/tabs/components/CobroView';
 
 const PedidosClient  = (props:any) => {
   const router = useRouter();
@@ -29,13 +31,14 @@ const PedidosClient  = (props:any) => {
   const [adding, setAdding] = useState(false);
   const [subtitle, setSubtitle] = useState('Consulta tus envios realizados')
   const [drawerPedido, setDrawerPedido] = useState<SafePedido>()
+  const [drawerCobro, setDrawerCobro] = useState<SafeCobro>()
   const [sheetOpen, setSheetOpen] = useState(false);
   //saveRecolecciones(props.data.recolecciones);
  
   //savePedidos(props.data.pedidos);
 
   useEffect(() => {
-    loader.isOpen && loader.onClose;
+    loader.isOpen && loader.onClose();
     }, []) 
 
   const onButtonClick = () => {
@@ -60,6 +63,13 @@ const PedidosClient  = (props:any) => {
 
   const handleDrawerPedido = (open: boolean, p: SafePedido) => {
     setDrawerPedido(p);
+    setDrawerCobro(undefined);
+    setSheetOpen(true);
+  }
+
+  const handleDrawerCobro = (open: boolean, c: SafeCobro) => {
+    setDrawerPedido(undefined);
+    setDrawerCobro(c);
     setSheetOpen(true);
   }
 
@@ -82,6 +92,7 @@ const PedidosClient  = (props:any) => {
                     <div className="flex flex-col w-full">
                 
                       {drawerPedido && <EnvioView data={drawerPedido} />}
+                      {drawerCobro && <CobroView data={drawerCobro} />}
                     </div>
                   </div>
               </div>
@@ -99,8 +110,9 @@ const PedidosClient  = (props:any) => {
             disabled = {false}
             noButton
           />
-          <DashSection />
-          <TabSection onView={handleDrawerPedido}/>
+          {/* <DashSection /> */}
+          <RecoleccionesSection />
+          <TabSection onView={handleDrawerPedido} onCobroView={handleDrawerCobro}/>
         </div>
     
           

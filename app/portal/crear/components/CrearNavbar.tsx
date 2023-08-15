@@ -50,7 +50,7 @@ const CrearNavbar: React.FC<CrearNavbarProps> = ({
             md:gap-0
           "
         >
-            <div className="cursor-pointer" onClick={onClose}><IoMdClose size={24} /></div>
+            <div className="cursor-pointer hidden md:block" onClick={onClose}><IoMdClose size={24} /></div>
             <div className="w-full md:w-3/4 py-0 pl-2">
                 <Stepper
                 activeStep={activeStep}
@@ -73,7 +73,7 @@ const CrearNavbar: React.FC<CrearNavbarProps> = ({
                     </Step>
                 </Stepper>
             </div>
-            <div className="hidden md:block">Otro</div>
+            <div className="cursor-pointer hidden md:block"></div>
           
         </div>
       </Container>

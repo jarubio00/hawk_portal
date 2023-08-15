@@ -11,7 +11,7 @@ import {
   } from "react-hook-form";
   import Input from "@/app/components/inputs/Input";
 import { useRouter } from "next/navigation";
-
+import { v4 as uuidv4, v5 as uuidv5 } from 'uuid';
 
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
@@ -23,7 +23,9 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-
+import PulseLoader from "react-spinners/PulseLoader";
+import { registerOtp } from "@/app/actions/otp";
+import { correoCheck } from "@/app/actions/apiQuerys";
 
 interface NewUserStepProps {
  data?: string;
@@ -61,31 +63,32 @@ const NewUserStep: React.FC<NewUserStepProps> = ({
     } = useContext(RegisterContext) as RegisterContextType;
 
     const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [errorMessage,setErrorMessage] = useState('');
 
-  const { 
-    register, 
-    handleSubmit,
-    setValue,
-      watch,
-      setError,
-    formState: {
-      errors,
-    },
-  } = useForm<RegisterFormType>({
-    resolver: yupResolver(validationSchema),
-    defaultValues: {
-      nombre: 'Usuario relleno ',
-      email: 'javier@segpak.com',
-      password: 'L1nux2020',
-      confirmPassword: 'L1nux2020',
-      celular: '+528115995194',
-      type: 'whatsapp',
-      status: 'pending',
-      code: 0
+    const { 
+      register, 
+      handleSubmit,
+      setValue,
+        watch,
+        setError,
+      formState: {
+        errors,
+      },
+    } = useForm<RegisterFormType>({
+      resolver: yupResolver(validationSchema),
+      defaultValues: {
+        nombre: 'Usuario relleno ',
+        email: 'jarubio@xinet.com.mx',
+        password: 'L1nux2020',
+        confirmPassword: 'L1nux2020',
+        celular: '+528115995194',
+        type: 'whatsapp',
+        status: 'pending',
+        code: 0
 
-    },
-  });
+      },
+    });
 
   const setCustomValue = (id: any, value: any) => {
     setValue(id, value, {
@@ -95,19 +98,61 @@ const NewUserStep: React.FC<NewUserStepProps> = ({
     })
   }
 
-  const onSubmit: SubmitHandler<RegisterFormType> = (data: RegisterFormType) => {
-    if (data) {
-      saveNewUser(data);
-    }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
-    updateActiveStep(1)
+  const onSubmit: SubmitHandler<RegisterFormType> = async (data: RegisterFormType) => {
+
+
+    if (data.celular === registration?.newUser?.celular) {
+      updateActiveStep(1)
+    } else {
+      setIsLoading(true);
+      setErrorMessage('');
+      
+      const check = await  correoCheck({email: data.email});
+      if (check.status === 1) {
+        setError('email', {type: 'custom', message: 'El correo ya está registrado'});
+        setIsLoading(false);
+        return null
+      }
+
+
+      const uuid = uuidv4();
+      if (data) {
+        saveNewUser({...data,uuid: uuid});
+      }          
+  
+      let result;
+      if (data.email && data.celular && data.type) {
+        result = await  registerOtp({
+          email: data.email,
+          phone: data.celular,
+          uuid: uuid,
+          type: data.type      
+        })
+      }
+  
+      if (result && result.status == 1) {
+        setIsLoading(false);
+        updateActiveStep(1)
+      } else {
+
+        setErrorMessage('Error al enviar el código de verificación. Intenta de nuevo o selecciona otro método de envío.')
+        setIsLoading(false);
+      }
+    }
+    
+
+    
+    //updateActiveStep(1)
   }
 
-  const handleCorreoCheck = (event: any) => {
-    console.log(event.target.value);
-
-    if (event && event.target.value === 'javier2@mail.com') {
-      setError('email', {type: 'custom', message: 'El correo ya está registrado'});
-    }
+  const handleCorreoCheck = async (event: any) => {
+      const check = await  correoCheck({email: event.target.value});
+      
+      if (check.status === 1) {
+        setError('email', {type: 'custom', message: 'El correo ya está registrado'});
+      }
+      
+    
   }
 
 
@@ -151,7 +196,7 @@ const NewUserStep: React.FC<NewUserStepProps> = ({
         label="Contraseña"
         type="password"
         placeholder="Teclea tu contraseña"
-        notes='8 caracteres. 1 Mayúscula. 1 Número'
+        notes='Min. 8 caracteres, Min. 1 Mayúscula,  Min. 1 Número'
         disabled={isLoading}
         register={register}
         errors={errors.password?.message}
@@ -177,6 +222,7 @@ const NewUserStep: React.FC<NewUserStepProps> = ({
         <div>
         <PhoneInput
           inputClass="!py-4 !w-full !pl-20 !border-input !text-base"
+          disabled={isLoading}
           buttonClass="!w-16 !p-2 !py-4   !border-input"
           country={'mx'}
           preferredCountries={['mx','us']}
@@ -201,6 +247,7 @@ const NewUserStep: React.FC<NewUserStepProps> = ({
           {...register('type')} 
           onValueChange={(e) => {
             setValue('type', e);
+            setErrorMessage('');
           }}
           
           >
@@ -217,9 +264,16 @@ const NewUserStep: React.FC<NewUserStepProps> = ({
         </RadioGroup>
       </div>
         
-        <Button onClick={handleSubmit(onSubmit)} className="mt-4 bg-rose-500 hover:bg-rose-500/80">
+        <Button 
+          onClick={handleSubmit(onSubmit)} 
+          className="mt-4 gap-3 py-5 bg-rose-500 hover:bg-rose-500/80">
+            {isLoading && <PulseLoader
+                            size={6}
+                            color="#FFFFFF"
+                            />}
           Siguiente
         </Button>
+        <p className="mt-2 text-xs text-red-500 text-left">{errorMessage}</p>
      
   </div>
  );

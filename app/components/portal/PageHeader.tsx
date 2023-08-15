@@ -38,8 +38,8 @@ interface PageHeaderProps {
     return (
       <>
         <div className="flex flex-col gap-1 pt-0">
-            <div className="flex flex-row justify-between items-center py-4 px-4 md:px-6 w-full md:w-5/6 lg:w-3/4">
-                <div className="flex flex-row gap-2 md:gap-6 items-center">
+            <div className="flex flex-row justify-between items-center py-2 px-2 md:px-2 w-full md:w-5/6 lg:w-3/4">
+                <div className="flex flex-row gap-2 md:gap-3 items-center">
                     <div 
                         className="
                             hidden
@@ -83,7 +83,7 @@ interface PageHeaderProps {
                     />
                 </div></>}
             </div>
-            <div className="my-0 px-4">
+            <div className="my-0 px-0">
                 <hr />
             </div>
         </div>

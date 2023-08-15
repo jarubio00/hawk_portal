@@ -37,7 +37,8 @@ const RegisterProvider: React.FC<Props> = ({children}) => {
       celular: user.celular,
       type: user.type,
       status: user.status,
-      code: user.code
+      code: user.code, 
+      uuid: user.uuid
     }});
   }
 

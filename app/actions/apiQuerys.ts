@@ -402,12 +402,61 @@ export  async function sendOtpSms(props: any) {
       return result;
 }
 
-export  async function sendOtpWhatsapp(props: any) {
+export  async function correoCheck(props: any) {
 
-  const result = await axios.post(`/api/otp/whatsapp`, props)
+  const result = await axios.post(`/api/register/user/check`, props)
       .then((response) => {
-        const responseData:ApiResponse = {status:1,statusMessage: 'OK', response: {data: response.data} }
-        return responseData;
+        if (response.data.status == 1) {
+          const responseData:ApiResponse = {status:1,statusMessage: 'El correo ya está registrado', response: {data: response.data} }
+          return responseData;
+        } else {
+          const responseData:ApiResponse = {status:2,statusMessage: 'Correo disponible', response: {data: {}, error: response.data} }
+          return responseData;
+        }
+      })
+      .catch((error) => {
+        const response:ApiResponse = {status:2,statusMessage: error.message, response: {data: {}, error: error} }
+        return response;
+      })
+ 
+      
+      return result;
+}
+
+export  async function passwordChange(props: any) {
+
+
+  const result = await axios.post(`/api/user/password/change`, props)
+      .then((response) => {
+        if (response.data.status == 1) {
+          const responseData:ApiResponse = {status:1,statusMessage: response.data.statusMessage, response: {data: response.data} }
+          return responseData;
+        } else {
+          const responseData:ApiResponse = {status:2,statusMessage: response.data.statusMessage, response: {data: {}, error: response.data} }
+          return responseData;
+        }
+      })
+      .catch((error) => {
+        const response:ApiResponse = {status:2,statusMessage: error.message, response: {data: {}, error: error} }
+        return response;
+      })
+ 
+      
+      return result;
+}
+
+export  async function confirmPhone(props: any) {
+  console.log(props);
+
+  const result = await axios.post(`/api/user/phone/confirm`, props)
+      .then((response) => {
+        if (response.data.status == 1) {
+          const responseData:ApiResponse = {status:1,statusMessage: response.data.statusMessage, response: {data: response.data} }
+          return responseData;
+        } else {
+          const responseData:ApiResponse = {status:2,statusMessage: response.data.statusMessage, response: {data: {}, error: response.data} }
+          return responseData;
+        }
       })
       .catch((error) => {
         const response:ApiResponse = {status:2,statusMessage: error.message, response: {data: {}, error: error} }

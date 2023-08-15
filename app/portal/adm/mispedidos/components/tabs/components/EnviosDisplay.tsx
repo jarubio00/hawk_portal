@@ -12,28 +12,14 @@ import {
     SelectTrigger,
     SelectValue,
   } from "@/components/ui/select"
-import {
-    Sheet,
-    SheetClose,
-    SheetContent,
-    SheetDescription,
-    SheetFooter,
-    SheetHeader,
-    SheetTitle,
-    SheetTrigger,
-    } from "@/components/ui/sheet"
 import Drawer from 'react-modern-drawer'
 
 import LoaderSingle from "@/app/components/LoaderSingle";
 import {BiSort} from 'react-icons/bi';
 import EnvioView from "./EnvioView";
-import {
-    Tabs,
-    TabsContent,
-    TabsList,
-    TabsTrigger,
-  } from "@/components/ui/tabs"
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Button } from "@/components/ui/button";
+import {useRouter} from "next/navigation";
 
 type UserQueryParams = {
     take?: number;
@@ -44,11 +30,10 @@ type UserQueryParams = {
   };
 
   const pedidosQuery = async ({ take, lastCursor, order, filter, search }: UserQueryParams) => {
-    console.log('firing pedidosQuery')
     const response = await axios.get("/api/pedidos", {
       params: { take, lastCursor, order, filter, search },
     });
-    console.log(response.data);
+    //console.log(response.data);
     return response?.data;
   };
 
@@ -75,6 +60,7 @@ const { ref, inView } = useInView(
         }
     }
 );
+const router = useRouter();
 const [initialLoading,setInitialLoading] = useState(false);
 const [order, setOrder] = useState('desc');
 const [sheetOpen, setSheetOpen] = useState(false);
@@ -94,13 +80,11 @@ const {
     queryKey: ["pedidos", order, filter],
 
     getNextPageParam: (lastPage) => {
+      //console.log(lastPage);
       return lastPage?.metaData.lastCursor;
     },
   });
 
-   /*  useEffect(() => {
-      console.log(data?.pages[0].metaData.isEmpty);
-     }, [data]); */
     
   /* useEffect(() => {
  
@@ -132,10 +116,10 @@ const {
 
  return (
   <div className="w-full xl:w-4/6 flex flex-col" >
-    <div className="flex flex-row justify-end items-center mb-4">
+    {isSuccess && data.pages[0].data.length >=1  && <div className="flex flex-row justify-end items-center mb-4">
         <div className="flex flex-row items-center gap-1">
             <BiSort size={16} />
-            <Select defaultValue={'desc'} onValueChange={(val: any) => handleOrder(val)}  disabled={isLoading || isFetchingNextPage}>
+            <Select defaultValue={'desc'} onValueChange={(val: any) => handleOrder(val)}  disabled={isLoading || isFetchingNextPage ||data.pages[0].data.length <=1}>
                 <SelectTrigger className="w-[140px] text-xs">
                     <SelectValue  />
                 </SelectTrigger>
@@ -145,16 +129,15 @@ const {
                 </SelectContent>
             </Select>
         </div>
-    </div>
+    </div>}
    
   
          
 
      
-         {isSuccess && 
-            data?.pages.map((page) =>
+         {isSuccess && data.pages[0].data.length >=1 ?
+            data?.pages.map((page, pageIndex) =>
               page.data.map((pedido: SafePedido, index: number) => {
-                //console.log(rec);
                if (page.data.length === index + 1) {
                   return (
                     <div ref={ref} key={pedido.id} onClick={() => handlePedidoClick(pedido)}>
@@ -174,8 +157,21 @@ const {
                 }
               })
             ) 
-             
-            }
+             :
+            <>
+              { !isLoading && 
+              <div className="felx flex-col gap-2 text-xs p-4">
+                <p>No se encontraron envíos</p>
+                {filter === '1' && 
+                 <Button 
+                    onClick={() => router.push('/portal/crear')} 
+                    className="mt-4 gap-3 py-1 px-4 bg-rose-500 hover:bg-rose-500/80">
+                    Crear envío
+                  </Button>
+                }
+              </div>}
+            </>
+          }
           {(isLoading ) && <p className="m-3"><LoaderSingle /></p>}
           {(isFetchingNextPage) && <p className="mb-2 mt-1 mx-3"><LoaderSingle /></p>}
 

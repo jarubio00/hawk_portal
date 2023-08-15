@@ -70,6 +70,7 @@ const CreandoPedidoModal = () => {
 
   const pedidoExitoso = () => {
     resetContext();
+    loader.onClose();
     router.replace('/portal/adm/mispedidos')
     router.refresh();
     CreandoPedidoModal.onClose();

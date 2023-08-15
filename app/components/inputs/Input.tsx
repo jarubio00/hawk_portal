@@ -24,7 +24,7 @@ interface InputProps {
   disabled?: boolean;
   formatPrice?: boolean;
   required?: boolean;
-  register: UseFormRegister<RegisterForm>,
+  register: UseFormRegister<FieldValues>,
   errors: FieldErrors;
   width?: string;
   onChange?: ChangeEventHandler<HTMLInputElement>;
@@ -108,7 +108,7 @@ const Input: React.FC<InputProps> = ({
           transform 
           -translate-y-3 
           top-4 
-
+          w-full
           origin-[0] 
           ${formatPrice ? 'left-9 text-md' : 'left-4'}
           peer-placeholder-shown:scale-100

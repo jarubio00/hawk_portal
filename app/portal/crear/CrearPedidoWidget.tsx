@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import useLoader from "@/app/hooks/useLoader";
 import RecoleccionStep from "./steps/Recoleccion";
 import CrearNavbar from "./components/CrearNavbar";
-import Button from '@/app/components/Button';
+import { Button } from "@/components/ui/button";
 import ConfirmDialog from "@/app/components/modals/ConfirmDialog";
 import {PedidoContext,} from "@/app/portal/crear/context/PedidoContext"
 import {PedidoContextType, IDrawer} from "@/app/types/pedido"
@@ -72,6 +72,10 @@ const CrearPedidoWidget: React.FC<CrearPedidoWidgetProps> = ({
 
     //console.log(append);
     //console.log(recoleccion);
+    useEffect(() => {
+      loader.isOpen && loader.onClose();
+      }, []) 
+
 
     const dialogContent ={
       title: "Estas seguro de salir?",
@@ -82,9 +86,9 @@ const CrearPedidoWidget: React.FC<CrearPedidoWidgetProps> = ({
     const handleConfirmSalir = async (props: any) => {
    
       if(props.confirm ) {
-        //loader.onOpen();
+        loader.onOpen();
         setConfirmSalirOpen(false);
-        router.push('/portal/adm/mispedidos');
+        router.push('/portal/adm/mispedidos')
         //loader.onClose();
       } else {
         setConfirmSalirOpen(false);
@@ -164,7 +168,6 @@ const CrearPedidoWidget: React.FC<CrearPedidoWidgetProps> = ({
           <div className="w-full md:w-3/4 py-2 px-1 md:px-8 mx-auto">
               <p className="text-sm text-white ">Agregando pedido a recolección en {recoleccion.calle} {recoleccion.numero}</p>
               <p className="text-xs text-white">{namedDateString(recoleccion.fecha)} ({bloqueToString(recoleccion.bloque)})</p>
-              <p className="text-xs text-red-500">{tipoPrograma} - {pedido?.programa?.fechaEntrega && namedDateString(pedido?.programa?.fechaEntrega)} </p>
           </div>
         </div>}
       <div className="w-full md:w-3/4 py-4 px-1 md:px-8 mx-auto">
@@ -187,7 +190,13 @@ const CrearPedidoWidget: React.FC<CrearPedidoWidgetProps> = ({
               <ConfirmarStep append={append} recoleccion={recoleccion}/>
           }
         </div>
-        {/* <Button label="Drawer" outline onClick={() => setOpenDrawer(true)}/> */}
+          <div className="my-4 w-full block md:hidden">
+            <Button 
+              onClick={() => setConfirmSalirOpen(true)} 
+              className="mt-4 gap-3 py-1 px-4 bg-red-500 hover:bg-red-500/80 w-full ">
+              Cancelar envío
+            </Button>
+          </div>
       </div>
     </>
    );

@@ -1,4 +1,4 @@
-import { Direccion, Destino, User, Paquete, Recoleccion, Pedido } from "@prisma/client";
+import { Direccion, Destino, User, Paquete, Recoleccion, Pedido, CobrosDestino } from "@prisma/client";
 import { CodeStatus, ConfirmationType } from "./constants";
 
 export type SafeDireccion = Omit<Direccion, "createdAt"> & {
@@ -48,7 +48,7 @@ export type SafeRecoleccion = Omit<
 > & {
   id: number;
   estatus: any;
-  pedidos: Pedido;
+  pedidos: Pedido[];
   municipio: any;
 };
 
@@ -65,6 +65,19 @@ export type SafePedido = Omit<
   estatusPedido: any;
 };
 
+export type SafeCobro = Omit<
+  CobrosDestino, 
+   "cobros"
+> & {
+  id: number;
+  pedido: SafePedido;
+  estatusCobro: any;
+  estatusPagoCobro: any;
+  retornoForma: any;
+};
+
+
+
 export type RegisterFormType = {
   email: string;
   nombre: string;
@@ -79,4 +92,17 @@ export type RegisterFormType = {
 export type LoginFormType = {
   email: string;
   password: string;
+}
+
+export type ForgotFormType = {
+  email: string;
+}
+export type ForgotChangeFormType = {
+  newPassword: string;
+  confirmPassword: string;
+}
+
+export type PhoneConfirmFormType = {
+  celular: string;
+  type?: string;
 }

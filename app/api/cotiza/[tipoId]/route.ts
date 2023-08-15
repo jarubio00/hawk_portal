@@ -21,7 +21,6 @@ export async function POST(
     paqPesoVol
    } = body;
 
-   
 
   Object.keys(body).forEach((value: any) => {
     if (!body[value]) {
@@ -48,6 +47,6 @@ export async function POST(
     }
   });
 
-
+  console.log(cotiza);
   return NextResponse.json(cotiza[0]);
 }

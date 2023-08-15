@@ -19,9 +19,9 @@ const Home = async ({ searchParams }: HomeProps) => {
 
   return (
     <ClientOnly>
-      <div className="flex flex-col min-h-screen w-full  justify-center items-center gap-16">
+      <div className="flex flex-col min-h-[90vh] md:min-h-screen w-full  justify-center items-center gap-16">
             
-            <div className=" bg-white rounded-2xl border border-neutral-200 shadow-lg p-6 w-5/6 md:w-4/6 lg:w-3/6 xl:w-2/6 flex flex-col items-center gap-8 relative">
+            <div className=" bg-white rounded-2xl border border-neutral-200 shadow-lg p-6 w-5/6 md:w-4/6 lg:w-3/6 xl:w-2/6  flex flex-col items-center gap-8 relative">
               <Logo />
               <div className="mb-6 w-full">
                 <LoginForm />

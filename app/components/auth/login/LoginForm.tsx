@@ -101,6 +101,10 @@ const LoginForm: React.FC<LoginFormProps> = ({
         router.push("/auth/register");
       }, [])
 
+      const onForgot = useCallback(() => {
+        router.push("/auth/forgot");
+      }, [])
+
       const loadingTest = 
       () => {
         setIsLoading(true);
@@ -163,7 +167,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
 
     <div className="flex flex-col gap-2 mt-3">
       <hr />
-      <Button variant={'ghost'} className="px-2 font-bold ">Olvidé mi contraseña</Button>
+      <Button variant={'ghost'} className="px-2 font-bold " onClick={onForgot}>Olvidé mi contraseña</Button>
       <div className="
       text-neutral-400 text-center mt-0">
         <p>No tienes cuenta?

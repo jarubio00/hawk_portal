@@ -7,6 +7,7 @@ import ConfirmationStep from "./steps/ConfirmationStep";
 import { Stepper, Step } from "@material-tailwind/react";
 import { BiSolidUserDetail } from "react-icons/bi";
 import { BsPersonFillCheck, BsCheckCircleFill, BsPersonVcardFill} from "react-icons/bs";
+import ConfirmedStep from "./steps/ConfirmedStep";
 
 
 
@@ -26,7 +27,7 @@ const RegisterClient: React.FC<RegisterClientProps> = ({
 
  return (
 
-  <div className='m-0'>
+  <div className='m-0 h-full'>
     <Stepper
         activeStep={activeStep}
         activeLineClassName="bg-rose-500"
@@ -49,6 +50,9 @@ const RegisterClient: React.FC<RegisterClientProps> = ({
               }
             {activeStep === 1 &&
                   <ConfirmationStep />
+              }
+            {activeStep === 2 &&
+                  <ConfirmedStep />
               }
         </div>
          

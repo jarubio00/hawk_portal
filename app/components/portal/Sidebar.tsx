@@ -3,6 +3,7 @@
 import { forwardRef, useRef } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
+import useLoader from '@/app/hooks/useLoader';
 import { BiSearch, BiCurrentLocation } from 'react-icons/bi';
 import usePortalDrawer from "@/app/hooks/usePortalDrawer";
 import {
@@ -15,7 +16,7 @@ import {
   import { FaCog, FaPlus, FaHome, FaMapMarkedAlt, } from 'react-icons/fa'
   import { AiOutlineMenu } from "react-icons/ai";
   import { GoPackage } from "react-icons/go";
-import Button from "../Button";
+  import { Button } from "@/components/ui/button";
 
 
 interface SidebarProps {
@@ -26,6 +27,7 @@ export type Ref = HTMLButtonElement;
 
 const SideBar = forwardRef<Ref, SidebarProps>((showNav, ref) => {
   const router = useRouter();
+  const loader = useLoader();
   const pathname = usePathname();
   const drawer = usePortalDrawer();
 
@@ -34,15 +36,18 @@ const SideBar = forwardRef<Ref, SidebarProps>((showNav, ref) => {
     <div ref={ref} className="w-full h-full bg-white shadow-sm">
         <div className="flex flex-col h-[92vh] pt-8 justify-between">    
             <div className='grow my-0'>
-              <div className="flex px-2 w-full justify-center items-end mb-6 rounded-lg">
-                <Link href={`/portal/crear`}>
-                    <Button 
-                      label="Programar envío"
-                      onClick={() => drawer.onClose()}
-                      icon={FaPlus}
-                      small
-                      />
-                </Link>
+              <div className="flex px-2 w-full mb-6 rounded-sm">
+                <Button 
+                  onClick={() => {
+                    loader.onOpen()
+                    router.push('/portal/crear')
+                    drawer.onClose()
+                  }} 
+                  className="gap-2 py-2 px-4 bg-rose-500 hover:bg-rose-500/80">
+                    <FaPlus />
+                    Programar envío
+                </Button>
+                
               </div>
                 {data.map((group,index) => (
                     <div key={index} className='my-2' >
@@ -66,7 +71,7 @@ const SideBar = forwardRef<Ref, SidebarProps>((showNav, ref) => {
                                                 <div className="mr-2">
                                                     <div 
                                                         className={`
-                                                            p-1 
+                                                            p-1.5 
                                                             mr-1
                                                             ${pathname == `${item.route}`
                                                                     ? "bg-rose-500 text-white"
@@ -75,7 +80,7 @@ const SideBar = forwardRef<Ref, SidebarProps>((showNav, ref) => {
                                                             rounded-full 
                                                         `}
                                                         >
-                                                        <item.icon size={20} />
+                                                        <item.icon size={16} />
                                                     </div>
                                                 </div>
                                                 

@@ -81,6 +81,38 @@ export function statusIdToString(status, size) {
     
 }
 
+export function statusCobroIdToString(status, size) {
+    let result = ''
+    const intStatus = isNaN(status) ? parseInt(status) : status;
+
+    const small = size == 'small' ? true : false;
+
+    switch(intStatus) {
+        case 1:
+            return <div className='flex flex-row gap-1 items-center'>
+                <MdAccessTimeFilled size={small ? 14 : 20} className="text-blue-500"/>
+                <p className={`font-semibold text-foreground ${small ? 'text-xs' : 'text-sm'}`}>Por cobrar</p>
+            </div>
+        case 2:
+            return <div className='flex flex-row gap-1 items-center'>
+                <IoIosWarning size={small ? 14 : 20} className="text-amber-700"/>
+                <p className={`font-semibold text-foreground ${small ? 'text-xs' : 'text-sm'}`}>Cobrado</p>
+            </div>
+        case 3:
+            return <div className='flex flex-row gap-1 items-center'>
+                <HiCheckCircle size={small ? 14 : 20} className="text-green-500"/>
+                <p className={`font-semibold text-foreground ${small ? 'text-xs' : 'text-sm'}`}>Confirmado</p>
+            </div>
+        case 4:
+            return <div className='flex flex-row gap-1 items-center'>
+                <MdCancel size={small ? 14 : 20} className="text-red-500"/>
+                <p className={`font-semibold text-foreground ${small ? 'text-xs' : 'text-sm'}`}>Cancelado</p>
+            </div>
+
+    }
+    
+}
+
 
 
 

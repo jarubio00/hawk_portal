@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE `OtpCodes` MODIFY `expireAt` DATETIME(3) NOT NULL DEFAULT (now() + INTERVAL 30 MINUTE),
+    MODIFY `createdAt` DATETIME(3) NOT NULL DEFAULT (NOW());

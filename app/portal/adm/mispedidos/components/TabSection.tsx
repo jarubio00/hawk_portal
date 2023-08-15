@@ -20,17 +20,19 @@ import {
   BsFillBoxSeamFill
   } from 'react-icons/bs'
 import CobrosTab from "./tabs/CobrosTab";
-import { SafePedido } from "@/app/types";
+import { SafeCobro, SafePedido } from "@/app/types";
 
 
 interface TabSectionProps {
 data?: any
 onView: (open: boolean, p: SafePedido) => void;
+onCobroView: (open: boolean, c: SafeCobro) => void;
 }
 
 const TabSection: React.FC<TabSectionProps> = ({
  data,
- onView
+ onView,
+ onCobroView
 }) => {
   return ( 
     <div>
@@ -67,7 +69,7 @@ const TabSection: React.FC<TabSectionProps> = ({
               <EnviosTab onView={onView}/>
             </TabPanel>
             <TabPanel value="cobros" className="m-0 p-0">
-              <CobrosTab />
+              <CobrosTab onView={onCobroView}/>
             </TabPanel>
             <TabPanel value={"tickets"} className="m-0 p-0">
               <HistorialTab />

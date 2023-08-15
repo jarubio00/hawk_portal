@@ -47,19 +47,24 @@ const NavbarPortal: React.FC<NavbarPortalProps> = ({
             
           "
         >
-          <div className="block md:hidden md:gap-8 " onClick={drawer.onOpen}>
+          <div className="flex flex-row  items-center md:hidden md:gap-8 " onClick={drawer.onOpen}>
             <SidebarButton />
+            <div className=" ml-3 md:ml-0">
+              <Logo />
+            </div>
           </div>
-          <div className=" ml-7 md:ml-0">
-            <Logo />
+
+          <div className=" hidden md:block  md:ml-0">
+              <Logo />
           </div>
+          
             
           <div className="flex flex-row items-center gap-8">
-            <div className="flex flex-row items-center gap-4">
+
               <PackagePlus size={20} className="text-neutral-700"/>
+             
+            <div className="flex flex-row items-center gap-2">
               <Bell size={20} className="text-neutral-700"/>
-            </div>
-            <div className="">
               <UserMenuPortal currentUser={currentUser} />
             </div>
           </div>

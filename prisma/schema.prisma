@@ -11,7 +11,6 @@ model User {
   id                 Int             @id @default(autoincrement())
   nombre             String?
   email              String?         @unique
-  correoVerificado   DateTime?
   imagen             String?
   hashedPassword     String?
   nivel              Int             @default(1)
@@ -28,6 +27,13 @@ model User {
   celular            String?
   whatsappEnabled    Boolean?        @default(false)
   cobrosPermitidos   Boolean         @default(false)
+  passwordType  String @default("bcrypt")
+  disabled  Boolean @default(false)
+  disabledAt  DateTime?
+  disabledBy  Int?
+  deleted Boolean @default(false)
+  deletedAt DateTime?
+  deletedBy Int?
   accounts           Account[]
   cobros             CobrosDestino[]
   destinos           Destino[]
@@ -35,8 +41,24 @@ model User {
   paquetes           Paquete[]
   pedidos            Pedido[]
   recolecciones      Recoleccion[]
+  checklist          ClientesChecklist[]
 
   @@map("Clientes")
+}
+
+model ClientesChecklist {
+   id                Int     @id @default(autoincrement())
+   clienteEmail String @unique
+   correoVerificado Boolean @default(true)
+   correoVerificadoAt DateTime  @default(dbgenerated("(NOW())")) 
+   celularVerificado Boolean @default(true)
+   celularVerificadoAt DateTime  @default(dbgenerated("(NOW())")) 
+   tutorialTomado Boolean @default(true)
+   tutorialTomadoAt DateTime?
+   firstLogin Boolean @default(false)
+   firstLoginAt DateTime?
+   clienteV2 Boolean @default(true)
+   email User    @relation(fields: [clienteEmail], references: [email], onDelete: Cascade)
 }
 
 model Account {
@@ -142,6 +164,7 @@ model Pedido {
   formaPago             CatalogoMetodosPago    @relation(fields: [formaPagoId], references: [id], onDelete: Cascade)
   tipoPaquete           CatalogoTiposPaquetes  @relation(fields: [paqTipoId], references: [id], onDelete: Cascade)
   recoleccion           Recoleccion            @relation(fields: [recoleccionId], references: [id], onDelete: Cascade)
+  cobro                 CobrosDestino[]
 
   @@index([clienteId], map: "Pedidos_clienteId_fkey")
   @@index([estatusPagoId], map: "Pedidos_estatusPagoId_fkey")
@@ -275,6 +298,7 @@ model CobrosDestino {
   estatusCobro          CatalogoEstatusCobros      @relation(fields: [estatusCobroId], references: [id], onDelete: Cascade)
   estatusPagoCobro      CatalogoEstatusPagoCobros  @relation(fields: [estatusPagoCobroId], references: [id], onDelete: Cascade)
   retornoForma          CatalogoTiposRetornoCobros @relation(fields: [retornoFormaId], references: [id], onDelete: Cascade)
+  pedido                Pedido @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
 
   @@index([clienteId], map: "CobrosDestino_clienteId_fkey")
   @@index([estatusCobroId], map: "CobrosDestino_estatusCobroId_fkey")
@@ -449,4 +473,22 @@ enum TipoFecha {
   REC
   ENT
   AMBOS
+}
+
+model OtpCodes {
+  id     Int         @id @default(autoincrement())
+  uuid  String
+  app OtpApplication
+  code Int
+  email String?
+  phone String?
+  createdAt  DateTime  @default(dbgenerated("(NOW())")) 
+  expireAt DateTime  @default(dbgenerated("(now() + INTERVAL 30 MINUTE)"))
+}
+
+enum OtpApplication {
+  register
+  passwordChange
+  phoneVerify
+  other
 }

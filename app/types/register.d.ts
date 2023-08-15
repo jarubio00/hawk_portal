@@ -9,6 +9,7 @@ export interface NewUser {
     type?: string;
     status?: string;
     code?: number;
+    uuid?: string;
 }
 
 

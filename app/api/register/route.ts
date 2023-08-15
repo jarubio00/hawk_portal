@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 
 import prisma from "@/app/libs/prismadb";
+import axios from "axios";
 
 export async function POST(
   request: Request, 
@@ -21,9 +22,29 @@ export async function POST(
       email,
       nombre,
       hashedPassword,
-      celular
+      celular,
+      checklist: {
+        create: {
+          clienteV2: true
+        }
+      }
     }
   });
+
+  if (user) {
+    const axiosConfig = {
+      method: 'post',
+        url: `https://nsgw-api.lamensajeria.mx/ns/email/welcome`,
+        data : {email: email, nombre: nombre}
+    }
+  
+    const otpResult = await axios(axiosConfig);
+  
+    console.log('response: ',otpResult.data);
+  }
+  
+
+
 
   return NextResponse.json(user);
 }

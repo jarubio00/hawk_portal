@@ -13,19 +13,14 @@ export async function GET(req: Request){
     return NextResponse.error();
   }
 
- 
-  const url = new URL(req.url);
 
-  const take = url.searchParams.get("take");
-  const lastCursor = url.searchParams.get("lastCursor");
-  const order = url.searchParams.get("order");
 
  
 
   let result = await prisma.recoleccion.findMany({
     where: {
         clienteId: currentUser.id,
-        estatusRecoleccionId: 3
+        estatusRecoleccionId: 1
     },
     include: {
         pedidos: {
@@ -47,74 +42,31 @@ export async function GET(req: Request){
           },
         }
       },
-    take: take ? parseInt(take as string) : 10,
-    ...(lastCursor && {
-   skip: 1, // Do not include the cursor itself in the query result.
-   cursor: {
-     id: parseInt(lastCursor as string),
-   }
-    }),
-    orderBy: {
-        createdAt: order == 'desc' ? Prisma.SortOrder.desc : Prisma.SortOrder.asc,
-    }
-  }
-  );
+    });
 
 
   if (result.length == 0) {
     return new Response(JSON.stringify({
    data: [],
-   metaData: {
-     lastCursor: null,
-     hasNextPage: false,
-   },
     }), { status: 200 });
   }
 
-  const lastPostInResults: any = result[result.length - 1];
-  const cursor: any = lastPostInResults.id;
+  let data1:any = [];
+  let data2:any = [];
+  let isMoreData=false;
 
-  const nextPage = await prisma.recoleccion.findMany({
-    // Same as before, limit the number of events returned by this query.
-    where: {
-        clienteId: currentUser.id,
-        estatusRecoleccionId: 3
-    },
-    include: {
-        pedidos: {
-          select: {
-            id: true,
-          },
-          orderBy: {
-            createdAt: 'desc'
-          },
-        },
-        municipio: {
-          select: {
-            municipio: true,
-          },
-        },
-        estatus: {
-          select: {
-            estatus: true,
-          },
-        }
-      },
-    take: take ? parseInt(take as string) : 7,
-    skip: 1, // Do not include the cursor itself in the query result.
-    cursor: {
-        id: cursor,
-        },
-    orderBy: {
-        createdAt:order == 'desc' ? Prisma.SortOrder.desc : Prisma.SortOrder.asc,
-    }
-    });
+  if (result.length >3) {
+    isMoreData = true;
+    data1 = result.slice(0,3);
+    data2 = result.slice(3);
+  } else {
+    data1 = result;
+  }
 
   const data = {
-    data: result, metaData: {
-   lastCursor: cursor,
-   hasNextPage: nextPage.length > 0,
-    }
+    data: data1,
+    moreData: data2,
+    isMoreData: isMoreData
   };
 
   return new Response(JSON.stringify(data), { status: 200 });
