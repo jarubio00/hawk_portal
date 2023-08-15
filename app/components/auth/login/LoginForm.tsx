@@ -20,21 +20,30 @@ import { LoginFormType } from "@/app/types";
 
 
 interface LoginFormProps {
- data?: string;
+ currentUser: any;
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({
- data
+ currentUser
 }) => {
 
+  const router = useRouter();
   const validationSchema = Yup.object().shape({
     email: Yup.string().required('El correo es requerido')
       .email('El correo es inválido'),
     password: Yup.string().required('La contrseña no puede estar vacía'),
   });
 
+  let redirectUrl = "https://hawkportal.lamensajeria.mx/portal/adm/mispedidos";
 
-    const router = useRouter();
+
+  if (currentUser) {
+    const url = new URL(location.href);
+    redirectUrl = url.searchParams.get("callbackUrl") || redirectUrl;
+    router.push(redirectUrl);
+  }
+
+   
     const [isLoading, setIsLoading] = useState(false);
     const [loginSuccess, setLoginSuccess] = useState(false);
     const [error,setError] = useState('');
