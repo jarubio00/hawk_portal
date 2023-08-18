@@ -87,6 +87,7 @@ model Recoleccion {
   estatusRecoleccionId Int                          @default(1)
   fecha                DateTime
   bloque               Int
+  direccionId          Int?
   contactoNombre       String
   contactoTel          String
   cpId                 Int
@@ -216,6 +217,8 @@ model Direccion {
   referencias     String?
   lat             String?
   lng             String?
+  icon            String?
+  color           String?
   createdAt       DateTime           @default(now()) @db.DateTime(0)
   updatedAt       DateTime?          @default(now()) @db.DateTime(0)
   updatedBy       Int?

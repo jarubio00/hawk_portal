@@ -28,18 +28,19 @@ export async function GET(
   let entBloque;
 
 
-  const testDays = 0;
-  const hoyUTC = new Date();
-  const hoy = addDays(subHours(hoyUTC,6),testDays);
+  const hoyUTC = new Date('2023-08-22T22:42:09.864Z');
+  const hoy = subHours(hoyUTC,6);
   const hoySoloFecha =  format(hoy,`yyyy-MM-dd`);
   const hoySearch = new Date(hoySoloFecha);
-  const hoyHora = hoyUTC.getHours();
+  let hoyHora = hoyUTC.getHours();
   const blockedLimit = addDays(hoyUTC,6)
 
+  console.log('auto date utc: ',hoyUTC);
   console.log('auto date: ',hoy);
   console.log('solo fecha: ',hoySoloFecha);
   console.log('hora: ',hoyHora);
   console.log('hoy search: ', hoySearch);
+  console.log('hoy day', hoy.getDay());
 
 
   const blocked = await prisma.fechasBloqueadas.findMany({
@@ -48,10 +49,16 @@ export async function GET(
       }
     });
   console.log('blocked: ',blocked)
+
+  
  
   let newDate = hoy;
   let newBloque = 1; 
-   if (hoyHora > bloque1Limit && hoyHora < bloque2Limit) {
+
+    //if (newDate.getDay() == 0) {hoyHora = 9};
+
+
+   if (hoyHora >= bloque1Limit && hoyHora < bloque2Limit ) {
     newDate = hoy;
     newBloque = 2; 
    } else if ( hoyHora >= bloque2Limit) {
@@ -60,7 +67,9 @@ export async function GET(
     newBloque = 1; 
    }
 
+   //&& hoy.getDay() != 0
    console.log('date to check: ', newDate);
+   console.log('bloque to check: ', newBloque)
 
    const check = await checkIfBlockedRec(hoy,newBloque,blocked, hoyHora);
 
@@ -72,11 +81,13 @@ export async function GET(
       while (!free) {
        
         if (newBloque == 1) {
-          newBloque = 2;
+          newBloque = hoy.getDay() == 0 ? 1 : 2;
         } else if (newBloque == 2) {
           newDate = addDays(newDate,1)
           newBloque = 1;
         }
+        console.log('cheking: ', newDate);
+        console.log('cheking bloque: ', newBloque)
         const recheck = await checkIfBlockedRec(newDate,newBloque,blocked, hoyHora);
         free = !recheck ? true : false;
       } //while

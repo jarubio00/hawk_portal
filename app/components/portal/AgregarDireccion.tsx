@@ -22,6 +22,7 @@
     import { SafeUser, ApiResponse } from "@/app/types";
     import { addDireccion, addDestino } from "@/app/actions/apiQuerys";
     import { Switch } from '@headlessui/react'
+import NombreDireccionInput from "../inputs/NombreDireccionInput";
     
 
 
@@ -409,7 +410,7 @@
                     Nombre de la dirección (Ej. Casa)
                   </div>
                   <div className="w-full lg:w-2/4 xl:w-3/5 2xl:w-2/5 pr-4">
-                    <Input
+                    <NombreDireccionInput
                       id="nombreDireccion"
                       label="Nombre direccion"
                       disabled={isLoading}
