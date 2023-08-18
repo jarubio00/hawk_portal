@@ -7,7 +7,7 @@ import {
 } from "react-hook-form";
 import { IconType } from "react-icons";
 import { BiDollar } from "react-icons/bi";
-import {ChangeEventHandler, useState} from 'react';
+import {ChangeEventHandler, useEffect, useState} from 'react';
 import {
   DropdownMenu,
   DropdownMenuItem,
@@ -41,6 +41,8 @@ interface InputProps {
   onChange?: ChangeEventHandler<HTMLInputElement>;
   onFocus?: () => void;
   onBlur?: () => void;
+  onColor: (val: string) => void;
+  onIcon: (val: string) => void;
   maxlength?: number;
 }
 
@@ -58,11 +60,30 @@ const Input: React.FC<InputProps> = ({
   maxlength,
   value,
   onFocus,
-  onBlur
+  onBlur,
+  onColor,
+  onIcon
 }) => {
 
   const [icon,setIcon] = useState('home');
-  const [color,setColor] = useState('#3b82f6');
+  const [color,setColor] = useState('#0ea5e9');
+  const [colorBg,setColorBg] = useState('bg-[#FFFFFF]');
+
+  useEffect(() => {
+    //handleColorBg('#dc2626');
+  },[])
+
+  const handleColor = (val: string) => {
+    setColor(val);
+    onColor(val);
+  }
+
+  const handleIcon = (val: string) => {
+    setIcon(val);
+    onIcon(val);
+  }
+
+
   return (
     <div className={`
      ${width ? `w-[${width}]` : "w-full"} 
@@ -79,19 +100,19 @@ const Input: React.FC<InputProps> = ({
               <div className="flex flex-row justify-center">
               <DropdownMenuItem>
                 <FaHome size={30} className={`w-8 h-8 text-neutral-700 p-1 ${icon == 'home' ? 'border-rose-500 border-2' : 'border-neutral-200 border'} 
-                  rounded-sm cursor-pointer`} onClick={() => setIcon('home')}/>
+                  rounded-sm cursor-pointer`} onClick={() => handleIcon('home')}/>
               </DropdownMenuItem>
               <DropdownMenuItem>
               <FaStore size={30} className={`w-8 h-8 text-neutral-700 p-1 ${icon == 'tienda' ? 'border-rose-500 border-2' : 'border-neutral-200 border'} 
-                rounded-sm cursor-pointer`} onClick={() => setIcon('tienda')}/>
+                rounded-sm cursor-pointer`} onClick={() => handleIcon('tienda')}/>
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <FaBuilding size={30} className={`w-8 h-8 text-neutral-700 p-1 ${icon == 'oficina' ? 'border-rose-500 border-2' : 'border-neutral-200 border'} 
-                  rounded-sm cursor-pointer`} onClick={() => setIcon('oficina')}/>
+                  rounded-sm cursor-pointer`} onClick={() => handleIcon('oficina')}/>
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <FaWarehouse size={30} className={`w-8 h-8 first-line:text-neutral-700 p-1 ${icon == 'bodega' ? 'border-rose-500 border-2' : 'border-neutral-200 border'} 
-                  rounded-sm cursor-pointer`} onClick={() => setIcon('bodega')}/>
+                  rounded-sm cursor-pointer`} onClick={() => handleIcon('bodega')}/>
               </DropdownMenuItem>
               </div>
             </DropdownMenuContent>
@@ -100,26 +121,33 @@ const Input: React.FC<InputProps> = ({
 
           <DropdownMenu>
           <DropdownMenuTrigger className="z-40">
-              <div className={`w-8 h-8 bg-["${color}"] border border-neutral-200 rounded-sm`}>{color}</div>
-             
+              
+              { color == '#0ea5e9' && <div className={`w-8 h-8 bg-[#0ea5e9] border border-neutral-200 rounded-sm`}></div>}
+              { color == '#db2777' && <div className={`w-8 h-8 bg-[#db2777] border border-neutral-200 rounded-sm`}></div>}
+              { color == '#f59e0b' && <div className={`w-8 h-8 bg-[#f59e0b] border border-neutral-200 rounded-sm`}></div>}
+              { color == '#10b981' && <div className={`w-8 h-8 bg-[#10b981] border border-neutral-200 rounded-sm`}></div>}
           </DropdownMenuTrigger>
             <DropdownMenuContent className="m-0 w-48">
               <div className="flex flex-row justify-center">
               <DropdownMenuItem>
-                <FaHome size={30} className={`w-8 h-8 text-neutral-700 p-1 ${icon == 'home' ? 'border-rose-500 border-2' : 'border-neutral-200 border'} 
-                  rounded-sm cursor-pointer`} onClick={() => setIcon('home')}/>
+              <div className={`w-8 h-8 bg-[#0ea5e9] cursor-pointer
+                ${color === '#0ea5e9' ? 'border-rose-500 border-2' : 'border-neutral-200 border'} 
+                rounded-sm`} onClick={() => handleColor('#0ea5e9')}></div>
               </DropdownMenuItem>
               <DropdownMenuItem>
-              <FaStore size={30} className={`w-8 h-8 text-neutral-700 p-1 ${icon == 'tienda' ? 'border-rose-500 border-2' : 'border-neutral-200 border'} 
-                rounded-sm cursor-pointer`} onClick={() => setIcon('tienda')}/>
+                <div className={`w-8 h-8 bg-[#db2777] cursor-pointer
+                  ${color === '#db2777' ? 'border-rose-500 border-2' : 'border-neutral-200 border'} 
+                  rounded-sm`} onClick={() => handleColor('#db2777')}></div>
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <FaBuilding size={30} className={`w-8 h-8 text-neutral-700 p-1 ${icon == 'oficina' ? 'border-rose-500 border-2' : 'border-neutral-200 border'} 
-                  rounded-sm cursor-pointer`} onClick={() => setIcon('oficina')}/>
+                <div className={`w-8 h-8 bg-[#f59e0b] cursor-pointer
+                  ${color === '#f59e0b' ? 'border-rose-500 border-2' : 'border-neutral-200 border'} 
+                  rounded-sm`} onClick={() => handleColor('#f59e0b')}></div>
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <FaWarehouse size={30} className={`w-8 h-8 first-line:text-neutral-700 p-1 ${icon == 'bodega' ? 'border-rose-500 border-2' : 'border-neutral-200 border'} 
-                  rounded-sm cursor-pointer`} onClick={() => setIcon('bodega')}/>
+                <div className={`w-8 h-8 bg-[#10b981] cursor-pointer
+                  ${color === '#10b981' ? 'border-rose-500 border-2' : 'border-neutral-200 border'} 
+                  rounded-sm`} onClick={() => handleColor('#10b981')}></div>
               </DropdownMenuItem>
               </div>
             </DropdownMenuContent>

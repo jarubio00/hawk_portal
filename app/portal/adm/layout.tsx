@@ -19,8 +19,10 @@ export default async function RootLayout({
   const currentUser = await getCurrentUser();
   const direcciones = await getDireccionesCount();
 
+  console.log(currentUser)
+
   const LayOut = () => {
-    if (!currentUser?.checklist[0].celularVerificado) {
+    if (!currentUser?.checklist?.celularVerificado) {
       return (
         <PhoneConfirmModal currentUser={currentUser} open={true}/>
       )

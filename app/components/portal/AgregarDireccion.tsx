@@ -23,6 +23,8 @@
     import { addDireccion, addDestino } from "@/app/actions/apiQuerys";
     import { Switch } from '@headlessui/react'
 import NombreDireccionInput from "../inputs/NombreDireccionInput";
+import { Badge } from "@/components/ui/badge";
+import {FaHome,FaStore,FaBuilding,FaWarehouse} from "react-icons/fa"
     
 
 
@@ -59,6 +61,8 @@ import NombreDireccionInput from "../inputs/NombreDireccionInput";
     const [buscarCp, setBuscarCP] = useState(true);
     const [openBuscarDialog, setOpenBuscarDialog] = useState(false);
     const [saveEnabled, setSaveEnabled] = useState(false);
+    const [nombreColor, setNombreColor] = useState('')
+    const [nombreIcon, setNombreIcon] = useState('')
 
     const { 
       register, 
@@ -174,6 +178,18 @@ import NombreDireccionInput from "../inputs/NombreDireccionInput";
       .finally(() => {
        loader.onClose();
       })
+    }
+
+    const nombreValue = watch('nombreDireccion');
+
+    const handleColor = (val: string) => {
+      setNombreColor(val);
+      console.log(val)
+    }
+  
+    const handleIcon = (val: string) => {
+      setNombreIcon(val);
+      console.log(val)
     }
 
     const addContent = (type: any) => { 
@@ -420,7 +436,20 @@ import NombreDireccionInput from "../inputs/NombreDireccionInput";
                       onChange={(event: any) => {
                         setCustomValue('nombreDireccion', event.target.value);
                       }}
+                      onColor={handleColor}
+                      onIcon={handleIcon}
                       />
+                  </div>
+                  <div className="my-2">
+                  <Badge className={`cursor-pointer  pr-3 pl-2 py-0 bg-[${nombreColor}]`}>
+                    <div className="flex flex-row items-center gap-1">
+                      { nombreIcon == 'home' && <FaHome />}
+                      { nombreIcon == 'tienda' && <FaStore  />}
+                      { nombreIcon == 'oficina' && <FaBuilding  />}
+                      { nombreIcon == 'bodega' && <FaWarehouse  />}
+                      <p className="text-xs">{nombreValue}</p>
+                    </div>
+                  </Badge>
                   </div>
                 </>
               }

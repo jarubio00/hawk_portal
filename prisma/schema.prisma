@@ -8,57 +8,57 @@ datasource db {
 }
 
 model User {
-  id                 Int             @id @default(autoincrement())
+  id                 Int                @id @default(autoincrement())
   nombre             String?
-  email              String?         @unique
+  email              String?            @unique
   imagen             String?
   hashedPassword     String?
-  nivel              Int             @default(1)
-  categoria          Int             @default(1)
-  saldo              Float           @default(0)
-  tipo               Int             @default(0)
-  credito            Boolean         @default(false)
-  limiteCredito      Float           @default(0)
+  nivel              Int                @default(1)
+  categoria          Int                @default(1)
+  saldo              Float              @default(0)
+  tipo               Int                @default(0)
+  credito            Boolean            @default(false)
+  limiteCredito      Float              @default(0)
   direccionDefaultId Int?
-  loggedIn           Boolean         @default(false)
-  createdAt          DateTime        @default(now())
-  updatedAt          DateTime        @updatedAt
+  loggedIn           Boolean            @default(false)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
   lastLoginAt        DateTime?
   celular            String?
-  whatsappEnabled    Boolean?        @default(false)
-  cobrosPermitidos   Boolean         @default(false)
-  passwordType  String @default("bcrypt")
-  disabled  Boolean @default(false)
-  disabledAt  DateTime?
-  disabledBy  Int?
-  deleted Boolean @default(false)
-  deletedAt DateTime?
-  deletedBy Int?
+  whatsappEnabled    Boolean?           @default(false)
+  cobrosPermitidos   Boolean            @default(false)
+  deleted            Boolean            @default(false)
+  deletedAt          DateTime?
+  deletedBy          Int?
+  disabled           Boolean            @default(false)
+  disabledAt         DateTime?
+  disabledBy         Int?
+  passwordType       String             @default("bcrypt")
   accounts           Account[]
+  checklist          ClientesChecklist?
   cobros             CobrosDestino[]
   destinos           Destino[]
   direcciones        Direccion[]
   paquetes           Paquete[]
   pedidos            Pedido[]
   recolecciones      Recoleccion[]
-  checklist          ClientesChecklist[]
 
   @@map("Clientes")
 }
 
 model ClientesChecklist {
-   id                Int     @id @default(autoincrement())
-   clienteEmail String @unique
-   correoVerificado Boolean @default(true)
-   correoVerificadoAt DateTime  @default(dbgenerated("(NOW())")) 
-   celularVerificado Boolean @default(true)
-   celularVerificadoAt DateTime  @default(dbgenerated("(NOW())")) 
-   tutorialTomado Boolean @default(true)
-   tutorialTomadoAt DateTime?
-   firstLogin Boolean @default(false)
-   firstLoginAt DateTime?
-   clienteV2 Boolean @default(true)
-   email User    @relation(fields: [clienteEmail], references: [email], onDelete: Cascade)
+  id                  Int       @id @default(autoincrement())
+  correoVerificado    Boolean   @default(true)
+  correoVerificadoAt  DateTime  @default(dbgenerated("(now())"))
+  celularVerificado   Boolean   @default(true)
+  celularVerificadoAt DateTime  @default(dbgenerated("(now())"))
+  tutorialTomado      Boolean   @default(true)
+  tutorialTomadoAt    DateTime?
+  firstLogin          Boolean   @default(false)
+  firstLoginAt        DateTime?
+  clienteV2           Boolean   @default(true)
+  clienteEmail        String    @unique
+  email               User      @relation(fields: [clienteEmail], references: [email], onDelete: Cascade)
 }
 
 model Account {
@@ -87,7 +87,6 @@ model Recoleccion {
   estatusRecoleccionId Int                          @default(1)
   fecha                DateTime
   bloque               Int
-  direccionId          Int?
   contactoNombre       String
   contactoTel          String
   cpId                 Int
@@ -104,6 +103,9 @@ model Recoleccion {
   createdAt            DateTime                     @default(now()) @db.DateTime(0)
   updatedAt            DateTime?                    @default(now()) @db.DateTime(0)
   updatedBy            Int?
+  direccionId          Int?
+  direccionIcon         String?
+  direccionColor        String?
   pedidos              Pedido[]
   user                 User                         @relation(fields: [clienteId], references: [id], onDelete: Cascade)
   estatus              CatalogoEstatusRecolecciones @relation(fields: [estatusRecoleccionId], references: [id], onDelete: Cascade)
@@ -157,6 +159,7 @@ model Pedido {
   updatedBy             Int?                   @default(1)
   labelImageUrl         String?
   labelPdfUrl           String?
+  cobro                 CobrosDestino[]
   operaciones           Operaciones?
   user                  User                   @relation(fields: [clienteId], references: [id], onDelete: Cascade)
   municipio             CatalogoMunicipios     @relation(fields: [entregaMunicipioId], references: [id], onDelete: Cascade)
@@ -165,7 +168,6 @@ model Pedido {
   formaPago             CatalogoMetodosPago    @relation(fields: [formaPagoId], references: [id], onDelete: Cascade)
   tipoPaquete           CatalogoTiposPaquetes  @relation(fields: [paqTipoId], references: [id], onDelete: Cascade)
   recoleccion           Recoleccion            @relation(fields: [recoleccionId], references: [id], onDelete: Cascade)
-  cobro                 CobrosDestino[]
 
   @@index([clienteId], map: "Pedidos_clienteId_fkey")
   @@index([estatusPagoId], map: "Pedidos_estatusPagoId_fkey")
@@ -217,11 +219,11 @@ model Direccion {
   referencias     String?
   lat             String?
   lng             String?
-  icon            String?
-  color           String?
   createdAt       DateTime           @default(now()) @db.DateTime(0)
   updatedAt       DateTime?          @default(now()) @db.DateTime(0)
   updatedBy       Int?
+  color           String?
+  icon            String?
   user            User               @relation(fields: [clienteId], references: [id], onDelete: Cascade)
   municipio       CatalogoMunicipios @relation(fields: [municipioId], references: [id], onDelete: Cascade)
 
@@ -300,13 +302,14 @@ model CobrosDestino {
   cliente               User                       @relation(fields: [clienteId], references: [id], onDelete: Cascade)
   estatusCobro          CatalogoEstatusCobros      @relation(fields: [estatusCobroId], references: [id], onDelete: Cascade)
   estatusPagoCobro      CatalogoEstatusPagoCobros  @relation(fields: [estatusPagoCobroId], references: [id], onDelete: Cascade)
+  pedido                Pedido                     @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
   retornoForma          CatalogoTiposRetornoCobros @relation(fields: [retornoFormaId], references: [id], onDelete: Cascade)
-  pedido                Pedido @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
 
   @@index([clienteId], map: "CobrosDestino_clienteId_fkey")
   @@index([estatusCobroId], map: "CobrosDestino_estatusCobroId_fkey")
   @@index([estatusPagoCobroId], map: "CobrosDestino_estatusPagoCobroId_fkey")
   @@index([retornoFormaId], map: "CobrosDestino_retornoFormaId_fkey")
+  @@index([pedidoId], map: "CobrosDestino_pedidoId_fkey")
 }
 
 model CatalogoMetodosPago {
@@ -435,8 +438,6 @@ model CatalogoMunicipios {
 
 model CatalogoProductos {
   id              Int                   @id @default(autoincrement())
-  nombre          String
-  descripcion     String
   tipo_id         Int                   @default(1)
   tipo_paquete_id Int
   cobertura_id    Int                   @default(1)
@@ -445,6 +446,8 @@ model CatalogoProductos {
   precio          Float
   createdAt       DateTime              @default(now())
   createdBy       Int                   @default(1)
+  descripcion     String
+  nombre          String
   cobertura       CatalogoCoberturas    @relation(fields: [cobertura_id], references: [id], onDelete: Cascade)
   tipo            CatalogoTiposPaquetes @relation(fields: [tipo_paquete_id], references: [id], onDelete: Cascade)
 
@@ -466,6 +469,17 @@ model FechasBloqueadas {
   tipo   TipoFecha
 }
 
+model OtpCodes {
+  id        Int            @id @default(autoincrement())
+  uuid      String
+  app       OtpApplication
+  code      Int
+  email     String?
+  phone     String?
+  expireAt  DateTime       @default(dbgenerated("(now() + interval 30 minute)"))
+  createdAt DateTime       @default(dbgenerated("(now())"))
+}
+
 enum TipoBloques {
   AM
   PM
@@ -476,17 +490,6 @@ enum TipoFecha {
   REC
   ENT
   AMBOS
-}
-
-model OtpCodes {
-  id     Int         @id @default(autoincrement())
-  uuid  String
-  app OtpApplication
-  code Int
-  email String?
-  phone String?
-  createdAt  DateTime  @default(dbgenerated("(NOW())")) 
-  expireAt DateTime  @default(dbgenerated("(now() + INTERVAL 30 MINUTE)"))
 }
 
 enum OtpApplication {
