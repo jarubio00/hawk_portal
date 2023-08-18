@@ -61,8 +61,8 @@ import {FaHome,FaStore,FaBuilding,FaWarehouse} from "react-icons/fa"
     const [buscarCp, setBuscarCP] = useState(true);
     const [openBuscarDialog, setOpenBuscarDialog] = useState(false);
     const [saveEnabled, setSaveEnabled] = useState(false);
-    const [nombreColor, setNombreColor] = useState('')
-    const [nombreIcon, setNombreIcon] = useState('')
+    const [nombreColor, setNombreColor] = useState('#0ea5e9')
+    const [nombreIcon, setNombreIcon] = useState('home')
 
     const { 
       register, 
@@ -99,9 +99,11 @@ import {FaHome,FaStore,FaBuilding,FaWarehouse} from "react-icons/fa"
       loader.onOpen();
 
       const apiData = {
-        data: data, 
+        data: {...data,icon: nombreIcon, color: nombreColor}, 
         currentUser: currentUser, 
-        otraColoniaSelected: otraColoniaSelected}
+        otraColoniaSelected: otraColoniaSelected,
+        
+      }
 
       onClose({apiData: apiData});
     

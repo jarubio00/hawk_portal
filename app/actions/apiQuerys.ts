@@ -6,7 +6,7 @@ import axios from "axios";
 import { ICotizaParams, IPedido } from "@/app/types/pedido";
 
 export  async function addDireccion(props: any) {
-
+ console.log('apiquery',props);
   const direccion = {
     clienteId : props.currentUser?.id, 
     nombreDireccion: props.data.nombreDireccion, 
@@ -21,7 +21,9 @@ export  async function addDireccion(props: any) {
     empresa: props.data.empresa, 
     referencias: props.data.referencias,
     isOtraColonia: props.otraColoniaSelected,
-    otraColonia: props.data.otraColonia
+    otraColonia: props.data.otraColonia,
+    icon: props.data.icon,
+    color: props.data.color
   }
   
   const result = await axios.post('/api/direcciones', direccion)

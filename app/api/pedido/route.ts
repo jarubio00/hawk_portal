@@ -81,6 +81,9 @@ export async function POST(
           municipioId: parseInt(p.recoleccion?.municipioId),
           empresa: p.recoleccion?.empresa || '',
           referencias: p.recoleccion?.referencias || '',
+          direccionId: p.recoleccion.id,
+          direccionIcon: p.recoleccion.direccionIcon,
+          direccionColor: p.recoleccion?.direccionColor,
           pedidos: {
             //@ts-ignore
             create: pedidoCrear,

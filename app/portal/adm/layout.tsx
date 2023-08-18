@@ -19,7 +19,7 @@ export default async function RootLayout({
   const currentUser = await getCurrentUser();
   const direcciones = await getDireccionesCount();
 
-  console.log(currentUser)
+  //console.log(currentUser)
 
   const LayOut = () => {
     if (!currentUser?.checklist?.celularVerificado) {

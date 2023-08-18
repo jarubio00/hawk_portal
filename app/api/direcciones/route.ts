@@ -13,6 +13,7 @@ export async function POST(
   }
 
   const body = await request.json();
+  console.log(body);
   
   const { 
     clienteId, 
@@ -28,7 +29,9 @@ export async function POST(
     empresa, 
     referencias, 
     isOtraColonia,
-    otraColonia
+    otraColonia,
+    icon,
+    color
    } = body;
 
   Object.keys(body).forEach((value: any) => {
@@ -53,7 +56,9 @@ export async function POST(
         municipioId, 
         empresa, 
         referencias, 
-        otraColonia: isOtraColonia
+        otraColonia: isOtraColonia,
+        icon,
+        color
     }
   });
 

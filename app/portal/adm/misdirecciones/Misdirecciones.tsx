@@ -150,6 +150,7 @@ const MisdireccionesClient  = (props:any) => {
   } 
 
   const onAddClose  = async (props: any) => {
+          console.log(props);
         const res = await addDireccion(props.apiData);
           if(res.status == 1) {
             toast.success('Dirección creada!');
