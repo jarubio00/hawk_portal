@@ -46,6 +46,7 @@ const {updateActiveStep,
         savePrograma, 
         saveRecoleccionState, 
         saveEntregaState, 
+        savePedidoInitial,
         recoleccionState, 
         entregaState,
         updateTipoPrograma, 
@@ -56,6 +57,8 @@ const {updateActiveStep,
         pedido} = useContext(PedidoContext) as PedidoContextType;
 
   const isInitialMount = useRef(true);
+  const [activeRec, setActiveRec] = useState(false);
+  const [activeRecData, setActiveRecData] = useState<any>({});
 
 useEffect(() => {
   console.log('entering tipoPrograma');
@@ -103,19 +106,49 @@ useEffect(() => {
 },[tipoPrograma])
 
 const getAutoDates = useCallback(async () => {
-  const autoDates = await autoPrograma();
+  let autoDates;
+  if(pedido?.recoleccion?.direccionId ){
+    autoDates =  await autoPrograma(pedido?.recoleccion?.direccionId);
+  }
+  
   console.log('auto dates: ',autoDates);
 
   const data = autoDates?.response?.data;
 
+  console.log('data',data);
+
+  if (data.recs) {
+    //.log('active recs true')
+    setActiveRec(true);
+    setActiveRecData(data.recsData[0])
+    //saveAppend({enabled: true, recoleccion: data.recsData[0]});
+    savePedidoInitial(
+      {enabled: true, recoleccion: data.recsData[0]},
+      { 
+        fechaRecoleccion: data.recDate,
+        bloqueRecoleccion: data.recBloque, 
+        fechaEntrega: data.entDate, 
+        bloqueEntrega: data.entBloque,
+      },
+      data.recsData[0]
+    )
+    setIsAutoLoading(false);
+  } else {
+    const timer = setTimeout(() => {
+      console.log('saving programa')
+        savePrograma({ 
+          fechaRecoleccion: data.recDate,
+          bloqueRecoleccion: data.recBloque, 
+          fechaEntrega: data.entDate, 
+          bloqueEntrega: data.entBloque,
+        });
+        setIsAutoLoading(false);
+      }, 1000);
+  }
+
   
-  savePrograma({ 
-    fechaRecoleccion: data.recDate,
-    bloqueRecoleccion: data.recBloque, 
-    fechaEntrega: data.entDate, 
-    bloqueEntrega: data.entBloque,
-  });
-  setIsAutoLoading(false);
+ 
+  
 }, [])
 
 const getAutoAppend = useCallback(async () => {
@@ -501,6 +534,7 @@ const handleTimerOff = () => {
                 {pedido?.programa?.bloqueRecoleccion == 1 ? '10:00am - 3:00pm' : '4:00pm - 9:00pm'}
               
               </p>}
+              {pedido?.append?.enabled && <p className="text-[11px]">Agregando envío a recolección {pedido.append.recoleccion?.id}</p>}
           </div>}
         </div>
       </div>

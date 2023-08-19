@@ -47,7 +47,7 @@ const CrearPedidoWidget: React.FC<CrearPedidoWidgetProps> = ({
  recoleccion
 }) => {
 
-    //console.log('isSm:', sm);
+    //console.log('isSm:', data.direcciones);
     const router = useRouter();
     const loader = useLoader();
     const {activeStep, 

@@ -4,6 +4,7 @@ import prisma from "@/app/libs/prismadb";
 import getCurrentUser from "@/app/actions/getCurrentUser";
 import {format, subHours, addHours} from "date-fns"
 import {utcToZonedTime} from 'date-fns-tz'
+import { checkRecolecciones } from "../../../auto/[auto]/utils";
 
 interface IParams {
   bloques?: string;
@@ -102,6 +103,9 @@ export async function POST(
           }
       }
   }
+
+  const recCheck1 = await checkRecolecciones(currentUser.id, fecha, 1, 46);
+  const recCheck2 = await checkRecolecciones(currentUser.id, fecha, 2, 46);
 
   const result = {am: matchAm ? false : amDisponible, pm: matchPm ? false :  pmDisponible}
   

@@ -277,10 +277,10 @@ export  async function getBloquesEntrega(fecha: string) {
       return result;
 }
 
-export  async function autoPrograma() {
+export  async function autoPrograma(direccionId: number) {
 
   
-  const result = await axios.get(`/api/programa/auto/now`)
+  const result = await axios.get(`/api/programa/auto/${direccionId}`)
       .then((response) => {
         console.log('paso api')
         const responseData:ApiResponse = {status:1,statusMessage: 'OK', response: {data: response.data} }

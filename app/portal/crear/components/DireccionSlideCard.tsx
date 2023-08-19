@@ -14,6 +14,7 @@ const DireccionSlideCard: React.FC<DireccionSlideCardProps> = ({
   onClick,
   selected
 }) => {
+  
   return ( 
     <div className={`mx-0 my-4 pt-2 pb-3 px-2 h-auto md:h-28 rounded-lg cursor-pointer shadow-sm md:shadow-md 
             ${selected ? 'border-black border-2 ' : 'border-neutral-200 border hover:shadow-xl hover:border-neutral-400'}`} 

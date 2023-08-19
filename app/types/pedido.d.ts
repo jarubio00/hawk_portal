@@ -13,6 +13,9 @@ export interface Municipio {
 
 
 export interface IRecoleccion {
+    direccionId?: number;
+    direccionIcon: String;
+    direccionColor: String;
     nombreDireccion: string;
     contactoNombre: string;
     contactoTel: string;

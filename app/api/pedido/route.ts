@@ -81,7 +81,7 @@ export async function POST(
           municipioId: parseInt(p.recoleccion?.municipioId),
           empresa: p.recoleccion?.empresa || '',
           referencias: p.recoleccion?.referencias || '',
-          direccionId: p.recoleccion.id,
+          direccionId: p.recoleccion.direccionId,
           direccionIcon: p.recoleccion.direccionIcon,
           direccionColor: p.recoleccion?.direccionColor,
           pedidos: {

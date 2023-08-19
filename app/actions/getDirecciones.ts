@@ -18,7 +18,8 @@ export default async function getDirecciones() {
             createdAt: 'desc'
           }
         });
-    
+
+        
         const safeListings = listings.map((listing) => ({
           ...listing,
           createdAt: listing.createdAt.toISOString(),

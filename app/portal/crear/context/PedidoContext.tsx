@@ -63,8 +63,11 @@ const PedidoProvider: React.FC<Props> = ({children}) => {
     setMetodoPago({formaPagoId:1, passed: true, comprobante: false, comprobanteSelected: false});
   }
 
-  const saveRecoleccion = (rec: IRecoleccion) => {
+  const saveRecoleccion = (rec: any) => {
     setPedido({...pedido,recoleccion: {
+      direccionId: rec.id,
+      direccionIcon: rec.icon,
+      direccionColor: rec.color,
       nombreDireccion: rec.nombreDireccion,
       contactoNombre: rec.contactoNombre,
       contactoTel: rec.contactoTel,
@@ -214,6 +217,7 @@ const PedidoProvider: React.FC<Props> = ({children}) => {
   }
 
   const saveAppend =  (append: IAppend) => {
+    console.log('context save append')
     setPedido({...pedido, append: {
       enabled: append.enabled,
       recoleccion: append.recoleccion

@@ -1,3 +1,6 @@
+import { NextResponse } from "next/server";
+import prisma from "@/app/libs/prismadb";
+import {format, subHours, addHours, addDays, endOfDay, startOfDay, subDays} from "date-fns"
 
 
 export  async function checkIfBlockedRec(date: any, bloque: number, blocked: any[], hoyHora: number) {
@@ -80,3 +83,34 @@ export  async function checkIfBlockedEnt(date: any, bloque: number, blocked: any
     const fecha = date.toISOString().slice(0, 10);
 
   }
+
+  export  async function checkRecolecciones(clienteId: number, fecha: Date, bloque: number, direccionId: number) {
+    console.log('fecha: ',fecha);
+    const start =  subHours(startOfDay(fecha),6);
+    const end = subHours(endOfDay(fecha),6);
+    console.log('start: ',start);
+    console.log('end: ',end);
+
+
+    const recs = await prisma.recoleccion.findMany({
+      where: {
+        AND: [
+          {
+            clienteId: clienteId
+          },
+          {
+          fecha: {lte: end, gte: start}
+          },
+          {
+            bloque: bloque
+          },
+          {
+            direccionId: direccionId
+          }
+        ]
+        }
+      });
+
+      return recs;
+  }
+

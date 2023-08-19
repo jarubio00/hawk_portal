@@ -3,7 +3,7 @@ import prisma from "@/app/libs/prismadb";
 
 import getCurrentUser from "@/app/actions/getCurrentUser";
 import {format, subHours, addHours, addDays} from "date-fns"
-import {checkIfBlockedRec, checkIfBlockedEnt} from "./utils";
+import {checkIfBlockedRec, checkIfBlockedEnt, checkRecolecciones} from "./utils";
 
 interface IParams {
   auto?: string;
@@ -15,11 +15,16 @@ export async function GET(
 ) {
   const currentUser = await getCurrentUser();
 
-  if (!currentUser) {
+  
+
+  const { auto } = params;
+
+
+  if (!currentUser || !auto) {
     return NextResponse.error();
   }
 
-  const { auto } = params;
+
   const bloque1Limit = 10;
   const bloque2Limit = 15;
   let recDate;
@@ -28,7 +33,8 @@ export async function GET(
   let entBloque;
 
 
-  const hoyUTC = new Date('2023-08-22T22:42:09.864Z');
+  const hoyUTC = new Date('2023-08-19T15:42:09.864Z');
+  //const hoyUTC = new Date();
   const hoy = subHours(hoyUTC,6);
   const hoySoloFecha =  format(hoy,`yyyy-MM-dd`);
   const hoySearch = new Date(hoySoloFecha);
@@ -48,7 +54,9 @@ export async function GET(
       fecha: {lte: blockedLimit, gte: hoySearch}
       }
     });
-  console.log('blocked: ',blocked)
+
+  console.log('recs: ',blocked)
+  
 
   
  
@@ -97,7 +105,10 @@ export async function GET(
 
     console.log('final rec date: ',recDate);
     console.log('final rec bloque: ',recBloque);
-  
+
+    const recCheck = await checkRecolecciones(currentUser.id, recDate, recBloque, parseInt(auto));
+    console.log('recs: ',recCheck.length);
+    console.log('dir id:',auto)
    ///ENTREGA
     let entNewDate = newDate;
     let entNewBloque = 1; 
@@ -141,7 +152,14 @@ export async function GET(
     console.log('final ent date: ',entDate);
     console.log('final ent bloque: ',entBloque);
 
-    const response = {recDate: recDate, recBloque: recBloque, entDate: entDate, entBloque: entBloque}
+    const response = {
+      recDate: recDate, 
+      recBloque: recBloque, 
+      entDate: entDate, 
+      entBloque: entBloque, 
+      recs: recCheck.length >=1,
+      recsData: recCheck
+    }
 
 
   return NextResponse.json(response);

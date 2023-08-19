@@ -54,7 +54,7 @@ const RecoleccionStep: React.FC<RecoleccionStepProps> = ({
    const [direccion, setDireccion] = useState(null);
    
    const onSelectDireccion = (direccion: any) => {
-    console.log(direccion);
+    console.log('on sel:' , direccion);
     updateDireccionSelected(direccion.id);
     //setDireccion(direccion);
     saveRecoleccion(direccion);
@@ -118,7 +118,7 @@ const RecoleccionStep: React.FC<RecoleccionStepProps> = ({
         }}
       >
         {direcciones.map((dir: any,i: number) => {
-
+          //console.log(dir)
           return (
               <SwiperSlide key={i}>
                 <DireccionSlideCard data={dir} onClick={onSelectDireccion} selected={direccionSelected === dir.id}/>
