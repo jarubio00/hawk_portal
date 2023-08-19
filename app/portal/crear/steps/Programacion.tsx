@@ -47,6 +47,7 @@ const {updateActiveStep,
         saveRecoleccionState, 
         saveEntregaState, 
         savePedidoInitial,
+        saveProgramaAppend,
         recoleccionState, 
         entregaState,
         updateTipoPrograma, 
@@ -122,7 +123,7 @@ const getAutoDates = useCallback(async () => {
     setActiveRec(true);
     setActiveRecData(data.recsData[0])
     //saveAppend({enabled: true, recoleccion: data.recsData[0]});
-    savePedidoInitial(
+    saveProgramaAppend(
       {enabled: true, recoleccion: data.recsData[0]},
       { 
         fechaRecoleccion: data.recDate,
@@ -130,7 +131,7 @@ const getAutoDates = useCallback(async () => {
         fechaEntrega: data.entDate, 
         bloqueEntrega: data.entBloque,
       },
-      data.recsData[0]
+      
     )
     setIsAutoLoading(false);
   } else {
@@ -204,7 +205,8 @@ const handleProgramaSection = (tipo: string) => {
  
     saveEntregaState({...entregaState, am: false, pm: false , show: false, enabled: false})
     saveRecoleccionState({...entregaState, am: false, pm: false , show: false, enabled: false})
-    savePrograma({});
+    saveProgramaAppend({},{});
+    
     updateTipoPrograma(tipo);
     setProgramaRun(1);
   
@@ -258,7 +260,7 @@ const handleTimerOff = () => {
         <ProgramarAutoEnt />
       </div>
       :
-      <div className="grid mx-4 md:mx-2 grid-cols-1 md:grid-cols-2  lg:grid-cols-3 gap-4">
+      <div className="grid mx-4 md:mx-2 grid-cols-1 md:grid-cols-1  lg:grid-cols-2 xl:grid-cols-3 gap-4">
         <ProgramarRecoleccion />
         <ProgramarEntrega />
       </div>
@@ -275,7 +277,7 @@ const handleTimerOff = () => {
               <Button 
                   label='Siguiente'
                   onClick={handleNext}
-                  /* disabled={
+                  disabled={
                     isAutoLoading || 
                     isRecLoading || 
                     isEntLoading || 
@@ -283,7 +285,7 @@ const handleTimerOff = () => {
                     pedido?.programa?.bloqueRecoleccion == 3 ||
                     !pedido?.programa?.fechaEntrega || 
                     pedido?.programa?.bloqueEntrega == 3
-                  } */
+                  }
               />
             </div>
    
@@ -304,9 +306,12 @@ const handleTimerOff = () => {
       savePrograma({...pedido?.programa, fechaEntrega: null, bloqueEntrega: 3,bloqueRecoleccion: 3, fechaRecoleccion: e});
      
       const fechaString = format(e, `yyyy-MM-dd`);
-      const res:ApiResponse = await getBloquesRecoleccion(fechaString);
+      const res:ApiResponse = await getBloquesRecoleccion(fechaString, pedido?.recoleccion);
+
+      console.log(res.response?.data)
       
       if (res.status == 1) {
+        
           if(res.response?.data) {
             saveRecoleccionState({...recoleccionState, ...res.response.data})
             const timer = setTimeout(() => {
@@ -323,8 +328,37 @@ const handleTimerOff = () => {
     };
     
     const handleBloqueChange = async  (b: number) => {
-     savePrograma({...pedido?.programa, fechaEntrega: null, bloqueEntrega: 3, bloqueRecoleccion: b});
+      //savePrograma({...pedido?.programa, fechaEntrega: null, bloqueEntrega: 3, bloqueRecoleccion: b});
      //handleTimerOn();
+        console.log(recoleccionState);
+
+        if (b == 1) {
+          if (recoleccionState?.recsB1) {
+            saveProgramaAppend(
+              {enabled: true, recoleccion: recoleccionState.recsB1Data[0]},
+              {...pedido?.programa, fechaEntrega: null, bloqueEntrega: 3, bloqueRecoleccion: b}
+            );
+          } else {
+            saveProgramaAppend(
+              {enabled: false, recoleccion: undefined},
+              {...pedido?.programa, fechaEntrega: null, bloqueEntrega: 3, bloqueRecoleccion: b}
+            );
+          }
+        }
+
+        if (b == 2) {
+          if (recoleccionState?.recsB2) {
+            saveProgramaAppend(
+              {enabled: true, recoleccion: recoleccionState.recsB2Data[0]},
+              {...pedido?.programa, fechaEntrega: null, bloqueEntrega: 3, bloqueRecoleccion: b}
+            );
+          } else {
+            saveProgramaAppend(
+              {enabled: false, recoleccion: undefined},
+              {...pedido?.programa, fechaEntrega: null, bloqueEntrega: 3, bloqueRecoleccion: b}
+            );
+          }
+        }
 
         if (b == 2 ){
           const entStartDate = addDays(pedido?.programa?.fechaRecoleccion,1);
@@ -336,7 +370,7 @@ const handleTimerOff = () => {
 
     return (
 
-      <div className="my-4 border border-neutral-300 shadow-md rounded-lg p-2 px-2 md:px-6">
+      <div className="my-4 border border-neutral-300 shadow-md rounded-lg p-2 px-2 md:px-2">
         <div className="flex flex-col">
           <p className="text-md font-bold">Recolección</p>
           <p className="text-xs text-neutral-500">Selecciona la fecha y horario de recolección</p>
@@ -361,31 +395,37 @@ const handleTimerOff = () => {
               />
           </div>
           :
-          <div className="mt-2 p-3 flex flex-col">
-            {(recoleccionState?.am || pedido?.programa?.bloqueRecoleccion == 1) && <Radio 
-              id="RecAm" 
-              value={1} 
-              name="recoleccion" 
-              label={<p className="text-sm font-semibold">10:00am - 3:00pm</p>}
-              onChange={(event) => handleBloqueChange(parseInt(event.target.value))}
-              defaultChecked={pedido?.programa?.bloqueRecoleccion == 1}
-              disabled={append ? append : false}
-            />}
-           { (recoleccionState?.pm || pedido?.programa?.bloqueRecoleccion == 2) && <Radio 
-              id="RecPm" 
-              value={2} 
-              name="recoleccion" 
-              label={<p className="text-sm font-semibold">3:30pm  - 7:00pm</p>}
-              onChange={(event) => handleBloqueChange(parseInt(event.target.value))}
-              defaultChecked={pedido?.programa?.bloqueRecoleccion == 2}
-              disabled={append ? append : false}
-            />}
+          <>
+            <div className="mt-2 p-3 flex flex-col">
+              {(recoleccionState?.am || pedido?.programa?.bloqueRecoleccion == 1) && <Radio 
+                id="RecAm" 
+                value={1} 
+                name="recoleccion" 
+                label={<p className="text-sm font-semibold">10:00am - 3:00pm</p>}
+                onChange={(event) => handleBloqueChange(parseInt(event.target.value))}
+                defaultChecked={pedido?.programa?.bloqueRecoleccion == 1}
+                disabled={append ? append : false}
+              />}
+            { (recoleccionState?.pm || pedido?.programa?.bloqueRecoleccion == 2) && <Radio 
+                id="RecPm" 
+                value={2} 
+                name="recoleccion" 
+                label={<p className="text-sm font-semibold">4:00pm  - 9:00pm</p>}
+                onChange={(event) => handleBloqueChange(parseInt(event.target.value))}
+                defaultChecked={pedido?.programa?.bloqueRecoleccion == 2}
+                disabled={append ? append : false}
+              />}
 
-             { (!recoleccionState?.am && !recoleccionState?.pm && pedido?.programa?.bloqueRecoleccion == 3 ) && <div className="text-sm">
-                No hay horarios disponibles
-              </div>}
+              { (!recoleccionState?.am && !recoleccionState?.pm && pedido?.programa?.bloqueRecoleccion == 3 ) && <div className="text-sm">
+                  No hay horarios disponibles
+                </div>}
 
-          </div>}
+            </div>
+            <div className="my-2">
+              {pedido?.append?.enabled && <p className="text-xs">Agregando envío a recolección {pedido?.append?.recoleccion?.id}</p>}
+            </div>
+          </>
+          }
 
 
         </div>
@@ -448,7 +488,7 @@ const handleTimerOff = () => {
 
     return (
 
-      <div className="my-4 border border-neutral-300 shadow-md rounded-lg p-2 px-2 md:px-6">
+      <div className="my-4 border border-neutral-300 shadow-md rounded-lg p-2 px-2 md:px-2">
         <div className="flex flex-col">
           <p className="text-md font-bold">Entrega</p>
           <p className="text-xs text-neutral-500">Selecciona la fecha y horario de entrega</p>
@@ -488,7 +528,7 @@ const handleTimerOff = () => {
               id="EntPm" 
               value={2} 
               name="entrega" 
-              label={<p className="text-sm font-semibold">3:30pm  - 7:00pm</p>}
+              label={<p className="text-sm font-semibold">4:00pm  - 9:00pm</p>}
               onChange={(event) => handleBloqueChange(parseInt(event.target.value))}
               defaultChecked={pedido?.programa?.bloqueEntrega == 2}
 

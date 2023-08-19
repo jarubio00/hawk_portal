@@ -241,10 +241,10 @@ export  async function serverDate(props: any) {
       return result;
 }
 
-export  async function getBloquesRecoleccion(fecha: string) {
+export  async function getBloquesRecoleccion(fecha: string, rec: any) {
 
   
-  const result = await axios.post(`/api/programa/bloques/recoleccion/${fecha}`)
+  const result = await axios.post(`/api/programa/bloques/recoleccion/${fecha}`, {direccionId: rec.direccionId})
       .then((response) => {
         const responseData:ApiResponse = {status:1,statusMessage: 'OK', response: {data: response.data} }
         return responseData;

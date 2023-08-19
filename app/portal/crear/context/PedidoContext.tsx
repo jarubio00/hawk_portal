@@ -136,7 +136,11 @@ const PedidoProvider: React.FC<Props> = ({children}) => {
       pm: state.pm,
       show: state.show,
       enabled: state.enabled,
-      startDate: state.startDate
+      startDate: state.startDate,
+      recsB1: state.recsB1,
+      recsB1Data: state.recsB1Data,
+      recsB2: state.recsB2,
+      recsB2Data: state.recsB2Data
     });
   }
 
@@ -232,6 +236,13 @@ const PedidoProvider: React.FC<Props> = ({children}) => {
     })
 }
 
+  const saveProgramaAppend =  (append: IAppend, programa: IPrograma) => {
+    setPedido({...pedido,
+    append: append,
+    programa: programa, 
+    })
+  }
+
   const updateActiveStep = (step: number) => {
     setActiveStep(step);
   }
@@ -316,6 +327,7 @@ const PedidoProvider: React.FC<Props> = ({children}) => {
         savePedidoInitial, 
         setProgramaRun, 
         programaRun,
+        saveProgramaAppend
       }}
     >
       {children}

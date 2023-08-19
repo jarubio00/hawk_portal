@@ -15,8 +15,11 @@ export async function POST(
   { params }: { params: IParams }
 ) {
   const currentUser = await getCurrentUser();
+  const body = await request.json();
 
-  if (!currentUser) {
+  const { direccionId}  = body;
+
+  if (!currentUser || !direccionId) {
     return NextResponse.error();
   }
 
@@ -104,10 +107,21 @@ export async function POST(
       }
   }
 
-  const recCheck1 = await checkRecolecciones(currentUser.id, fecha, 1, 46);
-  const recCheck2 = await checkRecolecciones(currentUser.id, fecha, 2, 46);
+  console.log('fecha: ', fecha);
+  console.log('dir id: ', direccionId);
 
-  const result = {am: matchAm ? false : amDisponible, pm: matchPm ? false :  pmDisponible}
+  const recCheck1 = await checkRecolecciones(currentUser.id, fecha, 1, direccionId);
+  const recCheck2 = await checkRecolecciones(currentUser.id, fecha, 2, direccionId);
+
+  const result = {
+    am: matchAm ? false : amDisponible, 
+    pm: matchPm ? false :  pmDisponible,
+    recsB1: recCheck1.length >= 1,
+    recsB1Data: recCheck1,
+    recsB2: recCheck2.length >= 1,
+    recsB2Data: recCheck2
+
+  }
   
 
   

@@ -94,6 +94,10 @@ export interface IProgramaState {
     show?: boolean | false;
     enabled?: boolean;
     startDate?: any;
+    recsB1?: boolean;
+    recsB1Data?: any;
+    recsB2?: boolean;
+    recsB2Data?: any;
 }
 
 export interface IPedido {
@@ -183,4 +187,5 @@ export type PedidoContextType = {
     savePedidoInitial: (append: IAppend, programa: IPrograma, recoleccion: IRecoleccion) => void;
     setProgramaRun: (val: number) => void;
     programaRun: number;
+    saveProgramaAppend: (append: IAppend, programa: IPrograma) => void;
 }
