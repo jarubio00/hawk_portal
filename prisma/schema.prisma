@@ -292,19 +292,25 @@ model CobrosDestino {
   comentario            String?
   cobradoAt             DateTime?
   cobradoBy             Int?
+  confirmadoAt          DateTime?
+  confirmadoBy          Int?
   retornado             Boolean                    @default(false)
   retornoFormaId        Int                        @default(1)
   retornoAt             DateTime?
   retornoBy             Int?
+  canceladoAt           DateTime?
+  canceladoBy           Int?
   createdAt             DateTime                   @default(now()) @db.DateTime(0)
   createdBy             Int?
   retornoComprobanteUrl String?
+  corteId               Int?
   cliente               User                       @relation(fields: [clienteId], references: [id], onDelete: Cascade)
   estatusCobro          CatalogoEstatusCobros      @relation(fields: [estatusCobroId], references: [id], onDelete: Cascade)
   estatusPagoCobro      CatalogoEstatusPagoCobros  @relation(fields: [estatusPagoCobroId], references: [id], onDelete: Cascade)
   pedido                Pedido                     @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
   retornoForma          CatalogoTiposRetornoCobros @relation(fields: [retornoFormaId], references: [id], onDelete: Cascade)
-
+  corte                 CobrosCortes?               @relation(fields: [corteId], references: [id], onDelete: Cascade)
+  
   @@index([clienteId], map: "CobrosDestino_clienteId_fkey")
   @@index([estatusCobroId], map: "CobrosDestino_estatusCobroId_fkey")
   @@index([estatusPagoCobroId], map: "CobrosDestino_estatusPagoCobroId_fkey")
@@ -312,6 +318,18 @@ model CobrosDestino {
   @@index([pedidoId], map: "CobrosDestino_pedidoId_fkey")
 }
 
+model CobrosCortes {
+  id              Int      @id @default(autoincrement())
+  estatusRetornoId    Int                        @default(1)
+  tipoRetornoId     Int @default(1)
+  retornoAt DateTime?
+  retornoBy Int?
+  comprobanteUrl  String?
+  createdAt DateTime       @default(dbgenerated("(now())"))
+  estatusRetorno  CatalogoEstatusPagoCobros @relation(fields: [estatusRetornoId], references: [id])
+  tipoRetorno     CatalogoTiposRetornoCobros @relation(fields: [tipoRetornoId], references: [id])
+  cobros          CobrosDestino[]
+}
 model CatalogoMetodosPago {
   id              Int      @id @default(autoincrement())
   tipo            String
@@ -386,6 +404,7 @@ model CatalogoEstatusPagoCobros {
   estatus String
   desc    String?
   cobros  CobrosDestino[]
+  cortes  CobrosCortes[]
 }
 
 model CatalogoTiposRetornoCobros {
@@ -393,6 +412,7 @@ model CatalogoTiposRetornoCobros {
   tipo   String
   desc   String?
   cobros CobrosDestino[]
+  cortes  CobrosCortes[]
 }
 
 model CatalogoCodigosPostales {

@@ -1,6 +1,6 @@
 'use client';
 
-import { bloqueToString, namedDateString, statusIdToString } from "@/app/components/utils/helpers";
+import { bloqueToString, namedDateString, statusCobroIdToString, statusIdToString } from "@/app/components/utils/helpers";
 import { SafeCobro, SafePedido } from "@/app/types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -17,16 +17,14 @@ import { MdViewInAr } from "react-icons/md";
 
 import Link from "next/link";
 import ComprobanteDialog from "./ComprobanteDialog";
-import EnvioViewGuia from "./EnvioViewGuia";
-import EnvioRastreo from "./EnvioRastreo";
-import EnvioInfo from "./EnvioInfo";
-import EnvioTickets from "./EnvioTickets";
+import CobroInfo from "./CobroInfo";
 
-interface EnvioViewProps {
+
+interface CobroViewProps {
  data: SafeCobro;
 }
 
-const EnvioView: React.FC<EnvioViewProps> = ({
+const CobroView: React.FC<CobroViewProps> = ({
  data
 }) => {
  return (
@@ -35,33 +33,20 @@ const EnvioView: React.FC<EnvioViewProps> = ({
         
     <div className=" w-full md:w-3/5 md:border md:border-neutral-300 md:rounded-md md:p-4">
         <div className="flex flex-row items-center justify-between px-2 py-2">
-            <p className="font-semibold text-foreground text-lg ml-10">{data.id}</p>
+            <div className="flex flex-col">
+            <p className="text-[11px] text-neutral-400 truncate ">ID:{data.id}</p>
+              <p className="font-semibold text-foreground text-xs ">{data.pedido.entregaContactoNombre}</p>
+              <p className="text-neutral-400 text-xs ">{data.pedido?.entregaColonia}, {data.pedido?.municipio?.municipio}</p>
+            </div>
             <div className="flex ">
-                {statusIdToString(data.estatusCobroId)}
+                {statusCobroIdToString(data.estatusCobroId)}
             </div>
         </div>
         <hr className="my-2 mb-2"></hr>
-        <Tabs defaultValue="info" className="mt-2 p-2 w-full">
-            <TabsList className="grid grid-cols-4">
-                <TabsTrigger value="info">Info</TabsTrigger>
-                <TabsTrigger value="rastreo">Rastreo</TabsTrigger>
-                <TabsTrigger value="guia">Guía</TabsTrigger>
-                <TabsTrigger value="tickets">Tickets</TabsTrigger>
-            </TabsList>
-            <TabsContent value="info">
-                
-
-            </TabsContent>
-            <TabsContent value={"rastreo"} className="m-0 p-0">
-                
-            </TabsContent>
-            <TabsContent value={"guia"} className="m-0 p-0">
-                
-            </TabsContent>
-            <TabsContent value={"tickets"} className="m-0 p-0">
-                <EnvioTickets data={data}/>
-            </TabsContent>
-        </Tabs>
+        <div>
+        <CobroInfo data={data} />
+        </div>
+        
         
         
         
@@ -73,4 +58,4 @@ const EnvioView: React.FC<EnvioViewProps> = ({
  );
 }
 
-export default EnvioView;
+export default CobroView;

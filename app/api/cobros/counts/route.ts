@@ -17,16 +17,17 @@ export async function GET(req: Request){
     return NextResponse.error();
   } 
   
-  
+  //caintidad en lugar de 1 dentro del if
   const counts:any = await prisma.$queryRaw`
     SELECT 
-      SUM(IF(estatusCobroId = 1 OR estatusCobroId = 2 OR estatusCobroId = 3, count(cantidad),0)) AS activos,
+      SUM(IF(estatusCobroId = 1 OR estatusCobroId = 2 OR estatusCobroId = 3, 1,0)) AS activos,
       SUM(IF(estatusCobroId = 5, 1,0)) AS entregados,
-      SUM(IF(estatusCobroId = 4, 1,0)) AS cancelados,
+      SUM(IF(estatusCobroId = 4, 1,0)) AS cancelados
     FROM CobrosDestino 
     WHERE clienteId = ${currentUser?.id};
   `;
 
+  
   return new Response(JSON.stringify(counts[0]), { status: 200 });
    } catch (error: any) {
   return new Response(JSON.stringify(JSON.stringify({ error: error.message })), { status: 403 });

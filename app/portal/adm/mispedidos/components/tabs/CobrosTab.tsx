@@ -15,7 +15,7 @@ import CobrosDisplay from "./components/CobrosDisplay";
 
 
 const pedidosQuery = async () => {
-  const response = await axios.get("/api/pedidos/counts");
+  const response = await axios.get("/api/cobros/counts");
   return response?.data;
 };
 
@@ -49,7 +49,7 @@ const CobrosTab: React.FC<CobrosTabProps> = ({
   } = useQuery({
     queryFn: () =>
       pedidosQuery(),
-    queryKey: ["counts", ],
+    queryKey: ["cobrosCounts", ],
 
   });
 
@@ -69,9 +69,9 @@ const CobrosTab: React.FC<CobrosTabProps> = ({
           </div>
         </Badge>
         <Badge 
-          variant={filter == '4' ? 'default' : 'secondary'} 
+          variant={filter == '5' ? 'default' : 'secondary'} 
           className="cursor-pointer  pr-2 pl-2 py-1"
-          onClick={() => changeFilter('4')}
+          onClick={() => changeFilter('5')}
           >
           <div className="flex flex-row items-center gap-1">
             <HiCheckCircle />
@@ -80,9 +80,9 @@ const CobrosTab: React.FC<CobrosTabProps> = ({
           </div>
         </Badge>
         <Badge 
-          variant={filter == '5' ? 'default' : 'secondary'} 
+          variant={filter == '4' ? 'default' : 'secondary'} 
           className="cursor-pointer  pr-2 pl-2 py-1"
-          onClick={() => changeFilter('5')}
+          onClick={() => changeFilter('4')}
           >
             <div className="flex flex-row items-center gap-1">
               <MdCancel />

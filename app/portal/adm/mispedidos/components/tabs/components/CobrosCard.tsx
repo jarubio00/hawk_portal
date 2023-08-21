@@ -26,7 +26,10 @@ const CobrosCards = forwardRef<Ref, CobrosCardsProps>((props, ref)  => {
   return ( 
         <div className="flex flex-col border border-neutral-300 bg-white shadow-lg rounded-lg  cursor-pointer my-2 py-1">
           <div className="flex flex-row items-center justify-between px-2 py-1">
-            <p className="font-semibold text-foreground text-xs ">{data.pedido.entregaContactoNombre}</p>
+            <div className="flex flex-col">
+              <p className="font-semibold text-foreground text-xs ">{data.pedido.entregaContactoNombre}</p>
+              <p className="text-neutral-400 text-xs ">{data.pedido?.entregaColonia}, {data.pedido?.municipio?.municipio}</p>
+            </div>
             <div className="flex ">
               {statusCobroIdToString(data.estatusCobroId,'small')}
             </div>

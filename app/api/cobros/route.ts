@@ -44,6 +44,9 @@ export async function GET(req: Request){
       },
       {
         estatusCobroId:  2 
+      },
+      {
+        estatusCobroId:  3
       }
     ]
   } else {
@@ -60,7 +63,11 @@ export async function GET(req: Request){
         OR : filtros
     },
     include: {
-      pedido: true,
+      pedido: {
+        include: {
+          municipio: true
+        }
+      },
       estatusCobro: true,
       estatusPagoCobro: true,
       retornoForma: true,

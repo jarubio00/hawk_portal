@@ -23,6 +23,8 @@ const ComprobanteDialog: React.FC<ComprobanteDialogProps> = ({
  pedidoId,
  url
 }) => {
+
+    console.log(url);
     const [open,setOpen] = useState(false);
 
     //data.comprobanteUrl && data?.comprobanteUrl.toLowerCase().includes('.pdf')

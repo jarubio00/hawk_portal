@@ -21,6 +21,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import {useRouter} from "next/navigation";
 import CobrosCards from "./CobrosCard";
+import CobroView from "./CobroView";
 
 type UserQueryParams = {
     take?: number;
@@ -65,7 +66,7 @@ const router = useRouter();
 const [initialLoading,setInitialLoading] = useState(false);
 const [order, setOrder] = useState('desc');
 const [sheetOpen, setSheetOpen] = useState(false);
-const [pedidoSelected, setPedidoSelected] = useState<SafePedido>();
+const [cobroSelected, setCobroSelected] = useState<SafeCobro>();
 
 const {
     data,
@@ -109,7 +110,7 @@ const {
         setOrder(order);
     }
 
-    const handlePedidoClick = (cobro: SafeCobro) => {
+    const handleCobroClick = (cobro: SafeCobro) => {
         //setPedidoSelected(pedido);
         //setSheetOpen(true);
           onView(true,cobro);
@@ -143,7 +144,7 @@ const {
               page.data.map((cobro: SafeCobro, index: number) => {
                if (page.data.length === index + 1) {
                   return (
-                    <div ref={ref} key={cobro.id} onClick={() => handlePedidoClick(cobro)}>
+                    <div ref={ref} key={cobro.id} onClick={() => handleCobroClick(cobro)}>
                          <CobrosCards
                             data={cobro}
                         />
@@ -152,7 +153,7 @@ const {
                   );
                 } else {
                   return (
-                    <div key={cobro.id} onClick={() => handlePedidoClick(cobro)}>
+                    <div key={cobro.id} onClick={() => handleCobroClick(cobro)}>
                        <CobrosCards
                             data={cobro}
                         />
@@ -183,7 +184,7 @@ const {
             >
               <ScrollArea>
                 <div className="flex flex-col py-2">
-                  {pedidoSelected && <EnvioView data={pedidoSelected} />}
+                  {cobroSelected && <CobroView data={cobroSelected} />}
                 </div>
               </ScrollArea>
               </Drawer>
