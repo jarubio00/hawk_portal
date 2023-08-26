@@ -22,7 +22,9 @@ export async function GET(req: Request){
     SELECT 
       SUM(IF(estatusCobroId = 1 OR estatusCobroId = 2 OR estatusCobroId = 3, 1,0)) AS activos,
       SUM(IF(estatusCobroId = 5, 1,0)) AS entregados,
-      SUM(IF(estatusCobroId = 4, 1,0)) AS cancelados
+      SUM(IF(estatusCobroId = 4, 1,0)) AS cancelados,
+      SUM(IF(estatusCobroId = 3, cantidad,0)) AS cobrados,
+      SUM(IF(estatusCobroId = 1 OR estatusCobroId = 2, cantidad,0)) AS porcobrar
     FROM CobrosDestino 
     WHERE clienteId = ${currentUser?.id};
   `;

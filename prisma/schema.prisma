@@ -24,7 +24,9 @@ model User {
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
   lastLoginAt        DateTime?
+  countryCode        String?
   celular            String?
+  kommoContactId     Int?
   whatsappEnabled    Boolean?           @default(false)
   cobrosPermitidos   Boolean            @default(false)
   deleted            Boolean            @default(false)
@@ -42,6 +44,7 @@ model User {
   paquetes           Paquete[]
   pedidos            Pedido[]
   recolecciones      Recoleccion[]
+  cobrosCortes      CobrosCortes[]
 
   @@map("Clientes")
 }
@@ -149,6 +152,7 @@ model Pedido {
   formaPagoId           Int                    @default(1)
   estatusPagoId         Int                    @default(1)
   cobroDestino          Boolean                @default(false)
+  cobroDestinoCantidad  Float                  @default(0)
   cobroDestinoId        Int?
   printCorte            Int?
   printMCorte           Int?
@@ -159,7 +163,7 @@ model Pedido {
   updatedBy             Int?                   @default(1)
   labelImageUrl         String?
   labelPdfUrl           String?
-  cobro                 CobrosDestino[]
+  cobro                 CobrosDestino?
   operaciones           Operaciones?
   user                  User                   @relation(fields: [clienteId], references: [id], onDelete: Cascade)
   municipio             CatalogoMunicipios     @relation(fields: [entregaMunicipioId], references: [id], onDelete: Cascade)
@@ -200,6 +204,52 @@ model Operaciones {
   entregadoBy         Int?
   entregadoFrom       String?
   pedido              Pedido    @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+}
+
+model OperacionesActividad {
+   id                  Int       @id @default(autoincrement())
+   pedidoId Int 
+   tipoId       Int
+   createdAt  DateTime @default(dbgenerated("(now())"))
+   createdBy  Int
+   tipo   CatalogoOperacionesActividad @relation(fields: [tipoId], references: [id])
+}
+
+model Ticket {
+   id              Int                @id @default(autoincrement())
+   clienteId       Int
+   viaId           TicketVia
+   asuntoId        Int
+   estatusId       Int
+   desc           String?
+   createdAt       DateTime @default(dbgenerated("(now())"))
+   createdBy       Int
+   items          TicketItems[]
+   asunto         CatalogoAsuntosTickets  @relation(fields: [asuntoId], references: [id])
+}
+
+model TicketItems {
+   id              Int                @id @default(autoincrement())
+   ticketId        Int
+   tipoItemId       TicketTipoItem
+   createdAt      DateTime  @default(dbgenerated("(now())"))
+   createdBy     Int
+   ticket   Ticket  @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+}
+
+
+model CatalogoAsuntosTickets {
+   id              Int                @id @default(autoincrement())
+   tipo             String
+   desc            String?
+   ticket       Ticket[]
+}
+
+model CatalogoEstatusTickets {
+   id              Int                @id @default(autoincrement())
+   estatus         String
+   desc             String?
 }
 
 model Direccion {
@@ -285,7 +335,7 @@ model Paquete {
 model CobrosDestino {
   id                    Int                        @id @default(autoincrement())
   clienteId             Int
-  pedidoId              Int
+  pedidoId              Int                         @unique
   cantidad              Float                      @default(0)
   estatusCobroId        Int                        @default(1)
   estatusPagoCobroId    Int                        @default(1)
@@ -320,6 +370,7 @@ model CobrosDestino {
 
 model CobrosCortes {
   id              Int      @id @default(autoincrement())
+  clienteId       Int
   estatusRetornoId    Int                        @default(1)
   tipoRetornoId     Int @default(1)
   retornoAt DateTime?
@@ -328,6 +379,7 @@ model CobrosCortes {
   createdAt DateTime       @default(dbgenerated("(now())"))
   estatusRetorno  CatalogoEstatusPagoCobros @relation(fields: [estatusRetornoId], references: [id])
   tipoRetorno     CatalogoTiposRetornoCobros @relation(fields: [tipoRetornoId], references: [id])
+  cliente         User    @relation(fields: [clienteId], references: [id], onDelete: Cascade)
   cobros          CobrosDestino[]
 }
 model CatalogoMetodosPago {
@@ -336,6 +388,15 @@ model CatalogoMetodosPago {
   descripcion     String?
   comprobante_req Int      @default(0)
   pedido          Pedido[]
+}
+
+model CatalogoOperacionesActividad {
+  id              Int      @id @default(autoincrement())
+  tipo            String
+  icon            String?
+  color           String?
+  desc            String?
+  actividad       OperacionesActividad[]
 }
 
 model CatalogoEstatusPago {
@@ -500,6 +561,18 @@ model OtpCodes {
   createdAt DateTime       @default(dbgenerated("(now())"))
 }
 
+model KommoApiAccount {
+  id        Int            @id @default(autoincrement())
+  name      String
+  clientId String     @db.LongText
+  clientSecret String     @db.LongText
+  accessToken String     @db.LongText
+  refreshToken String     @db.LongText
+  redirectUri  String     @db.LongText
+  expiresIn   Int?
+  updatedAt  DateTime?
+}
+
 enum TipoBloques {
   AM
   PM
@@ -517,4 +590,16 @@ enum OtpApplication {
   passwordChange
   phoneVerify
   other
+}
+
+enum TicketTipoItem {
+  texto
+  imagen
+  video
+}
+
+enum TicketVia {
+  whatsapp
+  email
+  hawk
 }

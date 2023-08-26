@@ -33,8 +33,8 @@ export async function GET(
   let entBloque;
 
 
-  const hoyUTC = new Date('2023-08-19T15:42:09.864Z');
-  //const hoyUTC = new Date();
+  //const hoyUTC = new Date('2023-08-19T15:42:09.864Z');
+  const hoyUTC = new Date();
   const hoy = subHours(hoyUTC,6);
   const hoySoloFecha =  format(hoy,`yyyy-MM-dd`);
   const hoySearch = new Date(hoySoloFecha);

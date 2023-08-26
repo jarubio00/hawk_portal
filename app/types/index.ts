@@ -105,4 +105,5 @@ export type ForgotChangeFormType = {
 export type PhoneConfirmFormType = {
   celular: string;
   type?: string;
+  countryCode: string
 }

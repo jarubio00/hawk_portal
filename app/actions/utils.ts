@@ -38,6 +38,9 @@ export async function generateLabels (props: any) {
 
 
   const zpl = createZpl(p, pedidoId);
+
+  console.log(zpl);
+  
   let formData = new FormData();
   formData.append('file',zpl);
   

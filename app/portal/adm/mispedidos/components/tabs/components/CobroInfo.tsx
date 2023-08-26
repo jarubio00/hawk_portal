@@ -27,9 +27,8 @@ const CobroInfo: React.FC<CobroInfoProps> = ({
 
     console.log(data);
  return (
-  <div className='mx-4 mt-4 flex flex-col gap-2'>
+  <div className='mx-4 mt-2 flex flex-col gap-2'>
     <div className="flex flex-col grow-0 text-left text-xs">
-        
         <p className="text-2xl font-bold">${currencyFormat(data.cantidad)}</p>
         <p className="text-[11px] text-neutral-400 leading-none">Comisión: ${(data.cantidad * .035).toFixed(2)}</p>
     </div>
@@ -38,11 +37,9 @@ const CobroInfo: React.FC<CobroInfoProps> = ({
     <p className="text-xs text-neutral-400 font-bold leading-none">{data.pedido.id}</p>
     <p className="text-sm font-semibold mt-2">Destinatario a cobrar</p>
     <hr className="my-0"></hr>
-    <p className="text-xs text-neutral-400 leading-none ">{data.pedido.entregaContactoNombre}</p>
-    <p className="text-xs text-neutral-400 leading-none ">{data.pedido.entregaContactoTel}</p>
+    <p className="text-xs text-neutral-400 leading-none ">{data.pedido.entregaContactoNombre} - {data.pedido.entregaContactoTel}</p>
     <p className="text-xs text-neutral-400 leading-none">{data.pedido.entregaCalle} {data.pedido.entregaNumero} {data.pedido.entregaNumeroInt} </p>
     <p className="text-xs text-neutral-400 leading-none">{data.pedido.entregaColonia}, {data.pedido?.municipio?.municipio }</p>
-    <p className="text-xs text-neutral-400 leading-none">{data.pedido.id}</p>
 
             
     <p className="text-sm font-semibold mt-2">Estatus</p>
@@ -72,7 +69,7 @@ const CobroInfo: React.FC<CobroInfoProps> = ({
                         >Cobrado</p>
                     </div>
                 </Badge>
-                <p className="text-[10px] font-normal text-neutral-300">{data.cobradoAt?.toString() || ''}</p>
+                <p className="text-[10px] font-normal text-neutral-300">{data?.cobradoAt?.toString() || ''}</p>
             </div>
             <div className="my-1 flex flex-col">
                 <Badge variant='outline' className="text-xs font-bold rounded-md px-1">
@@ -85,7 +82,7 @@ const CobroInfo: React.FC<CobroInfoProps> = ({
                         >Confirmado</p>
                     </div>
                 </Badge>
-                <p className="text-[10px] font-normal text-neutral-300">{data.cobradoAt?.toString() || ''}</p>
+                <p className="text-[10px] font-normal text-neutral-300">{data?.confirmadoAt?.toString() || ''}</p>
             </div>
             <div className="my-1 flex flex-col">
                 <Badge variant='outline' className="text-xs font-bold rounded-md px-1">
@@ -98,7 +95,7 @@ const CobroInfo: React.FC<CobroInfoProps> = ({
                         >Retornado</p>
                     </div>
                 </Badge>
-                <p className="text-[10px] font-normal text-neutral-300">{data.retornoAt?.toString() || ''}</p>
+                <p className="text-[10px] font-normal text-neutral-300">{data?.retornoAt?.toString() || ''}</p>
                 {data.estatusPagoCobroId == 2 && data.retornoComprobanteUrl &&
                     <ComprobanteDialog pedidoId={data.id} url={data.retornoComprobanteUrl} />
                 }
@@ -112,7 +109,7 @@ const CobroInfo: React.FC<CobroInfoProps> = ({
                     >Cancelado</p>
                 </div>
             </Badge>
-        <p className="text-[10px] font-normal text-neutral-300">{data.cobradoAt?.toString() || ''}</p>
+        <p className="text-[10px] font-normal text-neutral-300">{data?.canceladoAt?.toString() || ''}</p>
     </div>
         }
 

@@ -51,13 +51,13 @@ const CreandoPedidoModal = () => {
       if (pedido?.append?.enabled) {
         if (pedido.append.recoleccion) {
           
-          //handleAppendPedido(pedido.append.recoleccion.id);
+          handleAppendPedido(pedido.append.recoleccion.id);
         } else {
           console.log('Error en la recoleccion')
         }
        
       } else  {
-        //handleCrearPedido();
+        handleCrearPedido();
       }
       
     } else {

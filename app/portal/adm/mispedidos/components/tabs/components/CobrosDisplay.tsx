@@ -167,7 +167,7 @@ const {
             <>
               { !isLoading && 
               <div className="felx flex-col gap-2 text-xs p-4">
-                <p>No se encontraron envíos</p>
+                <p>No se encontraron cobros</p>
                
               </div>}
             </>

@@ -68,7 +68,8 @@ export async function GET(req: Request){
       municipio : true,
       formaPago: true,
       tipoPaquete: true,
-      estatusPedido: true
+      estatusPedido: true,
+      operaciones: true
     },
     take: take ? parseInt(take as string) : 15,
     ...(lastCursor && {
@@ -112,7 +113,8 @@ export async function GET(req: Request){
         municipio : true,
         formaPago: true,
         tipoPaquete: true,
-        estatusPedido: true
+        estatusPedido: true,
+        operaciones: true
         
       },
       take: take ? parseInt(take as string) : 10,

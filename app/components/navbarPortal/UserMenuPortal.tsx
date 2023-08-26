@@ -60,7 +60,7 @@ const UserMenuPortal: React.FC<UserMenuPortalProps> = ({
           <div className="block" >
             {/* <Avatar src={currentUser?.image} /> */}
             {currentUser ? (
-            <div className="m-0 w-7 h-7 relative flex justify-center items-center rounded-full bg-blue-500 text-lg text-white uppercase">{currentUser?.nombre?.charAt(0)}</div>
+            <div className="m-0 w-7 h-7 relative flex justify-center items-center rounded-full bg-primary text-lg text-white uppercase">{currentUser?.nombre?.charAt(0)}</div>
             ) : (
               <Avatar src={null} />
             )}
@@ -94,7 +94,7 @@ const UserMenuPortal: React.FC<UserMenuPortalProps> = ({
                 />
                 <MenuItem 
                   label="Mi Perfil" 
-                  onClick={() => router.push('/favorites')}
+                  onClick={() => router.push('/portal/adm/miperfil')}
                 />
                 <MenuItem 
                   label="Cambiar contraseña" 

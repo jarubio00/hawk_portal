@@ -23,6 +23,7 @@ interface EnvioRastreoProps {
 const EnvioRastreo: React.FC<EnvioRastreoProps> = ({
  data
 }) => {
+    console.log('rastreo: ',data);
  return (
   <div className="w-full m-6 flex flex-col gap-4">
     

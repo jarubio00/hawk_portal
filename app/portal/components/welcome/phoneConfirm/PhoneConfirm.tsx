@@ -7,7 +7,7 @@ import PhoneConfirmClient from "./PhoneConfirmClient";
 import PhoneConfirmProvider from "@/app/portal/components/welcome/phoneConfirm/context/PhoneConfirmContext";
 
 
-const Home = ({currentUser}:any) => {
+const Home = ({currentUser, type, onClose}:any) => {
 
    //Ancho si es fuera del dialog p-6 w-5/6 md:w-4/6 lg:w-3/6 xl:w-2/6 
   return (
@@ -17,7 +17,7 @@ const Home = ({currentUser}:any) => {
         
               <div className="mb-6 w-full">
                 <PhoneConfirmProvider>
-                  <PhoneConfirmClient currentUser={currentUser} />
+                  <PhoneConfirmClient currentUser={currentUser} type={type} onClose={onClose}/>
                 </PhoneConfirmProvider>
                 
               </div>

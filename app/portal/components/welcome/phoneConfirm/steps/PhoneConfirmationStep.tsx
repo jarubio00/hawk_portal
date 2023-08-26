@@ -17,10 +17,12 @@ import { confirmPhone } from "@/app/actions/apiQuerys";
 
 interface ConfirmationStepProps {
  data?: string;
+ type?: string,
 }
 
 const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
- data
+ data,
+ type
 }) => {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
@@ -119,13 +121,19 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
         email: phoneConfirm?.email,
         uuid: phoneConfirm?.uuid,
         code: code,
-        phone: phoneConfirm?.celular
+        phone: phoneConfirm?.celular,
+        countryCode: phoneConfirm?.countryCode
       });
 
       if (confirmed && confirmed?.status === 1) {
         setConfirmMessage('Celular verificado');
         const timer = setTimeout(async () => {
-            router.refresh();
+            if(type == 'profile') {
+              router.replace('/portal/adm/miperfil')
+            } else {
+              router.refresh();
+            }
+           
           }, 3000);
       } else {
         setIsValidating(false);

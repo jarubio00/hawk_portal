@@ -35,7 +35,10 @@ const PhoneStep: React.FC<PhoneStepProps> = ({
 }) => {
 
   const validationSchema = Yup.object().shape({
-    celular: Yup.string().required('El número de celular es requerido'),
+    celular: Yup.string().required('El número de celular es requerido')
+      .min(10,"EL número debe ser de 10 dígitos")
+      .max(10,"El número debe ser de 10 dígitos"),
+    countryCode: Yup.string().required('EL código de país es requerido')
   });
 
   const {
@@ -61,7 +64,8 @@ const PhoneStep: React.FC<PhoneStepProps> = ({
     } = useForm<PhoneConfirmFormType>({
       resolver: yupResolver(validationSchema),
       defaultValues: {
-        celular: '',
+        celular: phoneConfirm?.celular ? phoneConfirm.celular :'',
+        countryCode: phoneConfirm?.countryCode ? phoneConfirm.countryCode : ''
       },
     });
 
@@ -94,6 +98,7 @@ const PhoneStep: React.FC<PhoneStepProps> = ({
         result = await  registerOtp({
           email: currentUser.email || '',
           phone: data.celular,
+          countryCode: data.countryCode,
           uuid: uuid,
           type: data.type || 'whatsapp'
         })
@@ -138,23 +143,28 @@ const PhoneStep: React.FC<PhoneStepProps> = ({
    
     <div>
       <PhoneInput
-        inputClass="!py-4 !w-full !pl-20 !border-input !text-sm"
+        inputClass={`!py-4 !w-full !pl-20 !border-input !text-sm ${errors.celular && '!border-red-500'}`}
         disabled={isLoading}
-        buttonClass="!w-16 !p-2 !py-4   !border-input"
+        buttonClass={`"!w-16 !p-2 !py-4   !border-input ${errors.celular && '!border-red-500'}"`}
         country={'mx'}
         preferredCountries={['mx','us']}
-        value={phoneConfirm?.celular}
+        value={`${phoneConfirm?.countryCode}${phoneConfirm?.celular}`}
         onBlur={(e) => {
           console.log(e.target.value);
         }}
-        enableAreaCodeStretch
-        areaCodes={{mx: ['81', '55']}}
         countryCodeEditable={false}
         placeholder='No. de celular / whatsapp'
-        onChange={(value) => {
-          setValue('celular',value);
+        onChange={(value, country) => {
+          //@ts-ignore
+          const sub = country.dialCode.length;
+          const num = value.substring(sub);
+          setCustomValue('celular',num);
+          //@ts-ignore
+          setCustomValue('countryCode', country.dialCode);
         }}
+        
       />
+      <p className="my-2 text-[11px] text-red-500">{errors.celular?.message}</p>
     </div>
     <div className="w-full flex flex-col gap-3 mt-2">
       <p className="text-xs text-neutral-400">Enviar código de confirmación por: </p>

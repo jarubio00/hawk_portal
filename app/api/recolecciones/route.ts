@@ -57,18 +57,18 @@ export async function GET(req: Request){
   let data2:any = [];
   let isMoreData=false;
 
-  if (result.length >3) {
+ /*  if (result.length >3) {
     isMoreData = true;
     data1 = result.slice(0,3);
     data2 = result.slice(3);
   } else {
     data1 = result;
-  }
+  } */
 
   const data = {
-    data: data1,
-    moreData: data2,
-    isMoreData: isMoreData
+    data: result,
+    //moreData: data2,
+    //isMoreData: isMoreData
   };
 
   return new Response(JSON.stringify(data), { status: 200 });

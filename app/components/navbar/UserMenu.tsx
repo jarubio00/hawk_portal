@@ -77,7 +77,7 @@ const UserMenu: React.FC<UserMenuProps> = ({
           <div className="block" >
             {/* <Avatar src={currentUser?.image} /> */}
             {currentUser ? (
-            <div className="m-0 w-9 h-9 relative flex justify-center items-center rounded-full bg-blue-500 text-xl text-white uppercase">{currentUser?.nombre?.charAt(0)}</div>
+            <div className="m-0 w-9 h-9 relative flex justify-center items-center rounded-full bg-primary text-xl text-white uppercase">{currentUser?.nombre?.charAt(0)}</div>
             ) : (
               <Avatar src={null} />
             )}

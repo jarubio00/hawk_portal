@@ -6,6 +6,7 @@ interface RegisterOtpProps {
     uuid: string,
     email: string, 
     phone: string, 
+    countryCode?: string,
     type: string,
 }
 

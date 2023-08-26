@@ -32,17 +32,16 @@ const CobroView: React.FC<CobroViewProps> = ({
     <div className='flex flex-col items-center mt-2 w-full overflow-y-scroll '>
         
     <div className=" w-full md:w-3/5 md:border md:border-neutral-300 md:rounded-md md:p-4">
-        <div className="flex flex-row items-center justify-between px-2 py-2">
+        <div className="flex flex-row items-center justify-between px-2 py-2 ml-10">
             <div className="flex flex-col">
-            <p className="text-[11px] text-neutral-400 truncate ">ID:{data.id}</p>
-              <p className="font-semibold text-foreground text-xs ">{data.pedido.entregaContactoNombre}</p>
-              <p className="text-neutral-400 text-xs ">{data.pedido?.entregaColonia}, {data.pedido?.municipio?.municipio}</p>
+            <p className="text-xs text-neutral-400 truncate mt-1">ID:{data.id}</p>
+              
             </div>
             <div className="flex ">
                 {statusCobroIdToString(data.estatusCobroId)}
             </div>
         </div>
-        <hr className="my-2 mb-2"></hr>
+        <hr className="my-0 mt-2"></hr>
         <div>
         <CobroInfo data={data} />
         </div>

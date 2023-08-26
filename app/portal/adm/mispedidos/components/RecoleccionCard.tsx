@@ -18,9 +18,9 @@ const RecoleccionCard: React.FC<RecoleccionCardProps> = ({
     const router = useRouter();
     const loader = useLoader();
  return (
-  <div className='flex flex-row items-center justify-between my-1 '>
+   <div className="flex flex-row justify-between items-center border border-neutral-300 bg-white shadow-lg rounded-lg  cursor-pointer my-2 p-2">
     <div className="flex flex-col gap-1">
-        <p className="text-xs truncate leading-none ">{namedDateString(recoleccion.fecha)}</p>
+        <p className="text-xs truncate leading-none font-semibold text-foreground ">{namedDateString(recoleccion.fecha)}</p>
         <p className="text-[11px] text-neutral-400 truncate leading-none">{recoleccion.colonia}, {bloqueToString(recoleccion.bloque)}</p>
         <p className="text-[11px] font-semibold leading-none">Envíos: {recoleccion.pedidos.length }</p>
     </div>

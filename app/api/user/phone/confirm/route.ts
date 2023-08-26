@@ -15,7 +15,8 @@ export async function POST(
     uuid,
     code,
     email, 
-    phone
+    phone,
+    countryCode
    } = body;
 
    console.log('ch body',body);
@@ -53,6 +54,7 @@ export async function POST(
         },
         data: {
           celular: phone,
+          countryCode: countryCode,
             checklist: {
               update: {
                 where: {clienteEmail: email},

@@ -25,7 +25,8 @@ const PhoneConfirmProvider: React.FC<Props> = ({children}) => {
       status: data.status,
       code: data.code, 
       uuid: data.uuid,
-      celular: data.celular
+      celular: data.celular,
+      countryCode: data.countryCode
     });
   }
 

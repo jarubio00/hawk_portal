@@ -18,8 +18,6 @@ const Pedidos  = async () => {
   //const recolecciones = await getRecolecciones();
   //const data = {recolecciones: recolecciones, pedidos: pedidos}
 
-  
-  
 
     return (
       <ClientOnly>

@@ -12,10 +12,12 @@ import Canceladas from "./components/Canceladas";
 import EnviosDisplay from "./components/EnviosDisplay";
 import { SafeCobro, SafePedido } from "@/app/types";
 import CobrosDisplay from "./components/CobrosDisplay";
+import CobrosDash from "./components/CobrosDash";
 
 
 const pedidosQuery = async () => {
   const response = await axios.get("/api/cobros/counts");
+  console.log(response.data);
   return response?.data;
 };
 
@@ -56,6 +58,7 @@ const CobrosTab: React.FC<CobrosTabProps> = ({
 
   return ( 
     <div className=" w-full py-2 flex flex-col gap-2">
+      <CobrosDash data={data}/>
       <div className="my-4 flex flex-row items-center gap-4 overflow-x-auto touch-auto no-scrollbar">
         <Badge 
           variant={filter == '1' ? 'default' : 'secondary'} 

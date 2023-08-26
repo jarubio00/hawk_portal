@@ -21,6 +21,7 @@ import {
   } from 'react-icons/bs'
 import CobrosTab from "./tabs/CobrosTab";
 import { SafeCobro, SafePedido } from "@/app/types";
+import RecoleccionesSection from "./RecoleccionesSection";
 
 
 interface TabSectionProps {
@@ -50,30 +51,32 @@ const TabSection: React.FC<TabSectionProps> = ({
                 Envíos
               </div>
             </Tab>
+            <Tab  value={'recolecciones'} className="w-36 text-sm font-semibold py-1 pb-2">
+              <div className="flex items-center gap-2">
+                {React.createElement(FaHome, { className: "w-4 h-4" })}
+                Recolecciones
+              </div>
+            </Tab>
             <Tab  value={'cobros'} className="w-36 text-sm font-semibold py-1 pb-2">
               <div className="flex items-center gap-2">
                 {React.createElement(FaCircleDollarToSlot, { className: "w-4 h-4" })}
                 Cobros
               </div>
             </Tab>
-            <Tab  value={'tickets'} className="w-36 text-sm font-semibold py-1 pb-2">
-              <div className="flex items-center gap-2">
-                {React.createElement(FaTicketAlt, { className: "w-4 h-4" })}
-                Tickets
-              </div>
-            </Tab>
+            
           </TabsHeader>
           <TabsBody className="m-0 p-0">
            
             <TabPanel value={"envios"} className="m-0 p-0">
               <EnviosTab onView={onView}/>
             </TabPanel>
+            <TabPanel value={"recolecciones"} className="m-0 pb-4">
+              <RecoleccionesSection />
+            </TabPanel>
             <TabPanel value="cobros" className="m-0 p-0">
               <CobrosTab onView={onCobroView}/>
             </TabPanel>
-            <TabPanel value={"tickets"} className="m-0 p-0">
-              <HistorialTab />
-            </TabPanel>
+            
           </TabsBody>
       </Tabs>
     </div>

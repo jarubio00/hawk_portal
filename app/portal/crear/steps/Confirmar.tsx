@@ -13,6 +13,10 @@ import {ICotizaParams, ICotizaItem} from "@/app/types/pedido";
 import { cotizaPaqueteById, crearPedido } from "@/app/actions/apiQuerys";
 import { PulseLoader } from "react-spinners";
 import useCreandoPedidoModal from "@/app/hooks/useCreandoPedidoModal";
+import BolsasDialog from "../components/BolsasDialog";
+
+
+
 
 
 interface ConfirmarStepProps {
@@ -34,6 +38,8 @@ const ConfirmarStep: React.FC<ConfirmarStepProps> = ({
   const [cotiza,setCotiza] = useState<ICotizaItem>({})
   const [error,setError] = useState(false);
   const [errorMessage,setErrorMessage] = useState('');
+  const [bolsaDialogOpen, setBolsaDialogOpen] = useState(true);
+  const [bolsaSelected, setBolsaSelected] = useState({});
 
   const getCotizaServer = useCallback(async (props: ICotizaParams) => {
 
@@ -115,6 +121,10 @@ const handleNext = async () => {
   } */
    
 }
+
+const handleBolsaDialogClose = (val: any) => {
+  setBolsaDialogOpen(false);
+}
   return ( 
     <div className="px-2">
       <StepHeading title="Confirmar" subtitle="Confirma tu envío" />
@@ -134,7 +144,10 @@ const handleNext = async () => {
             :
             <div>
               {!error ? <div className="flex flex-col">
-              {pedido?.cotizacion && <CotizaCard data={pedido?.cotizacion}/>}
+              {pedido?.cotizacion && <div className="flex flex-col gap-4">
+                <CotizaCard data={pedido?.cotizacion}/>
+                <BolsasDialog open={bolsaDialogOpen} onClose={handleBolsaDialogClose}/>
+              </div>}
               </div> :
               <div className="flex flex-col">
                 <p className="text-xs text-red-500">Algo salió mal</p>

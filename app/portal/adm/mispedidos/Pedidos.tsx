@@ -111,7 +111,7 @@ const PedidosClient  = (props:any) => {
             noButton
           />
           {/* <DashSection /> */}
-          <RecoleccionesSection />
+          {/* <RecoleccionesSection /> */}
           <TabSection onView={handleDrawerPedido} onCobroView={handleDrawerCobro}/>
         </div>
     

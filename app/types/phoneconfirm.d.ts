@@ -2,6 +2,7 @@
 export interface PhoneConfirm {
     email?: string;
     celular?: string;
+    countryCode?: string;
     type?: string;
     status?: string;
     code?: number;
