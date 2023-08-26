@@ -84,6 +84,7 @@ export type RegisterFormType = {
   password: string;
   confirmPassword: string;
   celular: string;
+  countryCode: string;
   type?: string;
   status?: string;
   code?: number;
@@ -98,6 +99,12 @@ export type ForgotFormType = {
   email: string;
 }
 export type ForgotChangeFormType = {
+  newPassword: string;
+  confirmPassword: string;
+}
+
+export type PasswordChangeFormType = {
+  oldPassword: string;
   newPassword: string;
   confirmPassword: string;
 }

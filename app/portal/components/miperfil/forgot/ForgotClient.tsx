@@ -12,19 +12,11 @@ import ChangeStep from "./steps/ChangeStep";
 
 
 interface ForgotClientProps {
-    currentUser?: any;
-    type?: string;
-    onClose?: () => void;
-    onForgot?: () => void;
-    toggleCloseButton?: () => void;
+ data?: string;
 }
 
 const ForgotClient: React.FC<ForgotClientProps> = ({
-    currentUser,
-    type,
-    onClose,
-    onForgot,
-    toggleCloseButton
+ data
 }) => {
     const {
         saveForgot, 
@@ -54,30 +46,13 @@ const ForgotClient: React.FC<ForgotClientProps> = ({
         <div className="my-2 flex flex-col ">
             
             {activeStep === 0 &&
-                  <EmailStep 
-                    currentUser={currentUser} 
-                    type={type}
-                    onClose={onClose}
-                    onForgot={onForgot}
-                    toggleCloseButton={toggleCloseButton}
-                    />
+                  <EmailStep/>
               }
             {activeStep === 1 &&
-                  <ConfirmationStep 
-                    onClose={onClose}
-                    onForgot={onForgot}
-                    toggleCloseButton={toggleCloseButton}
-                  
-                  />
+                  <ConfirmationStep />
               }
             {activeStep === 2 &&
-                  <ChangeStep 
-                    type={type}
-                    onClose={onClose}
-                    onForgot={onForgot}
-                    toggleCloseButton={toggleCloseButton}
-                  
-                  />
+                  <ChangeStep />
               }
         </div>
          

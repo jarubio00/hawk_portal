@@ -27,11 +27,11 @@ import { BsCheckCircle } from "react-icons/bs";
 
 
 interface ConfirmedStepProps {
- data?: string;
+ onClose?: () => void;
 }
 
 const ConfirmedStep: React.FC<ConfirmedStepProps> = ({
- data
+ onClose
 }) => {
   const validationSchema = Yup.object().shape({
     newPassword: Yup.string().required('La contrseña no puede estar vacía')

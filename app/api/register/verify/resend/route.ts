@@ -13,6 +13,7 @@ export async function POST(
     uuid,
     email,
     phone,
+    countryCode,
     type
    } = body;
 

@@ -18,9 +18,13 @@ import toast from "react-hot-toast";
 import EditarDireccion from "@/app/components/portal/EditarDireccion";
 import ListSearch from "@/app/components/ListSearch";
 import ProfileInput from "@/app/components/inputs/ProfileInput";
-import { MdModeEditOutline, MdSave } from "react-icons/md";
+import { MdCancel, MdModeEditOutline, MdSave } from "react-icons/md";
 import { Button } from "@/components/ui/button";
 import PhoneChangeModal from "../../components/welcome/PhoneChangeModal";
+import PasswordChangeModal from "../../components/miperfil/PasswordChangeModal";
+import { IoMdClose } from "react-icons/io";
+import PhoneInput from "react-phone-input-2";
+import { Label } from "@/components/ui/label";
 
 
 interface MiPerfilProps {
@@ -39,6 +43,7 @@ interface MiPerfilProps {
   const [adding,setAdding] = useState(false);
   const [nombreEdit, setNombreEdit] = useState(false);
   const [celularEdit,setCelularEdit] = useState(false);
+  const [passwordEdit,setPasswordEdit] = useState(false);
   const [confirmDialogOpen,setConfirmDialogOpen] = useState(false);
   const [dialogContent, setDialogContent] = useState({});
   const [editing,setEditing] = useState(false);
@@ -55,7 +60,7 @@ interface MiPerfilProps {
 
   const toggleNombreEdit = (action: string) => {
     if(action == 'edit') {
-      setNombreEdit(true);
+      setNombreEdit(!nombreEdit);
       //nombreInputRef?.current?.focus();
     } 
 
@@ -68,8 +73,16 @@ interface MiPerfilProps {
     setCelularEdit(true);
   }
 
+  const handleChangePassword = () => {
+    setPasswordEdit(true);
+  }
+
   const handleCloseChangeCelular = () => {
     setCelularEdit(false);
+  }
+
+  const handleCloseChangePassword = () => {
+    setPasswordEdit(false);
   }
 
   const handleConfirmDialog = async (props: any) => {
@@ -186,6 +199,7 @@ interface MiPerfilProps {
     return (
       <ClientOnly>
         <PhoneChangeModal currentUser={currentUser} open={celularEdit} onClose={handleCloseChangeCelular}/>
+        <PasswordChangeModal currentUser={currentUser} open={passwordEdit} onClose={handleCloseChangePassword}/>
         <ConfirmDialog isOpen={confirmDialogOpen} onClose={handleConfirm} dialogContent={dialogContent}/>
             <PageHeader 
               title="Mi perfil"
@@ -210,6 +224,7 @@ interface MiPerfilProps {
                 <hr className="my-1"></hr>
                 <div className=" flex flex-row items-center gap-2">
                   <div className="m-0 w-72 ">
+                   
                     <ProfileInput
                       id="nombre"
                       label="Nombre completo"
@@ -225,40 +240,43 @@ interface MiPerfilProps {
                   
                     />
                     </div>
-                   <div className=" p-1.5 bg-rose-500 rounded-md mt-3 cursor-pointer hover:bg-rose-500/80" 
+                   <div className="  rounded-md mt-3 cursor-pointer " 
                         onClick={
                           !nombreEdit ? () => toggleNombreEdit('edit') : () => toggleNombreEdit('save')}>
 
-                        { !nombreEdit ? <MdModeEditOutline className="text-white" size={20}/> 
+                        { !nombreEdit ? <MdModeEditOutline className="text-rose-500" size={20}/> 
                           :
-                          <MdSave  className="text-white" size={20}/> 
+                          <MdSave  className="text-rose-500" size={20}/> 
                       }
                     </div>
+                    {nombreEdit && <div className=" rounded-md mt-3 cursor-pointer " 
+                        onClick={() => toggleNombreEdit('edit')}>
+                          <IoMdClose className="text-primary" size={20}/> 
+                    </div>}
                 </div>
                 <div className=" flex flex-row items-center gap-2">
-                  <div className="m-0 w-72 ">
-                    <ProfileInput
-                      id="celular"
-                      label="Celular / Whatsapp"
-                      placeholder=""
-                      disabled={true}
-                      value={currentUser?.celular || ''}
-                      errors={''}
-                      required
-                      onChange={(event: any) => {
-                  
-                      }}
-                  
-                    />
+                  <div className="m-0 w-72 gap-2">
+                  <Label htmlFor={'celular'} className="text-xs text-neutral-400 w-full mb-1">Celular / Whatsapp</Label>
+                  <PhoneInput
+                    inputClass={`!py-4 !w-full !pl-20 !border-input !text-sm !disabled:border-0}`}
+                    disabled={true}
+                    buttonClass={`"!w-16 !p-2 !py-4   !border-input  !disabled:border-0}"`}
+                    country={'mx'}
+                    preferredCountries={['mx','us']}
+                    value={`${currentUser.countryCode}${currentUser.celular}`}
+                    countryCodeEditable={false}
+                  />
                     </div>
-                   <div className=" p-1.5 bg-rose-500 rounded-md mt-3 cursor-pointer hover:bg-rose-500/80" 
+                   <div className=" rounded-md mt-4 cursor-pointer" 
                         onClick={() => handleChangeCelular()}>
 
-                        <MdModeEditOutline className="text-white" size={20}/> 
+                        <MdModeEditOutline className="text-rose-500" size={20}/> 
                     </div>
                 </div>
-                <div>
-                  <Button variant={'outline'} className="px-2">
+
+                
+                <div className="my-4">
+                  <Button variant={'outline'} className="px-2" onClick={() => handleChangePassword()}>
                       <div className="flex flex-row items-center gap-2">
                         <FaLock />
                         <p>Cambiar contraseña</p>

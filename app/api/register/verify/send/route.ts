@@ -27,6 +27,7 @@ export async function POST(
       uuid,
       email,
       phone,
+      countryCode,
       code,
       app: OtpApplication.register
     }

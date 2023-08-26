@@ -557,6 +557,7 @@ model OtpCodes {
   code      Int
   email     String?
   phone     String?
+  countryCode String?
   expireAt  DateTime       @default(dbgenerated("(now() + interval 30 minute)"))
   createdAt DateTime       @default(dbgenerated("(now())"))
 }

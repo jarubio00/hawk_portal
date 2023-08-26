@@ -114,6 +114,7 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
         result = await  registerOtpResend({
           email: registration?.newUser?.email,
           phone: registration?.newUser?.celular,
+          countryCode: registration?.newUser.countryCode,
           uuid: registration.newUser.uuid,
           type: type    
         })
@@ -161,11 +162,8 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
           inputStyle="inputStyle"
           inputType="tel"
         /> : 
-        <div className="flex flex-col animate-fadeIn animate-scaleIn mx-auto my-auto">
-          <BsCheckCircle
-            size={40}
-            className={`${codeValidation == 'correcto' ? 'text-green-500' : 'text-neutral-200'}`} />
-        </div>
+        <p className="text-sm text-neutral-400">Código correcto</p>
+       
         }
         
         {isValidating && <PulseLoader
@@ -184,7 +182,11 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
       </div>
       
     </div>
-
+      {/* <div className="flex flex-col animate-fadeIn animate-scaleIn mx-auto my-auto">
+          <BsCheckCircle
+            size={40}
+            className={`${codeValidation == 'correcto' ? 'text-green-500' : 'text-neutral-200'}`} />
+        </div> */}
     </div>
    
     <p className="mt-2 text-xs text-red-500 text-left">{sendErrorMessage}</p>

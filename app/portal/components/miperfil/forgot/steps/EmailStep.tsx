@@ -26,19 +26,11 @@ import { registerOtp } from "@/app/actions/otp";
 import { correoCheck } from "@/app/actions/apiQuerys";
 
 interface NewUserStepProps {
-  currentUser?: any;
-  type?: string;
-  onClose?: () => void;
-    onForgot?: () => void;
-    toggleCloseButton?: () => void;
+ data?: string;
 }
 
 const NewUserStep: React.FC<NewUserStepProps> = ({
-  currentUser,
-  type,
-  onClose,
-    onForgot,
-    toggleCloseButton
+ data
 }) => {
 
   const validationSchema = Yup.object().shape({
@@ -69,7 +61,7 @@ const NewUserStep: React.FC<NewUserStepProps> = ({
     } = useForm<ForgotFormType>({
       resolver: yupResolver(validationSchema),
       defaultValues: {
-        email: type === 'profile' ? currentUser?.email : forgot?.email || ''
+        email: 'jarubio@xinet.com.mx'
       },
     });
 
@@ -88,18 +80,12 @@ const NewUserStep: React.FC<NewUserStepProps> = ({
       updateActiveStep(1)
     } else {
       setIsLoading(true);
-      if (toggleCloseButton){
-        toggleCloseButton();
-      }
       setErrorMessage('');
       
       const check = await  correoCheck({email: data.email});
       if (check.status === 2) {
         setError('email', {type: 'custom', message: 'El correo no se encuentra registrado'});
         setIsLoading(false);
-        if (toggleCloseButton){
-          toggleCloseButton();
-        }
         return null
       }
 
@@ -120,15 +106,10 @@ const NewUserStep: React.FC<NewUserStepProps> = ({
       }
   
       if (result && result.status == 1) {
-        if (toggleCloseButton){
-          toggleCloseButton();
-        }
         setIsLoading(false);
         updateActiveStep(1)
       } else {
-        if (toggleCloseButton){
-          toggleCloseButton();
-        }
+
         setErrorMessage('Error al enviar el código de verificación. Intenta de nuevo o selecciona otro método de envío.')
         setIsLoading(false);
       }
@@ -142,6 +123,9 @@ const NewUserStep: React.FC<NewUserStepProps> = ({
   const handleCorreoCheck = async (event: any) => {
       const check = await  correoCheck({email: event.target.value});
       
+      if (check.status === 1) {
+        setError('email', {type: 'custom', message: 'El correo ya está registrado'});
+      }
       
     
   }
@@ -158,7 +142,7 @@ const NewUserStep: React.FC<NewUserStepProps> = ({
     <FormInput
         id="email"
         label="Correo"
-        disabled={isLoading || type === 'profile'}
+        disabled={isLoading}
         register={register}
         errors={errors.email?.message}
         placeholder="Ingresa tu correo registrado"

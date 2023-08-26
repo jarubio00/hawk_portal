@@ -48,7 +48,10 @@ const NewUserStep: React.FC<NewUserStepProps> = ({
     confirmPassword: Yup.string()
       .required('Confirmar la contraseña es requerido')
       .oneOf([Yup.ref('password'), ''], 'Las contraseñas no coinciden'),
-      celular: Yup.string().required('El número de celular es requerido'),
+      celular: Yup.string().required('El número de celular es requerido')
+      .min(10,"EL número debe ser de 10 dígitos")
+      .max(10,"El número debe ser de 10 dígitos"),
+    countryCode: Yup.string().required('EL código de país es requerido')
       //type: Yup.string().required('El tipo de confirmación es requerido'),
       //status: Yup.string().required(),
       //code: Yup.number().required()
@@ -78,11 +81,12 @@ const NewUserStep: React.FC<NewUserStepProps> = ({
     } = useForm<RegisterFormType>({
       resolver: yupResolver(validationSchema),
       defaultValues: {
-        nombre: 'Usuario relleno ',
-        email: 'jarubio@xinet.com.mx',
-        password: 'L1nux2020',
-        confirmPassword: 'L1nux2020',
-        celular: '+528115995194',
+        nombre: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+        celular: '',
+        countryCode: '',
         type: 'whatsapp',
         status: 'pending',
         code: 0
@@ -125,6 +129,7 @@ const NewUserStep: React.FC<NewUserStepProps> = ({
         result = await  registerOtp({
           email: data.email,
           phone: data.celular,
+          countryCode: data.countryCode,
           uuid: uuid,
           type: data.type      
         })
@@ -219,26 +224,31 @@ const NewUserStep: React.FC<NewUserStepProps> = ({
       />
       
         <Label htmlFor="sms" className="text-xs text-neutral-400">Número de celular</Label>
-        <div>
+      <div>
         <PhoneInput
-          inputClass="!py-4 !w-full !pl-20 !border-input !text-base"
+          inputClass={`!py-4 !w-full !pl-20 !border-input !text-sm ${errors.celular && '!border-red-500'}`}
           disabled={isLoading}
-          buttonClass="!w-16 !p-2 !py-4   !border-input"
+          buttonClass={`!w-16 !p-2 !py-4   !border-input ${errors.celular && '!border-red-500'}`}
           country={'mx'}
           preferredCountries={['mx','us']}
-          value={registration?.newUser?.celular ? registration?.newUser?.celular : '528115995194' }
+          value={`${registration?.newUser?.countryCode}${registration?.newUser?.celular}`}
           onBlur={(e) => {
             console.log(e.target.value);
           }}
-          enableAreaCodeStretch
-          areaCodes={{mx: ['81', '55']}}
           countryCodeEditable={false}
-          placeholder='Celular / whatsapp'
-          onChange={(value) => {
-            setValue('celular',value);
+          placeholder='No. de celular / whatsapp'
+          onChange={(value, country) => {
+            //@ts-ignore
+            const sub = country.dialCode.length;
+            const num = value.substring(sub);
+            setCustomValue('celular',num);
+            //@ts-ignore
+            setCustomValue('countryCode', country.dialCode);
           }}
+          
         />
-      </div>
+        <p className="my-2 text-[11px] text-red-500">{errors.celular?.message}</p>
+    </div>
       <div className="w-full flex flex-col gap-3 mt-2">
         <p className="text-xs text-neutral-400">Enviar código de confirmación por: </p>
         <RadioGroup 

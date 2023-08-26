@@ -12,7 +12,8 @@ export async function POST(
     email,
     nombre,
     password,
-    celular
+    celular,
+    countryCode
    } = body;
 
    const hashedPassword = await bcrypt.hash(password, 12);
@@ -23,6 +24,7 @@ export async function POST(
       nombre,
       hashedPassword,
       celular,
+      countryCode,
       checklist: {
         create: {
           clienteV2: true

@@ -37,9 +37,7 @@ const handleLogout = () => {
 }
  return (
     <AlertDialog open={open}>
-    <AlertDialogTrigger asChild>
-      <Button variant="outline"></Button>
-    </AlertDialogTrigger>
+   
     <AlertDialogContent>
         <PhoneConfirm currentUser={currentUser} type={'profile'} onClose={handleLogout}/>
     </AlertDialogContent>

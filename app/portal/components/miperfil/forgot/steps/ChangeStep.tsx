@@ -27,17 +27,11 @@ import { BsCheckCircle } from "react-icons/bs";
 
 
 interface ConfirmedStepProps {
-  type?: string;
-  onClose?: () => void;
-  onForgot?: () => void;
-  toggleCloseButton?: () => void;
+ data?: string;
 }
 
 const ConfirmedStep: React.FC<ConfirmedStepProps> = ({
-  type = '',
-  onClose,
-  onForgot,
-  toggleCloseButton
+ data
 }) => {
   const validationSchema = Yup.object().shape({
     newPassword: Yup.string().required('La contrseña no puede estar vacía')
@@ -98,9 +92,7 @@ const ConfirmedStep: React.FC<ConfirmedStepProps> = ({
 
 const onSubmit: SubmitHandler<ForgotChangeFormType> = async (data: ForgotChangeFormType) => {
   setIsLoading(true);
-  if (toggleCloseButton){
-    toggleCloseButton();
-  }
+
   let result;
 
   if (data.newPassword === data.confirmPassword) {
@@ -113,15 +105,7 @@ const onSubmit: SubmitHandler<ForgotChangeFormType> = async (data: ForgotChangeF
 
   if (result && result?.status === 1) {
     setChanged(true);
-    if(type == 'profile' && onClose) {
-      const timer = setTimeout(() => {
-        onClose();
-      }, 2500);
-    }
   } else {
-    if (toggleCloseButton){
-      toggleCloseButton();
-    }
     setErrorMessage(`Error al cambiar la contraseña. ${result?.statusMessage}`);
     setChangeError(true);
   }
@@ -199,19 +183,17 @@ const handleRestart = () => {
             {!changeError ? 'Cambiar contraseña' : 'Reiniciar'}
           </Button> 
           :
-          <>
-          {type !== 'profile' && <Button
+          <Button
             onClick={handleFinish}
             variant='outline'
-            className="mt-4 w-full gap-3 py-5 text-white  bg-rose-500 hover:bg-rose-500/80 hover:text-white">
+            className="mt-4 w-full gap-3 py-5 text-white  bg-rose-500 hover:bg-rose-500/80">
               {isLoading && <PulseLoader
                               size={6}
                               color="#FFFFFF"
                               />}
             Acceder a mi cuenta
-          </Button> }</>
+          </Button> 
         }
-        
        
         <p className="mt-2 text-xs text-red-500 text-left">{errorMessage}</p>
        

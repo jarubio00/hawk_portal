@@ -6,6 +6,7 @@ export interface NewUser {
     password?: string;
     countryCode?: string;
     celular?: string;
+    countryCode?: string;
     type?: string;
     status?: string;
     code?: number;

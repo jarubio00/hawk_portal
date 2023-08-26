@@ -15,15 +15,11 @@ import {registerOtp, registerOtpResend, checkOtp} from '@/app/actions/otp';
 import { PulseLoader } from "react-spinners";
 
 interface ConfirmationStepProps {
-  onClose?: () => void;
-  onForgot?: () => void;
-  toggleCloseButton?: () => void;
+ data?: string;
 }
 
 const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
-  onClose,
-  onForgot,
-  toggleCloseButton
+ data
 }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [isValidating, setIsValidating] = useState(false);
@@ -76,10 +72,6 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
 
         if (val.length === 4 ) {
           setIsValidating(true);
-          if (toggleCloseButton){
-            toggleCloseButton();
-          }
-          
           let result;
 
           if (forgot?.uuid) {
@@ -93,20 +85,14 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
 
             setOtpEnabled(false);
             if (result && result?.status === 1) {
-              if (toggleCloseButton){
-                toggleCloseButton();
-              }
               setCodeValidation('correcto');
               setIsValidating(false);
               saveForgot({...forgot,code: parseInt(val)})
               const timer = setTimeout(() => {
                 updateActiveStep(2);
                
-                }, 500);
+                }, 1500);
             } else {
-              if (toggleCloseButton){
-                toggleCloseButton();
-              }
               setIsValidating(false);
               setCodeValidation('incorrecto')
               setErrorMessage(result?.statusMessage || 'Código incorrecto o expirado');
@@ -127,9 +113,6 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
       setErrorMessage('');
       setSendErrorMessage('');
       setOtpEnabled(false);
-      if (toggleCloseButton){
-        toggleCloseButton();
-      }
       let result;
       if (forgot?.email && forgot?.uuid) {
         result = await  registerOtpResend({
@@ -143,14 +126,8 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
       console.log(result);
 
       if (result && result.status == 1) {
-        if (toggleCloseButton){
-          toggleCloseButton();
-        }
         setIsLoading(false);
       } else {
-        if (toggleCloseButton){
-          toggleCloseButton();
-        }
         setSendErrorMessage('Error al enviar el código de verificación. Intenta de nuevo o selecciona otro método de envío.')
         setIsLoading(false);
       }
@@ -168,7 +145,7 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
       </div>
     :
     <div className=" text-neutral-400 my-4 text-center text-sm">
-       
+        Código confirmado
       </div>
 
     }
@@ -201,7 +178,7 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
     <div  className="my-4 w-full">
       <div className="flex flex-row items-center justify-between">
         <p></p>
-        {resendTimer && codeValidation != 'correcto' && !isValidating && <OtpTimerForgot 
+        {resendTimer && codeValidation != 'correcto' && <OtpTimerForgot 
           expiryTimestamp={resendTimer} 
           onResendCode={handleResendCode}
           email={forgot?.email}
@@ -224,7 +201,7 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
                     Atrás
                   </Button>}
                 <Button
-                className="w-full mt-4 gap-3 py-5 bg-rose-500 hover:bg-rose-500/80 hover:text-white"
+                className="w-full mt-4 gap-3 py-5 bg-rose-500 hover:bg-rose-500/80"
                     onClick={handleNext}
                     disabled={codeValidation != 'correcto'}
                  
