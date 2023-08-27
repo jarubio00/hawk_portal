@@ -13,7 +13,6 @@ import AgregarDireccion from "@/app/components/portal/AgregarDireccion";
 import { SafeDireccion,SafeDestino, SafeUser} from "@/app/types";
 import DireccionesCard from "@/app/components/portal/DireccionesCard";
 import { addDestino, addDireccion, deleteDireccion, markDireccion, updateDireccion } from "@/app/actions/apiQuerys";
-import ConfirmDialog from "@/app/components/modals/ConfirmDialog";
 import toast from "react-hot-toast";
 import EditarDireccion from "@/app/components/portal/EditarDireccion";
 import ListSearch from "@/app/components/ListSearch";
@@ -85,110 +84,8 @@ interface MiPerfilProps {
     setPasswordEdit(false);
   }
 
-  const handleConfirmDialog = async (props: any) => {
-    if (props.tipo == 'delete') {
-      setDialogContent({
-        title: "Borrar dirección",
-        notes: "La dirección no se borrara de tus guías activas o completadas.",
-        action: "Estas seguro de borrar",
-        object: props.data.nombreDireccion,
-        data: props.data,
-        tipo: 'delete'
-      })
-      setConfirmDialogOpen(true);
 
-    } else if (props.tipo == 'mark') {
-      setDialogContent({
-        title: "Marcar predeterminada",
-        notes: "Esta dirección aparecerá como predeterminada al agregar envíos",
-        action: "Estas seguro de marcar como predeterminada",
-        object: props.data.nombreDireccion,
-        data: props.data,
-        tipo: 'mark'
-      })
-      setConfirmDialogOpen(true);
-    }
-    
-  }
-
-  const handleConfirm = async (props: any) => {
-   
-    if(props.confirm ) {
-
-      if (props.tipo == 'delete') {
-        setConfirmDialogOpen(false);
-        loader.onOpen();
-        const res = await deleteDireccion({id: props.data.id});
-        toast.success('Dirección borrada!');
-      } else if (props.tipo == 'mark') {
-        setConfirmDialogOpen(false);
-        loader.onOpen();
-        const res = await markDireccion({id: props.data.id});
-        toast.success('Dirección marcada!');
-      }
-
-      router.refresh();
-
-      const timer = setTimeout(() => {
-        loader.onClose();
-        }, 2000);
-      
-     
-
-    } else {
-      setConfirmDialogOpen(false);
-    }
-  }
-  
-
-  const onAddDireccion = async (props: any) => {
-    loader.onOpen();
-    setConfirmDialogOpen(true);
-
-    //deleteDireccion({id: id});
-
-    const timer = setTimeout(() => {
-      loader.onClose();
-      }, 3000);
-  } 
-
-  const onEditDireccion = async (direccion: any) => {
-    setEditData(direccion);
-    setEditing(true);
-  } 
-
-  const onEditClose  = async (props: any) => {
-
-    if(props.action == 'save') {
-      const res = await updateDireccion({id: props.id, data: props.data});
-      toast.success('Direccion editada!');
-      setEditing(false);
-      router.refresh();
-      const timer = setTimeout(() => {
-        loader.onClose();
-        }, 1000);
-      
-    } else if ( props.action == 'cancel') {
-      setEditing(false);
-    }
-  } 
-
-  const onAddClose  = async (props: any) => {
-          console.log(props);
-        const res = await addDireccion(props.apiData);
-          if(res.status == 1) {
-            toast.success('Dirección creada!');
-          } else {
-            toast.error(res.statusMessage);
-          }
-          setAdding(false);
-          router.refresh();
-          const timer = setTimeout(() => {
-            loader.onClose();
-          }, 1000);
-  } 
-
-  const handleSearch = (data: any) => {
+  const handleChangeName = (data: any) => {
     if (data) {
      
     } 
@@ -200,7 +97,7 @@ interface MiPerfilProps {
       <ClientOnly>
         <PhoneChangeModal currentUser={currentUser} open={celularEdit} onClose={handleCloseChangeCelular}/>
         <PasswordChangeModal currentUser={currentUser} open={passwordEdit} onClose={handleCloseChangePassword}/>
-        <ConfirmDialog isOpen={confirmDialogOpen} onClose={handleConfirm} dialogContent={dialogContent}/>
+    
             <PageHeader 
               title="Mi perfil"
               subtitle='Administra la información de tu perfil de usuario'

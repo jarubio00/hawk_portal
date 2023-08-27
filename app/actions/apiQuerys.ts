@@ -471,6 +471,30 @@ export  async function passwordChangeProfile(props: any) {
       return result;
 }
 
+export  async function nameChangeProfile(props: any) {
+
+
+  const result = await axios.post(`/api/user/name`, props)
+      .then((response) => {
+        
+        if (response.data.status == 1) {
+          const responseData:ApiResponse = {status:1,statusMessage: response.data.statusMessage, response: {data: response.data} }
+          return responseData;
+        } else {
+          console.log('apiquery error')
+          const responseData:ApiResponse = {status:2,statusMessage: response.data.statusMessage, response: {data: {}, error: response.data} }
+          return responseData;
+        }
+      })
+      .catch((error) => {
+        const response:ApiResponse = {status:2,statusMessage: error.message, response: {data: {}, error: error} }
+        return response;
+      })
+ 
+      
+      return result;
+}
+
 export  async function confirmPhone(props: any) {
   console.log(props);
 
