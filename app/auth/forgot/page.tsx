@@ -21,7 +21,7 @@ const Home = async ({ searchParams }: HomeProps) => {
 
   return (
     <ClientOnly>
-      <div className="flex flex-col min-h-screen w-full  justify-center items-center gap-16">
+      <div className="flex flex-col min-h-[90vh] md:min-h-screen w-full  justify-center items-center gap-16">
             
             <div className=" 
               bg-white 

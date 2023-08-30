@@ -8,6 +8,8 @@ import { Stepper, Step } from "@material-tailwind/react";
 import { BiSolidUserDetail } from "react-icons/bi";
 import { BsPersonFillCheck, BsCheckCircleFill, BsPersonVcardFill} from "react-icons/bs";
 import ChangeStep from "./steps/ChangeStep";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 
 
@@ -32,10 +34,15 @@ const ForgotClient: React.FC<ForgotClientProps> = ({
         activeStep
     } = useContext(ForgotContext) as ForgotContextType;
 
+    const router = useRouter();
+
  return (
 
   <div className='m-0 h-full'>
-    <p className="text-xl font-bold text-center mb-4">Reestablecer contraseña</p>
+    <div className="flex flex-row items-center justify-end mb-4">
+        <Button variant={'ghost'} className="text-blue-500" onClick={() => router.back()}>Regresar</Button>
+    </div>
+    <p className="text-xl font-bold text-center mb-8">Reestablecer contraseña</p>
     <Stepper
         activeStep={activeStep}
         activeLineClassName="bg-rose-500"
@@ -51,7 +58,7 @@ const ForgotClient: React.FC<ForgotClientProps> = ({
         </Step>
                 
     </Stepper>
-        <div className="my-2 flex flex-col ">
+        <div className="my-6 flex flex-col ">
             
             {activeStep === 0 &&
                   <EmailStep 

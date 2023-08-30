@@ -186,7 +186,7 @@ const NewUserStep: React.FC<NewUserStepProps> = ({
       <FormInput
         id="nombre"
         label="Nombre"
-        
+        placeholder="Ingresa tu nombre completo"
         
         disabled={isLoading}
         register={register}
@@ -213,6 +213,7 @@ const NewUserStep: React.FC<NewUserStepProps> = ({
        <FormInput
         id="confirmPassword"
         label="Confirmar contraseña"
+        placeholder="Confirma tu contraseña"
         type='password'
         disabled={isLoading}
         register={register}  
@@ -226,9 +227,9 @@ const NewUserStep: React.FC<NewUserStepProps> = ({
         <Label htmlFor="sms" className="text-xs text-neutral-400">Número de celular</Label>
       <div>
         <PhoneInput
-          inputClass={`!py-4 !w-full !pl-20 !border-input !text-sm ${errors.celular && '!border-red-500'}`}
+          inputClass={`!py-4 !w-full !pl-20 !h-11 !border-input !text-xs ${errors.celular && '!border-red-500'}`}
           disabled={isLoading}
-          buttonClass={`!w-16 !p-2 !py-4   !border-input ${errors.celular && '!border-red-500'}`}
+          buttonClass={`!w-16 !p-2 !py-4  !h-11 !border-input ${errors.celular && '!border-red-500'}`}
           country={'mx'}
           preferredCountries={['mx','us']}
           value={`${registration?.newUser?.countryCode}${registration?.newUser?.celular}`}
@@ -249,7 +250,7 @@ const NewUserStep: React.FC<NewUserStepProps> = ({
         />
         <p className="my-2 text-[11px] text-red-500">{errors.celular?.message}</p>
     </div>
-      <div className="w-full flex flex-col gap-3 mt-2">
+      <div className="w-full flex flex-col gap-4 my-2">
         <p className="text-xs text-neutral-400">Enviar código de confirmación por: </p>
         <RadioGroup 
           defaultValue="whatsapp" 
@@ -263,7 +264,7 @@ const NewUserStep: React.FC<NewUserStepProps> = ({
           >
 
 
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 mb-1">
             <RadioGroupItem value="whatsapp"/>
             <Label htmlFor="whatsapp" className="text-xs w-full">Mensaje de Whatsapp</Label>
           </div>
