@@ -25,6 +25,9 @@ import CobroView from './components/tabs/components/CobroView';
 const PedidosClient  = (props:any) => {
   const router = useRouter();
   const loader = useLoader();
+
+
+  
   //const {saveRecolecciones, savePedidos} = useContext(MisPedidosContext) as MisPedidosContextType;
 
   const [isLoading,setIsLoading] = useState(false);
@@ -74,6 +77,7 @@ const PedidosClient  = (props:any) => {
   }
 
  
+ 
   return (
     <ClientOnly>
         <Drawer
@@ -86,6 +90,7 @@ const PedidosClient  = (props:any) => {
             >
               <div className='flex w-full '>
                   <div className='flex flex-col w-full relative'>
+                   
                     <div className='absolute top-5 left-4 ' onClick={() => setSheetOpen(false)}>
                       <GrClose size={18}/>
                     </div>

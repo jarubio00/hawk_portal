@@ -46,6 +46,8 @@ const CreandoPedidoModal = () => {
     if (CreandoPedidoModal.isOpen) {
       setCreated(false);
       setGuiaBox(false);
+      setError(false);
+      setErrorMessage('');
       setIsLoading(true);
       console.log(pedido);
       if (pedido?.append?.enabled) {

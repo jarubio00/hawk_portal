@@ -69,7 +69,15 @@ export async function GET(req: Request){
       formaPago: true,
       tipoPaquete: true,
       estatusPedido: true,
-      operaciones: true
+      operaciones: true,
+      incidencias: {
+        include: {
+          fotos : true,
+        },
+        orderBy : {
+          createdAt: Prisma.SortOrder.desc
+        }
+      }
     },
     take: take ? parseInt(take as string) : 15,
     ...(lastCursor && {
@@ -114,7 +122,15 @@ export async function GET(req: Request){
         formaPago: true,
         tipoPaquete: true,
         estatusPedido: true,
-        operaciones: true
+        operaciones: true,
+        incidencias: {
+          include: {
+            fotos : true,
+          },
+          orderBy : {
+            createdAt: Prisma.SortOrder.desc
+          }
+        }
         
       },
       take: take ? parseInt(take as string) : 10,

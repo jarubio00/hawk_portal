@@ -72,6 +72,7 @@ const {
     isLoading,
     hasNextPage,
     fetchNextPage,
+    refetch,
     isSuccess,
     isFetchingNextPage,
   } = useInfiniteQuery({
@@ -110,8 +111,10 @@ const {
         //setPedidoSelected(pedido);
         //setSheetOpen(true);
           onView(true,pedido);
-       
+    }
 
+    const rastreoRefresh = () => {
+      refetch();
     }
 
  return (
@@ -182,9 +185,11 @@ const {
             style={{height: '90%', zIndex: 9999}}
           
             >
+              
               <ScrollArea>
+              <div>Reload</div>
                 <div className="flex flex-col py-2">
-                  {pedidoSelected && <EnvioView data={pedidoSelected} />}
+                  {pedidoSelected && <EnvioView data={pedidoSelected} onRastreoRefresh={rastreoRefresh} />}
                 </div>
               </ScrollArea>
               </Drawer>

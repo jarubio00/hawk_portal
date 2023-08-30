@@ -38,7 +38,7 @@ const ConfirmarStep: React.FC<ConfirmarStepProps> = ({
   const [cotiza,setCotiza] = useState<ICotizaItem>({})
   const [error,setError] = useState(false);
   const [errorMessage,setErrorMessage] = useState('');
-  const [bolsaDialogOpen, setBolsaDialogOpen] = useState(true);
+  const [bolsaDialogOpen, setBolsaDialogOpen] = useState(false);
   const [bolsaSelected, setBolsaSelected] = useState({});
 
   const getCotizaServer = useCallback(async (props: ICotizaParams) => {
@@ -146,7 +146,7 @@ const handleBolsaDialogClose = (val: any) => {
               {!error ? <div className="flex flex-col">
               {pedido?.cotizacion && <div className="flex flex-col gap-4">
                 <CotizaCard data={pedido?.cotizacion}/>
-                <BolsasDialog open={bolsaDialogOpen} onClose={handleBolsaDialogClose}/>
+                {/* <BolsasDialog open={bolsaDialogOpen} onClose={handleBolsaDialogClose}/> */}
               </div>}
               </div> :
               <div className="flex flex-col">

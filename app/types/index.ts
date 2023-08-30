@@ -1,4 +1,5 @@
-import { Direccion, Destino, User, Paquete, Recoleccion, Pedido, CobrosDestino } from "@prisma/client";
+
+import { Direccion, Destino, User, Paquete, Recoleccion, Pedido, CobrosDestino, Operaciones, Incidencia, IncidenciaFoto } from "@prisma/client";
 import { CodeStatus, ConfirmationType } from "./constants";
 
 export type SafeDireccion = Omit<Direccion, "createdAt"> & {
@@ -63,6 +64,8 @@ export type SafePedido = Omit<
   tipoPaquete: any;
   formaPago: any;
   estatusPedido: any;
+  operaciones: SafeOperaciones;
+  incidencias: SafeIncidencia[];
 };
 
 export type SafeCobro = Omit<
@@ -76,6 +79,18 @@ export type SafeCobro = Omit<
   retornoForma: any;
 };
 
+export type SafeOperaciones = Omit<Operaciones,"operaciones"> & {
+  id:number;
+}
+
+export type SafeIncidencia = Omit<Incidencia,"incidencia"> & {
+  id:number;
+  fotos: SafeIncidenciaFoto[]
+}
+
+export type SafeIncidenciaFoto = Omit<IncidenciaFoto,"fotos"> & {
+  id: number;
+}
 
 
 export type RegisterFormType = {
@@ -113,4 +128,21 @@ export type PhoneConfirmFormType = {
   celular: string;
   type?: string;
   countryCode: string
+}
+
+export type SafeRastreo = {
+  programado?: boolean;
+  programadoAt?: Date;
+  enRutaRec?: boolean;
+  enRutaRecAt?: Date;
+  recolectado?: boolean;
+  recolectadoAt?: Date;
+  enRutaEnt?: boolean;
+  enRutaEntAt?: Date;
+  entregado?: boolean;
+  entregadoAt?: Date;
+  incidenciaRec?:boolean;
+  incidenciaRecAt?: Date;
+  incidenciaEnt?: boolean;
+  incidenciaEntAt?: Date;
 }

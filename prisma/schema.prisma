@@ -110,7 +110,7 @@ model Recoleccion {
   direccionIcon         String?
   direccionColor        String?
   pedidos              Pedido[]
-  user                 User                         @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  cliente                 User                         @relation(fields: [clienteId], references: [id], onDelete: Cascade)
   estatus              CatalogoEstatusRecolecciones @relation(fields: [estatusRecoleccionId], references: [id], onDelete: Cascade)
   municipio            CatalogoMunicipios           @relation(fields: [municipioId], references: [id], onDelete: Cascade)
 
@@ -172,6 +172,7 @@ model Pedido {
   formaPago             CatalogoMetodosPago    @relation(fields: [formaPagoId], references: [id], onDelete: Cascade)
   tipoPaquete           CatalogoTiposPaquetes  @relation(fields: [paqTipoId], references: [id], onDelete: Cascade)
   recoleccion           Recoleccion            @relation(fields: [recoleccionId], references: [id], onDelete: Cascade)
+  incidencias Incidencia[]
 
   @@index([clienteId], map: "Pedidos_clienteId_fkey")
   @@index([estatusPagoId], map: "Pedidos_estatusPagoId_fkey")
@@ -186,21 +187,21 @@ model Pedido {
 model Operaciones {
   id                  Int       @id @default(autoincrement())
   pedidoId            Int       @unique
-  punteoRecoleccion   Boolean?
+  punteoRecoleccion   Boolean? @default(false)
   punteoRecoleccionAt DateTime?
   punteoRecoleccionBy Int?
   recolectadoAt       DateTime?
-  recolectado         Boolean?
+  recolectado         Boolean?  @default(false)
   recolectadoBy       Int?
   recolectadoFrom     String?
   reciboAt            DateTime?
-  recibo              Boolean?
+  recibo              Boolean?  @default(false)
   reciboBy            Int?
   punteoEntregaAt     DateTime?
-  punteoEntrega       Boolean?
+  punteoEntrega       Boolean?  @default(false)
   punteoEntregaBy     Int?
   entregadoAt         DateTime?
-  entregado           Boolean?
+  entregado           Boolean?  @default(false)
   entregadoBy         Int?
   entregadoFrom       String?
   pedido              Pedido    @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
@@ -238,7 +239,6 @@ model TicketItems {
 
 }
 
-
 model CatalogoAsuntosTickets {
    id              Int                @id @default(autoincrement())
    tipo             String
@@ -251,6 +251,48 @@ model CatalogoEstatusTickets {
    estatus         String
    desc             String?
 }
+
+model Incidencia {
+  id              Int                @id @default(autoincrement())
+  pedidoId        Int
+  tipoId  Int @default(1)
+  motivoId  Int @default(1)
+  comentarios String? 
+  lat String?
+  lng String?
+  createdAt DateTime  @default(dbgenerated("(now())"))
+  createdBy Int @default(1)
+  fotos IncidenciaFoto[]
+  pedido  Pedido @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+  motivo  CatalogoIncidenciaMotivo @relation(fields: [motivoId], references: [id], onDelete: Cascade)
+  tipo  CatalogoIncidenciaTipo @relation(fields: [tipoId], references: [id], onDelete: Cascade)
+}
+
+model IncidenciaFoto {
+  id              Int                @id @default(autoincrement())
+  incidenciaId  Int
+  fotoUrl String @db.LongText
+  createdAt DateTime @default(dbgenerated("(now())"))
+  createdBy Int @default(1)
+  incidencia Incidencia @relation(fields: [incidenciaId], references: [id], onDelete: Cascade)
+}
+
+model CatalogoIncidenciaMotivo {
+  id              Int                @id @default(autoincrement())
+  motivo  String
+  desc  String?
+  incidencias Incidencia[]
+}
+
+model CatalogoIncidenciaTipo {
+  id              Int                @id @default(autoincrement())
+  tipo  String
+  desc  String?
+  incidencias Incidencia[]
+}
+
+
+
 
 model Direccion {
   id              Int                @id @default(autoincrement())

@@ -133,7 +133,7 @@ const ModalCreando: React.FC<ModalCreandoProps> = ({
                 border-b-[1px]
                 "
               >
-                <button
+                {/* <button
                   className="
                     p-1
                     border-0 
@@ -145,7 +145,7 @@ const ModalCreando: React.FC<ModalCreandoProps> = ({
                   onClick={handleClose}
                 >
                   <IoMdClose size={18} />
-                </button>
+                </button> */}
                 <div className="text-lg font-semibold">
                 </div>
               </div>

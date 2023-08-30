@@ -12,7 +12,7 @@ import { useEffect, useState, useRef } from "react";
 import AgregarDireccion from "@/app/components/portal/AgregarDireccion";
 import { SafeDireccion,SafeDestino, SafeUser} from "@/app/types";
 import DireccionesCard from "@/app/components/portal/DireccionesCard";
-import { addDestino, addDireccion, deleteDireccion, markDireccion, updateDireccion } from "@/app/actions/apiQuerys";
+import { addDestino, addDireccion, deleteDireccion, markDireccion, nameChangeProfile, updateDireccion } from "@/app/actions/apiQuerys";
 import toast from "react-hot-toast";
 import EditarDireccion from "@/app/components/portal/EditarDireccion";
 import ListSearch from "@/app/components/ListSearch";
@@ -24,6 +24,7 @@ import PasswordChangeModal from "../../components/miperfil/PasswordChangeModal";
 import { IoMdClose } from "react-icons/io";
 import PhoneInput from "react-phone-input-2";
 import { Label } from "@/components/ui/label";
+import PulseLoader from "react-spinners/PulseLoader";
 
 
 interface MiPerfilProps {
@@ -43,7 +44,9 @@ interface MiPerfilProps {
   const [nombreEdit, setNombreEdit] = useState(false);
   const [celularEdit,setCelularEdit] = useState(false);
   const [passwordEdit,setPasswordEdit] = useState(false);
-  const [confirmDialogOpen,setConfirmDialogOpen] = useState(false);
+  const [nombre,setNombre] = useState(currentUser.nombre);
+  const [newName, setNewName] = useState(currentUser.nombre);
+  const [errorMessage,setErrorMessage] = useState('');
   const [dialogContent, setDialogContent] = useState({});
   const [editing,setEditing] = useState(false);
   const [editData,setEditData] = useState({});
@@ -57,13 +60,37 @@ interface MiPerfilProps {
 
  
 
-  const toggleNombreEdit = (action: string) => {
+  const toggleNombreEdit = async (action: string) => {
+    setErrorMessage('');
+
     if(action == 'edit') {
       setNombreEdit(!nombreEdit);
       //nombreInputRef?.current?.focus();
     } 
 
     if(action == 'save') {
+      setIsLoading(true)
+      
+
+        const res = await nameChangeProfile({
+          name: newName, 
+        })
+  
+        if (res.status == 1) {
+          setIsLoading(false);
+          setNombre(newName);
+          setNombreEdit(false);
+        } else {
+          setNewName(nombre);
+          setIsLoading(false);
+          setNombreEdit(false);
+        }
+
+      
+    }
+
+    if(action == 'cancel') {
+      setNewName(nombre);
       setNombreEdit(false);
     }
   }
@@ -85,11 +112,7 @@ interface MiPerfilProps {
   }
 
 
-  const handleChangeName = (data: any) => {
-    if (data) {
-     
-    } 
-  }
+ 
   
 
 
@@ -125,32 +148,42 @@ interface MiPerfilProps {
                     <ProfileInput
                       id="nombre"
                       label="Nombre completo"
-                      ref={nombreInputRef}
                       placeholder=""
                       disabled={!nombreEdit}
-                      value={currentUser?.nombre || ''}
+                      value={newName ||''}
                       errors={''}
                       required
-                      onChange={(event: any) => {
-                  
-                      }}
+                      onChange={(event: any) => { 
+                        setNewName(event.target.value);
+                      }}  
                   
                     />
                     </div>
-                   <div className="  rounded-md mt-3 cursor-pointer " 
+                   {!isLoading ? <div className="  rounded-md mt-3 cursor-pointer " 
                         onClick={
                           !nombreEdit ? () => toggleNombreEdit('edit') : () => toggleNombreEdit('save')}>
 
                         { !nombreEdit ? <MdModeEditOutline className="text-rose-500" size={20}/> 
                           :
-                          <MdSave  className="text-rose-500" size={20}/> 
+                          <Button variant={'ghost'} disabled={newName === nombre}>
+                            <MdSave className="text-rose-500 disabled:text-neutral-300" size={20}/>
+                          </Button> 
                       }
                     </div>
-                    {nombreEdit && <div className=" rounded-md mt-3 cursor-pointer " 
-                        onClick={() => toggleNombreEdit('edit')}>
+                    :
+                    <div className="mt-3">
+                      <PulseLoader
+                        size={6}
+                        color="#FF6B00"
+                        />
+                    </div>
+                  }
+                    {nombreEdit && !isLoading  && <div className=" rounded-md mt-3 cursor-pointer " 
+                        onClick={() => toggleNombreEdit('cancel')}>
                           <IoMdClose className="text-primary" size={20}/> 
                     </div>}
-                </div>
+                  </div>
+                <p className="text-[11px] text-red-500">{errorMessage || ' '}</p>
                 <div className=" flex flex-row items-center gap-2">
                   <div className="m-0 w-72 gap-2">
                   <Label htmlFor={'celular'} className="text-xs text-neutral-400 w-full mb-1">Celular / Whatsapp</Label>

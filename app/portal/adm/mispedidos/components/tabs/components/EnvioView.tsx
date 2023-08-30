@@ -12,8 +12,8 @@ import {
     TabsTrigger,
   } from "@/components/ui/tabs"
 
-import { HiCheckCircle } from "react-icons/hi";
-import { MdViewInAr } from "react-icons/md";
+import { HiCheckCircle, HiOutlineRefresh } from "react-icons/hi";
+import { MdRefresh, MdViewInAr } from "react-icons/md";
 
 import Link from "next/link";
 import ComprobanteDialog from "./ComprobanteDialog";
@@ -21,14 +21,20 @@ import EnvioViewGuia from "./EnvioViewGuia";
 import EnvioRastreo from "./EnvioRastreo";
 import EnvioInfo from "./EnvioInfo";
 import EnvioTickets from "./EnvioTickets";
+import { useRouter } from "next/navigation";
 
 interface EnvioViewProps {
  data: SafePedido;
+ onRastreoRefresh?: () => void;
 }
 
 const EnvioView: React.FC<EnvioViewProps> = ({
- data
+ data,
+ onRastreoRefresh
 }) => {
+    const router = useRouter();
+
+
  return (
     
     <div className='flex flex-col items-center mt-2 w-full overflow-y-scroll '>
@@ -36,7 +42,7 @@ const EnvioView: React.FC<EnvioViewProps> = ({
     <div className=" w-full md:w-3/5 md:border md:border-neutral-300 md:rounded-md md:p-4">
         <div className="flex flex-row items-center justify-between px-2 py-2">
             <p className="font-semibold text-foreground text-lg ml-10">{data.id}</p>
-            <div className="flex ">
+            <div className="flex " >
                 {statusIdToString(data.estatusPedidoId)}
             </div>
         </div>

@@ -63,6 +63,11 @@ export async function POST(
       comprobante: p.metodoPago?.comprobante,
       comprobanteUrl: p.metodoPago?.comprobanteUrl,
       cobroDestino: p.cobro,
+      operaciones: {
+        create: {
+          punteoRecoleccion: false
+        }
+      }
     }
 
     //console.log(p.programa.fechaRecoleccion);

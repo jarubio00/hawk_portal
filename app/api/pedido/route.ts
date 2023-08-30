@@ -61,8 +61,8 @@ export async function POST(
       formaPagoId: parseInt(p.metodoPago?.formaPagoId),
       comprobante: p.metodoPago?.comprobante,
       comprobanteUrl: p.metodoPago?.comprobanteUrl,
-      cobroDestino: p.cobro,
-      cobroDestinoCantidad: parseFloat(p.cobroCantidad),
+      cobroDestino: p.cobro || false,
+      cobroDestinoCantidad: p.cobroCantidad ? parseFloat(p.cobroCantidad) : 0,
       operaciones: {
         create: {
           punteoRecoleccion: false
