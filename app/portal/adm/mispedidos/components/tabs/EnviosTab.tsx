@@ -55,7 +55,7 @@ const EnviosTab: React.FC<EnviosTabProps> = ({
 
   return ( 
     <div className=" w-full py-2 flex flex-col gap-2">
-      <div className="my-4 flex flex-row items-center gap-4 overflow-x-auto touch-auto no-scrollbar">
+      <div className="my-4 py-2 flex flex-row items-center gap-4 overflow-x-auto touch-auto no-scrollbar">
         <Badge 
           variant={filter == '1' ? 'default' : 'secondary'} 
           className="cursor-pointer  pr-2 pl-2 py-1"

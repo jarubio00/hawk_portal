@@ -3,6 +3,8 @@ import {format, isDate} from 'date-fns';
 import {MdAccessTimeFilled, MdCancel} from 'react-icons/md'
 import {HiCheckCircle} from 'react-icons/hi'
 import {IoIosWarning} from 'react-icons/io'
+import { Badge } from "@/components/ui/badge";
+import {FaHome,FaStore,FaBuilding,FaWarehouse} from "react-icons/fa"
 
 export function namedDate(date) {
     let result = 'No hay fecha'
@@ -115,6 +117,30 @@ export function statusCobroIdToString(status, size) {
 
 export function currencyFormat(num) {
     return  '$'+Number(num).toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+ }
+
+ export function direccionBadge(direccion) {
+    if (direccion.color && direccion.icon) {
+        return (
+            <Badge className={`cursor-pointer  pr-3 pl-2 py-0 bg-[${direccion.color}]`}>
+                <div className="flex flex-row items-center gap-1">
+                    { direccion.icon == 'home' && <FaHome />}
+                    { direccion.icon == 'tienda' && <FaStore  />}
+                    { direccion.icon == 'oficina' && <FaBuilding  />}
+                    { direccion.icon == 'bodega' && <FaWarehouse  />}
+                    <p className="text-xs capitalize">{direccion.nombreDireccion}</p>
+                </div>
+            </Badge>
+      )
+    } else {
+        return (<Badge className={`cursor-pointer  pr-3 pl-2 py-0 bg-[#0ea5e9]`}>
+            <div className="flex flex-row items-center gap-1">
+                <FaHome />
+                <p className="text-xs capitalize">{direccion.nombreDireccion}</p>
+            </div>
+        </Badge>)
+    }
+   
  }
 
 

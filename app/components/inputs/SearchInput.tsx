@@ -72,7 +72,8 @@ const SearchInput: React.FC<SearchInputProps> = ({
           font-medium 
           bg-white 
           text-neutral-700
-          border-2
+          border
+          border-neutral-300
           rounded-md
           outline-none
           transition

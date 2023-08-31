@@ -70,7 +70,7 @@ const TabSection: React.FC<TabSectionProps> = ({
             <TabPanel value={"envios"} className="m-0 p-0">
               <EnviosTab onView={onView}/>
             </TabPanel>
-            <TabPanel value={"recolecciones"} className="m-0 pb-4">
+            <TabPanel value={"recolecciones"} className="m-0 p-0">
               <RecoleccionesSection />
             </TabPanel>
             <TabPanel value="cobros" className="m-0 p-0">

@@ -9,7 +9,8 @@ import SidebarButton from "./SidebarButton";
 import UserMenuPortal from "./UserMenuPortal";
 import usePortalDrawer from "@/app/hooks/usePortalDrawer";
 import { PackagePlus, Bell } from 'lucide-react';
-
+import { ChevronDownIcon } from "@radix-ui/react-icons"
+import { Button } from "@/components/ui/button";
 
 
 interface NavbarPortalProps {
@@ -59,13 +60,17 @@ const NavbarPortal: React.FC<NavbarPortalProps> = ({
           </div>
           
             
-          <div className="flex flex-row items-center gap-8">
+          <div className="flex flex-row items-center gap-4 md:gap-8">
 
-              <PackagePlus size={20} className="text-neutral-700"/>
-             
-            <div className="flex flex-row items-center gap-2">
-              <Bell size={20} className="text-neutral-700"/>
+              <Button variant={'outline'} className="px-4 gap-2" onClick={() => router.push('/portal/crear')}>
+                <PackagePlus size={20} className="text-primary"/>
+                <p className="hidden md:block">Programar envío</p>
+              </Button>
+              {/* <Bell size={20} className="text-neutral-700"/> */}
+            <div className="flex flex-row items-center">
+              
               <UserMenuPortal currentUser={currentUser} />
+              
             </div>
           </div>
         

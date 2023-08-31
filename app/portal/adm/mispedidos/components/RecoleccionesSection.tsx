@@ -48,9 +48,9 @@ useEffect(() => {
 },[data])
 
  return (
-  <div className='my-2 p-2  w-full xl:w-4/6'>
+  <div className='my-0   w-full xl:w-4/6'>
         <p className="text-xs font-bold mb-2 text-foreground">Recolecciones activas</p>
-        <hr className="my-1"></hr>
+        <hr className="my-2 mb-4"></hr>
         {isSuccess && data.data?.length >=1 ?
             <>
             <div>

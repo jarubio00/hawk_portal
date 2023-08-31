@@ -142,7 +142,7 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
       </div>
     :
     <div className=" text-neutral-400 my-4 text-center text-sm">
-        Código confirmado
+       
       </div>
 
     }

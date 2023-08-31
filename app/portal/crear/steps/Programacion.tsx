@@ -38,8 +38,9 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
   recoleccion
 }) => {
 
-  console.log(append);
-  console.log(recoleccion);
+  useEffect(() => {
+    window.scrollTo(0,0);
+  },[])
 
 const {updateActiveStep, 
         saveProgramaKey, 

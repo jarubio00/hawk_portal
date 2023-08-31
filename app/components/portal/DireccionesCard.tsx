@@ -2,6 +2,7 @@
 
 import { SafeDireccion,SafeDestino} from "@/app/types";
 import ActionButtons from "../ActionButtons";
+import { direccionBadge } from "../utils/helpers";
 
 
 interface DireccionesCardProps {
@@ -24,20 +25,32 @@ const DireccionesCard: React.FC<DireccionesCardProps> = ({
   onMark,
   onSelect
 }) => {
+
+  
   
   return ( 
     
-      <div className={'text-start my-2 shadow-sm bg-white shadow-neutral-300 rounded-md border-1 p-3 w-full  lg:w-3/4 xl:w-3/5'}>
-        <div className="flex flex-row justify-between ">
+      <div className={'flex flex-col border border-neutral-300 bg-white shadow-lg rounded-lg  my-2 py-1 w-full  lg:w-3/4 xl:w-3/5'}>
+          <div className="flex flex-row items-center justify-between px-2 py-1">
+             { <>
+              { tipo == 'direccion' ? 
+                direccionBadge(direccion) 
+              : 
+              <p className="font-semibold text-foreground text-sm capitalize"> {direccion.contactoNombre}</p> }
+             
+             
+             </>}
+          </div>
+          <hr className="my-1"></hr>
+        
+        <div className="flex flex-row justify-between px-2 py-1">
           <div >
-            {tipo == 'direccion' && <div className="text-md font-bold text-gray-400 uppercase">
-              {direccion.nombreDireccion}
-            </div>}
+            
             <div className="flex flex-row items-center text-xs">
-              <div className="font-bold">
-                {direccion.contactoNombre}
+              <div className="text-primary font-semibold">
+                {tipo == 'direccion' ? direccion.contactoNombre : direccion.contactoTel}
               </div>
-              <div className="font-light text-white text-xs bg-gray-400 rounded-sm hover:bg-blue-400 px-1 py-0 ml-2">
+              <div className="font-light text-white text-xs bg-gray-500 rounded-sm hover:bg-blue-400 px-1 py-0 ml-2">
                 {direccion.empresa}
               </div>
             </div>

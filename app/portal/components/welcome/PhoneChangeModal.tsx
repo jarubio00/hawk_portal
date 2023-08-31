@@ -36,9 +36,9 @@ const handleLogout = () => {
 
 }
  return (
-    <AlertDialog open={open}>
+    <AlertDialog open={open} >
    
-    <AlertDialogContent>
+    <AlertDialogContent className="h-screen md:h-auto">
         <PhoneConfirm currentUser={currentUser} type={'profile'} onClose={handleLogout}/>
     </AlertDialogContent>
   </AlertDialog>

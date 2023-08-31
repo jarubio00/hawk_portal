@@ -45,6 +45,7 @@ model User {
   pedidos            Pedido[]
   recolecciones      Recoleccion[]
   cobrosCortes      CobrosCortes[]
+  kommoSync   KommoSync[]
 
   @@map("Clientes")
 }
@@ -616,6 +617,16 @@ model KommoApiAccount {
   updatedAt  DateTime?
 }
 
+model KommoSync {
+  id        Int            @id @default(autoincrement())
+  clientId  Int
+  tipo  TipoKommoSync @default(add)
+  isProc  Boolean @default(false)
+  procAt  DateTime?
+  createdAt DateTime       @default(dbgenerated("(now())"))
+  cliente User @relation(fields: [clientId], references: [id])
+}
+
 enum TipoBloques {
   AM
   PM
@@ -645,4 +656,10 @@ enum TicketVia {
   whatsapp
   email
   hawk
+}
+
+enum TipoKommoSync {
+  add
+  update
+  delete
 }

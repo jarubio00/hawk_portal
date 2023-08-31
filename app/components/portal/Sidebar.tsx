@@ -17,6 +17,7 @@ import {
   import { AiOutlineMenu } from "react-icons/ai";
   import { GoPackage } from "react-icons/go";
   import { Button } from "@/components/ui/button";
+import { PackagePlus } from "lucide-react";
 
 
 interface SidebarProps {
@@ -34,19 +35,18 @@ const SideBar = forwardRef<Ref, SidebarProps>((showNav, ref) => {
   return (
     // @ts-ignore
     <div ref={ref} className="w-full h-full bg-white shadow-sm">
-        <div className="flex flex-col h-[92vh] pt-8 justify-between">    
+        <div className="flex flex-col h-[80vh] md:h-[92vh] pt-8 md:pt-6 justify-between">    
             <div className='grow my-0'>
-              <div className="flex px-2 w-full mb-6 rounded-sm">
-                <Button 
-                  onClick={() => {
+              <div className="flex px-2 w-full mb-6 rounded-sm md:hidden">
+              <Button  className="px-4 gap-2 bg-rose-500 text-white" onClick={() => {
                     loader.onOpen()
                     router.push('/portal/crear')
                     drawer.onClose()
-                  }} 
-                  className="gap-2 py-2 px-4 bg-rose-500 hover:bg-rose-500/80">
-                    <FaPlus />
-                    Programar envío
-                </Button>
+                  }} >
+                <PackagePlus size={20} className="text-white"/>
+                <p >Programar envío</p>
+              </Button>
+                
                 
               </div>
                 {data.map((group,index) => (

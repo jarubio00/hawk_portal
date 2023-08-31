@@ -25,18 +25,23 @@ import { IoMdClose } from "react-icons/io";
 import PhoneInput from "react-phone-input-2";
 import { Label } from "@/components/ui/label";
 import PulseLoader from "react-spinners/PulseLoader";
+import { useSearchParams } from "next/navigation"
 
 
 interface MiPerfilProps {
+  searchParams: any
   currentUser: SafeUser;
  }
 
  const MiPerfilClient: React.FC<MiPerfilProps> = ({
+  searchParams,
   currentUser
  }) => {
   const router = useRouter();
   const loader = useLoader();
   const nombreInputRef = useRef(null);
+  
+  const params = useSearchParams();
   
 
   const [isLoading,setIsLoading] = useState(false);
@@ -55,8 +60,12 @@ interface MiPerfilProps {
 
   useEffect(() => {
    
-   console.log(currentUser);
-    }, [currentUser]) 
+    if (params?.get('pc') && params.get('pc') == '1') {
+      setPasswordEdit(true);
+    }
+
+   
+    }, []) 
 
  
 
@@ -133,7 +142,7 @@ interface MiPerfilProps {
               disabled = {false}
               noButton
             />
-            <div className="my-4 flex flex-col gap-4 p-4">
+            <div className="my-4 flex flex-col gap-2 py-8 px-4">
              
                 <div className="flex flex-row items-center gap-4">
                   <div className="m-0 w-9 h-9 flex justify-center items-center rounded-full bg-primary text-xl text-white uppercase">
@@ -184,24 +193,28 @@ interface MiPerfilProps {
                     </div>}
                   </div>
                 <p className="text-[11px] text-red-500">{errorMessage || ' '}</p>
+                <Label htmlFor={'celular'} className="text-xs text-neutral-400 w-full">Celular / Whatsapp</Label>
                 <div className=" flex flex-row items-center gap-2">
+                
                   <div className="m-0 w-72 gap-2">
-                  <Label htmlFor={'celular'} className="text-xs text-neutral-400 w-full mb-1">Celular / Whatsapp</Label>
-                  <PhoneInput
-                    inputClass={`!py-4 !w-full !pl-20 !border-input !text-sm !disabled:border-0}`}
-                    disabled={true}
-                    buttonClass={`"!w-16 !p-2 !py-4   !border-input  !disabled:border-0}"`}
-                    country={'mx'}
-                    preferredCountries={['mx','us']}
-                    value={`${currentUser.countryCode}${currentUser.celular}`}
-                    countryCodeEditable={false}
-                  />
+                  
+                    <div>
+                      <PhoneInput
+                        inputClass={`!py-4 !w-full !pl-20 !h-11 !border-input !text-sm !disabled:border-0}`}
+                        disabled={true}
+                        buttonClass={`"!w-16 !p-2 !py-4  !h-11 !border-input  !disabled:border-0}"`}
+                        country={'mx'}
+                        preferredCountries={['mx','us']}
+                        value={`${currentUser.countryCode}${currentUser.celular}`}
+                        countryCodeEditable={false}
+                      />
                     </div>
-                   <div className=" rounded-md mt-4 cursor-pointer" 
+                  </div>
+                  <div className=" rounded-md mt-0 cursor-pointer" 
                         onClick={() => handleChangeCelular()}>
 
-                        <MdModeEditOutline className="text-rose-500" size={20}/> 
-                    </div>
+                      <MdModeEditOutline className="text-rose-500" size={20}/> 
+                  </div>
                 </div>
 
                 

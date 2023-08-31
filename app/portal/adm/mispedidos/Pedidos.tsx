@@ -102,7 +102,7 @@ const PedidosClient  = (props:any) => {
                   </div>
               </div>
         </Drawer>
-        <div className='flex flex-col gap-4 z-40'>
+        <div className='flex flex-col gap-6 z-40'>
           <PageHeader
             title="Mis envíos"
             subtitle={subtitle}

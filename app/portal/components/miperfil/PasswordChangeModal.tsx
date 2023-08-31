@@ -54,7 +54,7 @@ const handleCloseButton = () => {
 
  return (
     <AlertDialog open={open}>
-    <AlertDialogContent>
+    <AlertDialogContent className="flex flex-col h-[95vh] md:h-auto justify-center">
       {closeButton && <AlertDialogTitle className="text-sm text-right">
         <Button variant='link' onClick={handleLogout}>Salir</Button>
       </AlertDialogTitle>}

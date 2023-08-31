@@ -33,7 +33,7 @@ import {FaHome,FaStore,FaBuilding,FaWarehouse} from "react-icons/fa"
     currentUser?: SafeUser | null;
     onClose: (value: Object) => void;
     tipo: string;
-    from: string; // 'menu' , 'pedido'
+    from: string; // 'menu' , 'pedido', 'auth'
     saved?: boolean;
     direccion?: any;
   }
@@ -63,7 +63,7 @@ import {FaHome,FaStore,FaBuilding,FaWarehouse} from "react-icons/fa"
     const [saveEnabled, setSaveEnabled] = useState(false);
     const [nombreColor, setNombreColor] = useState('#0ea5e9')
     const [nombreIcon, setNombreIcon] = useState('home')
-
+    
     const { 
       register, 
       handleSubmit,

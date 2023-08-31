@@ -25,15 +25,17 @@ const DireccionesCard: React.FC<DireccionesCardProps> = ({
   
   return ( 
     
-      <div className={'text-start my-2 shadow-sm bg-white shadow-neutral-300 rounded-md border-1 p-3 w-full  lg:w-3/4 xl:w-3/5'}>
-        <div className="flex flex-row justify-between ">
+      <div className={'flex flex-col border border-neutral-300 bg-white shadow-lg rounded-lg  my-2 py-1 w-full  lg:w-3/4 xl:w-3/5'}>
+        <div className="flex flex-row items-center justify-between px-2 py-1">
+          <p className="font-semibold text-foreground text-sm capitalize"> {paquete.nombrePaquete}</p> 
+        </div>
+        <hr className="my-1"></hr>
+        <div className="flex flex-row justify-between px-2 py-1">
           <div >
-            <div className="text-md font-bold text-gray-400 uppercase">
-              {paquete.nombrePaquete}
-            </div>
+           
             <div className="flex flex-row items-center text-xs">
               
-              <div className="font-light text-white text-xs bg-gray-400 rounded-sm hover:bg-blue-400 px-1 py-0  uppercase">
+              <div className="font-light text-white text-xs bg-gray-500 rounded-sm hover:bg-blue-400 px-1 py-0  uppercase">
                 {paquete.tipo?.tipo}
               </div>
             </div>

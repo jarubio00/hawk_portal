@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 
 import prisma from "@/app/libs/prismadb";
 import axios from "axios";
+import { TipoKommoSync } from "@prisma/client";
 
 export async function POST(
   request: Request, 
@@ -28,6 +29,11 @@ export async function POST(
       checklist: {
         create: {
           clienteV2: true
+        }
+      },
+      kommoSync: {
+        create: {
+          tipo: TipoKommoSync.add
         }
       }
     }
