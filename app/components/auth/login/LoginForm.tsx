@@ -1,5 +1,5 @@
 'use client';
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { signIn } from 'next-auth/react';
 import { 
@@ -16,6 +16,7 @@ import PulseLoader from "react-spinners/PulseLoader";
 import * as Yup from 'yup';
 import {yupResolver} from '@hookform/resolvers/yup';
 import { LoginFormType } from "@/app/types";
+import useLoader from "@/app/hooks/useLoader";
 
 
 
@@ -26,8 +27,13 @@ interface LoginFormProps {
 const LoginForm: React.FC<LoginFormProps> = ({
  currentUser
 }) => {
+  
+ 
 
   const router = useRouter();
+  const loader = useLoader();
+
+  
   const validationSchema = Yup.object().shape({
     email: Yup.string().required('El correo es requerido')
       .email('El correo es inválido'),
@@ -43,6 +49,9 @@ const LoginForm: React.FC<LoginFormProps> = ({
     router.push(redirectUrl);
   }
 
+  useEffect(() => {
+    loader.isOpen && loader.onClose();
+    }, []) 
    
     const [isLoading, setIsLoading] = useState(false);
     const [loginSuccess, setLoginSuccess] = useState(false);

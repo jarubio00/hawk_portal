@@ -17,12 +17,6 @@ import { ChevronDownIcon } from "@radix-ui/react-icons";
 import { Button } from "@/components/ui/button";
 import { BiSolidLogInCircle, BiSolidUserPlus } from "react-icons/bi";
 
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-} from "@/components/ui/dropdown-menu"
-
 interface UserMenuPortalProps {
   currentUser?: SafeUser | null
 }
@@ -51,24 +45,54 @@ const UserMenuPortal: React.FC<UserMenuPortalProps> = ({
   }, [loginModal,  currentUser]);
 
   return ( 
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <div className="flex flex-row items-center gap-1 cursor-pointer"  onClick={toggleOpen} >
-          <div className="flex flex-row items-center gap-2 cursor-pointer transition">
-            <div className="block" >
-              {currentUser ? (
-              <div className="m-0 w-7 h-7 relative flex justify-center items-center rounded-full bg-primary text-lg text-white uppercase">{currentUser?.nombre?.charAt(0)}</div>
-              ) : (
-                <Avatar src={null} />
-              )}
-            </div>
-            {/* <span className="hidden md:block text-xs">{currentUser?.nombre}</span> */}
+    <div className="relative">
+      <div className="flex flex-row items-center gap-1 cursor-pointer"  onClick={toggleOpen} tabIndex={0}>
+      
+        <div 
+          onBlur={toggleOpen}
+          className="
+            flex 
+            flex-row 
+            items-center 
+            gap-2 
+            cursor-pointer 
+            transition
+            "
+          >
+          {/* <AiOutlineMenu /> */}
+          <div className="block" >
+            {/* <Avatar src={currentUser?.image} /> */}
+            {currentUser ? (
+            <div className="m-0 w-7 h-7 relative flex justify-center items-center rounded-full bg-primary text-lg text-white uppercase">{currentUser?.nombre?.charAt(0)}</div>
+            ) : (
+              <Avatar src={null} />
+            )}
+            
           </div>
-          <ChevronDownIcon className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200" />
+          {/* <span className="hidden md:block text-xs">{currentUser?.nombre}</span> */}
         </div>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent className="z-[9999] w-w-[60vw] md:w-72">
-        <div className="flex flex-col cursor-pointer py-4">
+        <ChevronDownIcon className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200" />
+      </div>
+      {isOpen && (
+        <div 
+        
+          className="
+            absolute 
+            border
+            border-neutral-200
+            rounded-md 
+            shadow-lg
+            w-[60vw]
+            md:w-72
+            bg-white 
+            overflow-hidden 
+            right-0 
+            top-8 
+            text-sm
+            z-[9999]
+          "
+        >
+          <div className="flex flex-col cursor-pointer py-4">
             { currentUser ?  ( 
                 <>
                   <div className="flex flex-row items-center gap-2  justify-center ">
@@ -85,7 +109,7 @@ const UserMenuPortal: React.FC<UserMenuPortalProps> = ({
                 <>
                   <div className="flex flex-col items-center  gap-6  justify-center my-6">
                     <Button  className="px-4 gap-2 w-48" onClick={() => {
-                      loader.onOpen();
+                      console.log('go to login')
                       router.push('/auth/login')}
                       
                       }>
@@ -161,10 +185,10 @@ const UserMenuPortal: React.FC<UserMenuPortalProps> = ({
                 </>
               )}
             </div>
+          </div>
         </div>
-      </DropdownMenuContent>
-    </DropdownMenu>
-
+      )}
+    </div>
    );
 }
  
