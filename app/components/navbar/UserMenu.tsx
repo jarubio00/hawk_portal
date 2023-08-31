@@ -108,7 +108,11 @@ const UserMenuPortal: React.FC<UserMenuPortalProps> = ({
                 )  : (
                 <>
                   <div className="flex flex-col items-center  gap-6  justify-center my-6">
-                    <Button  className="px-4 gap-2 w-48" onClick={() => router.push('/auth/login')}>
+                    <Button  className="px-4 gap-2 w-48" onClick={() => {
+                      console.log('go to login')
+                      router.push('/auth/login')}
+                      
+                      }>
                      
                       <p className="text-white">Entrar con mi cuenta</p>
                     </Button>
