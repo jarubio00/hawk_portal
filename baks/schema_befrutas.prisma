@@ -718,15 +718,13 @@ model CatalogoCodigosPostales {
   id          Int                @id @unique
   municipioId Int
   zonaId      Int?
-  rutaId      Int
+  rutaId      Int?
   coberturaId Int?
   lat         String?
   lng         String?
   base        String?
-  createdAt   DateTime           @default(dbgenerated("(now())"))
-  createdBy   Int                @default(1)
   municipio   CatalogoMunicipios @relation(fields: [municipioId], references: [id], onDelete: Cascade)
-  ruta        CatalalogoRutas    @relation(fields: [rutaId], references: [id])
+  //ruta        CatalalogoRutas?   @relation(fields: [rutaId], references: [id])
   colonias    CatalogoColonias[]
 
   @@index([municipioId], map: "CatalogoCodigosPostales_municipioId_fkey")
@@ -740,8 +738,6 @@ model CatalogoColonias {
   tipo            String
   custom          Boolean                 @default(false)
   customCreatedAt DateTime                @default(now())
-  createdAt       DateTime                @default(dbgenerated("(now())"))
-  createdBy       Int                     @default(1)
   codigos         CatalogoCodigosPostales @relation(fields: [cpId], references: [id], onDelete: Cascade)
 
   @@index([cpId], map: "CatalogoColonias_cpId_fkey")
@@ -753,8 +749,6 @@ model CatalogoMunicipios {
   abrev         String?
   estado        String                    @default("Nuevo León")
   pais          String                    @default("México")
-  createdAt     DateTime                  @default(dbgenerated("(now())"))
-  createdBy     Int                       @default(1)
   colonias      CatalogoCodigosPostales[]
   destino       Destino[]
   direccion     Direccion[]
@@ -763,12 +757,12 @@ model CatalogoMunicipios {
 }
 
 model CatalalogoRutas {
-  id              Int                       @id @default(autoincrement())
-  clave           String
-  nombre          String
-  createdAt       DateTime                  @default(dbgenerated("(now())"))
-  createdBy       Int                       @default(1)
-  codigosPostales CatalogoCodigosPostales[]
+  id        Int      @id @default(autoincrement())
+  clave     String
+  nombre    String
+  createdAt DateTime @default(dbgenerated("(now())"))
+  createdBy Int      @default(1)
+  //codigosPostales CatalogoCodigosPostales[]
 }
 
 model CatalogoProductos {
