@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
 datasource db {
@@ -7,47 +8,79 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+//updatedAt          DateTime                   @updatedAt
 model User {
-  id                 Int                @id @default(autoincrement())
-  nombre             String?
-  email              String?            @unique
-  imagen             String?
-  hashedPassword     String?
-  nivel              Int                @default(1)
-  categoria          Int                @default(1)
-  saldo              Float              @default(0)
-  tipo               Int                @default(0)
-  credito            Boolean            @default(false)
-  limiteCredito      Float              @default(0)
-  direccionDefaultId Int?
-  loggedIn           Boolean            @default(false)
-  createdAt          DateTime           @default(now())
-  updatedAt          DateTime           @updatedAt
-  lastLoginAt        DateTime?
-  countryCode        String?
-  celular            String?
-  kommoContactId     Int?
-  whatsappEnabled    Boolean?           @default(false)
-  cobrosPermitidos   Boolean            @default(false)
-  deleted            Boolean            @default(false)
-  deletedAt          DateTime?
-  deletedBy          Int?
-  disabled           Boolean            @default(false)
-  disabledAt         DateTime?
-  disabledBy         Int?
-  passwordType       String             @default("bcrypt")
-  accounts           Account[]
-  checklist          ClientesChecklist?
-  cobros             CobrosDestino[]
-  destinos           Destino[]
-  direcciones        Direccion[]
-  paquetes           Paquete[]
-  pedidos            Pedido[]
-  recolecciones      Recoleccion[]
-  cobrosCortes       CobrosCortes[]
-  kommoSync          KommoSync[]
+  id                   Int                        @id @default(autoincrement())
+  nombre               String?
+  email                String                     @unique
+  imagen               String?
+  hashedPassword       String?
+  nivelId              Int                        @default(1)
+  categoriaId          Int                        @default(1)
+  saldo                Float                      @default(0)
+  tipo                 Int                        @default(0)
+  credito              Boolean                    @default(false)
+  limiteCredito        Float                      @default(0)
+  direccionDefaultId   Int?
+  loggedIn             Boolean                    @default(false)
+  createdAt            DateTime                   @default(dbgenerated("(now())"))
+  createdBy            Int                        @default(1)
+  updatedAt            DateTime                   @default(dbgenerated("(now())"))
+  lastLoginAt          DateTime?
+  countryCode          String?
+  celular              String?
+  empresa              String?
+  kommoContactId       Int?
+  whatsappEnabled      Boolean?                   @default(false)
+  cobrosPermitidos     Boolean                    @default(false)
+  deleted              Boolean                    @default(false)
+  deletedAt            DateTime?
+  deletedBy            Int?
+  disabled             Boolean                    @default(false)
+  disabledAt           DateTime?
+  disabledBy           Int?
+  passwordType         String                     @default("bcrypt")
+  md5Pass              String?
+  sysopTel             String?
+  accounts             Account[]
+  checklist            ClientesChecklist?
+  cobros               CobrosDestino[]
+  destinos             Destino[]
+  direcciones          Direccion[]
+  paquetes             Paquete[]
+  pedidos              Pedido[]
+  pedidosHistory       PedidoHistory[]
+  recolecciones        Recoleccion[]
+  cobrosCortes         CobrosCortes[]
+  kommoSync            KommoSync[]
+  recoleccionesHistory RecoleccionHistory[]
+  nivel                CatalogoNivelesClientes    @relation(fields: [nivelId], references: [id], onDelete: NoAction)
+  categoria            CatalogoCategoriasClientes @relation(fields: [categoriaId], references: [id], onDelete: NoAction)
 
+  @@fulltext([nombre])
+  @@fulltext([email])
   @@map("Clientes")
+}
+
+model CatalogoNivelesClientes {
+  id        Int      @id @default(autoincrement())
+  nivel     String
+  desc      String?
+  puntos    Int      @default(0)
+  color     String?
+  imagenUrl String?  @db.LongText
+  createdAt DateTime @default(dbgenerated("(now())"))
+  createdBy Int      @default(1)
+  clientes  User[]
+}
+
+model CatalogoCategoriasClientes {
+  id        Int      @id @default(autoincrement())
+  categoria String
+  desc      String?
+  createdAt DateTime @default(dbgenerated("(now())"))
+  createdBy Int      @default(1)
+  clientes  User[]
 }
 
 model ClientesChecklist {
@@ -101,7 +134,7 @@ model Recoleccion {
   otraColonia          Boolean                      @default(false)
   municipioId          Int
   empresa              String?
-  referencias          String?
+  referencias          String?                      @db.LongText
   lat                  String?
   lng                  String?
   createdAt            DateTime                     @default(now()) @db.DateTime(0)
@@ -114,6 +147,7 @@ model Recoleccion {
   cliente              User                         @relation(fields: [clienteId], references: [id], onDelete: Cascade)
   estatus              CatalogoEstatusRecolecciones @relation(fields: [estatusRecoleccionId], references: [id], onDelete: Cascade)
   municipio            CatalogoMunicipios           @relation(fields: [municipioId], references: [id], onDelete: Cascade)
+  cp                   CatalogoCodigosPostales      @relation(fields: [cpId], references: [id], onDelete: NoAction)
 
   @@index([clienteId], map: "Recolecciones_clienteId_fkey")
   @@index([estatusRecoleccionId], map: "Recolecciones_estatusRecoleccionId_fkey")
@@ -121,11 +155,48 @@ model Recoleccion {
   @@map("Recolecciones")
 }
 
+model RecoleccionHistory {
+  id                   Int                           @id @default(autoincrement())
+  clienteId            Int?
+  estatusRecoleccionId Int?                          @default(1)
+  fecha                DateTime?
+  bloque               Int?
+  contactoNombre       String?
+  contactoTel          String?
+  cpId                 Int?                          @default(97777)
+  calle                String?
+  numero               String?
+  numeroInt            String?
+  colonia              String?
+  otraColonia          Boolean?                      @default(false)
+  municipioId          Int?                          @default(1)
+  empresa              String?
+  referencias          String?                       @db.LongText
+  lat                  String?
+  lng                  String?
+  createdAt            DateTime?                     @default(now()) @db.DateTime(0)
+  updatedAt            DateTime?                     @default(now()) @db.DateTime(0)
+  updatedBy            Int?
+  direccionId          Int?
+  direccionIcon        String?
+  direccionColor       String?
+  pedidos              PedidoHistory[]
+  cliente              User?                         @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  estatus              CatalogoEstatusRecolecciones? @relation(fields: [estatusRecoleccionId], references: [id], onDelete: Cascade)
+  municipio            CatalogoMunicipios?           @relation(fields: [municipioId], references: [id], onDelete: Cascade)
+  cpHistory            CatalogoCodigosPostales?      @relation(fields: [cpId], references: [id], onDelete: NoAction)
+
+  @@index([clienteId], map: "RecoleccionesHistory_clienteId_fkey")
+  @@index([estatusRecoleccionId], map: "RecoleccionesHistory_estatusRecoleccionId_fkey")
+  @@index([municipioId], map: "RecoleccionesHistory_municipioId_fkey")
+  @@map("RecoleccionesHistory")
+}
+
 model Pedido {
-  id                    Int                    @id @default(autoincrement())
+  id                    Int                     @id @default(autoincrement())
   clienteId             Int
   recoleccionId         Int
-  estatusPedidoId       Int                    @default(1)
+  estatusPedidoId       Int                     @default(1)
   fechaEntrega          DateTime
   bloqueEntrega         Int
   entregaContactoNombre String?
@@ -135,14 +206,14 @@ model Pedido {
   entregaNumero         String?
   entregaNumeroInt      String?
   entregaColonia        String
-  entregaOtraColonia    Boolean                @default(false)
+  entregaOtraColonia    Boolean                 @default(false)
   entregaMunicipioId    Int
   entregaEmpresa        String?
-  entregaReferencias    String?
+  entregaReferencias    String?                 @db.LongText
   entregaLat            String?
   entregaLng            String?
   paqTipoId             Int
-  paqEmpaqueId          Int                    @default(1)
+  paqEmpaqueId          Int                     @default(1)
   paqAncho              Float
   paqLargo              Float
   paqAlto               Float
@@ -150,31 +221,36 @@ model Pedido {
   paqContenido          String?
   paqPesoVol            Float
   precioVenta           Float
-  formaPagoId           Int                    @default(1)
-  estatusPagoId         Int                    @default(1)
-  cobroDestino          Boolean                @default(false)
-  cobroDestinoCantidad  Float                  @default(0)
+  formaPagoId           Int                     @default(1)
+  estatusPagoId         Int                     @default(1)
+  cobroDestino          Boolean                 @default(false)
+  cobroDestinoCantidad  Float                   @default(0)
   cobroDestinoId        Int?
-  printCorte            Int?
-  printMCorte           Int?
-  comprobante           Boolean                @default(false)
-  comprobanteUrl        String?                @db.LongText
-  createdAt             DateTime               @default(now()) @db.DateTime(0)
-  updatedAt             DateTime?              @default(now()) @db.DateTime(0)
-  updatedBy             Int?                   @default(1)
-  labelImageUrl         String?                @db.LongText
-  labelPdfUrl           String?                @db.LongText
+  batched               Boolean                 @default(false)
+  printBatchId          Int?
+  printBatchNumber      Int?
+  printed               Boolean?                @default(false)
+  comprobante           Boolean                 @default(false)
+  comprobanteUrl        String?                 @db.LongText
+  createdAt             DateTime                @default(now()) @db.DateTime(0)
+  updatedAt             DateTime?               @default(now()) @db.DateTime(0)
+  updatedBy             Int?                    @default(1)
+  labelImageUrl         String?                 @db.LongText
+  labelPdfUrl           String?                 @db.LongText
   cobro                 CobrosDestino?
   operaciones           Operaciones?
-  user                  User                   @relation(fields: [clienteId], references: [id], onDelete: Cascade)
-  municipio             CatalogoMunicipios     @relation(fields: [entregaMunicipioId], references: [id], onDelete: Cascade)
-  estatusPago           CatalogoEstatusPago    @relation(fields: [estatusPagoId], references: [id], onDelete: Cascade)
-  estatusPedido         CatalogoEstatusPedidos @relation(fields: [estatusPedidoId], references: [id], onDelete: Cascade)
-  formaPago             CatalogoMetodosPago    @relation(fields: [formaPagoId], references: [id], onDelete: Cascade)
-  tipoPaquete           CatalogoTiposPaquetes  @relation(fields: [paqTipoId], references: [id], onDelete: Cascade)
-  recoleccion           Recoleccion            @relation(fields: [recoleccionId], references: [id], onDelete: Cascade)
+  user                  User                    @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  municipio             CatalogoMunicipios      @relation(fields: [entregaMunicipioId], references: [id], onDelete: Cascade)
+  estatusPago           CatalogoEstatusPago     @relation(fields: [estatusPagoId], references: [id], onDelete: Cascade)
+  estatusPedido         CatalogoEstatusPedidos  @relation(fields: [estatusPedidoId], references: [id], onDelete: Cascade)
+  formaPago             CatalogoMetodosPago     @relation(fields: [formaPagoId], references: [id], onDelete: Cascade)
+  tipoPaquete           CatalogoTiposPaquetes   @relation(fields: [paqTipoId], references: [id], onDelete: Cascade)
+  recoleccion           Recoleccion             @relation(fields: [recoleccionId], references: [id], onDelete: Cascade)
+  entregaCp             CatalogoCodigosPostales @relation(fields: [entregaCpId], references: [id], onDelete: NoAction)
+  printBatch            PrintBatch?             @relation(fields: [printBatchId], references: [id])
   incidencias           Incidencia[]
   actividad             ActividadOperaciones[]
+  approute              AppRouteGuias[]
 
   @@index([clienteId], map: "Pedidos_clienteId_fkey")
   @@index([estatusPagoId], map: "Pedidos_estatusPagoId_fkey")
@@ -184,6 +260,94 @@ model Pedido {
   @@index([estatusPedidoId], map: "Pedidos_estatusPedidoId_fkey")
   @@index([paqTipoId], map: "Pedidos_paqTipoId_fkey")
   @@map("Pedidos")
+}
+
+model PrintBatch {
+  id        Int        @id @default(autoincrement())
+  corteId   Int
+  nombre    String?
+  grupo     Int?
+  printer   Int?
+  printed   Boolean    @default(false)
+  printedAt DateTime?
+  createdAt DateTime   @default(dbgenerated("(now())"))
+  createdBy Int        @default(1)
+  corte     PrintCorte @relation(fields: [corteId], references: [id])
+  pedidos   Pedido[]
+}
+
+model PrintCorte {
+  id        Int          @id @default(autoincrement())
+  nombre    String?
+  fecha     DateTime     @db.Date
+  bloque    Int
+  createdAt DateTime     @default(dbgenerated("(now())"))
+  createdBy Int          @default(1)
+  batches   PrintBatch[]
+}
+
+model PedidoHistory {
+  id                    Int                      @id
+  clienteId             Int?
+  recoleccionId         Int?
+  estatusPedidoId       Int?                     @default(1)
+  fechaEntrega          DateTime?
+  bloqueEntrega         Int?
+  entregaContactoNombre String?
+  entregaContactoTel    String?
+  entregaCpId           Int?                     @default(97777)
+  entregaCalle          String?
+  entregaNumero         String?
+  entregaNumeroInt      String?
+  entregaColonia        String?
+  entregaOtraColonia    Boolean?                 @default(false)
+  entregaMunicipioId    Int?                     @default(1)
+  entregaEmpresa        String?
+  entregaReferencias    String?                  @db.LongText
+  entregaLat            String?
+  entregaLng            String?
+  paqTipoId             Int?                     @default(1)
+  paqEmpaqueId          Int?                     @default(1)
+  paqAncho              Float?
+  paqLargo              Float?
+  paqAlto               Float?
+  paqPeso               Float?
+  paqContenido          String?
+  paqPesoVol            Float?
+  precioVenta           Float?
+  formaPagoId           Int?                     @default(1)
+  estatusPagoId         Int?                     @default(1)
+  cobroDestino          Boolean?                 @default(false)
+  cobroDestinoCantidad  Float?                   @default(0)
+  cobroDestinoId        Int?
+  batched               Boolean                  @default(false)
+  printBatchId          Int?
+  printBatchNumber      Int?
+  printed               Boolean?
+  comprobante           Boolean?                 @default(false)
+  comprobanteUrl        String?                  @db.LongText
+  createdAt             DateTime                 @default(now()) @db.DateTime(0)
+  updatedAt             DateTime?                @updatedAt
+  updatedBy             Int?                     @default(1)
+  labelImageUrl         String?                  @db.LongText
+  labelPdfUrl           String?                  @db.LongText
+  user                  User?                    @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  municipio             CatalogoMunicipios?      @relation(fields: [entregaMunicipioId], references: [id], onDelete: Cascade)
+  estatusPago           CatalogoEstatusPago?     @relation(fields: [estatusPagoId], references: [id], onDelete: Cascade)
+  estatusPedido         CatalogoEstatusPedidos?  @relation(fields: [estatusPedidoId], references: [id], onDelete: Cascade)
+  formaPago             CatalogoMetodosPago?     @relation(fields: [formaPagoId], references: [id], onDelete: Cascade)
+  tipoPaquete           CatalogoTiposPaquetes?   @relation(fields: [paqTipoId], references: [id], onDelete: Cascade)
+  recoleccion           RecoleccionHistory?      @relation(fields: [recoleccionId], references: [id], onDelete: Cascade)
+  entregaCp             CatalogoCodigosPostales? @relation(fields: [entregaCpId], references: [id], onDelete: NoAction)
+
+  @@index([clienteId], map: "PedidosHistory_clienteId_fkey")
+  @@index([estatusPagoId], map: "PedidosHistory_estatusPagoId_fkey")
+  @@index([formaPagoId], map: "PedidosHistory_formaPagoId_fkey")
+  @@index([recoleccionId], map: "PedidosHistory_recoleccionId_fkey")
+  @@index([entregaMunicipioId], map: "PedidosHistory_entregaMunicipioId_fkey")
+  @@index([estatusPedidoId], map: "PedidosHistory_estatusPedidoId_fkey")
+  @@index([paqTipoId], map: "PedidosHistory_paqTipoId_fkey")
+  @@map("PedidosHistory")
 }
 
 model Operaciones {
@@ -235,15 +399,25 @@ model ActividadClientes {
 }
 
 model AppRoute {
-  id          Int        @id @default(autoincrement())
+  id          Int             @id @default(autoincrement())
   operadorId  Int
-  isActive    Boolean    @default(true)
-  isReceiving Boolean    @default(false)
+  isActive    Boolean         @default(true)
+  isReceiving Boolean         @default(false)
   receivedAt  DateTime?
   receivedBy  Int?
-  createdAt   DateTime   @default(dbgenerated("(now())"))
-  createdBy   Int        @default(1)
-  operador    Operadores @relation(fields: [operadorId], references: [id])
+  createdAt   DateTime        @default(dbgenerated("(now())"))
+  createdBy   Int             @default(1)
+  operador    Operadores      @relation(fields: [operadorId], references: [id])
+  guias       AppRouteGuias[]
+}
+
+model AppRouteGuias {
+  id       Int           @id @default(autoincrement())
+  routeId  Int
+  pedidoId Int
+  tipo     RouteGuiaTipo
+  pedido   Pedido        @relation(fields: [pedidoId], references: [id])
+  route    AppRoute      @relation(fields: [routeId], references: [id])
 }
 
 model AppVisita {
@@ -481,7 +655,7 @@ model CatalogoIncidenciaTipo {
 }
 
 model Direccion {
-  id              Int                @id @default(autoincrement())
+  id              Int                     @id @default(autoincrement())
   clienteId       Int
   nombreDireccion String
   contactoNombre  String?
@@ -491,19 +665,20 @@ model Direccion {
   numero          String
   numeroInt       String
   colonia         String
-  otraColonia     Boolean            @default(false)
+  otraColonia     Boolean                 @default(false)
   municipioId     Int
   empresa         String?
   referencias     String?
   lat             String?
   lng             String?
-  createdAt       DateTime           @default(now()) @db.DateTime(0)
-  updatedAt       DateTime?          @default(now()) @db.DateTime(0)
+  createdAt       DateTime                @default(now()) @db.DateTime(0)
+  updatedAt       DateTime?               @default(now()) @db.DateTime(0)
   updatedBy       Int?
   color           String?
   icon            String?
-  user            User               @relation(fields: [clienteId], references: [id], onDelete: Cascade)
-  municipio       CatalogoMunicipios @relation(fields: [municipioId], references: [id], onDelete: Cascade)
+  user            User                    @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  municipio       CatalogoMunicipios      @relation(fields: [municipioId], references: [id], onDelete: Cascade)
+  cp              CatalogoCodigosPostales @relation(fields: [cpId], references: [id])
 
   @@index([clienteId], map: "Misdirecciones_clienteId_fkey")
   @@index([municipioId], map: "Misdirecciones_municipioId_fkey")
@@ -511,7 +686,7 @@ model Direccion {
 }
 
 model Destino {
-  id             Int                @id @default(autoincrement())
+  id             Int                     @id @default(autoincrement())
   clienteId      Int
   contactoNombre String?
   contactoTel    String
@@ -520,18 +695,19 @@ model Destino {
   numero         String
   numeroInt      String
   colonia        String
-  otraColonia    Boolean            @default(false)
+  otraColonia    Boolean                 @default(false)
   municipioId    Int
   empresa        String?
   referencias    String?
   lat            String?
   lng            String?
-  createdAt      DateTime           @default(now()) @db.DateTime(0)
-  updatedAt      DateTime?          @default(now()) @db.DateTime(0)
+  createdAt      DateTime                @default(now()) @db.DateTime(0)
+  updatedAt      DateTime?               @default(now()) @db.DateTime(0)
   updatedBy      Int?
-  sinCp          Boolean            @default(false)
-  user           User               @relation(fields: [clienteId], references: [id], onDelete: Cascade)
-  municipio      CatalogoMunicipios @relation(fields: [municipioId], references: [id], onDelete: Cascade)
+  sinCp          Boolean                 @default(false)
+  user           User                    @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  municipio      CatalogoMunicipios      @relation(fields: [municipioId], references: [id], onDelete: Cascade)
+  cp             CatalogoCodigosPostales @relation(fields: [cpId], references: [id])
 
   @@index([clienteId], map: "Misdestinos_clienteId_fkey")
   @@index([municipioId], map: "Misdestinos_municipioId_fkey")
@@ -612,11 +788,12 @@ model CobrosCortes {
 }
 
 model CatalogoMetodosPago {
-  id              Int      @id @default(autoincrement())
+  id              Int             @id @default(autoincrement())
   tipo            String
   descripcion     String?
-  comprobante_req Int      @default(0)
+  comprobante_req Int             @default(0)
   pedido          Pedido[]
+  pedidosHistory  PedidoHistory[]
 }
 
 model CatalogoActividadOperaciones {
@@ -638,22 +815,11 @@ model CatalogoActividadClientes {
 }
 
 model CatalogoEstatusPago {
-  id          Int      @id @default(autoincrement())
-  estatus     String
-  descripcion String?
-  pedido      Pedido[]
-}
-
-model CatalogoNivelesCLientes {
-  id    Int     @id @default(autoincrement())
-  nivel String
-  desc  String?
-}
-
-model CatalalogoCategoriasClientes {
-  id        Int     @id @default(autoincrement())
-  categoria String
-  desc      String?
+  id             Int             @id @default(autoincrement())
+  estatus        String
+  descripcion    String?
+  pedido         Pedido[]
+  pedidosHistory PedidoHistory[]
 }
 
 model CatalogoTiposClientes {
@@ -663,26 +829,31 @@ model CatalogoTiposClientes {
 }
 
 model CatalogoEstatusRecolecciones {
-  id            Int           @id @default(autoincrement())
-  estatus       String
-  desc          String?
-  recolecciones Recoleccion[]
+  id                   Int                  @id @default(autoincrement())
+  estatus              String
+  desc                 String?
+  recolecciones        Recoleccion[]
+  recoleccionesHistory RecoleccionHistory[]
 }
 
 model CatalogoEstatusPedidos {
-  id      Int      @id @default(autoincrement())
-  estatus String
-  desc    String?
-  pedidos Pedido[]
+  id             Int             @id @default(autoincrement())
+  estatus        String
+  desc           String?
+  pedidos        Pedido[]
+  pedidosHistory PedidoHistory[]
 }
 
 model CatalogoTiposPaquetes {
-  id       Int                 @id @default(autoincrement())
-  tipo     String
-  desc     String?
-  producto CatalogoProductos[]
-  paquetes Paquete[]
-  pedidos  Pedido[]
+  id             Int                 @id @default(autoincrement())
+  tipo           String
+  desc           String?
+  createdAt      DateTime            @default(dbgenerated("(now())"))
+  createdBy      Int                 @default(1)
+  producto       CatalogoProductos[]
+  paquetes       Paquete[]
+  pedidos        Pedido[]
+  pedidosHistory PedidoHistory[]
 }
 
 model CatalogoEmpaquesPaquetes {
@@ -715,19 +886,25 @@ model CatalogoTiposRetornoCobros {
 }
 
 model CatalogoCodigosPostales {
-  id          Int                @id @unique
-  municipioId Int
-  zonaId      Int?
-  rutaId      Int
-  coberturaId Int?
-  lat         String?
-  lng         String?
-  base        String?
-  createdAt   DateTime           @default(dbgenerated("(now())"))
-  createdBy   Int                @default(1)
-  municipio   CatalogoMunicipios @relation(fields: [municipioId], references: [id], onDelete: Cascade)
-  ruta        CatalalogoRutas    @relation(fields: [rutaId], references: [id])
-  colonias    CatalogoColonias[]
+  id                   Int                  @id @unique
+  municipioId          Int
+  rutaId               Int
+  coberturaId          Int
+  lat                  String?
+  lng                  String?
+  base                 String?
+  createdAt            DateTime             @default(dbgenerated("(now())"))
+  createdBy            Int                  @default(1)
+  municipio            CatalogoMunicipios   @relation(fields: [municipioId], references: [id], onDelete: Cascade)
+  ruta                 CatalalogoRutas      @relation(fields: [rutaId], references: [id])
+  cobertura            CatalogoCoberturas   @relation(fields: [coberturaId], references: [id])
+  colonias             CatalogoColonias[]
+  entregas             Pedido[]
+  pedidosHistory       PedidoHistory[]
+  recolecciones        Recoleccion[]
+  recoleccionesHistory RecoleccionHistory[]
+  direcciones          Direccion[]
+  destinos             Destino[]
 
   @@index([municipioId], map: "CatalogoCodigosPostales_municipioId_fkey")
 }
@@ -736,30 +913,31 @@ model CatalogoColonias {
   id              Int                     @id @default(autoincrement())
   colonia         String
   cpId            Int
-  municipio_id    Int
-  tipo            String
-  custom          Boolean                 @default(false)
-  customCreatedAt DateTime                @default(now())
+  tipo            String?                 @default("default")
+  custom          Boolean?                @default(false)
+  customCreatedAt DateTime?
   createdAt       DateTime                @default(dbgenerated("(now())"))
   createdBy       Int                     @default(1)
-  codigos         CatalogoCodigosPostales @relation(fields: [cpId], references: [id], onDelete: Cascade)
+  cp              CatalogoCodigosPostales @relation(fields: [cpId], references: [id], onDelete: Cascade)
 
   @@index([cpId], map: "CatalogoColonias_cpId_fkey")
 }
 
 model CatalogoMunicipios {
-  id            Int                       @id @default(autoincrement())
-  municipio     String
-  abrev         String?
-  estado        String                    @default("Nuevo León")
-  pais          String                    @default("México")
-  createdAt     DateTime                  @default(dbgenerated("(now())"))
-  createdBy     Int                       @default(1)
-  colonias      CatalogoCodigosPostales[]
-  destino       Destino[]
-  direccion     Direccion[]
-  pedidos       Pedido[]
-  recolecciones Recoleccion[]
+  id                   Int                       @id @default(autoincrement())
+  municipio            String
+  abrev                String?
+  estado               String                    @default("Nuevo León")
+  pais                 String                    @default("México")
+  createdAt            DateTime                  @default(dbgenerated("(now())"))
+  createdBy            Int                       @default(1)
+  colonias             CatalogoCodigosPostales[]
+  destino              Destino[]
+  direccion            Direccion[]
+  pedidos              Pedido[]
+  pedidosHistory       PedidoHistory[]
+  recolecciones        Recoleccion[]
+  recoleccionesHistory RecoleccionHistory[]
 }
 
 model CatalalogoRutas {
@@ -773,16 +951,15 @@ model CatalalogoRutas {
 
 model CatalogoProductos {
   id              Int                   @id @default(autoincrement())
-  tipo_id         Int                   @default(1)
+  nombre          String
+  descripcion     String
   tipo_paquete_id Int
   cobertura_id    Int                   @default(1)
   peso_min        Int
   peso_max        Int
   precio          Float
-  createdAt       DateTime              @default(now())
+  createdAt       DateTime              @default(dbgenerated("(now())"))
   createdBy       Int                   @default(1)
-  descripcion     String
-  nombre          String
   cobertura       CatalogoCoberturas    @relation(fields: [cobertura_id], references: [id], onDelete: Cascade)
   tipo            CatalogoTiposPaquetes @relation(fields: [tipo_paquete_id], references: [id], onDelete: Cascade)
 
@@ -791,10 +968,13 @@ model CatalogoProductos {
 }
 
 model CatalogoCoberturas {
-  id          Int                 @id @default(autoincrement())
+  id          Int                       @id @default(autoincrement())
   cobertura   String
   descripcion String?
+  createdAt   DateTime?                 @default(dbgenerated("(now())"))
+  createdBy   Int?                      @default(1)
   producto    CatalogoProductos[]
+  cps         CatalogoCodigosPostales[]
 }
 
 model FechasBloqueadas {
@@ -879,4 +1059,15 @@ enum UsuariosHawkRoles {
   superUser
   admin
   user
+}
+
+enum EstatusPrintBatch {
+  pendiente
+  imprimiendo
+  completado
+}
+
+enum RouteGuiaTipo {
+  Recoleccion
+  entrega
 }

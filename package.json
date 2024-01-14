@@ -52,6 +52,7 @@
     "jsbarcode": "^3.11.5",
     "jsprintmanager": "^6.0.0",
     "lucide-react": "^0.260.0",
+    "md5": "^2.3.0",
     "next": "^13.4.1",
     "next-auth": "^4.22.1",
     "next-cloudinary": "^4.15.0",
@@ -88,6 +89,7 @@
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
+    "@types/md5": "^2.3.2",
     "@types/pdfjs-dist": "^2.10.378",
     "@types/react-datepicker": "^4.11.2",
     "@types/react-instantsearch-dom": "^6.12.3",

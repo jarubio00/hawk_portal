@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE `Clientes` ADD COLUMN `createdBy` INTEGER NOT NULL DEFAULT 1,
+    MODIFY `createdAt` DATETIME(3) NOT NULL DEFAULT (now());
