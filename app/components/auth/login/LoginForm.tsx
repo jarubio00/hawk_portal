@@ -75,6 +75,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ currentUser }) => {
       signIn("credentials", {
         ...data,
         callbackUrl: "/portal/adm/mispedidos",
+        redirect: false,
       })
         .then((callback) => {
           console.log(callback);
@@ -148,7 +149,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ currentUser }) => {
             setError("");
           }}
         />
-        <div className="flex flex-row justify-between items-center">
+        <div className="flex flex-row justify-center items-center">
           <p className="text-xs text-red-500">{error}</p>
         </div>
 
