@@ -117,10 +117,10 @@ const MetodoPagoCard: React.FC<MetodoPagoCardProps> = ({ data }) => {
               Se cobrará el monto en efectivo en la visita de recolección, favor
               de tener el monto exacto.
             </p>
-            <CardNumber placeholder="Card Number" />
+            {/* <CardNumber placeholder="Card Number" />
             <SecurityCode placeholder="Security Code" />
             <ExpirationDate placeholder="Expiration Date" mode="short" />
-            <button onClick={() => cardToken()}>Pay</button>
+            <button onClick={() => cardToken()}>Pay</button> */}
           </div>
         )}
         {tipoPago == "transfer" && (

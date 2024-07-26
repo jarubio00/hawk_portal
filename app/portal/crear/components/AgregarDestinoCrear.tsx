@@ -169,6 +169,12 @@ const AgregarDestinoCrear: React.FC<AgregarDestinoCrearProps> = ({
     }
   }, [destinoCaptured]);
 
+  useEffect(() => {
+    if (saved) {
+      setCpError({ error: false, errorMessage: "" });
+    }
+  }, [saved]);
+
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     //loader.onOpen();
 
@@ -309,10 +315,19 @@ const AgregarDestinoCrear: React.FC<AgregarDestinoCrearProps> = ({
 
   const handleNext = () => {
     //updateActiveStep(4);
-    console.log("next");
+    console.log("next ahorita");
     if (!saved) {
-      setCustomValue("cp", cpFromSearch);
-      handleSubmit(onSubmit)();
+      if (cpActive) {
+        console.log(pedido?.destino?.cpId);
+        setCustomValue("cp", cpFromSearch);
+        handleSubmit(onSubmit)();
+        //
+      } else {
+        setCpError({
+          error: true,
+          errorMessage: "El Código Postal no ha sido capturado",
+        });
+      }
     } else {
       updateActiveStep(2);
     }
@@ -655,7 +670,7 @@ const AgregarDestinoCrear: React.FC<AgregarDestinoCrearProps> = ({
                 }
               }}
             />
-            <div className="flex text-xs ml-1 text-rose-500 my-1">
+            <div className="flex text-xs ml-1 text-red-500 my-1">
               {cpError.error ? cpError.errorMessage : ""}
             </div>
           </div>

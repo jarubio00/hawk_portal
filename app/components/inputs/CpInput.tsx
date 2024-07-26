@@ -1,14 +1,9 @@
-'use client';
+"use client";
 
-
-import { 
-  FieldErrors, 
-  FieldValues, 
-  UseFormRegister 
-} from "react-hook-form";
+import { FieldErrors, FieldValues, UseFormRegister } from "react-hook-form";
 import { BiDollar } from "react-icons/bi";
 import { PulseLoader } from "react-spinners";
-import {ChangeEventHandler} from 'react';
+import { ChangeEventHandler } from "react";
 
 interface InputProps {
   id: string;
@@ -18,7 +13,7 @@ interface InputProps {
   disabled?: boolean;
   formatPrice?: boolean;
   required?: boolean;
-  register: UseFormRegister<FieldValues>,
+  register: UseFormRegister<FieldValues>;
   errors: FieldErrors;
   width?: string;
   onChange?: ChangeEventHandler<HTMLInputElement>;
@@ -30,8 +25,8 @@ interface InputProps {
 const CpInput: React.FC<InputProps> = ({
   id,
   label,
-  type = "text", 
-  disabled, 
+  type = "text",
+  disabled,
   formatPrice,
   register,
   required,
@@ -41,12 +36,14 @@ const CpInput: React.FC<InputProps> = ({
   maxlength,
   value,
   isLoading,
-  cpError = false
+  cpError = false,
 }) => {
   return (
-    <div className={`
+    <div
+      className={`
      ${width ? `w-[${width}]` : "w-full"} 
-    relative`}>
+    relative`}
+    >
       {isLoading && (
         <PulseLoader
           size={7}
@@ -60,15 +57,14 @@ const CpInput: React.FC<InputProps> = ({
         />
       )}
       <input
-      
         id={id}
         value={value}
         disabled={disabled}
-        {...register(id, { required: 'este campo es requerido'})}
+        {...register(id, { required: "este campo es requerido" })}
         placeholder=" "
         type={type}
         //@ts-ignore
-        //onInput={(event)=>event.target.value=event.target.value.slice(0,event.target.maxLength)} 
+        //onInput={(event)=>event.target.value=event.target.value.slice(0,event.target.maxLength)}
         //maxLength={maxlength}
         className={`
           peer
@@ -84,13 +80,17 @@ const CpInput: React.FC<InputProps> = ({
           transition
           disabled:opacity-70
           disabled:cursor-not-allowed
-          ${formatPrice ? 'pl-9' : 'pl-4'}
-          ${errors[id] || cpError ? 'border-red-500' : 'border-neutral-300'}
-          ${errors[id] || cpError ? 'focus:border-red-500' : 'focus:border-black'}
+          ${formatPrice ? "pl-9" : "pl-4"}
+          ${errors[id] || cpError ? "border-red-500" : "border-neutral-300"}
+          ${
+            errors[id] || cpError
+              ? "focus:border-red-500"
+              : "focus:border-black"
+          }
         `}
         onChange={onChange}
       />
-      <label 
+      <label
         htmlFor={id}
         className={`
           cursor-text
@@ -103,18 +103,18 @@ const CpInput: React.FC<InputProps> = ({
           top-4 
           
           origin-[0] 
-          ${formatPrice ? 'left-9' : 'left-4'}
+          ${formatPrice ? "left-9" : "left-4"}
           peer-placeholder-shown:scale-100
           peer-placeholder-shown:translate-y-0 
           peer-focus:scale-75
           peer-focus:-translate-y-4
-          ${errors[id] ? 'text-red-500' : 'text-zinc-400'}
+          ${errors[id] || cpError ? "text-red-500" : "text-zinc-400"}
         `}
       >
         {label}
       </label>
     </div>
-   );
-}
- 
+  );
+};
+
 export default CpInput;
