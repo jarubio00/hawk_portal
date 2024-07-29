@@ -37,6 +37,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ currentUser }) => {
     const url = new URL(location.href);
     redirectUrl = url.searchParams.get("callbackUrl") || redirectUrl;
     router.push(redirectUrl);
+    console.log(redirectUrl);
   }
 
   useEffect(() => {
@@ -75,7 +76,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ currentUser }) => {
       signIn("credentials", {
         ...data,
         callbackUrl: "/portal/adm/mispedidos",
-        redirect: false,
+        redirect: true,
       })
         .then((callback) => {
           console.log(callback);
@@ -83,6 +84,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ currentUser }) => {
           if (callback?.ok) {
             setLoginSuccess(true);
             //router.refresh();
+            console.log("login ok");
             router.push("/portal/adm/mispedidos");
           }
 
@@ -155,6 +157,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ currentUser }) => {
 
         <Button
           onClick={handleSubmit(onSubmit)}
+          disabled={isLoading}
           className="gap-3 py-5 bg-rose-500 hover:bg-rose-500/80"
         >
           {isLoading && <PulseLoader size={6} color="#FFFFFF" />}
