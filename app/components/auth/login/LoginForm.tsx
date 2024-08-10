@@ -27,7 +27,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ currentUser }) => {
     email: Yup.string()
       .required("El correo es requerido")
       .email("El correo es inválido"),
-    password: Yup.string().required("La contrseña no puede estar vacía"),
+    password: Yup.string().required("La contraseña no puede estar vacía"),
   });
 
   //let redirectUrl = "https://hawkportal.lamensajeria.mx/portal/adm/mispedidos";
@@ -36,7 +36,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ currentUser }) => {
   if (currentUser) {
     const url = new URL(location.href);
     redirectUrl = url.searchParams.get("callbackUrl") || redirectUrl;
-    router.push(redirectUrl);
+    router.push("/portal/adm/mispedidos");
     console.log(redirectUrl);
   }
 
@@ -47,6 +47,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ currentUser }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [loginSuccess, setLoginSuccess] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (currentUser) {
+      router.push("/portal/adm/mispedidos");
+    }
+  }, [currentUser]);
 
   const {
     register,
@@ -75,7 +81,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ currentUser }) => {
     const timer = setTimeout(() => {
       signIn("credentials", {
         ...data,
-        callbackUrl: "/portal/adm/mispedidos",
+
         redirect: false,
       })
         .then((callback) => {
@@ -83,9 +89,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ currentUser }) => {
 
           if (callback?.ok) {
             setLoginSuccess(true);
-            //router.refresh();
+            router.refresh();
             console.log("login ok");
-            router.push("/portal/adm/mispedidos");
           }
 
           if (callback?.error) {
@@ -93,6 +98,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ currentUser }) => {
             setError(callback.error);
             setIsLoading(false);
           }
+        })
+        .catch((err) => {
+          console.log(err);
         })
         .finally(() => {
           //setIsLoading(false);
