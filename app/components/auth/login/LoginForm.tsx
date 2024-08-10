@@ -76,7 +76,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ currentUser }) => {
       signIn("credentials", {
         ...data,
         callbackUrl: "/portal/adm/mispedidos",
-        redirect: true,
+        redirect: false,
       })
         .then((callback) => {
           console.log(callback);

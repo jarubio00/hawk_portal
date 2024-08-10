@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE `Pedidos` ADD COLUMN `migratedBy` VARCHAR(191) NULL;
+ALTER TABLE `Pedidos` AUTO_INCREMENT=2000000;
+

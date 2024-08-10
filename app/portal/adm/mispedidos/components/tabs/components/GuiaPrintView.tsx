@@ -25,7 +25,7 @@ const GuiaPrintView: React.FC<GuiaPrintViewProps> = ({ data }) => {
           content={() => componentRef.current}
         /> */}
         <GuiaPrint data={data} />
-        <div className="p-2 bg-neutral-200 rounded-full cursor-pointer">
+        {/* <div className="p-2 bg-neutral-200 rounded-full cursor-pointer">
           <a
             target="_blank"
             href={"http://www.file.com/file.pdf"}
@@ -36,7 +36,7 @@ const GuiaPrintView: React.FC<GuiaPrintViewProps> = ({ data }) => {
         </div>
         <div className="p-2 bg-neutral-200 rounded-full">
           <MdShare className="text-neutral-500" size={25} />
-        </div>
+        </div> */}
       </div>
       <hr className="mt-2 mb-4"></hr>
       <GuiaLabelView data={data} />

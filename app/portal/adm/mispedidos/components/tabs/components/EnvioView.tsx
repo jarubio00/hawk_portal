@@ -46,20 +46,20 @@ const EnvioView: React.FC<EnvioViewProps> = ({ data, onRastreoRefresh }) => {
             <TabsTrigger value="info">Info</TabsTrigger>
             <TabsTrigger value="rastreo">Rastreo</TabsTrigger>
             <TabsTrigger value="guia">Guía</TabsTrigger>
-            <TabsTrigger value="tickets">Tickets</TabsTrigger>
+            {/* <TabsTrigger value="tickets">Tickets</TabsTrigger> */}
           </TabsList>
           <TabsContent value="info">
             <EnvioInfo data={data} />
           </TabsContent>
           <TabsContent value={"rastreo"} className="m-0 p-0">
-            <EnvioRastreo data={data} />
+            <EnvioRastreo id={data.id} />
           </TabsContent>
           <TabsContent value={"guia"} className="m-0 p-0">
             <GuiaPrintView data={data} />
           </TabsContent>
-          <TabsContent value={"tickets"} className="m-0 p-0">
+          {/* <TabsContent value={"tickets"} className="m-0 p-0">
             <EnvioTickets data={data} />
-          </TabsContent>
+          </TabsContent> */}
         </Tabs>
       </div>
     </div>

@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import { RegisterContext } from "@/app/components/auth/register/context/RegisterContext";
 import { RegisterContextType } from "@/app/types/register";
 import { useState, useContext, useCallback, useEffect } from "react";
@@ -9,118 +9,106 @@ import { useRouter } from "next/navigation";
 import { PulseLoader } from "react-spinners";
 
 interface ConfirmedStepProps {
- data?: string;
+  data?: string;
 }
 
-const ConfirmedStep: React.FC<ConfirmedStepProps> = ({
- data
-}) => {
+const ConfirmedStep: React.FC<ConfirmedStepProps> = ({ data }) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [created, setCreated] = useState(false);
-  const [statusMessage, setStatusMessage] = useState('Creando cuenta...');
+  const [statusMessage, setStatusMessage] = useState("Creando cuenta...");
   const [registerError, setRegisterError] = useState(false);
+  const [turn, setTurn] = useState(1);
 
+  const { updateActiveStep, activeStep, registration } = useContext(
+    RegisterContext
+  ) as RegisterContextType;
 
-  const {
-    updateActiveStep, 
-    activeStep,
-    registration,
-} = useContext(RegisterContext) as RegisterContextType;
+  useEffect(() => {
+    handleRegister(registration?.newUser);
+  }, []);
 
-useEffect(() => {
-  handleRegister(registration?.newUser)
-},[])
+  const click = () => {
+    handleRegister(registration?.newUser);
+  };
 
-const click = () => {
-  handleRegister(registration?.newUser)
-}
+  const handleRegister = useCallback(async (data: any) => {
+    setRegisterError(false);
+    setIsLoading(true);
+    if (turn === 1) {
+      setTurn(2);
+      axios
+        .post("/api/register", data)
+        .then(() => {
+          setCreated(true);
+          setStatusMessage("Cuenta creada");
 
-const handleRegister = useCallback(async (data: any) => {
-  setRegisterError(false);
-  setIsLoading(true);
-  axios.post('/api/register', data)
-  .then(() => {
-    setCreated(true);
-    setStatusMessage('Cuenta creada')
-    loginAfter(data);
-  })
-  .catch((error) => {
-    setRegisterError(true);
-      console.log('error',error);
-  })
-  .finally(() => {
-    //setIsLoading(false);
-  });
+          const timer = setTimeout(() => {
+            loginAfter(data);
+          }, 500);
+        })
+        .catch((error) => {
+          setRegisterError(true);
+          console.log("error", error);
+        })
+        .finally(() => {
+          //setIsLoading(false);
+        });
+    }
 
-  const loginAfter = 
-    (data: any) => {
+    const loginAfter = (data: any) => {
       setIsLoading(true);
 
-      signIn('credentials', { 
-        ...data, 
+      signIn("credentials", {
+        ...data,
         redirect: false,
-      })
-      .then((callback) => {
+      }).then((callback) => {
         console.log(callback);
-        setStatusMessage('Redireccionando al panel...')
+        setStatusMessage("Redireccionando al panel...");
         setIsLoading(false);
 
         if (callback?.ok) {
           router.refresh();
-          router.push('/portal/adm/mispedidos')
+          router.push("/portal/adm/mispedidos");
         }
-        
+
         if (callback?.error) {
-          console.log('error', callback.error);
+          console.log("error", callback.error);
         }
       });
-  }
-  
-  
-}, [])
+    };
+  }, []);
 
+  const handleBack = () => {
+    updateActiveStep(1);
+  };
 
-
-
-
-
-const handleBack = () => {
-  updateActiveStep(1)
-}
-  
- return (
-    <div className='flex flex-col min-h-[50vh] justify-center items-center gap-4 '>
-        {!registerError ? <div className="flex flex-col justify-center items-center ">
-          <PulseLoader
-            size={8}
-            color="#FF6B00"
-            />
-         <div className=" text-neutral-400 my-4 text-center text-xs">
-              {statusMessage}
+  return (
+    <div className="flex flex-col min-h-[50vh] justify-center items-center gap-4 ">
+      {!registerError ? (
+        <div className="flex flex-col justify-center items-center ">
+          <PulseLoader size={8} color="#FF6B00" />
+          <div className=" text-neutral-400 my-4 text-center text-xs">
+            {statusMessage}
           </div>
-          
-          
-        </div> 
-        :
+        </div>
+      ) : (
         <div className="flex flex-col">
           <div className=" text-red-500 my-4 text-center text-xs">
-                Error al crear la cuenta
+            Error al crear la cuenta
           </div>
           <Button
             className="w-full mt-2 gap-3 py-5 "
-            variant= 'outline'
+            variant="outline"
             onClick={click}
             disabled={false}
-            >
+          >
             Reintentar
           </Button>
+        </div>
+      )}
 
-        </div>  
-      
-      }
-        
-       {/*  <Button
+      {/*  <Button
           className="w-full mt-4 gap-3 py-5 "
             variant= 'outline'
             onClick={click}
@@ -136,12 +124,9 @@ const handleBack = () => {
           >
           Atrás
         </Button> */}
-        <div>
-    
-        </div>
-    
+      <div></div>
     </div>
- );
-}
+  );
+};
 
 export default ConfirmedStep;

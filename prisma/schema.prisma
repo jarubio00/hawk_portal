@@ -237,6 +237,10 @@ model Pedido {
   updatedBy             Int?                    @default(1)
   labelImageUrl         String?                 @db.LongText
   labelPdfUrl           String?                 @db.LongText
+  migrated              Boolean                 @default(false)
+  migratedAt            DateTime?
+  migratedBy            String?
+  userCreated           Boolean                 @default(true)
   cobro                 CobrosDestino?
   operaciones           Operaciones?
   user                  User                    @relation(fields: [clienteId], references: [id], onDelete: Cascade)

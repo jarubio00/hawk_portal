@@ -1,11 +1,8 @@
-import Head from "next/head";
 import { Metadata } from "next";
+import ClientOnly from "../../components/ClientOnly";
+import Navbar from "../../components/navbar/Navbar";
 import getCurrentUser from "@/app/actions/getCurrentUser";
-import ClientOnly from "../components/ClientOnly";
-import Container from "@/app/components/Container";
-import Navbar from "../components/navbar/Navbar";
-import MainDrawer from "../components/drawer/MainDrawer";
-import RastreoClient from "./RastreoClient";
+import RastreoClient from "../RastreoClient";
 
 export const metadata: Metadata = {
   title: "Rastrea tu envío",
@@ -27,21 +24,20 @@ export const metadata: Metadata = {
   },
 };
 
-interface HomeProps {
-  searchParams: any;
-}
-
-const Home = async ({ searchParams }: HomeProps) => {
+export default async function Page({
+  params,
+}: {
+  params: { pedidoId: string };
+}) {
   const currentUser = await getCurrentUser();
+  //slug={params.pedidoId}
 
   return (
     <ClientOnly>
       <Navbar currentUser={currentUser} />
-
       <div className="pt-40">
-        <RastreoClient />
+        <RastreoClient data={parseInt(params.pedidoId)} />
       </div>
     </ClientOnly>
   );
-};
-export default Home;
+}

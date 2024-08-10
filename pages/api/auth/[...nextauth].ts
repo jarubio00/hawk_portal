@@ -38,23 +38,25 @@ export const authOptions: AuthOptions = {
           },
         });
 
-        //console.log('user prisma: ', user);
-        //console.log(credentials.password);
+        console.log("user prisma: ", user);
+        console.log(credentials.password);
 
         if (!user || !user?.hashedPassword) {
           throw new Error("Usuario inválido");
         }
 
         let passToCompare = credentials.password;
+        let isCorrectPassword = false;
 
         if (user.passwordType === "md5") {
           passToCompare = md5(credentials.password);
+          isCorrectPassword = user.md5Pass === passToCompare;
+        } else {
+          isCorrectPassword = await bcrypt.compare(
+            passToCompare,
+            user.hashedPassword
+          );
         }
-
-        const isCorrectPassword = await bcrypt.compare(
-          passToCompare,
-          user.hashedPassword
-        );
 
         if (!isCorrectPassword) {
           throw new Error("Contraseña incorrecta");
