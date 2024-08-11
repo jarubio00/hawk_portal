@@ -1,13 +1,13 @@
+"use server";
 import prisma from "@/app/libs/prismadb";
 import getCurrentUser from "./getCurrentUser";
 
 export default async function getDirecciones() {
-    try {
-        const currentUser = await getCurrentUser();
-        //console.log(currentUser);
+  try {
+    const currentUser = await getCurrentUser();
+    //console.log(currentUser);
 
-
-        const counts = await prisma.$queryRaw`
+    const counts = await prisma.$queryRaw`
            SELECT 
             SUM(IF(estatusPedidoId = 1 OR estatusPedidoId = 2, 1,0)) AS activos,
             SUM(IF(estatusPedidoId = 4, 1,0)) AS entregados,
@@ -16,10 +16,9 @@ export default async function getDirecciones() {
           FROM Pedidos 
           WHERE clienteId = ${currentUser?.id};
          `;
-         
-    
-        return counts;
-      } catch (error: any) {
-        throw new Error(error);
-      }
+
+    return counts;
+  } catch (error: any) {
+    throw new Error(error);
+  }
 }
