@@ -1,21 +1,22 @@
 /** @type {import('next').NextConfig} */
-const withImages = require('next-images')
+const withImages = require("next-images");
 const nextConfig = {
+  reactStrictMode: false,
   images: {
     domains: [
-      'firebasestorage.googleapis.com', 
-      'res.cloudinary.com',
-      'www.googleapis.com'
-    ]
+      "firebasestorage.googleapis.com",
+      "res.cloudinary.com",
+      "www.googleapis.com",
+    ],
   },
   experimental: {
     appDir: true,
   },
   future: { webpack5: true },
   webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
-      config.resolve.alias.canvas = false
-      config.resolve.alias.encoding = false
-      return config
+    config.resolve.alias.canvas = false;
+    config.resolve.alias.encoding = false;
+    return config;
   },
   eslint: {
     // Warning: This allows production builds to successfully complete even if
@@ -29,9 +30,6 @@ const nextConfig = {
     // !! WARN !!
     ignoreBuildErrors: true,
   },
-}
+};
 
-module.exports = nextConfig
-
-
-
+module.exports = nextConfig;
