@@ -143,6 +143,7 @@ model Recoleccion {
   direccionId          Int?
   direccionIcon        String?
   direccionColor       String?
+  migrated             Boolean                      @default(false)
   pedidos              Pedido[]
   cliente              User                         @relation(fields: [clienteId], references: [id], onDelete: Cascade)
   estatus              CatalogoEstatusRecolecciones @relation(fields: [estatusRecoleccionId], references: [id], onDelete: Cascade)

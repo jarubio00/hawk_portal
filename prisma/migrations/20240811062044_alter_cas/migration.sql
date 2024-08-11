@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE `Recolecciones` ADD COLUMN `migrated` BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE `Pedidos` AUTO_INCREMENT = 2113905;

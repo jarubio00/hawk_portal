@@ -5,8 +5,10 @@ import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import md5 from "md5";
+import { format, subHours, addHours, addDays } from "date-fns";
 
 import prisma from "@/app/libs/prismadb";
+import { DateTimeField } from "@mui/x-date-pickers";
 
 export const authOptions: AuthOptions = {
   adapter: PrismaAdapter(prisma),
@@ -36,10 +38,14 @@ export const authOptions: AuthOptions = {
           where: {
             email: credentials.email,
           },
+          include: {
+            checklist: true,
+          },
         });
 
-        console.log("user prisma: ", user);
-        console.log(credentials.password);
+        //console.log("user prisma: ", user);
+
+        //console.log(credentials.password);
 
         if (!user || !user?.hashedPassword) {
           throw new Error("Usuario inválido");
@@ -60,6 +66,20 @@ export const authOptions: AuthOptions = {
 
         if (!isCorrectPassword) {
           throw new Error("Contraseña incorrecta");
+        }
+        const hoyUTC = new Date();
+        const hoy = subHours(hoyUTC, 6);
+        if (!user?.checklist?.firstLogin) {
+          console.log("Capturar first login");
+          const flogin = await prisma.clientesChecklist.update({
+            where: {
+              clienteEmail: user?.email,
+            },
+            data: {
+              firstLogin: true,
+              firstLoginAt: hoy,
+            },
+          });
         }
 
         return user;

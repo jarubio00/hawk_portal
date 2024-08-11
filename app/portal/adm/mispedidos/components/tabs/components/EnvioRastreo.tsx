@@ -74,7 +74,7 @@ const EnvioRastreo: React.FC<EnvioRastreoProps> = ({ id }) => {
               <TimelineItem>
                 <TimelineConnector className="text-rose-500 border-rose-500" />
                 <TimelineHeader>
-                  <TimelineIcon className="p-2 bg-green-500 ">
+                  <TimelineIcon className="p-2 bg-rose-500 ">
                     <MdCheck className="h-4 w-4" />
                   </TimelineIcon>
                   <p className="text-sm font-bold ">Envío programado</p>
@@ -90,7 +90,7 @@ const EnvioRastreo: React.FC<EnvioRastreoProps> = ({ id }) => {
                 <TimelineHeader>
                   <TimelineIcon
                     className={`p-2 ${
-                      rastreo.enRutaRec ? "bg-green-500" : "bg-neutral-300"
+                      rastreo.enRutaRec ? "bg-rose-500" : "bg-neutral-300"
                     }`}
                   >
                     <FaMotorcycle className={`h-4 w-4 `} />
@@ -124,7 +124,7 @@ const EnvioRastreo: React.FC<EnvioRastreoProps> = ({ id }) => {
                 <TimelineHeader>
                   <TimelineIcon
                     className={`p-2 ${
-                      rastreo.recolectado ? "bg-green-500" : "bg-neutral-300"
+                      rastreo.recolectado ? "bg-rose-500" : "bg-neutral-300"
                     }`}
                   >
                     <MdHome className="h-4 w-4" />
@@ -145,11 +145,7 @@ const EnvioRastreo: React.FC<EnvioRastreoProps> = ({ id }) => {
                 <TimelineConnector />
                 <TimelineHeader>
                   <TimelineIcon className="p-2 bg-neutral-300">
-                    <FaMotorcycle
-                      className={`p-2 ${
-                        rastreo.enRutaEnt ? "bg-green-500" : "bg-neutral-300"
-                      }`}
-                    />
+                    <FaMotorcycle className="h-4 w-4" />
                   </TimelineIcon>
                   <p
                     className={`text-sm font-bold ${
@@ -166,11 +162,7 @@ const EnvioRastreo: React.FC<EnvioRastreoProps> = ({ id }) => {
               <TimelineItem>
                 <TimelineHeader>
                   <TimelineIcon className="p-2 bg-neutral-300">
-                    <FaLocationDot
-                      className={`p-2 ${
-                        rastreo.entregado ? "bg-green-500" : "bg-neutral-300"
-                      }`}
-                    />
+                    <FaLocationDot className="h-4 w-4" />
                   </TimelineIcon>
                   <p
                     className={`text-sm font-bold ${

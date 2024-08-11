@@ -36,7 +36,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentUser }) => {
               <div className="p-1 bg-gray-900 rounded-md  w-36 text-xs text-white-500 text-center">
                 <div className="flex flex-row items-center gap-2 justify-center">
                   <FaPhoneAlt size={12} />
-                  <p className="font-semibold">(81) 8317 4000</p>
+                  <p className="font-semibold">(81) 4738 0949</p>
                 </div>
               </div>
               <div className="flex flex-row items-center gap-3">
@@ -85,9 +85,9 @@ const Navbar: React.FC<NavbarProps> = ({ currentUser }) => {
               <UserMenu currentUser={currentUser} />
             </div>
           </div>
-          <div className="block sm:hidden my-2 px-4">
+          {/* <div className="block sm:hidden my-2 px-4">
             <Search />
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
