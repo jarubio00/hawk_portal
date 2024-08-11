@@ -244,6 +244,19 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
 
       <div className="my-8 flex flex-row items-center gap-4">
         <div
+          className={`w-44 md:w-60 border-2 bg-rose-500 border-rose-500 text-xs 
+                  shadow-md rounded-md py-1 px-2 cursor-pointer
+          ${
+            tipoPrograma == "auto"
+              ? "bg-rose-500 text-white border-rose-500"
+              : "bg-white  border-neutral-800"
+          }
+             `}
+          onClick={() => handleProgramaSection("auto")}
+        >
+          <p className=" text-center text">Lo antes posible</p>
+        </div>
+        <div
           className={`border-2 w-44 md:w-60  text-xs 
           shadow-md rounded-md py-1 px-2 cursor-pointer
           ${
@@ -258,10 +271,17 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
         </div>
       </div>
 
-      <div className="grid mx-4 md:mx-2 grid-cols-1 md:grid-cols-1  lg:grid-cols-2 xl:grid-cols-3 gap-4">
-        <ProgramarRecoleccion />
-        <ProgramarEntrega />
-      </div>
+      {tipoPrograma == "auto" ? (
+        <div className="grid mx-4 md:mx-2 grid-cols-1 md:grid-cols-2  lg:grid-cols-3 gap-4">
+          <ProgramarAutoRec />
+          <ProgramarAutoEnt />
+        </div>
+      ) : (
+        <div className="grid mx-4 md:mx-2 grid-cols-1 md:grid-cols-1  lg:grid-cols-2 xl:grid-cols-3 gap-4">
+          <ProgramarRecoleccion />
+          <ProgramarEntrega />
+        </div>
+      )}
 
       <div className="my-4 flex flex-row items-center gap-4">
         <Button
