@@ -1,4 +1,3 @@
-"use server";
 import { createPdfZpl, createZpl } from "@/app/components/utils/zplUtils";
 import { ApiResponse } from "@/app/types";
 import axios from "axios";
