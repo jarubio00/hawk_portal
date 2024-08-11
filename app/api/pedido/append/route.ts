@@ -4,13 +4,13 @@ import prisma from "@/app/libs/prismadb";
 import getCurrentUser from "@/app/actions/getCurrentUser";
 import { IPedido } from "@/app/types/pedido";
 import { Pedido } from "@prisma/client";
-import PedidoProvider, { PedidoContext } from "@/app/portal/crear/context/PedidoContext";
-import {format, subHours} from "date-fns"
+import PedidoProvider, {
+  PedidoContext,
+} from "@/app/portal/crear/context/PedidoContext";
+import { format, subHours } from "date-fns";
 import { generateLabels } from "@/app/actions/utils";
 
-export async function POST(
-  request: Request, 
-) {
+export async function POST(request: Request) {
   const currentUser = await getCurrentUser();
 
   if (!currentUser) {
@@ -20,13 +20,11 @@ export async function POST(
   const serverDateUTC = new Date();
   const serverDate = subHours(serverDateUTC, 6);
 
-  console.log('utc: '+serverDateUTC)
-  console.log('-6: '+serverDate);
+  //console.log('utc: '+serverDateUTC)
+  //console.log('-6: '+serverDate);
 
   const body = await request.json();
-  const {p,r} = body;
-
-
+  const { p, r } = body;
 
   let pedido;
   let pedidoId = 0;
@@ -65,60 +63,55 @@ export async function POST(
       cobroDestino: p.cobro,
       operaciones: {
         create: {
-          punteoRecoleccion: false
-        }
-      }
-    }
+          punteoRecoleccion: false,
+        },
+      },
+    };
 
     //console.log(p.programa.fechaRecoleccion);
-     pedido = await prisma.pedido.create({
+    pedido = await prisma.pedido.create({
       data: pedidoCrear,
     });
 
     pedidoId = pedido.id;
-    
-    
+
     if (p.cobro) {
       const cobroAdd = await prisma.cobrosDestino.create({
         data: {
           clienteId: currentUser.id,
           pedidoId: pedidoId,
-          cantidad: parseFloat(p.cobroCantidad)
-        }
-      })
+          cantidad: parseFloat(p.cobroCantidad),
+        },
+      });
       cobroAddId = cobroAdd ? cobroAdd.id : cobroAddId;
     }
 
-   
-
-    
-  if (p.destino.save) {
-    const destinoSave = await prisma.destino.create({
-      //@ts-ignore
-      data: {
-          clienteId: currentUser.id, 
-          contactoNombre: p.destino?.contactoNombre, 
-          contactoTel: p.destino?.contactoTel, 
-          cpId: parseInt(p.destino?.cpId), 
-          calle: p.destino?.calle, 
-          numero: p.destino?.numero, 
-          numeroInt: p.destino?.numeroInt, 
+    if (p.destino.save) {
+      const destinoSave = await prisma.destino.create({
+        //@ts-ignore
+        data: {
+          clienteId: currentUser.id,
+          contactoNombre: p.destino?.contactoNombre,
+          contactoTel: p.destino?.contactoTel,
+          cpId: parseInt(p.destino?.cpId),
+          calle: p.destino?.calle,
+          numero: p.destino?.numero,
+          numeroInt: p.destino?.numeroInt,
           colonia: p.destino?.colonia,
-          municipioId: p.destino?.municipioId, 
-          empresa: p.destino?.empresa, 
-          referencias: p.destino?.referencias, 
-          otraColonia: p.destino?.otraColonia
-      }
-    });
-    destinoSaveId = destinoSave ? destinoSave.id : destinoSaveId;
-  }
+          municipioId: p.destino?.municipioId,
+          empresa: p.destino?.empresa,
+          referencias: p.destino?.referencias,
+          otraColonia: p.destino?.otraColonia,
+        },
+      });
+      destinoSaveId = destinoSave ? destinoSave.id : destinoSaveId;
+    }
 
-    
     if (p.paquete.save) {
       const paqueteSave = await prisma.paquete.create({
         //@ts-ignore
         data: {
-          clienteId: currentUser.id, 
+          clienteId: currentUser.id,
           paqAncho: parseFloat(p.paquete?.paqAncho),
           paqAlto: parseFloat(p.paquete?.paqAlto),
           paqLargo: parseFloat(p.paquete?.paqLargo),
@@ -126,17 +119,14 @@ export async function POST(
           paqContenido: p.paquete?.paqContenido,
           paqTipoId: p.paquete?.paqTipoId,
           paqPesoVol: parseFloat(p.paquete?.paqPesoVol),
-          nombrePaquete: p.paquete?.nombrePaquete
-        }
+          nombrePaquete: p.paquete?.nombrePaquete,
+        },
       });
       paqueteSaveId = paqueteSave ? paqueteSave.id : paqueteSaveId;
     }
-    
-
-    
   }
 
-  const labels = await generateLabels({p: p, pedidoId: pedidoId});
+  /*  const labels = await generateLabels({p: p, pedidoId: pedidoId});
 
   if (labels && labels.image && labels.pdf) {
     const updatePedido = await prisma.pedido.update({
@@ -148,16 +138,18 @@ export async function POST(
         labelPdfUrl: labels.pdf
       }
     });
-  }
+  } */
 
-  const response = {pedidoId: pedidoId, cobroAddId: cobroAddId, destinoSaveId: destinoSaveId, paqueteSaveId: paqueteSaveId}
+  const response = {
+    pedidoId: pedidoId,
+    cobroAddId: cobroAddId,
+    destinoSaveId: destinoSaveId,
+    paqueteSaveId: paqueteSaveId,
+  };
 
-  console.log(response);
- 
+  //console.log(response);
 
-  
- //console.log('Agregado! ->', recoleccion);
-
+  //console.log('Agregado! ->', recoleccion);
 
   return NextResponse.json(response);
 }

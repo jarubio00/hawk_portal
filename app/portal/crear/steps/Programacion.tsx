@@ -442,7 +442,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
             </div>
           ) : (
             <>
-              <div className="mt-2 p-3 flex flex-col">
+              <div className="mt-2 py-3 px-1 flex flex-col">
                 {(recoleccionState?.am ||
                   pedido?.programa?.bloqueRecoleccion == 1) && (
                   <Radio
@@ -450,7 +450,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
                     value={1}
                     name="recoleccion"
                     label={
-                      <p className="text-sm font-semibold">10:00am - 3:00pm</p>
+                      <p className="text-xs font-semibold">10:00am - 3:00pm</p>
                     }
                     onChange={(event) =>
                       handleBloqueChange(parseInt(event.target.value))
@@ -466,7 +466,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
                     value={2}
                     name="recoleccion"
                     label={
-                      <p className="text-sm font-semibold">4:00pm - 9:00pm</p>
+                      <p className="text-xs font-semibold">4:00pm - 9:00pm</p>
                     }
                     onChange={(event) =>
                       handleBloqueChange(parseInt(event.target.value))
@@ -479,7 +479,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
                 {!recoleccionState?.am &&
                   !recoleccionState?.pm &&
                   pedido?.programa?.bloqueRecoleccion == 3 && (
-                    <div className="text-sm">No hay horarios disponibles</div>
+                    <div className="text-xs">No hay horarios disponibles</div>
                   )}
               </div>
               <div className="my-2">
