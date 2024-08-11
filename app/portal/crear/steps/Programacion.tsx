@@ -442,7 +442,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
             </div>
           ) : (
             <>
-              <div className="mt-2 py-3 px-1 flex flex-col">
+              <div className="mt-2 py-3 px-1 flex flex-col w-full">
                 {(recoleccionState?.am ||
                   pedido?.programa?.bloqueRecoleccion == 1) && (
                   <Radio
@@ -554,7 +554,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
     };
 
     return (
-      <div className="my-4 border border-neutral-300 shadow-md rounded-lg p-2 px-2 md:px-2">
+      <div className="my-4 border border-neutral-300 shadow-md rounded-lg p-2 px-1 md:px-2">
         <div className="flex flex-col">
           <p className="text-md font-bold">Entrega</p>
           <p className="text-xs text-neutral-500">
@@ -586,14 +586,14 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
               />
             </div>
           ) : (
-            <div className="mt-2 p-3 flex flex-col">
+            <div className="mt-2 py-3 px-1 flex flex-col">
               {(entregaState?.am || pedido?.programa?.bloqueEntrega == 1) && (
                 <Radio
                   id="EntAm"
                   value={1}
                   name="entrega"
                   label={
-                    <p className="text-sm font-semibold">10:00am - 3:00pm</p>
+                    <p className="text-xs font-semibold">10:00am - 3:00pm</p>
                   }
                   onChange={(event) =>
                     handleBloqueChange(parseInt(event.target.value))
@@ -607,7 +607,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
                   value={2}
                   name="entrega"
                   label={
-                    <p className="text-sm font-semibold">4:00pm - 9:00pm</p>
+                    <p className="text-xs font-semibold">4:00pm - 9:00pm</p>
                   }
                   onChange={(event) =>
                     handleBloqueChange(parseInt(event.target.value))
@@ -621,7 +621,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
                 !entregaState?.am &&
                 !entregaState?.pm &&
                 pedido?.programa?.bloqueEntrega == 3 && (
-                  <div className="text-sm">No hay horarios disponibles</div>
+                  <div className="text-xs">No hay horarios disponibles</div>
                 )
               )}
             </div>
