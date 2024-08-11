@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import prisma from "@/app/libs/prismadb";
 import getCurrentUser from "@/app/actions/getCurrentUser";
+import { userActivityRegister } from "@/app/actions/utils";
 
 export async function POST(request: Request) {
   const currentUser = await getCurrentUser();
@@ -86,7 +87,7 @@ export async function POST(request: Request) {
     },
   });
 
-  console.log(mark);
+  const activity = await userActivityRegister(currentUser.id, 6);
 
   return NextResponse.json(direccionCompleta);
 }

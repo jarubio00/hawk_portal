@@ -2,10 +2,9 @@ import { NextResponse } from "next/server";
 
 import prisma from "@/app/libs/prismadb";
 import getCurrentUser from "@/app/actions/getCurrentUser";
+import { userActivityRegister } from "@/app/actions/utils";
 
-export async function POST(
-  request: Request, 
-) {
+export async function POST(request: Request) {
   const currentUser = await getCurrentUser();
 
   if (!currentUser) {
@@ -13,22 +12,22 @@ export async function POST(
   }
 
   const body = await request.json();
-  
-  const { 
-    clienteId, 
-    contactoNombre, 
-    contactoTel, 
-    cpId, 
-    calle, 
-    numero, 
-    numeroInt, 
+
+  const {
+    clienteId,
+    contactoNombre,
+    contactoTel,
+    cpId,
+    calle,
+    numero,
+    numeroInt,
     colonia,
-    municipioId, 
-    empresa, 
-    referencias, 
+    municipioId,
+    empresa,
+    referencias,
     isOtraColonia,
-    otraColonia
-   } = body;
+    otraColonia,
+  } = body;
 
   Object.keys(body).forEach((value: any) => {
     if (!body[value]) {
@@ -38,24 +37,25 @@ export async function POST(
 
   const coloniaVal = isOtraColonia ? otraColonia : colonia;
 
-
   const direccion = await prisma.destino.create({
     //@ts-ignore
     data: {
-        clienteId, 
-        contactoNombre, 
-        contactoTel, 
-        cpId, 
-        calle, 
-        numero, 
-        numeroInt, 
-        colonia: coloniaVal,
-        municipioId, 
-        empresa, 
-        referencias, 
-        otraColonia: isOtraColonia
-    }
+      clienteId,
+      contactoNombre,
+      contactoTel,
+      cpId,
+      calle,
+      numero,
+      numeroInt,
+      colonia: coloniaVal,
+      municipioId,
+      empresa,
+      referencias,
+      otraColonia: isOtraColonia,
+    },
   });
+
+  const activity = await userActivityRegister(currentUser.id, 9);
 
   return NextResponse.json(direccion);
 }

@@ -10,36 +10,36 @@ datasource db {
 
 //updatedAt          DateTime                   @updatedAt
 model User {
-  id                   Int                        @id @default(autoincrement())
+  id                   Int                           @id @default(autoincrement())
   nombre               String?
-  email                String                     @unique
+  email                String                        @unique
   imagen               String?
   hashedPassword       String?
-  nivelId              Int                        @default(1)
-  categoriaId          Int                        @default(1)
-  saldo                Float                      @default(0)
-  tipo                 Int                        @default(0)
-  credito              Boolean                    @default(false)
-  limiteCredito        Float                      @default(0)
+  nivelId              Int                           @default(1)
+  categoriaId          Int                           @default(1)
+  saldo                Float                         @default(0)
+  tipo                 Int                           @default(0)
+  credito              Boolean                       @default(false)
+  limiteCredito        Float                         @default(0)
   direccionDefaultId   Int?
-  loggedIn             Boolean                    @default(false)
-  createdAt            DateTime                   @default(dbgenerated("(now())"))
-  createdBy            Int                        @default(1)
-  updatedAt            DateTime                   @default(dbgenerated("(now())"))
+  loggedIn             Boolean                       @default(false)
+  createdAt            DateTime                      @default(dbgenerated("(now())"))
+  createdBy            Int                           @default(1)
+  updatedAt            DateTime                      @default(dbgenerated("(now())"))
   lastLoginAt          DateTime?
   countryCode          String?
   celular              String?
   empresa              String?
   kommoContactId       Int?
-  whatsappEnabled      Boolean?                   @default(false)
-  cobrosPermitidos     Boolean                    @default(false)
-  deleted              Boolean                    @default(false)
+  whatsappEnabled      Boolean?                      @default(false)
+  cobrosPermitidos     Boolean                       @default(false)
+  deleted              Boolean                       @default(false)
   deletedAt            DateTime?
   deletedBy            Int?
-  disabled             Boolean                    @default(false)
+  disabled             Boolean                       @default(false)
   disabledAt           DateTime?
   disabledBy           Int?
-  passwordType         String                     @default("bcrypt")
+  passwordType         String                        @default("bcrypt")
   md5Pass              String?
   sysopTel             String?
   accounts             Account[]
@@ -54,8 +54,9 @@ model User {
   cobrosCortes         CobrosCortes[]
   kommoSync            KommoSync[]
   recoleccionesHistory RecoleccionHistory[]
-  nivel                CatalogoNivelesClientes    @relation(fields: [nivelId], references: [id], onDelete: NoAction)
-  categoria            CatalogoCategoriasClientes @relation(fields: [categoriaId], references: [id], onDelete: NoAction)
+  nivel                CatalogoNivelesClientes       @relation(fields: [nivelId], references: [id], onDelete: NoAction)
+  categoria            CatalogoCategoriasClientes    @relation(fields: [categoriaId], references: [id], onDelete: NoAction)
+  actividad            ActividadPlataformaClientes[]
 
   @@fulltext([nombre])
   @@fulltext([email])
@@ -401,6 +402,24 @@ model ActividadClientes {
   createdAt DateTime                  @default(dbgenerated("(now())"))
   createdBy Int                       @default(1)
   tipo      CatalogoActividadClientes @relation(fields: [tipoId], references: [id])
+}
+
+model ActividadPlataformaClientes {
+  id        Int                                 @id @default(autoincrement())
+  clienteId Int
+  tipoId    Int
+  createdAt DateTime                            @default(dbgenerated("(now())"))
+  createdBy Int                                 @default(1)
+  tipo      CatalogoActividadPlataformaClientes @relation(fields: [tipoId], references: [id])
+  cliente   User                                @relation(fields: [clienteId], references: [id])
+}
+
+model CatalogoActividadPlataformaClientes {
+  id        Int                           @id @default(autoincrement())
+  clave     String
+  tipo      String
+  desc      String?
+  actividad ActividadPlataformaClientes[]
 }
 
 model AppRoute {

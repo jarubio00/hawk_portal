@@ -2,10 +2,9 @@ import { NextResponse } from "next/server";
 
 import prisma from "@/app/libs/prismadb";
 import getCurrentUser from "@/app/actions/getCurrentUser";
+import { userActivityRegister } from "@/app/actions/utils";
 
-export async function POST(
-  request: Request, 
-) {
+export async function POST(request: Request) {
   const currentUser = await getCurrentUser();
 
   if (!currentUser) {
@@ -13,9 +12,9 @@ export async function POST(
   }
 
   const body = await request.json();
-  
-  const { 
-    clienteId, 
+
+  const {
+    clienteId,
     paqAncho,
     paqAlto,
     paqLargo,
@@ -24,8 +23,8 @@ export async function POST(
     paqTipoId,
     paqEmpaqueId,
     paqPesoVol,
-    nombrePaquete
-   } = body;
+    nombrePaquete,
+  } = body;
 
   Object.keys(body).forEach((value: any) => {
     if (!body[value]) {
@@ -33,11 +32,10 @@ export async function POST(
     }
   });
 
-
   const direccion = await prisma.paquete.create({
     //@ts-ignore
     data: {
-      clienteId, 
+      clienteId,
       paqAncho: parseFloat(paqAncho),
       paqAlto: parseFloat(paqAlto),
       paqLargo: parseFloat(paqLargo),
@@ -46,9 +44,10 @@ export async function POST(
       paqTipoId: parseInt(paqTipoId),
       paqEmpaqueId: parseInt(paqEmpaqueId),
       paqPesoVol: parseFloat(paqPesoVol),
-      nombrePaquete
-    }
+      nombrePaquete,
+    },
   });
 
+  const activity = await userActivityRegister(currentUser.id, 12);
   return NextResponse.json(direccion);
 }

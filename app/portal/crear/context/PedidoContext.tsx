@@ -31,8 +31,8 @@ const PedidoProvider: React.FC<Props> = ({ children }) => {
   const [pedido, setPedido] = useState<IPedido>();
   const [recoleccion, setRecoleccion] = useState<IRecoleccion>();
   const [append, setAppend] = useState<IAppend>();
-  const [tipoPrograma, setTipoPrograma] = useState("custom");
-  //const [tipoPrograma, setTipoPrograma] = useState("auto");
+  const [tipoPrograma, setTipoPrograma] = useState("auto");
+  //const [tipoPrograma, setTipoPrograma] = useState("custom");
   const [programaRun, setProgramaRun] = useState(1);
   const [tipoPago, setTipoPago] = useState("efectivo");
 

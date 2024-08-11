@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 import prisma from "@/app/libs/prismadb";
 import axios from "axios";
 import { TipoKommoSync } from "@prisma/client";
+import { userActivityRegister } from "@/app/actions/utils";
 
 export async function POST(request: Request) {
   const body = await request.json();
@@ -26,7 +27,7 @@ export async function POST(request: Request) {
     },
   });
 
-  if (user) {
+  /* if (user) {
     const axiosConfig = {
       method: "post",
       url: `https://nsgw-api.lamensajeria.mx/ns/email/welcome`,
@@ -36,6 +37,9 @@ export async function POST(request: Request) {
     const otpResult = await axios(axiosConfig);
 
     console.log("response: ", otpResult.data);
+  } */
+  if (user) {
+    const activity = await userActivityRegister(user.id, 1);
   }
 
   return NextResponse.json(user);

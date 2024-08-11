@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { OtpApplication } from "@prisma/client";
 import bcrypt from "bcrypt";
-
+import { userActivityRegister } from "@/app/actions/utils";
 import prisma from "@/app/libs/prismadb";
 import axios from "axios";
 
@@ -45,6 +45,7 @@ export async function POST(request: Request) {
     });
 
     if (pass) {
+      const activity = await userActivityRegister(pass.id, 4);
       result = { status: 1, statusMessage: "Contraseña actualizada" };
     }
   }

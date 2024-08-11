@@ -2,13 +2,14 @@ import { NextResponse } from "next/server";
 
 import getCurrentUser from "@/app/actions/getCurrentUser";
 import prisma from "@/app/libs/prismadb";
+import { userActivityRegister } from "@/app/actions/utils";
 
 interface IParams {
   paqueteId?: string;
 }
 
 export async function DELETE(
-  request: Request, 
+  request: Request,
   { params }: { params: IParams }
 ) {
   const currentUser = await getCurrentUser();
@@ -19,24 +20,23 @@ export async function DELETE(
 
   const { paqueteId } = params;
 
-  if (!paqueteId || typeof paqueteId !== 'string') {
-    throw new Error('Invalid ID');
+  if (!paqueteId || typeof paqueteId !== "string") {
+    throw new Error("Invalid ID");
   }
 
   const paquete = await prisma.paquete.deleteMany({
     where: {
       id: parseInt(paqueteId),
-      clienteId: currentUser.id
-    }
+      clienteId: currentUser.id,
+    },
   });
+
+  const activity = await userActivityRegister(currentUser.id, 14);
 
   return NextResponse.json(paquete);
 }
 
-export async function PATCH(
-  request: Request, 
-  { params }: { params: IParams }
-) {
+export async function PATCH(request: Request, { params }: { params: IParams }) {
   const currentUser = await getCurrentUser();
 
   if (!currentUser) {
@@ -46,14 +46,13 @@ export async function PATCH(
   const body = await request.json();
   const { paqueteId } = params;
 
-  if (!paqueteId || typeof paqueteId !== 'string') {
-    throw new Error('Invalid ID');
+  if (!paqueteId || typeof paqueteId !== "string") {
+    throw new Error("Invalid ID");
   }
 
   if (!body) {
-    throw new Error('No Changes!');
+    throw new Error("No Changes!");
   }
-
 
   /* Object.keys(body).map((key,index) => {
    console.log(key);
@@ -62,9 +61,11 @@ export async function PATCH(
   const paquete = await prisma.paquete.update({
     where: {
       id: parseInt(paqueteId),
-    }, 
-    data: body
+    },
+    data: body,
   });
+
+  const activity = await userActivityRegister(currentUser.id, 13);
 
   return NextResponse.json(paquete);
 }

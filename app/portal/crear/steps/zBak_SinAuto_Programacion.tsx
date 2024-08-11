@@ -244,19 +244,6 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
 
       <div className="my-8 flex flex-row items-center gap-4">
         <div
-          className={`w-44 md:w-60 border-2 bg-rose-500 border-rose-500 text-xs 
-                  shadow-md rounded-md py-1 px-2 cursor-pointer
-          ${
-            tipoPrograma == "auto"
-              ? "bg-rose-500 text-white border-rose-500"
-              : "bg-white  border-neutral-800"
-          }
-             `}
-          onClick={() => handleProgramaSection("auto")}
-        >
-          <p className=" text-center text">Lo antes posible</p>
-        </div>
-        <div
           className={`border-2 w-44 md:w-60  text-xs 
           shadow-md rounded-md py-1 px-2 cursor-pointer
           ${
@@ -271,17 +258,10 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
         </div>
       </div>
 
-      {tipoPrograma == "auto" ? (
-        <div className="grid mx-4 md:mx-2 grid-cols-1 md:grid-cols-2  lg:grid-cols-3 gap-4">
-          <ProgramarAutoRec />
-          <ProgramarAutoEnt />
-        </div>
-      ) : (
-        <div className="grid mx-4 md:mx-2 grid-cols-1 md:grid-cols-1  lg:grid-cols-2 xl:grid-cols-3 gap-4">
-          <ProgramarRecoleccion />
-          <ProgramarEntrega />
-        </div>
-      )}
+      <div className="grid mx-4 md:mx-2 grid-cols-1 md:grid-cols-1  lg:grid-cols-2 xl:grid-cols-3 gap-4">
+        <ProgramarRecoleccion />
+        <ProgramarEntrega />
+      </div>
 
       <div className="my-4 flex flex-row items-center gap-4">
         <Button
@@ -462,7 +442,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
             </div>
           ) : (
             <>
-              <div className="mt-2 p-3 flex flex-col">
+              <div className="mt-2 py-3 px-1 flex flex-col w-full">
                 {(recoleccionState?.am ||
                   pedido?.programa?.bloqueRecoleccion == 1) && (
                   <Radio
@@ -470,7 +450,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
                     value={1}
                     name="recoleccion"
                     label={
-                      <p className="text-sm font-semibold">10:00am - 3:00pm</p>
+                      <p className="text-xs font-semibold">10:00am - 3:00pm</p>
                     }
                     onChange={(event) =>
                       handleBloqueChange(parseInt(event.target.value))
@@ -486,7 +466,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
                     value={2}
                     name="recoleccion"
                     label={
-                      <p className="text-sm font-semibold">4:00pm - 9:00pm</p>
+                      <p className="text-xs font-semibold">4:00pm - 9:00pm</p>
                     }
                     onChange={(event) =>
                       handleBloqueChange(parseInt(event.target.value))
@@ -499,7 +479,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
                 {!recoleccionState?.am &&
                   !recoleccionState?.pm &&
                   pedido?.programa?.bloqueRecoleccion == 3 && (
-                    <div className="text-sm">No hay horarios disponibles</div>
+                    <div className="text-xs">No hay horarios disponibles</div>
                   )}
               </div>
               <div className="my-2">
@@ -574,7 +554,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
     };
 
     return (
-      <div className="my-4 border border-neutral-300 shadow-md rounded-lg p-2 px-2 md:px-2">
+      <div className="my-4 border border-neutral-300 shadow-md rounded-lg p-2 px-1 md:px-2">
         <div className="flex flex-col">
           <p className="text-md font-bold">Entrega</p>
           <p className="text-xs text-neutral-500">
@@ -606,14 +586,14 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
               />
             </div>
           ) : (
-            <div className="mt-2 p-3 flex flex-col">
+            <div className="mt-2 py-3 px-1 flex flex-col">
               {(entregaState?.am || pedido?.programa?.bloqueEntrega == 1) && (
                 <Radio
                   id="EntAm"
                   value={1}
                   name="entrega"
                   label={
-                    <p className="text-sm font-semibold">10:00am - 3:00pm</p>
+                    <p className="text-xs font-semibold">10:00am - 3:00pm</p>
                   }
                   onChange={(event) =>
                     handleBloqueChange(parseInt(event.target.value))
@@ -627,7 +607,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
                   value={2}
                   name="entrega"
                   label={
-                    <p className="text-sm font-semibold">4:00pm - 9:00pm</p>
+                    <p className="text-xs font-semibold">4:00pm - 9:00pm</p>
                   }
                   onChange={(event) =>
                     handleBloqueChange(parseInt(event.target.value))
@@ -641,7 +621,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
                 !entregaState?.am &&
                 !entregaState?.pm &&
                 pedido?.programa?.bloqueEntrega == 3 && (
-                  <div className="text-sm">No hay horarios disponibles</div>
+                  <div className="text-xs">No hay horarios disponibles</div>
                 )
               )}
             </div>

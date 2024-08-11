@@ -13,11 +13,9 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json();
-  const { name } = body;
+  const { empresa } = body;
 
-  console.log("ch body", body);
-
-  if (!name) {
+  if (!empresa) {
     return NextResponse.json({ error: "Error de validación", status: 500 });
   }
 
@@ -28,13 +26,14 @@ export async function POST(request: Request) {
       email: currentUser.email || undefined,
     },
     data: {
-      nombre: name,
+      empresa: empresa,
     },
   });
 
+  const activity = await userActivityRegister(currentUser.id, 17);
+
   if (pass) {
-    result = { status: 1, statusMessage: "Nombre actualizado" };
-    const activity = await userActivityRegister(currentUser.id, 16);
+    result = { status: 1, statusMessage: "Empresa actualizada" };
   } else {
     result = { status: 2, statusMessage: "Error al actualizar" };
   }
