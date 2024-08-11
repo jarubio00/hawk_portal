@@ -48,7 +48,7 @@ const ConfirmedStep: React.FC<ConfirmedStepProps> = ({ data }) => {
           setStatusMessage("Cuenta creada");
 
           const timer = setTimeout(() => {
-            //loginAfter(data);
+            loginAfter(data);
           }, 500);
         })
         .catch((error) => {
@@ -60,7 +60,7 @@ const ConfirmedStep: React.FC<ConfirmedStepProps> = ({ data }) => {
         });
     }
 
-    /* const loginAfter = (data: any) => {
+    const loginAfter = (data: any) => {
       setIsLoading(true);
 
       signIn("credentials", {
@@ -80,7 +80,7 @@ const ConfirmedStep: React.FC<ConfirmedStepProps> = ({ data }) => {
           console.log("error", callback.error);
         }
       });
-    }; */
+    };
   }, []);
 
   const handleBack = () => {
