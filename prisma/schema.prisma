@@ -42,6 +42,7 @@ model User {
   passwordType         String                        @default("bcrypt")
   md5Pass              String?
   sysopTel             String?
+  migrated             Boolean                       @default(true)
   accounts             Account[]
   checklist            ClientesChecklist?
   cobros               CobrosDestino[]

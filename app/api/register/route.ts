@@ -27,7 +27,14 @@ export async function POST(request: Request) {
     },
   });
 
-  /* if (user) {
+  if (user) {
+    const activity = await userActivityRegister(user.id, 1);
+  }
+
+  return NextResponse.json(user);
+}
+
+/* if (user) {
     const axiosConfig = {
       method: "post",
       url: `https://nsgw-api.lamensajeria.mx/ns/email/welcome`,
@@ -38,9 +45,3 @@ export async function POST(request: Request) {
 
     console.log("response: ", otpResult.data);
   } */
-  if (user) {
-    const activity = await userActivityRegister(user.id, 1);
-  }
-
-  return NextResponse.json(user);
-}

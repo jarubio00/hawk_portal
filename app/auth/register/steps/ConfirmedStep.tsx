@@ -19,6 +19,7 @@ const ConfirmedStep: React.FC<ConfirmedStepProps> = ({ data }) => {
   const [statusMessage, setStatusMessage] = useState("Creando cuenta...");
   const [registerError, setRegisterError] = useState(false);
   const [turn, setTurn] = useState(1);
+  const [cuentaCreada, setCuentaCreada] = useState(false);
 
   const { updateActiveStep, activeStep, registration } = useContext(
     RegisterContext
@@ -29,7 +30,7 @@ const ConfirmedStep: React.FC<ConfirmedStepProps> = ({ data }) => {
   }, []);
 
   const click = () => {
-    handleRegister(registration?.newUser);
+    router.push("/portal/adm/mispedidos");
   };
 
   const handleRegister = useCallback(async (data: any) => {
@@ -39,12 +40,15 @@ const ConfirmedStep: React.FC<ConfirmedStepProps> = ({ data }) => {
       setTurn(2);
       axios
         .post("/api/register", data)
-        .then(() => {
+        .then((response) => {
+          if (response) {
+            setCuentaCreada(true);
+          }
           setCreated(true);
           setStatusMessage("Cuenta creada");
 
           const timer = setTimeout(() => {
-            loginAfter(data);
+            //loginAfter(data);
           }, 500);
         })
         .catch((error) => {
@@ -52,11 +56,11 @@ const ConfirmedStep: React.FC<ConfirmedStepProps> = ({ data }) => {
           console.log("error", error);
         })
         .finally(() => {
-          //setIsLoading(false);
+          setIsLoading(false);
         });
     }
 
-    const loginAfter = (data: any) => {
+    /* const loginAfter = (data: any) => {
       setIsLoading(true);
 
       signIn("credentials", {
@@ -68,7 +72,7 @@ const ConfirmedStep: React.FC<ConfirmedStepProps> = ({ data }) => {
         setIsLoading(false);
 
         if (callback?.ok) {
-          router.refresh();
+          //router.refresh();
           router.push("/portal/adm/mispedidos");
         }
 
@@ -76,7 +80,7 @@ const ConfirmedStep: React.FC<ConfirmedStepProps> = ({ data }) => {
           console.log("error", callback.error);
         }
       });
-    };
+    }; */
   }, []);
 
   const handleBack = () => {
@@ -85,7 +89,7 @@ const ConfirmedStep: React.FC<ConfirmedStepProps> = ({ data }) => {
 
   return (
     <div className="flex flex-col min-h-[50vh] justify-center items-center gap-4 ">
-      {!registerError ? (
+      {isLoading ? (
         <div className="flex flex-col justify-center items-center ">
           <PulseLoader size={8} color="#FF6B00" />
           <div className=" text-neutral-400 my-4 text-center text-xs">
@@ -94,17 +98,16 @@ const ConfirmedStep: React.FC<ConfirmedStepProps> = ({ data }) => {
         </div>
       ) : (
         <div className="flex flex-col">
-          <div className=" text-red-500 my-4 text-center text-xs">
-            Error al crear la cuenta
+          <div className="my-4 text-center text-xs">
+            <Button
+              className="w-full mt-4 gap-3 py-5 px-4 "
+              variant="outline"
+              onClick={click}
+              disabled={false}
+            >
+              Entrar con mi cuenta
+            </Button>
           </div>
-          <Button
-            className="w-full mt-2 gap-3 py-5 "
-            variant="outline"
-            onClick={click}
-            disabled={false}
-          >
-            Reintentar
-          </Button>
         </div>
       )}
 

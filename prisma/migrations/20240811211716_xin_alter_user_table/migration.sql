@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE `Clientes` ADD COLUMN `migrated` BOOLEAN NOT NULL DEFAULT true;
+ALTER TABLE `Clientes` AUTO_INCREMENT = 40924;
