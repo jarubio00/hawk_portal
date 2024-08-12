@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 import getCurrentUser from "@/app/actions/getCurrentUser";
 import prisma from "@/app/libs/prismadb";
-import { userActivityRegister } from "@/app/actions/utils";
+import { userActivityRegister } from "@/app/api/utils/activity";
 
 interface IParams {
   destinoId?: string;

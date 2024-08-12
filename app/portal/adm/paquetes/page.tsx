@@ -8,11 +8,11 @@ import PaquetesClient from "./Paquetes";
 
 const Paquetes = async () => {
   const currentUser = await getCurrentUser();
-  //const paquetes = await getPaquetes();
+  const paquetes = await getPaquetes();
 
   return (
     <ClientOnly>
-      <PaquetesClient data={[]} currentUser={currentUser} />
+      <PaquetesClient data={paquetes} currentUser={currentUser} />
     </ClientOnly>
   );
 };

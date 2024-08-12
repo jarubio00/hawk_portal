@@ -1,5 +1,3 @@
-import prisma from "@/app/libs/prismadb";
-import getCurrentUser from "./getCurrentUser";
 import useLoader from "@/app/hooks/useLoader";
 import { SafeUser, ApiResponse } from "@/app/types";
 import axios from "axios";

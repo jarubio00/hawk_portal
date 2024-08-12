@@ -6,7 +6,7 @@ import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import md5 from "md5";
 import { format, subHours, addHours, addDays } from "date-fns";
-import { userActivityRegister } from "@/app/actions/utils";
+import { userActivityRegister } from "@/app/api/utils/activity";
 
 import prisma from "@/app/libs/prismadb";
 import { DateTimeField } from "@mui/x-date-pickers";
@@ -81,9 +81,9 @@ export const authOptions: AuthOptions = {
               firstLoginAt: hoy,
             },
           });
-          //const activity = await userActivityRegister(user.id, 2);
+          const activity = await userActivityRegister(user.id, 2);
         } else {
-          //const activity = await userActivityRegister(user.id, 3);
+          const activity = await userActivityRegister(user.id, 3);
         }
 
         return user;

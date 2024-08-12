@@ -5,7 +5,7 @@ import getCurrentUser from "@/app/actions/getCurrentUser";
 import prisma from "@/app/libs/prismadb";
 import axios from "axios";
 import md5 from "md5";
-import { userActivityRegister } from "@/app/actions/utils";
+import { userActivityRegister } from "@/app/api/utils/activity";
 
 export async function POST(request: Request) {
   const currentUser = await getCurrentUser();
@@ -65,7 +65,7 @@ export async function POST(request: Request) {
 
       if (pass) {
         result = { status: 1, statusMessage: "Contraseña actualizada" };
-        const activity = await userActivityRegister(pass.id, 4);
+        //const activity = await userActivityRegister(pass.id, 4);
       }
     } else {
       const hashedNewPassword = await bcrypt.hash(newPassword, 12);

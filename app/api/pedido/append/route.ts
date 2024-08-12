@@ -9,6 +9,7 @@ import PedidoProvider, {
 } from "@/app/portal/crear/context/PedidoContext";
 import { format, subHours } from "date-fns";
 import { generateLabels } from "@/app/actions/utils";
+import { userActivityRegister } from "@/app/api/utils/activity";
 
 export async function POST(request: Request) {
   const currentUser = await getCurrentUser();
@@ -140,6 +141,7 @@ export async function POST(request: Request) {
     });
   } */
 
+  const activity = await userActivityRegister(currentUser.id, 15);
   const response = {
     pedidoId: pedidoId,
     cobroAddId: cobroAddId,

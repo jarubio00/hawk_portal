@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { OtpApplication } from "@prisma/client";
 import bcrypt from "bcrypt";
-import { userActivityRegister } from "@/app/actions/utils";
+import { userActivityRegister } from "@/app/api/utils/activity";
 import prisma from "@/app/libs/prismadb";
 import axios from "axios";
 

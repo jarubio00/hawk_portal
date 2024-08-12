@@ -4,7 +4,7 @@ import bcrypt from "bcrypt";
 import getCurrentUser from "@/app/actions/getCurrentUser";
 import prisma from "@/app/libs/prismadb";
 import axios from "axios";
-import { userActivityRegister } from "@/app/actions/utils";
+import { userActivityRegister } from "@/app/api/utils/activity";
 
 export async function POST(request: Request) {
   const currentUser = await getCurrentUser();
