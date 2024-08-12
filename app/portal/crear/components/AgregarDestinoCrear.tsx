@@ -183,7 +183,7 @@ const AgregarDestinoCrear: React.FC<AgregarDestinoCrearProps> = ({
     const destino = {
       ...data,
       otraColonia: otraColoniaSelected,
-      //colonia: otraColoniaSelected ? data.otraColonia : data.colonia.label,
+      colonia: otraColoniaSelected ? data.otraColonia : data.colonia.label,
       cpId: data.cp,
       sincp: false,
       save: saveEnabled,
