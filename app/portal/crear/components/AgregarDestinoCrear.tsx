@@ -431,7 +431,7 @@ const AgregarDestinoCrear: React.FC<AgregarDestinoCrearProps> = ({
               register={register}
               errors={errors}
               onChange={(event: any) => {
-                console.log(event.target.value);
+                //console.log(event.target.value);
                 setCustomValue("colonia", event.target.value);
                 setCustomValue("otraColonia", event.target.value);
               }}
