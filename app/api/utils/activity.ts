@@ -22,8 +22,8 @@ import prisma from "@/app/libs/prismadb";
 */
 
 export async function userActivityRegister(clienteId: number, tipoId: number) {
-  console.log("actividad info");
-  console.log(clienteId, tipoId);
+  //console.log("actividad info");
+  //console.log(clienteId, tipoId);
 
   try {
     const addActivity = await prisma.actividadPlataformaClientes.create({

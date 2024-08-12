@@ -81,9 +81,9 @@ export const authOptions: AuthOptions = {
               firstLoginAt: hoy,
             },
           });
-          //const activity = await userActivityRegister(user.id, 2);
+          const activity = await userActivityRegister(user.id, 2);
         } else {
-          //const activity = await userActivityRegister(user.id, 3);
+          const activity = await userActivityRegister(user.id, 3);
         }
 
         return user;
