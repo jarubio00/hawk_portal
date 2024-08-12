@@ -22,10 +22,22 @@ import prisma from "@/app/libs/prismadb";
 */
 
 export async function userActivityRegister(clienteId: number, tipoId: number) {
-  const addActivity = await prisma.actividadPlataformaClientes.create({
-    data: {
-      clienteId: clienteId,
-      tipoId: tipoId,
-    },
-  });
+  console.log("actividad info");
+  console.log(clienteId, tipoId);
+
+  try {
+    const addActivity = await prisma.actividadPlataformaClientes.create({
+      data: {
+        clienteId: clienteId,
+        tipoId: tipoId,
+      },
+    });
+    if (addActivity) {
+      return { error: false, statusMessage: "OK" };
+    } else {
+      return { error: true, statusMessage: "ERROR al insertar la actividad" };
+    }
+  } catch (err) {
+    console.log(err);
+  }
 }
