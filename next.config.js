@@ -1,7 +1,6 @@
 /** @type {import('next').NextConfig} */
 const withImages = require("next-images");
 const nextConfig = {
-  reactStrictMode: false,
   images: {
     domains: [
       "firebasestorage.googleapis.com",
