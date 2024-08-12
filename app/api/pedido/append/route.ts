@@ -141,7 +141,10 @@ export async function POST(request: Request) {
     });
   } */
 
-  const activity = await userActivityRegister(currentUser.id, 15);
+  if (pedido) {
+    const activity = await userActivityRegister(pedido?.clienteId || 10, 15);
+  }
+
   const response = {
     pedidoId: pedidoId,
     cobroAddId: cobroAddId,

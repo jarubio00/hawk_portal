@@ -161,8 +161,12 @@ export async function POST(request: Request) {
       paqueteSaveId = paqueteSave ? paqueteSave.id : paqueteSaveId;
     }
   }
-
-  const activity = await userActivityRegister(currentUser.id, 15);
+  if (recoleccion) {
+    const activity = await userActivityRegister(
+      recoleccion?.clienteId || 10,
+      15
+    );
+  }
 
   /*  const labels = await generateLabels({p: p, pedidoId: pedidoId});
 
