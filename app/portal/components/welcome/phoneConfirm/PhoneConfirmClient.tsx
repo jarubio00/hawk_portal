@@ -14,6 +14,8 @@ import {
 import ChangeStep from "./steps/ChangeStep";
 import { AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { signOut } from "next-auth/react";
+import useLoader from "@/app/hooks/useLoader";
 
 interface PhoneConfirmProps {
   currentUser?: any;
@@ -36,11 +38,21 @@ const PhoneConfirm: React.FC<PhoneConfirmProps> = ({
         }
     },[currentUser.email]) */
 
+  const loader = useLoader();
+
+  const handleLogout = () => {
+    loader.onOpen();
+    signOut({ callbackUrl: "/" });
+  };
+
   return (
-    <div className="m-0 h-full w-full px-6 ">
-      <AlertDialogTitle className="text-sm text-right">
-        {activeStep == 0 && <Button variant="link" onClick={onClose}></Button>}
-      </AlertDialogTitle>
+    <div className="m-0 h-full w-full md:w-3/4 lg:w-1/2 xl:w-1/2 px-6 ">
+      {activeStep == 0 && (
+        <Button variant="link" onClick={handleLogout}>
+          Salir
+        </Button>
+      )}
+
       <div className="flex flex-col text-xs text-center text-neutral-400 my-4 md:my-8">
         <span className="font-semibold text-black text-sm">
           Cambiar número de celular / whatsapp
