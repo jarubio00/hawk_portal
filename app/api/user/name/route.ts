@@ -4,7 +4,7 @@ import bcrypt from "bcrypt";
 import getCurrentUser from "@/app/actions/getCurrentUser";
 import prisma from "@/app/libs/prismadb";
 import axios from "axios";
-import { userActivityRegister } from "@/app/api/utils/activity";
+//import { userActivityRegister } from "@/app/api/utils/activity";
 
 export async function POST(request: Request) {
   const currentUser = await getCurrentUser();
@@ -34,7 +34,7 @@ export async function POST(request: Request) {
 
   if (pass) {
     result = { status: 1, statusMessage: "Nombre actualizado" };
-    const activity = await userActivityRegister(currentUser.id, 16);
+    //const activity = await userActivityRegister(currentUser.id, 16);
   } else {
     result = { status: 2, statusMessage: "Error al actualizar" };
   }

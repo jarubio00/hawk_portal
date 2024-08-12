@@ -37,12 +37,12 @@ export async function GET(request: Request, { params }: { params: IParams }) {
   let hoyHora = hoyUTC.getHours();
   const blockedLimit = addDays(hoyUTC, 6);
 
-  console.log("auto date utc: ", hoyUTC);
-  console.log("auto date: ", hoy);
-  console.log("solo fecha: ", hoySoloFecha);
-  console.log("hora: ", hoyHora);
-  console.log("hoy search: ", hoySearch);
-  console.log("hoy day", hoyUTC.getDay());
+  //console.log("auto date utc: ", hoyUTC);
+  //console.log("auto date: ", hoy);
+  //console.log("solo fecha: ", hoySoloFecha);
+  //console.log("hora: ", hoyHora);
+  //console.log("hoy search: ", hoySearch);
+  //console.log("hoy day", hoyUTC.getDay());
 
   const blocked = await prisma.fechasBloqueadas.findMany({
     where: {
@@ -67,8 +67,8 @@ export async function GET(request: Request, { params }: { params: IParams }) {
   }
 
   //&& hoy.getDay() != 0
-  console.log("date to check: ", newDate);
-  console.log("bloque to check: ", newBloque);
+  //console.log("date to check: ", newDate);
+  //console.log("bloque to check: ", newBloque);
 
   const check = await checkIfBlockedRec(hoy, newBloque, blocked, hoyHora);
 
@@ -84,8 +84,8 @@ export async function GET(request: Request, { params }: { params: IParams }) {
         newDate = addDays(newDate, 1);
         newBloque = 1;
       }
-      console.log("cheking: ", newDate);
-      console.log("cheking bloque: ", newBloque);
+      //console.log("cheking: ", newDate);
+      //console.log("cheking bloque: ", newBloque);
       const recheck = await checkIfBlockedRec(
         newDate,
         newBloque,
@@ -98,8 +98,8 @@ export async function GET(request: Request, { params }: { params: IParams }) {
     recBloque = newBloque;
   }
 
-  console.log("final rec date: ", recDate);
-  console.log("final rec bloque: ", recBloque);
+  //console.log("final rec date: ", recDate);
+  //console.log("final rec bloque: ", recBloque);
 
   const recCheck = await checkRecolecciones(
     currentUser.id,
@@ -107,8 +107,8 @@ export async function GET(request: Request, { params }: { params: IParams }) {
     recBloque,
     parseInt(auto)
   );
-  console.log("recs: ", recCheck.length);
-  console.log("dir id:", auto);
+  //console.log("recs: ", recCheck.length);
+  //console.log("dir id:", auto);
   ///ENTREGA
   let entNewDate = newDate;
   let entNewBloque = 1;
@@ -122,7 +122,7 @@ export async function GET(request: Request, { params }: { params: IParams }) {
   }
 
   const checkEnt = await checkIfBlockedEnt(entNewDate, entNewBloque, blocked);
-  console.log(checkEnt);
+  //console.log(checkEnt);
 
   if (!checkEnt) {
     entDate = entNewDate;
@@ -152,8 +152,8 @@ export async function GET(request: Request, { params }: { params: IParams }) {
     entBloque = entNewBloque;
   }
 
-  console.log("final ent date: ", entDate);
-  console.log("final ent bloque: ", entBloque);
+  //console.log("final ent date: ", entDate);
+  //console.log("final ent bloque: ", entBloque);
 
   const response = {
     recDate: recDate,

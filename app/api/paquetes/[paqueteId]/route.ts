@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 import getCurrentUser from "@/app/actions/getCurrentUser";
 import prisma from "@/app/libs/prismadb";
-import { userActivityRegister } from "@/app/api/utils/activity";
+//import { userActivityRegister } from "@/app/api/utils/activity";
 
 interface IParams {
   paqueteId?: string;
@@ -31,7 +31,7 @@ export async function DELETE(
     },
   });
 
-  const activity = await userActivityRegister(currentUser.id, 14);
+  //const activity = await userActivityRegister(currentUser.id, 14);
 
   return NextResponse.json(paquete);
 }
@@ -65,7 +65,7 @@ export async function PATCH(request: Request, { params }: { params: IParams }) {
     data: body,
   });
 
-  const activity = await userActivityRegister(currentUser.id, 13);
+  //const activity = await userActivityRegister(currentUser.id, 13);
 
   return NextResponse.json(paquete);
 }

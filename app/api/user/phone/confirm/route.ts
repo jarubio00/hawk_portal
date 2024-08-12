@@ -6,17 +6,17 @@ import bcrypt from "bcrypt";
 
 import prisma from "@/app/libs/prismadb";
 import axios from "axios";
-import { userActivityRegister } from "@/app/api/utils/activity";
+//import { userActivityRegister } from "@/app/api/utils/activity";
 
 export async function POST(request: Request) {
   const body = await request.json();
   const { uuid, code, email, phone, countryCode } = body;
 
-  console.log("ch body", body);
+  //console.log("ch body", body);
 
   const date = ServerDate(new Date());
 
-  console.log("raw date: ", date);
+  //console.log("raw date: ", date);
 
   if (!uuid || !code || !email || !phone) {
     return NextResponse.json({ error: "Error de validación", status: 500 });
@@ -61,7 +61,7 @@ export async function POST(request: Request) {
 
     if (pass) {
       result = { status: 1, statusMessage: "Celular verificado" };
-      const activity = await userActivityRegister(pass.id, 5);
+      //const activity = await userActivityRegister(pass.id, 5);
     }
   }
 
