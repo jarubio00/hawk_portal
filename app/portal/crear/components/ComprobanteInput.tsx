@@ -146,9 +146,9 @@ const ComprobanteInput: React.FC<ComprobanteInputProps> = ({ onChange }) => {
         <p className="text-2xl text-rose-500 font-bold mb-1">BANREGIO</p>
 
         <p className="text-sm font-semibold">Eslo Regiomontana S.A. DE C.V.</p>
-        <p className="text-sm text-neutral-400">4721 4556 3454 8900</p>
+        <p className="text-sm text-neutral-400">CUENTA: 025-03606-001-1</p>
         <p className="text-sm text-neutral-400">
-          CLABE: 018000 3454 898762 873
+          CLABE: 0585 8025 0360 6001 16
         </p>
       </div>
       <p className="my-1 text-xs text-neutral-500">
