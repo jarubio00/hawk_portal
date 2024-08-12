@@ -6,6 +6,8 @@ export function rastreoSanitizer(data: SafePedido) {
   const incisRecArray = incis.filter((inci) => inci.tipoId === 2);
   const incisEntArray = incis.filter((inci) => inci.tipoId == 3);
 
+  console.log(data);
+
   const rastreo: SafeRastreo = {
     programado: true,
     programadoAt: data.createdAt,
@@ -26,7 +28,7 @@ export function rastreoSanitizer(data: SafePedido) {
     entregadoAt: ops.entregadoAt ? ops.entregadoAt : undefined,
     incidenciaRec: !incisRecArray.length || ops.recolectado ? false : true,
     incidenciaRecAt: incisRecArray ? incisRecArray[0]?.createdAt : undefined,
-    incidenciaEnt: incisEntArray.length || ops.entregado ? true : false,
+    incidenciaEnt: incisEntArray.length || ops.entregado ? false : true,
     incidenciaEntAt: incisEntArray ? incisRecArray[0]?.createdAt : undefined,
   };
 

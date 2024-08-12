@@ -49,6 +49,7 @@ const EnvioRastreo: React.FC<EnvioRastreoProps> = ({ id }) => {
       //console.log("Rastreo tapped");
       //console.log({ result });
       const rastreoData = rastreoSanitizer(result);
+      console.log({ rastreoData });
       setRastreo(rastreoData);
       const timer = setTimeout(() => {
         setIsLoading(false);
@@ -144,7 +145,11 @@ const EnvioRastreo: React.FC<EnvioRastreoProps> = ({ id }) => {
               <TimelineItem>
                 <TimelineConnector />
                 <TimelineHeader>
-                  <TimelineIcon className="p-2 bg-neutral-300">
+                  <TimelineIcon
+                    className={`p-2 ${
+                      rastreo.enRutaEnt ? "bg-rose-500" : "bg-neutral-300"
+                    }`}
+                  >
                     <FaMotorcycle className="h-4 w-4" />
                   </TimelineIcon>
                   <p
@@ -161,7 +166,11 @@ const EnvioRastreo: React.FC<EnvioRastreoProps> = ({ id }) => {
               </TimelineItem>
               <TimelineItem>
                 <TimelineHeader>
-                  <TimelineIcon className="p-2 bg-neutral-300">
+                  <TimelineIcon
+                    className={`p-2 ${
+                      rastreo.entregado ? "bg-rose-500" : "bg-neutral-300"
+                    }`}
+                  >
                     <FaLocationDot className="h-4 w-4" />
                   </TimelineIcon>
                   <p
