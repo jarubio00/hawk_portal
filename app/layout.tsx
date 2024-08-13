@@ -24,7 +24,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className="notranslate" translate="no">
       <body className={font.className}>
         <NextTopLoader
           color="#FF6B00"
