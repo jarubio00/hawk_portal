@@ -52,8 +52,10 @@ const RecoleccionStep: React.FC<RecoleccionStepProps> = ({
   console.log(append);
 
   const [direccion, setDireccion] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const onSelectDireccion = (direccion: any) => {
+    setErrorMessage("");
     console.log("on sel:", direccion);
     updateDireccionSelected(direccion.id);
     //setDireccion(direccion);
@@ -73,6 +75,14 @@ const RecoleccionStep: React.FC<RecoleccionStepProps> = ({
   }, []);
 
   useEffect(() => {}, []);
+
+  const handleNext = () => {
+    if (pedido?.recoleccion?.direccionId) {
+      updateActiveStep(1);
+    } else {
+      setErrorMessage("Selecciona una dirección de recolección");
+    }
+  };
 
   return (
     <div className="px-2">
@@ -154,8 +164,11 @@ const RecoleccionStep: React.FC<RecoleccionStepProps> = ({
           <DireccionCard data={pedido?.recoleccion} append={append} />
         </div>
       )}
+      <div className="my-2">
+        <p className="text-xs text-red-500">{errorMessage}</p>
+      </div>
       <div className="my-4">
-        <Button label="Siguiente" onClick={() => updateActiveStep(1)} />
+        <Button label="Siguiente" onClick={handleNext} />
       </div>
     </div>
   );

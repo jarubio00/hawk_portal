@@ -123,42 +123,40 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
       try {
         autoDates = await autoPrograma(pedido?.recoleccion?.direccionId);
         data = autoDates?.response?.data;
+        if (data && data?.recs) {
+          //.log('active recs true')
+          setActiveRec(true);
+          setActiveRecData(data.recsData[0]);
+          //saveAppend({enabled: true, recoleccion: data.recsData[0]});
+          saveProgramaAppend(
+            { enabled: true, recoleccion: data.recsData[0] },
+            {
+              fechaRecoleccion: data.recDate,
+              bloqueRecoleccion: data.recBloque,
+              fechaEntrega: data.entDate,
+              bloqueEntrega: data.entBloque,
+            }
+          );
+          setIsAutoLoading(false);
+        } else {
+          const timer = setTimeout(() => {
+            console.log("saving programa");
+            savePrograma({
+              fechaRecoleccion: data.recDate,
+              bloqueRecoleccion: data.recBloque,
+              fechaEntrega: data.entDate,
+              bloqueEntrega: data.entBloque,
+            });
+            setIsAutoLoading(false);
+          }, 1000);
+        }
       } catch (e) {
         //console.log("try error");
         //console.log(e);
         setIsAutoLoading(false);
       }
-    }
-
-    //console.log("auto dates: ", autoDates);
-    //console.log("console");
-
-    if (data && data?.recs) {
-      //.log('active recs true')
-      setActiveRec(true);
-      setActiveRecData(data.recsData[0]);
-      //saveAppend({enabled: true, recoleccion: data.recsData[0]});
-      saveProgramaAppend(
-        { enabled: true, recoleccion: data.recsData[0] },
-        {
-          fechaRecoleccion: data.recDate,
-          bloqueRecoleccion: data.recBloque,
-          fechaEntrega: data.entDate,
-          bloqueEntrega: data.entBloque,
-        }
-      );
-      setIsAutoLoading(false);
     } else {
-      const timer = setTimeout(() => {
-        console.log("saving programa");
-        savePrograma({
-          fechaRecoleccion: data.recDate,
-          bloqueRecoleccion: data.recBloque,
-          fechaEntrega: data.entDate,
-          bloqueEntrega: data.entBloque,
-        });
-        setIsAutoLoading(false);
-      }, 1000);
+      setIsAutoLoading(false);
     }
   }, []);
 
