@@ -133,7 +133,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
     //console.log("auto dates: ", autoDates);
     //console.log("console");
 
-    if (data.recs) {
+    if (data && data?.recs) {
       //.log('active recs true')
       setActiveRec(true);
       setActiveRecData(data.recsData[0]);
