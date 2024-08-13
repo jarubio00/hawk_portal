@@ -235,7 +235,7 @@ model Pedido {
   printed               Boolean?                @default(false)
   comprobante           Boolean                 @default(false)
   comprobanteUrl        String?                 @db.LongText
-  createdAt             DateTime                @default(now()) @db.DateTime(0)
+  createdAt             DateTime                @default(dbgenerated("(now())"))
   updatedAt             DateTime?               @default(now()) @db.DateTime(0)
   updatedBy             Int?                    @default(1)
   labelImageUrl         String?                 @db.LongText

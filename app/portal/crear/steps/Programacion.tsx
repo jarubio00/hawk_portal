@@ -117,15 +117,21 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
 
   const getAutoDates = useCallback(async () => {
     let autoDates;
+    let data: any;
+
     if (pedido?.recoleccion?.direccionId) {
-      autoDates = await autoPrograma(pedido?.recoleccion?.direccionId);
+      try {
+        autoDates = await autoPrograma(pedido?.recoleccion?.direccionId);
+        data = autoDates?.response?.data;
+      } catch (e) {
+        //console.log("try error");
+        //console.log(e);
+        setIsAutoLoading(false);
+      }
     }
 
-    console.log("auto dates: ", autoDates);
-
-    const data = autoDates?.response?.data;
-
-    console.log("data", data);
+    //console.log("auto dates: ", autoDates);
+    //console.log("console");
 
     if (data.recs) {
       //.log('active recs true')
@@ -239,7 +245,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
     <div className="px-2">
       <StepHeading
         title="Programación"
-        subtitle="Selecciona las fechas y horarios de recolección y entrega"
+        subtitle="Obten las fechas disponibles automáticamente o seleccionalas manualmente"
       />
 
       <div className="my-8 flex flex-row items-center gap-4">
@@ -271,12 +277,13 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
         </div>
       </div>
 
-      {tipoPrograma == "auto" ? (
+      {tipoPrograma == "auto" && (
         <div className="grid mx-4 md:mx-2 grid-cols-1 md:grid-cols-2  lg:grid-cols-3 gap-4">
           <ProgramarAutoRec />
           <ProgramarAutoEnt />
         </div>
-      ) : (
+      )}
+      {tipoPrograma == "custom" && (
         <div className="grid mx-4 md:mx-2 grid-cols-1 md:grid-cols-1  lg:grid-cols-2 xl:grid-cols-3 gap-4">
           <ProgramarRecoleccion />
           <ProgramarEntrega />

@@ -57,6 +57,10 @@ export async function GET(request: Request, { params }: { params: IParams }) {
 
   //if (newDate.getDay() == 0) {hoyHora = 9};
 
+  /*  if (1 < 2) {
+    throw new Error("Error manual");
+  } */
+
   if (hoyHora >= bloque1Limit && hoyHora < bloque2Limit) {
     newDate = hoy;
     newBloque = 2;
