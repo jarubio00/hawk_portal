@@ -77,15 +77,18 @@ export async function POST(request: Request) {
     },
   });
 
-  const mark = await prisma.user.update({
-    where: {
-      id: clienteId,
-      direccionDefaultId: null,
-    },
-    data: {
-      direccionDefaultId: direccion.id,
-    },
-  });
+  console.log(currentUser);
+
+  if (!currentUser.direccionDefaultId) {
+    const mark = await prisma.user.update({
+      where: {
+        id: clienteId,
+      },
+      data: {
+        direccionDefaultId: direccion.id,
+      },
+    });
+  }
 
   //const activity = await userActivityRegister(currentUser.id, 6);
 

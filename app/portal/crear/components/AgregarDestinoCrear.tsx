@@ -93,6 +93,7 @@ const AgregarDestinoCrear: React.FC<AgregarDestinoCrearProps> = ({
     handleSubmit,
     setValue,
     watch,
+    setError,
     formState: { errors },
     reset,
   } = useForm<FieldValues>({
@@ -176,24 +177,28 @@ const AgregarDestinoCrear: React.FC<AgregarDestinoCrearProps> = ({
   }, [saved]);
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
-    //loader.onOpen();
-    console.log("from submit");
-    console.log({ data });
+    if (otraColoniaSelected && !data?.otraColonia) {
+      setError("otraColonia", {
+        type: "custom",
+        message: "La colonia es requerida",
+      });
+    } else {
+      const destino = {
+        ...data,
+        otraColonia: otraColoniaSelected,
+        colonia: otraColoniaSelected ? data?.otraColonia : data?.colonia?.label,
+        cpId: data.cp,
+        sincp: false,
+        save: saveEnabled,
+        coloniasList: colonias,
+      };
 
-    const destino = {
-      ...data,
-      otraColonia: otraColoniaSelected,
-      colonia: otraColoniaSelected ? data?.otraColonia : data?.colonia?.label,
-      cpId: data.cp,
-      sincp: false,
-      save: saveEnabled,
-      coloniasList: colonias,
-    };
+      //@ts-ignore
+      saveDestino(destino);
+      updateDestinoCaptured(true);
+      updateActiveStep(2);
+    }
 
-    //@ts-ignore
-    saveDestino(destino);
-    updateDestinoCaptured(true);
-    updateActiveStep(2);
     //onClose({apiData: apiData});
     //onMove('destino');
   };
@@ -316,9 +321,6 @@ const AgregarDestinoCrear: React.FC<AgregarDestinoCrearProps> = ({
   };
 
   const handleNext = () => {
-    //updateActiveStep(4);
-    console.log("next ahorita");
-    console.log("next otra vez");
     if (!saved) {
       if (cpActive) {
         console.log(pedido?.destino?.cpId);
@@ -377,7 +379,7 @@ const AgregarDestinoCrear: React.FC<AgregarDestinoCrearProps> = ({
                       if (val.value && val.value == 9999) {
                         setOtraColoniaSelected(true);
                         setCustomValue("isOtraColonia", true);
-                        //setCustomValue("colonia", val);
+                        setCustomValue("colonia", val);
                       } else {
                         setOtraColoniaSelected(false);
                         setCustomValue("isOtraColonia", false);
@@ -432,7 +434,7 @@ const AgregarDestinoCrear: React.FC<AgregarDestinoCrearProps> = ({
               errors={errors}
               onChange={(event: any) => {
                 //console.log(event.target.value);
-                setCustomValue("colonia", event.target.value);
+                //setCustomValue("colonia", event.target.value);
                 setCustomValue("otraColonia", event.target.value);
               }}
             />
