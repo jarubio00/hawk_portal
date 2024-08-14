@@ -159,35 +159,38 @@ model Recoleccion {
 }
 
 model RecoleccionHistory {
-  id                   Int                           @id @default(autoincrement())
-  clienteId            Int?
-  estatusRecoleccionId Int?                          @default(1)
-  fecha                DateTime?
-  bloque               Int?
-  contactoNombre       String?
-  contactoTel          String?
-  cpId                 Int?                          @default(97777)
-  calle                String?
-  numero               String?
-  numeroInt            String?
-  colonia              String?
-  otraColonia          Boolean?                      @default(false)
-  municipioId          Int?                          @default(1)
-  empresa              String?
-  referencias          String?                       @db.LongText
-  lat                  String?
-  lng                  String?
-  createdAt            DateTime?                     @default(now()) @db.DateTime(0)
-  updatedAt            DateTime?                     @default(now()) @db.DateTime(0)
-  updatedBy            Int?
-  direccionId          Int?
-  direccionIcon        String?
-  direccionColor       String?
-  pedidos              PedidoHistory[]
-  cliente              User?                         @relation(fields: [clienteId], references: [id], onDelete: Cascade)
-  estatus              CatalogoEstatusRecolecciones? @relation(fields: [estatusRecoleccionId], references: [id], onDelete: Cascade)
-  municipio            CatalogoMunicipios?           @relation(fields: [municipioId], references: [id], onDelete: Cascade)
-  cpHistory            CatalogoCodigosPostales?      @relation(fields: [cpId], references: [id], onDelete: NoAction)
+  id                     Int                           @id @default(autoincrement())
+  clienteId              Int?
+  estatusRecoleccionId   Int?                          @default(1)
+  fecha                  DateTime?
+  bloque                 Int?
+  contactoNombre         String?
+  contactoTel            String?
+  cpId                   Int?                          @default(97777)
+  calle                  String?
+  numero                 String?
+  numeroInt              String?
+  colonia                String?
+  otraColonia            Boolean?                      @default(false)
+  municipioId            Int?                          @default(1)
+  empresa                String?
+  referencias            String?                       @db.LongText
+  lat                    String?
+  lng                    String?
+  fechaOriginal          DateTime?
+  bloqueOriginal         Int?
+  recoleccionActualizada Boolean                       @default(false)
+  createdAt              DateTime?                     @default(now()) @db.DateTime(0)
+  updatedAt              DateTime?                     @default(now()) @db.DateTime(0)
+  updatedBy              Int?
+  direccionId            Int?
+  direccionIcon          String?
+  direccionColor         String?
+  pedidos                PedidoHistory[]
+  cliente                User?                         @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  estatus                CatalogoEstatusRecolecciones? @relation(fields: [estatusRecoleccionId], references: [id], onDelete: Cascade)
+  municipio              CatalogoMunicipios?           @relation(fields: [municipioId], references: [id], onDelete: Cascade)
+  cpHistory              CatalogoCodigosPostales?      @relation(fields: [cpId], references: [id], onDelete: NoAction)
 
   @@index([clienteId], map: "RecoleccionesHistory_clienteId_fkey")
   @@index([estatusRecoleccionId], map: "RecoleccionesHistory_estatusRecoleccionId_fkey")
@@ -235,6 +238,9 @@ model Pedido {
   printed               Boolean?                @default(false)
   comprobante           Boolean                 @default(false)
   comprobanteUrl        String?                 @db.LongText
+  fechaEntregaOriginal  DateTime?
+  bloqueEntregaOriginal Int?
+  entregaActualizada    Boolean                 @default(false)
   createdAt             DateTime                @default(dbgenerated("(now())"))
   updatedAt             DateTime?               @default(now()) @db.DateTime(0)
   updatedBy             Int?                    @default(1)
@@ -391,6 +397,14 @@ model ActividadOperaciones {
   createdBy Int
   tipo      CatalogoActividadOperaciones @relation(fields: [tipoId], references: [id])
   pedido    Pedido                       @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+}
+
+model CatalogoActividadOperaciones {
+  id        Int                    @id @default(autoincrement())
+  clave     String
+  tipo      String
+  desc      String?
+  actividad ActividadOperaciones[]
 }
 
 model ActividadClientes {
@@ -819,15 +833,6 @@ model CatalogoMetodosPago {
   comprobante_req Int             @default(0)
   pedido          Pedido[]
   pedidosHistory  PedidoHistory[]
-}
-
-model CatalogoActividadOperaciones {
-  id        Int                    @id @default(autoincrement())
-  tipo      String
-  icon      String?
-  color     String?
-  desc      String?
-  actividad ActividadOperaciones[]
 }
 
 model CatalogoActividadClientes {

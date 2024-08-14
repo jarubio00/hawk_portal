@@ -23,6 +23,19 @@ const EnviosCards = forwardRef<Ref, EnviosCardsProps>((props, ref) => {
   const { data } = props;
   const router = useRouter();
 
+  let coloniaEntregaDisplay = data.entregaColonia;
+  let coloniaRecoDisplay = data.recoleccion?.colonia;
+
+  if (data.entregaColonia.length > 22) {
+    const coloniaEntregaArray = data.entregaColonia.match(/.{1,20}/g) ?? [];
+    coloniaEntregaDisplay = coloniaEntregaArray[0] + "...";
+  }
+
+  if (data.recoleccion?.colonia.length > 22) {
+    const coloniaRecoArray = data.recoleccion?.colonia.match(/.{1,20}/g) ?? [];
+    coloniaRecoDisplay = coloniaRecoArray[0] + "...";
+  }
+
   return (
     <div className="flex flex-col border border-neutral-300 bg-white shadow-lg rounded-lg  cursor-pointer my-2 py-1 mx-2 hover:scale-y-[1.04] hover:scale-x-[1.01]">
       <div className="flex flex-row items-center justify-between px-2 py-1">
@@ -45,7 +58,7 @@ const EnviosCards = forwardRef<Ref, EnviosCardsProps>((props, ref) => {
             {bloqueToString(data.recoleccion.bloque)}
           </p>
           <p className="text-[11px] text-neutral-500 truncate">
-            {data.recoleccion.colonia}, {data.recoleccion?.municipio?.municipio}
+            {coloniaRecoDisplay}, {data.recoleccion?.municipio?.abrev}
           </p>
         </div>
         <div className="w-6/12 flex flex-col items-end text-xs">
@@ -60,7 +73,7 @@ const EnviosCards = forwardRef<Ref, EnviosCardsProps>((props, ref) => {
             {bloqueToString(data.bloqueEntrega)}
           </p>
           <p className="text-[11px] text-neutral-500 truncate">
-            {data.entregaColonia}, Monterrey
+            {coloniaEntregaDisplay}, {data?.municipio?.abrev}
           </p>
         </div>
       </div>
