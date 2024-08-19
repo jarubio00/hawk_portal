@@ -43,6 +43,7 @@ export async function GET(req: Request) {
         incidencias: {
           include: {
             fotos: true,
+            motivo: true,
           },
           orderBy: {
             createdAt: Prisma.SortOrder.desc,

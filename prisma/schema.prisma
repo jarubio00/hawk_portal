@@ -674,6 +674,7 @@ model IncidenciaFoto {
   id           Int        @id @default(autoincrement())
   incidenciaId Int
   fotoUrl      String     @db.LongText
+  takenAt      DateTime?
   createdAt    DateTime   @default(dbgenerated("(now())"))
   createdBy    Int        @default(1)
   incidencia   Incidencia @relation(fields: [incidenciaId], references: [id], onDelete: Cascade)

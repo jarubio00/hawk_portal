@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  dateString,
   namedDateString,
   namedDateStringFull,
 } from "@/app/components/utils/helpers";
@@ -82,7 +83,7 @@ const EnvioRastreo: React.FC<EnvioRastreoProps> = ({ id }) => {
                 </TimelineHeader>
                 <TimelineBody className="pb-4">
                   <p className="text-xs text-neutral-400">
-                    {/* {namedDateStringFull(data?.createdAt)} */}
+                    {namedDateStringFull(data?.createdAt)}
                   </p>
                 </TimelineBody>
               </TimelineItem>
@@ -109,9 +110,16 @@ const EnvioRastreo: React.FC<EnvioRastreoProps> = ({ id }) => {
                     <div className="flex flex-row items-center gap-2">
                       <IoIosWarning size={18} className="text-amber-700" />
                       <div className="flex flex-col ">
-                        <p className={`text-xs  `}>1era visita sin éxito</p>
+                        <p className={`text-xs  `}>
+                          {rastreo.leyendaInciRec} (
+                          {dateString(rastreo.timeStampUltimaInciRec)})
+                        </p>
+                        <p className={`text-[11px] text-blue-500`}>
+                          {rastreo.motivoUltimaInciRec}
+                        </p>
                         <p className={`text-[11px] text-neutral-400`}>
-                          Intentaremos nuevamente mañana por la mañana
+                          Intentaremos nuevamente en el siguiente bloque
+                          disponible
                         </p>
                       </div>
                     </div>
@@ -186,9 +194,16 @@ const EnvioRastreo: React.FC<EnvioRastreoProps> = ({ id }) => {
                     <div className="flex flex-row items-center gap-2">
                       <IoIosWarning size={18} className="text-amber-700" />
                       <div className="flex flex-col ">
-                        <p className={`text-xs  `}>1era visita sin éxito</p>
+                        <p className={`text-xs  `}>
+                          {rastreo.leyendaInciEnt} (
+                          {dateString(rastreo.timeStampUltimaInciEnt)})
+                        </p>
+                        <p className={`text-[11px] text-blue-500`}>
+                          {rastreo.motivoUltimaInciEnt}
+                        </p>
                         <p className={`text-[11px] text-neutral-400`}>
-                          Intentaremos nuevamente mañana por la mañana
+                          Intentaremos nuevamente en el siguiente bloque
+                          disponible
                         </p>
                       </div>
                     </div>

@@ -1,5 +1,5 @@
 import esLocale from "date-fns/locale/es";
-import { format, isDate } from "date-fns";
+import { format, isDate, addHours } from "date-fns";
 import { MdAccessTimeFilled, MdCancel } from "react-icons/md";
 import { HiCheckCircle } from "react-icons/hi";
 import { IoIosWarning } from "react-icons/io";
@@ -38,9 +38,11 @@ export function dateString(dateString) {
   const date = new Date(dateString);
   let result = "No hay fecha";
   if (isDate(date)) {
-    result = format(date, `dd/MM/yyyy HH:mm:ss `, { locale: esLocale });
+    result = format(addHours(date, 6), `dd/MM/yyyy HH:mm:ss `, {
+      locale: esLocale,
+    });
   }
-  return result;
+  return result.trim();
 }
 
 export function bloqueToString(bloque) {
