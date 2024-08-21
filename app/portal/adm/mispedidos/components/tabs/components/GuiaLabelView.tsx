@@ -88,7 +88,7 @@ const GuiaLabelView: React.FC<GuiaLabelViewProps> = ({ data }) => {
         <div className="flex flex-col justify-end gap-1">
           <div className="flex flex-row justify-end items-center">
             <p className="text-[8px]">
-              {data?.fechaEntrega.toString().slice(0, 10)}
+              {data?.recoleccion?.fecha.toString().slice(0, 10)}
             </p>
             <p className=" h-5 w-5 bg-gray-900 text-white text-[10px] text-center pt-[2px] ml-1">
               AM
@@ -156,7 +156,7 @@ const GuiaLabelView: React.FC<GuiaLabelViewProps> = ({ data }) => {
           <div className="flex flex-row justify-end items-center">
             <p className="text-[8px]">
               {" "}
-              {data?.recoleccion?.fecha.toString().slice(0, 10)}
+              {data?.fechaEntrega.toString().slice(0, 10)}
             </p>
             <p className=" h-5 w-5 bg-gray-900 text-white text-[10px] text-center pt-[2px] ml-1">
               PM

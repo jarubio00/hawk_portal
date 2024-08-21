@@ -6,7 +6,7 @@ import bcrypt from "bcrypt";
 
 import prisma from "@/app/libs/prismadb";
 import axios from "axios";
-//import { userActivityRegister } from "@/app/api/utils/activity";
+import { userActivityRegister } from "@/app/api/utils/activity";
 
 export async function POST(request: Request) {
   const body = await request.json();
@@ -61,7 +61,7 @@ export async function POST(request: Request) {
 
     if (pass) {
       result = { status: 1, statusMessage: "Celular verificado" };
-      //const activity = await userActivityRegister(pass.id, 5);
+      const activity = await userActivityRegister(pass.id, 5);
     }
   }
 

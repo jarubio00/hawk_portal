@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import prisma from "@/app/libs/prismadb";
 
 import getCurrentUser from "@/app/actions/getCurrentUser";
-import { format, subHours, addHours, addDays } from "date-fns";
+import { format, subHours, addHours, addDays, startOfDay } from "date-fns";
 import {
   checkIfBlockedRec,
   checkIfBlockedEnt,
@@ -159,10 +159,13 @@ export async function GET(request: Request, { params }: { params: IParams }) {
   //console.log("final ent date: ", entDate);
   //console.log("final ent bloque: ", entBloque);
 
+  console.log(startOfDay(recDate));
+  console.log(startOfDay(entDate));
+
   const response = {
-    recDate: recDate,
+    recDate: startOfDay(recDate),
     recBloque: recBloque,
-    entDate: entDate,
+    entDate: startOfDay(entDate),
     entBloque: entBloque,
     recs: recCheck.length >= 1,
     recsData: recCheck,

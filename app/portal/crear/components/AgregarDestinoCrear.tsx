@@ -78,6 +78,7 @@ const AgregarDestinoCrear: React.FC<AgregarDestinoCrearProps> = ({
   const [sinCpDialogOpen, setSinCpDialogOpen] = useState(false);
   const [dialogContent, setDialogContent] = useState({});
   const [coloniaTooltip, setColoniaTooltip] = useState(false);
+  const [coloniaError, setColoniaError] = useState(false);
 
   const {
     updateActiveStep,
@@ -90,6 +91,7 @@ const AgregarDestinoCrear: React.FC<AgregarDestinoCrearProps> = ({
 
   const {
     register,
+    getValues,
     handleSubmit,
     setValue,
     watch,
@@ -177,6 +179,8 @@ const AgregarDestinoCrear: React.FC<AgregarDestinoCrearProps> = ({
   }, [saved]);
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
+    console.log("on submit");
+    console.log(data.colonia);
     if (otraColoniaSelected && !data?.otraColonia) {
       setError("otraColonia", {
         type: "custom",
@@ -285,6 +289,7 @@ const AgregarDestinoCrear: React.FC<AgregarDestinoCrearProps> = ({
   };
 
   const handleOnCancelCp = () => {
+    setOtraColoniaSelected(false);
     setUsingCpFromSearch(false);
     setCpFromSearch(0);
     formReset();
@@ -323,9 +328,15 @@ const AgregarDestinoCrear: React.FC<AgregarDestinoCrearProps> = ({
   const handleNext = () => {
     if (!saved) {
       if (cpActive) {
-        console.log(pedido?.destino?.cpId);
-        setCustomValue("cp", cpFromSearch);
-        handleSubmit(onSubmit)();
+        if (!otraColoniaSelected && !getValues().colonia) {
+          console.log("error colonia");
+          setColoniaError(true);
+        } else {
+          setCustomValue("cp", cpFromSearch);
+          console.log("handle next before submit");
+          handleSubmit(onSubmit)();
+        }
+
         //
       } else {
         setCpError({
@@ -367,48 +378,60 @@ const AgregarDestinoCrear: React.FC<AgregarDestinoCrearProps> = ({
                       : "col-span-2"
                   }`}
                 >
-                  <Select
-                    id="colonia"
-                    //@ts-ignore
-                    register={register}
-                    onFocus={() => setColoniaTooltip(true)}
-                    onBlur={() => setColoniaTooltip(false)}
-                    placeholder={coloniaPlaceholder}
-                    onChange={(val: any) => {
-                      console.log(val);
-                      if (val.value && val.value == 9999) {
-                        setOtraColoniaSelected(true);
-                        setCustomValue("isOtraColonia", true);
-                        setCustomValue("colonia", val);
-                      } else {
-                        setOtraColoniaSelected(false);
-                        setCustomValue("isOtraColonia", false);
-                        setCustomValue("otraColonia", "");
-                        setCustomValue("colonia", val);
-                      }
-                    }}
-                    value={colonia ? colonia : null}
-                    isClearable
-                    options={colonias}
-                    isLoading={coloniasLoading}
-                    isDisabled={!cpActive || saved}
-                    classNames={{
-                      control: () => "p-2 border-2",
-
-                      input: () => "text-lg",
-                      option: () => "text-lg",
-                    }}
-                    theme={(theme) => ({
-                      ...theme,
-                      borderRadius: 6,
-                      colors: {
-                        ...theme.colors,
-                        primary: "black",
-                        primary25: "#ffe4e6",
-                      },
-                    })}
-                    components={{ LoadingIndicator }}
-                  />
+                  <div
+                    className={`${
+                      coloniaError && "border-2 border-red-500 rounded-md"
+                    }`}
+                  >
+                    <Select
+                      id="colonia"
+                      //@ts-ignore
+                      register={register}
+                      onFocus={() => setColoniaTooltip(true)}
+                      onBlur={() => setColoniaTooltip(false)}
+                      placeholder={coloniaPlaceholder}
+                      onChange={(val: any) => {
+                        setColoniaError(false);
+                        if (val) {
+                          if (val.value && val.value == 9999) {
+                            setOtraColoniaSelected(true);
+                            setCustomValue("isOtraColonia", true);
+                            setCustomValue("colonia", val);
+                          } else {
+                            setOtraColoniaSelected(false);
+                            setCustomValue("isOtraColonia", false);
+                            setCustomValue("otraColonia", "");
+                            setCustomValue("colonia", val);
+                          }
+                        }
+                      }}
+                      value={colonia ? colonia : null}
+                      //isClearable
+                      options={colonias}
+                      isLoading={coloniasLoading}
+                      isDisabled={!cpActive || saved}
+                      classNames={{
+                        control: () => "p-2 border-2",
+                        input: () => "text-lg",
+                        option: () => "text-lg",
+                      }}
+                      theme={(theme) => ({
+                        ...theme,
+                        borderRadius: 6,
+                        colors: {
+                          ...theme.colors,
+                          primary: "black",
+                          primary25: "#ffe4e6",
+                        },
+                      })}
+                      components={{ LoadingIndicator }}
+                    />
+                  </div>
+                  <p className="text-[11px] md:text-xs text-red-500 mt-1">
+                    {coloniaError
+                      ? "Selecciona la colonia de la lista, si no se encuentra selecciona OTRA COLONIA e ingresala en el campo que aparece."
+                      : ""}
+                  </p>
                 </div>
               </TooltipTrigger>
               <TooltipContent>

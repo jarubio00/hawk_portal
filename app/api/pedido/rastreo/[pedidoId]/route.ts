@@ -80,13 +80,8 @@ export async function GET(req: Request, { params }: { params: IParams }) {
         entregado: ops.entregado ? true : false,
         entregadoAt: ops.entregadoAt ? ops.entregadoAt : undefined,
         incidenciaRec: incisRecArray.length ? true : false,
-        incidenciaRecAt: incisRecArray
-          ? incisRecArray[0]?.createdAt
-          : undefined,
+
         incidenciaEnt: incisEntArray.length ? true : false,
-        incidenciaEntAt: incisEntArray
-          ? incisRecArray[0]?.createdAt
-          : undefined,
       };
     } else {
       rastreo = {};
