@@ -172,7 +172,11 @@ const ConfirmarStep: React.FC<ConfirmarStepProps> = ({
           onClick={handleBack}
           disabled={isLoading}
         />
-        <Button label="Terminar" onClick={handleNext} disabled={isLoading} />
+        <Button
+          label="Terminar"
+          onClick={handleNext}
+          disabled={isLoading || !pedido?.metodoPago?.passed}
+        />
       </div>
     </div>
   );

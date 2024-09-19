@@ -349,6 +349,36 @@ export async function getBloquesEntrega(fecha: string) {
   return result;
 }
 
+export async function autoProgramaNuevo(
+  municipioRecId: number,
+  municipioEntregaId: number
+) {
+  const result = await axios
+    .post(`/api/programa/autodev`, {
+      municipioRecId: municipioRecId,
+      municipioEntregaId: municipioEntregaId,
+    })
+    .then((response) => {
+      console.log("paso api");
+      const responseData: ApiResponse = {
+        status: 1,
+        statusMessage: "OK",
+        response: { data: response.data },
+      };
+      return responseData;
+    })
+    .catch((error) => {
+      const response: ApiResponse = {
+        status: 2,
+        statusMessage: "Error de API",
+        response: { data: {}, error: error },
+      };
+      return response;
+    });
+
+  return result;
+}
+
 export async function autoPrograma(direccionId: number) {
   const result = await axios
     .get(`/api/programa/auto/${direccionId}`)

@@ -99,7 +99,19 @@ const MetodoPagoCard: React.FC<MetodoPagoCardProps> = ({ data }) => {
         <div className="flex flex-row items-center gap-3 my-2">
           <div className="flex flex-row items-center gap-4">
             <EfectivoButton />
-            <TransferenciaButton />
+            <div
+              className={`border-2  text-xs
+                        shadow-md rounded-md py-1 px-2 cursor-pointer
+                        ${
+                          tipoPago == "transfer"
+                            ? "bg-rose-500 text-white border-rose-500"
+                            : "bg-white  border-neutral-800"
+                        }
+                        `}
+              onClick={() => handleTipoPago("transfer")}
+            >
+              <p className=" text-center">Transferencia o depósito</p>
+            </div>
           </div>
         </div>
       </div>
@@ -146,18 +158,14 @@ const MetodoPagoCard: React.FC<MetodoPagoCardProps> = ({ data }) => {
           </AlertDialogTrigger>
           <AlertDialogContent className=" ">
             <AlertDialogHeader>
-              <AlertDialogTitle>AVISO IMPORTANTE</AlertDialogTitle>
+              <AlertDialogTitle>RUTA CADEREYTA</AlertDialogTitle>
               <AlertDialogDescription className="text-black">
-                Al dar clic en TERMINAR se acepta que en caso de realizar un
-                cambio en la forma de pago seleccionado en la guía posterior a
-                la generación de el envío, este se puede ver desfasado en
-                tiempos de entrega debido a la revisión del pago. Recordamos que
-                los operadores no cuentan con caja chica por lo que es
-                importante el importe sea exacto en caso de pago en efectivo.
+                Te recordamos que nuestra ruta de recolecciones en el municipio
+                de Cadereyta es únicamente los días sábados en el bloque
+                matutino.
                 <p className="mt-4 text-xs font-bold">
-                  Si deseas realizar el pago de varias guías en una sola
-                  transferencia, los envíos deben ser del mismo día y se deberá
-                  adjuntar el comprobante en todas las guías correspondientes.
+                  Puedes generar el envío en cualquier momento y será
+                  recolectado el siguiente día sábado hábil.
                 </p>
                 <div className="flex flex-col md:flex-row items-center justify-between mt-4 md:mt-8 gap-2 md:gap-0">
                   <div className="flex flex-row gap-1 items-center">
@@ -192,83 +200,6 @@ const MetodoPagoCard: React.FC<MetodoPagoCardProps> = ({ data }) => {
               <AlertDialogAction
                 className="px-4 mx-4"
                 onClick={() => handleTipoPago("efectivo")}
-              >
-                Continuar
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      </div>
-    );
-  }
-
-  function TransferenciaButton() {
-    return (
-      <div>
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <div
-              className={`border-2  text-xs
-                        shadow-md rounded-md py-1 px-2 cursor-pointer
-                        ${
-                          tipoPago == "transfer"
-                            ? "bg-rose-500 text-white border-rose-500"
-                            : "bg-white  border-neutral-800"
-                        }
-                        `}
-              onClick={() => {}}
-            >
-              <p className=" text-center">Transferencia o depósito</p>
-            </div>
-          </AlertDialogTrigger>
-          <AlertDialogContent className=" ">
-            <AlertDialogHeader>
-              <AlertDialogTitle>AVISO IMPORTANTE</AlertDialogTitle>
-              <AlertDialogDescription className="text-black">
-                Al dar clic en TERMINAR se acepta que en caso de realizar un
-                cambio en la forma de pago seleccionado en la guía posterior a
-                la generación de el envío, este se puede ver desfasado en
-                tiempos de entrega debido a la revisión del pago. Recordamos que
-                los operadores no cuentan con caja chica por lo que es
-                importante el importe sea exacto en caso de pago en efectivo.
-                <p className="mt-4 text-xs font-bold">
-                  Si deseas realizar el pago de varias guías en una sola
-                  transferencia, los envíos deben ser del mismo día y se deberá
-                  adjuntar el comprobante en todas las guías correspondientes.
-                </p>
-                <div className="flex flex-col md:flex-row items-center justify-between mt-4 md:mt-8 gap-2 md:gap-0">
-                  <div className="flex flex-row gap-1 items-center">
-                    <MdPhone className="text-white p-1 h-6 w-6 bg-deep-orange-400 rounded-full" />
-                    <p className="text-grey-800 font-bold text-xs">
-                      81 4738 09 49
-                    </p>
-                  </div>
-                  <div className="flex flex-row gap-1 items-center">
-                    <FaWhatsapp className="text-white p-1 h-6 w-6 bg-green-500 rounded-full" />
-                    <p className="text-grey-800 font-bold text-xs">
-                      81 1553 83 33
-                    </p>
-                  </div>
-                  <div className="flex flex-row gap-1 items-center">
-                    <MdEmail className="text-white p-1 h-6 w-6 bg-amber-700 rounded-full" />
-                    <p className="text-grey-800 font-bold text-xs">
-                      contacto@lamensajeria.mx
-                    </p>
-                  </div>
-                </div>
-                <p className="mt-3 text-rose-500 text-xs">
-                  Horario de atención Lunes a viernes de 9 am a 6 pm / sábado de
-                  9 am a 1 pm
-                </p>
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel className="px-4 mx-4">
-                Regresar
-              </AlertDialogCancel>
-              <AlertDialogAction
-                className="px-4 mx-4"
-                onClick={() => handleTipoPago("transfer")}
               >
                 Continuar
               </AlertDialogAction>

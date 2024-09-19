@@ -34,7 +34,7 @@ const PedidoProvider: React.FC<Props> = ({ children }) => {
   const [tipoPrograma, setTipoPrograma] = useState("");
   //const [tipoPrograma, setTipoPrograma] = useState("custom");
   const [programaRun, setProgramaRun] = useState(1);
-  const [tipoPago, setTipoPago] = useState("efectivo");
+  const [tipoPago, setTipoPago] = useState("");
 
   const [drawer, setDrawer] = useState<IDrawer>({
     open: false,

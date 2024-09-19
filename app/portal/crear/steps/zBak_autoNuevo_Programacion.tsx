@@ -137,13 +137,12 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
     let autoDates;
     let data: any;
 
-    if (pedido?.recoleccion?.direccionId) {
+    if (pedido?.recoleccion?.municipioId && pedido?.destino?.municipioId) {
       try {
-        /*  autoDates = await autoPrograma(
+        autoDates = await autoPrograma(
           pedido?.recoleccion?.municipioId,
           pedido?.destino?.municipioId
-        ); */
-        autoDates = await autoPrograma(pedido?.recoleccion?.direccionId);
+        );
         data = autoDates?.response?.data;
         console.log("saving programa");
         console.log(data.recDate);
@@ -392,90 +391,89 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
           onClick={handleBack}
           disabled={isAutoLoading}
         />
-        <Button
-          label="Siguiente"
-          onClick={handleNext}
-          disabled={
-            isAutoLoading ||
-            isRecLoading ||
-            isEntLoading ||
-            !pedido?.programa?.fechaRecoleccion ||
-            pedido?.programa?.bloqueRecoleccion == 3 ||
-            !pedido?.programa?.fechaEntrega ||
-            pedido?.programa?.bloqueEntrega == 3
-          }
-        />
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button
+              label="Siguiente"
+              onClick={() => {}}
+              disabled={
+                isAutoLoading ||
+                isRecLoading ||
+                isEntLoading ||
+                !pedido?.programa?.fechaRecoleccion ||
+                pedido?.programa?.bloqueRecoleccion == 3 ||
+                !pedido?.programa?.fechaEntrega ||
+                pedido?.programa?.bloqueEntrega == 3
+              }
+            />
+          </AlertDialogTrigger>
+          <AlertDialogContent className="bg-[url('/images/avisos/rain1.gif')] bg-blue-100">
+            <AlertDialogHeader>
+              <AlertDialogTitle>AVISO IMPORTANTE</AlertDialogTitle>
+              <AlertDialogDescription className="text-black">
+                Debido a las fuertes lluvias que se esperan en Monterrey y zona
+                metropolitana en los próximos días, nuestras operaciones podrían
+                verse afectadas.
+                <p className="mt-4 text-xs font-bold">
+                  Recordamos que nuestros bloques pueden llenarse con
+                  anticipación en la página, el sistema en automático muestra
+                  los horarios disponibles para recolección y entrega.
+                  Considerar que los AGREGADOS no tienen prioridad sobre los
+                  envíos programados en tiempo.
+                </p>
+                <div className="flex flex-col md:flex-row items-center justify-between mt-4 md:mt-8 gap-2 md:gap-0">
+                  <div className="flex flex-row gap-1 items-center">
+                    <MdPhone className="text-white p-1 h-6 w-6 bg-deep-orange-400 rounded-full" />
+                    <p className="text-grey-800 font-bold text-xs">
+                      81 4738 09 49
+                    </p>
+                  </div>
+                  <div className="flex flex-row gap-1 items-center">
+                    <FaWhatsapp className="text-white p-1 h-6 w-6 bg-green-500 rounded-full" />
+                    <p className="text-grey-800 font-bold text-xs">
+                      81 1553 83 33
+                    </p>
+                  </div>
+                  <div className="flex flex-row gap-1 items-center">
+                    <MdEmail className="text-white p-1 h-6 w-6 bg-amber-700 rounded-full" />
+                    <p className="text-grey-800 font-bold text-xs">
+                      contacto@lamensajeria.mx
+                    </p>
+                  </div>
+                </div>
+                {/* <div className="flex flex-col md:flex-row items-center justify-evenly mt-1 md:mt-2 gap-2 md:gap-0">
+                  <div className="flex flex-row gap-1 items-center">
+                    <FaFacebookF className="text-white p-1 h-6 w-6 bg-blue-900 rounded-full" />
+                    <p className="text-grey-800 font-bold text-xs">
+                      mensajeriamx
+                    </p>
+                  </div>
+                  <div className="flex flex-row gap-1 items-center">
+                    <FaInstagram className="text-white p-1 h-6 w-6 bg-purple-500 rounded-full" />
+                    <p className="text-grey-800 font-bold text-xs">
+                      mensajeria.mx
+                    </p>
+                  </div>
+                </div> */}
+                <p className="mt-3 text-rose-500 text-xs">
+                  Horario de atención Lunes a viernes de 9 am a 6 pm / sábado de
+                  9 am a 1 pm
+                </p>
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel className="px-4 mx-4">
+                Regresar
+              </AlertDialogCancel>
+              <AlertDialogAction className="px-4 mx-4" onClick={handleNext}>
+                Continuar
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );
-
-  /*  <AlertDialog>
-  <AlertDialogTrigger asChild>
-    <Button
-      label="Siguiente"
-      onClick={handleNext}
-      disabled={
-        isAutoLoading ||
-        isRecLoading ||
-        isEntLoading ||
-        !pedido?.programa?.fechaRecoleccion ||
-        pedido?.programa?.bloqueRecoleccion == 3 ||
-        !pedido?.programa?.fechaEntrega ||
-        pedido?.programa?.bloqueEntrega == 3
-      }
-    />
-  </AlertDialogTrigger>
-  <AlertDialogContent className="bg-[url('/images/avisos/rain1.gif')] bg-blue-100">
-    <AlertDialogHeader>
-      <AlertDialogTitle>AVISO IMPORTANTE</AlertDialogTitle>
-      <AlertDialogDescription className="text-black">
-        Debido a las fuertes lluvias que se esperan en Monterrey y zona
-        metropolitana en los próximos días, nuestras operaciones podrían
-        verse afectadas.
-        <p className="mt-4 text-xs font-bold">
-          Recordamos que nuestros bloques pueden llenarse con
-          anticipación en la página, el sistema en automático muestra
-          los horarios disponibles para recolección y entrega.
-          Considerar que los AGREGADOS no tienen prioridad sobre los
-          envíos programados en tiempo.
-        </p>
-        <div className="flex flex-col md:flex-row items-center justify-between mt-4 md:mt-8 gap-2 md:gap-0">
-          <div className="flex flex-row gap-1 items-center">
-            <MdPhone className="text-white p-1 h-6 w-6 bg-deep-orange-400 rounded-full" />
-            <p className="text-grey-800 font-bold text-xs">
-              81 4738 09 49
-            </p>
-          </div>
-          <div className="flex flex-row gap-1 items-center">
-            <FaWhatsapp className="text-white p-1 h-6 w-6 bg-green-500 rounded-full" />
-            <p className="text-grey-800 font-bold text-xs">
-              81 1553 83 33
-            </p>
-          </div>
-          <div className="flex flex-row gap-1 items-center">
-            <MdEmail className="text-white p-1 h-6 w-6 bg-amber-700 rounded-full" />
-            <p className="text-grey-800 font-bold text-xs">
-              contacto@lamensajeria.mx
-            </p>
-          </div>
-        </div>
-       
-        <p className="mt-3 text-rose-500 text-xs">
-          Horario de atención Lunes a viernes de 9 am a 6 pm / sábado de
-          9 am a 1 pm
-        </p>
-      </AlertDialogDescription>
-    </AlertDialogHeader>
-    <AlertDialogFooter>
-      <AlertDialogCancel className="px-4 mx-4">
-        Regresar
-      </AlertDialogCancel>
-      <AlertDialogAction className="px-4 mx-4" onClick={handleNext}>
-        Continuar
-      </AlertDialogAction>
-    </AlertDialogFooter>
-  </AlertDialogContent>
-</AlertDialog> */
 
   function ProgramarRecoleccion() {
     //console.log(pedido?.programa?.fechaRecoleccion);

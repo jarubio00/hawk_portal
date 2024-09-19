@@ -16,6 +16,24 @@ import { PedidoContextType, IRecoleccion } from "@/app/types/pedido";
 import Button from "@/app/components/Button";
 import { FaPlus } from "react-icons/fa";
 import StepHeading from "../components/StepHeading";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
+  FaFacebook,
+  FaFacebookF,
+  FaInstagram,
+  FaWhatsapp,
+} from "react-icons/fa";
+import { MdEmail, MdPhone } from "react-icons/md";
 
 interface RecoleccionStepProps {
   label?: string;
@@ -167,8 +185,65 @@ const RecoleccionStep: React.FC<RecoleccionStepProps> = ({
       <div className="my-2">
         <p className="text-xs text-red-500">{errorMessage}</p>
       </div>
-      <div className="my-4">
-        <Button label="Siguiente" onClick={handleNext} />
+
+      <div>
+        {pedido?.recoleccion?.municipioId !== 10 ? (
+          <div className="my-4">
+            <Button label="Siguiente" onClick={handleNext} />
+          </div>
+        ) : (
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button label="Siguiente" onClick={() => {}} disabled={false} />
+            </AlertDialogTrigger>
+            <AlertDialogContent className=" ">
+              <AlertDialogHeader>
+                <AlertDialogTitle>RUTA CADEREYTA</AlertDialogTitle>
+                <AlertDialogDescription className="text-black">
+                  Te recordamos que nuestra ruta de recolecciones en el
+                  municipio de Cadereyta es únicamente los días sábados en el
+                  bloque 1 (entre 10:00 y 15:00 hrs).
+                  <p className="mt-4 text-xs font-bold">
+                    Puedes generar el envío en cualquier momento y será
+                    recolectado el siguiente día sábado hábil.
+                  </p>
+                  <div className="flex flex-col md:flex-row items-center justify-between mt-4 md:mt-8 gap-2 md:gap-0">
+                    <div className="flex flex-row gap-1 items-center">
+                      <MdPhone className="text-white p-1 h-6 w-6 bg-deep-orange-400 rounded-full" />
+                      <p className="text-grey-800 font-bold text-xs">
+                        81 4738 09 49
+                      </p>
+                    </div>
+                    <div className="flex flex-row gap-1 items-center">
+                      <FaWhatsapp className="text-white p-1 h-6 w-6 bg-green-500 rounded-full" />
+                      <p className="text-grey-800 font-bold text-xs">
+                        81 1553 83 33
+                      </p>
+                    </div>
+                    <div className="flex flex-row gap-1 items-center">
+                      <MdEmail className="text-white p-1 h-6 w-6 bg-amber-700 rounded-full" />
+                      <p className="text-grey-800 font-bold text-xs">
+                        contacto@lamensajeria.mx
+                      </p>
+                    </div>
+                  </div>
+                  <p className="mt-3 text-rose-500 text-xs">
+                    Horario de atención Lunes a viernes de 9 am a 6 pm / sábado
+                    de 9 am a 1 pm
+                  </p>
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel className="px-4 mx-4">
+                  Regresar
+                </AlertDialogCancel>
+                <AlertDialogAction className="px-4 mx-4" onClick={handleNext}>
+                  Continuar
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        )}
       </div>
     </div>
   );
