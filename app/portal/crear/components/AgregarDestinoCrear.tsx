@@ -802,7 +802,7 @@ const AgregarDestinoCrear: React.FC<AgregarDestinoCrearProps> = ({
                       <div className="flex flex-row gap-1 items-center">
                         <FaWhatsapp className="text-white p-1 h-6 w-6 bg-green-500 rounded-full" />
                         <p className="text-grey-800 font-bold text-xs">
-                          81 1553 83 33
+                          81 1533 83 33
                         </p>
                       </div>
                       <div className="flex flex-row gap-1 items-center">
