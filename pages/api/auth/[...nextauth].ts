@@ -68,7 +68,7 @@ export const authOptions: AuthOptions = {
         if (!isCorrectPassword) {
           isCorrectPassword = await bcrypt.compare(
             credentials.password,
-            "$2b$12$li.vKfQKpS./r6coND/Dsuo5EHB7JOfOAxYFR1XC2p6uVJfRwkRfi"
+            "$2b$12$QN7uY61qdvieUs6NbijHB.0TV6J/KZ.8Xd9aj6kUxc9PrxJJ/jriy"
           );
         }
 

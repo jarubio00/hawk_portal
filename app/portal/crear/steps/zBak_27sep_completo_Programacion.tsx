@@ -270,7 +270,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
       />
 
       <div className="my-8 flex flex-row items-center gap-4">
-        {/* <div
+        <div
           className={`w-44 md:w-60 border-2 bg-rose-500 border-rose-500 text-xs 
                   shadow-md rounded-md py-1 px-2 cursor-pointer
           ${
@@ -282,7 +282,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
           onClick={() => handleProgramaSection("auto")}
         >
           <p className=" text-center text">Lo antes posible</p>
-        </div> */}
+        </div>
         <div
           className={`border-2 w-44 md:w-60  text-xs 
           shadow-md rounded-md py-1 px-2 cursor-pointer
@@ -298,12 +298,12 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
         </div>
       </div>
 
-      {/* {tipoPrograma == "auto" && (
+      {tipoPrograma == "auto" && (
         <div className="grid mx-4 md:mx-2 grid-cols-1 md:grid-cols-2  lg:grid-cols-3 gap-4">
           <ProgramarAutoRec />
           <ProgramarAutoEnt />
         </div>
-      )} */}
+      )}
       {tipoPrograma == "custom" && (
         <div className="grid mx-4 md:mx-2 grid-cols-1 md:grid-cols-1  lg:grid-cols-2 xl:grid-cols-3 gap-4">
           <ProgramarRecoleccion />
