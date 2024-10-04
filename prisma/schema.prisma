@@ -1049,6 +1049,22 @@ model KommoSync {
   cliente   User          @relation(fields: [clientId], references: [id])
 }
 
+model ConfiguracionHorarios {
+  id                       Int       @id @default(autoincrement())
+  bloque1GuiasLimitEnabled Boolean   @default(false)
+  bloque2GuiasLimitEnabled Boolean   @default(false)
+  bloque1GuiasLimit        Int
+  bloque2GuiasLimit        Int
+  bloque1HoraLimit         Int
+  bloque1MinutosLimit      Int
+  bloque2HoraLimit         Int
+  bloque2MinutosLimit      Int
+  createdAt                DateTime? @default(dbgenerated("(now())"))
+  createdBy                Int?      @default(1)
+  updatedAt                DateTime? @updatedAt
+  updatedBy                Int?      @default(1)
+}
+
 enum TipoBloques {
   AM
   PM
