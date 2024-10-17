@@ -247,6 +247,7 @@ model Pedido {
   labelImageUrl         String?                 @db.LongText
   labelPdfUrl           String?                 @db.LongText
   migrated              Boolean                 @default(false)
+  compMigrated          Boolean                 @default(false)
   migratedAt            DateTime?
   migratedBy            String?
   userCreated           Boolean                 @default(true)
@@ -272,6 +273,7 @@ model Pedido {
   @@index([entregaMunicipioId], map: "Pedidos_entregaMunicipioId_fkey")
   @@index([estatusPedidoId], map: "Pedidos_estatusPedidoId_fkey")
   @@index([paqTipoId], map: "Pedidos_paqTipoId_fkey")
+  @@index([createdAt], map: "Pedidos_dateInxs_fkey")
   @@map("Pedidos")
 }
 
@@ -420,13 +422,14 @@ model ActividadClientes {
 }
 
 model ActividadPlataformaClientes {
-  id        Int                                 @id @default(autoincrement())
-  clienteId Int
-  tipoId    Int
-  createdAt DateTime                            @default(dbgenerated("(now())"))
-  createdBy Int                                 @default(1)
-  tipo      CatalogoActividadPlataformaClientes @relation(fields: [tipoId], references: [id])
-  cliente   User                                @relation(fields: [clienteId], references: [id])
+  id         Int                                 @id @default(autoincrement())
+  clienteId  Int
+  tipoId     Int
+  createdAt  DateTime                            @default(dbgenerated("(now())"))
+  createdBy  Int                                 @default(1)
+  appVersion String?
+  tipo       CatalogoActividadPlataformaClientes @relation(fields: [tipoId], references: [id])
+  cliente    User                                @relation(fields: [clienteId], references: [id])
 }
 
 model CatalogoActividadPlataformaClientes {

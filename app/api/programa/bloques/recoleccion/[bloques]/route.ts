@@ -92,14 +92,11 @@ export async function POST(request: Request, { params }: { params: IParams }) {
 
     console.log(conf);
 
-    console.log("change limit tests.......");
+    console.log("cambio horario tests.......");
     console.log(fecha);
-    console.log(fecha.getDay());
-    console.log(nowMinutes);
-    console.log(bloque1LimitTotal);
-    console.log(bloque2LimitTotal);
+    console.log(hoy);
 
-    console.log("change limit tests<<<<<.......>>>>>");
+    console.log("cambio horario tests<<<<<.......>>>>>");
 
     if (hoyDate == fechaDate) {
       if (fecha.getDay() == 6) {

@@ -35,6 +35,9 @@ export async function POST(request: Request) {
   let labelResult = "";
   let labelPdfResult = "";
 
+  console.log(p.programa.fechaEntrega);
+  console.log(p.programa?.fechaRecoleccion);
+
   if (p) {
     const pedidoCrear = {
       clienteId: currentUser.id,
