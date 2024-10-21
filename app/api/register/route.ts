@@ -43,5 +43,5 @@ export async function POST(request: Request) {
 
     const otpResult = await axios(axiosConfig);
 
-    console.log("response: ", otpResult.data);
+     //console.log("response: ", otpResult.data);
   } */

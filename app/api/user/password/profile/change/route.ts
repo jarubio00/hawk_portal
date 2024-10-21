@@ -11,7 +11,7 @@ export async function POST(request: Request) {
   const currentUser = await getCurrentUser();
 
   if (!currentUser) {
-    return NextResponse.error();
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
   const body = await request.json();
@@ -20,7 +20,10 @@ export async function POST(request: Request) {
   //console.log('ch body',body);
 
   if (!oldPassword || !newPassword) {
-    return NextResponse.error();
+    return NextResponse.json(
+      { error: "Error de validación de datos" },
+      { status: 403 }
+    );
   }
 
   const user = await prisma.user.findUnique({
@@ -30,7 +33,7 @@ export async function POST(request: Request) {
   });
 
   if (!user) {
-    return NextResponse.error();
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
   let passToCompare = oldPassword;

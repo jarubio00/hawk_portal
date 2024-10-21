@@ -12,12 +12,13 @@ import { createPdfZpl, createZpl } from "@/app/components/utils/zplUtils";
 import { ApiResponse } from "@/app/types";
 import { generateLabels } from "@/app/actions/utils";
 import { userActivityRegister } from "@/app/api/utils/activity";
+import { cl } from "@/app/api/utils/utils";
 
 export async function POST(request: Request) {
   const currentUser = await getCurrentUser();
 
   if (!currentUser) {
-    return NextResponse.error();
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
   const serverDateUTC = new Date();
@@ -35,8 +36,8 @@ export async function POST(request: Request) {
   let labelResult = "";
   let labelPdfResult = "";
 
-  console.log(p.programa.fechaEntrega);
-  console.log(p.programa?.fechaRecoleccion);
+  cl("PRECREATEENT", p.programa.fechaEntrega);
+  cl("PRECREATEREC", p.programa?.fechaRecoleccion);
 
   if (p) {
     const pedidoCrear = {
@@ -103,6 +104,7 @@ export async function POST(request: Request) {
         pedidos: {
           select: {
             id: true,
+            fechaEntrega: true,
           },
           orderBy: {
             createdAt: "desc",
@@ -113,6 +115,11 @@ export async function POST(request: Request) {
     });
 
     pedidoId = recoleccion.pedidos[0].id;
+    const createdEntrega = recoleccion.pedidos[0].fechaEntrega;
+    const createdReco = recoleccion.fecha;
+
+    cl("POSTCREATEENT", createdEntrega.toISOString());
+    cl("POSTCREATEREC", createdReco.toISOString());
 
     if (p.cobro) {
       const cobroAdd = await prisma.cobrosDestino.create({

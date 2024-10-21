@@ -8,7 +8,7 @@ export async function POST(request: Request) {
   const currentUser = await getCurrentUser();
 
   if (!currentUser) {
-    return NextResponse.error();
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
   const body = await request.json();
@@ -34,7 +34,10 @@ export async function POST(request: Request) {
 
   Object.keys(body).forEach((value: any) => {
     if (!body[value]) {
-      NextResponse.error();
+      NextResponse.json(
+        { error: "Error de validación de datos" },
+        { status: 403 }
+      );
     }
   });
 
@@ -46,7 +49,7 @@ export async function POST(request: Request) {
     }
   });
 
-  console.log(check); */
+   //console.log(check); */
 
   const direccion = await prisma.direccion.create({
     data: {

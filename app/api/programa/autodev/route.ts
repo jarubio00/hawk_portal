@@ -21,7 +21,7 @@ export async function POST(request: Request) {
   const { municipioRecId, municipioEntregaId } = body;
 
   if (!currentUser || !municipioRecId || !municipioRecId) {
-    return NextResponse.error();
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
   //Obteniendo hora del servidor
@@ -29,19 +29,19 @@ export async function POST(request: Request) {
   //Restando 6 horas para obtener en tiempo central
   const hoyDate = subHours(hoyDateUTC, 6);
 
-  console.log(hoyDateUTC);
-  console.log(hoyDate);
-  console.log("municipio recoleccion: " + municipioRecId);
-  console.log("municipio entrega: " + municipioEntregaId);
+  //console.log(hoyDateUTC);
+  //onsole.log(hoyDate);
+  //console.log("municipio recoleccion: " + municipioRecId);
+  //console.log("municipio entrega: " + municipioEntregaId);
 
   const hoyB1Limit = new Date("2024-09-17T11:30:00.000Z");
-  console.log(hoyB1Limit.getTime());
-  console.log(hoyDate.getTime());
+  //console.log(hoyB1Limit.getTime());
+  //console.log(hoyDate.getTime());
 
   const timeDiff = hoyB1Limit.getTime() - hoyDate.getTime();
   const minDiff = timeDiff / 1000 / 60;
 
-  console.log(minDiff);
+  //console.log(minDiff);
 
   const response = {};
 

@@ -2,23 +2,19 @@ import prisma from "@/app/libs/prismadb";
 import { Prisma } from "@prisma/client";
 //import getCurrentUser from "@/app/actions/getCurrentUser";
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth/next"
+import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 
+export async function GET(req: Request) {
+  try {
+    const currentUser = await getCurrentUser();
 
+    if (!currentUser) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
 
-
-export async function GET(req: Request){
- try {
-
-  const currentUser = await getCurrentUser();
-
-  if (!currentUser) {
-    return NextResponse.error();
-  } 
-  
-  //caintidad en lugar de 1 dentro del if
-  const counts:any = await prisma.$queryRaw`
+    //caintidad en lugar de 1 dentro del if
+    const counts: any = await prisma.$queryRaw`
     SELECT 
       SUM(IF(estatusCobroId = 1 OR estatusCobroId = 2 OR estatusCobroId = 3, 1,0)) AS activos,
       SUM(IF(estatusCobroId = 5, 1,0)) AS entregados,
@@ -29,15 +25,17 @@ export async function GET(req: Request){
     WHERE clienteId = ${currentUser?.id};
   `;
 
-  
-  return new Response(JSON.stringify(counts[0]), { status: 200 });
-   } catch (error: any) {
-  return new Response(JSON.stringify(JSON.stringify({ error: error.message })), { status: 403 });
-   }
+    return new Response(JSON.stringify(counts[0]), { status: 200 });
+  } catch (error: any) {
+    return new Response(
+      JSON.stringify(JSON.stringify({ error: error.message })),
+      { status: 403 }
+    );
+  }
 }
 
 export async function getSession() {
-  return await getServerSession(authOptions)
+  return await getServerSession(authOptions);
 }
 
 export async function getCurrentUser() {
@@ -54,7 +52,7 @@ export async function getCurrentUser() {
   const currentUser = await prisma.user.findUnique({
     where: {
       email: session.user.email as string,
-    }
+    },
   });
 
   if (!currentUser) {

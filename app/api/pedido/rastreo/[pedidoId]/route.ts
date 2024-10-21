@@ -15,7 +15,7 @@ export async function GET(req: Request, { params }: { params: IParams }) {
     const currentUser = await getCurrentUser();
 
     if (!currentUser) {
-      return NextResponse.error();
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     const { pedidoId } = params;

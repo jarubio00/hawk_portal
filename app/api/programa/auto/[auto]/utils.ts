@@ -135,9 +135,9 @@ export async function checkLimitRecolecciones(
   limitHour: number,
   limitMinutes: number
 ) {
-  console.log("check limit");
-  console.log(nowHour);
-  console.log(nowMinutes);
-  console.log(limitHour);
-  console.log(limitMinutes);
+  //console.log("check limit");
+  // console.log(nowHour);
+  //console.log(nowMinutes);
+  //console.log(limitHour);
+  //console.log(limitMinutes);
 }

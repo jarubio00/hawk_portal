@@ -9,10 +9,13 @@ export async function POST(request: Request) {
   const body = await request.json();
   const { uuid, code, newPassword } = body;
 
-  console.log("ch body", body);
+  //console.log("ch body", body);
 
   if (!uuid || !code || !newPassword) {
-    return NextResponse.error();
+    return NextResponse.json(
+      { error: "Error de validación de datos" },
+      { status: 403 }
+    );
   }
 
   const dbOtp: any = await prisma.$queryRaw`
@@ -22,7 +25,7 @@ export async function POST(request: Request) {
   let result;
   const otp = dbOtp[0];
 
-  console.log("dif: ", parseInt(otp.diff));
+  //console.log("dif: ", parseInt(otp.diff));
 
   if (parseInt(otp.diff) < 1) {
     result = { status: 2, statusMessage: "Tiempo expirado" };

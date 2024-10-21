@@ -8,6 +8,7 @@ import {
   checkLimitRecolecciones,
   checkRecolecciones,
 } from "../../../auto/[auto]/utils";
+import { cl } from "@/app/api/utils/utils";
 
 interface IParams {
   bloques?: string;
@@ -20,7 +21,7 @@ export async function POST(request: Request, { params }: { params: IParams }) {
   const { direccionId } = body;
 
   if (!currentUser || !direccionId) {
-    return NextResponse.error();
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
   const { bloques } = params;
@@ -36,6 +37,8 @@ export async function POST(request: Request, { params }: { params: IParams }) {
   const hoyUTC = new Date();
   const fecha = addHours(fechaUTC, 6);
   const hoy = subHours(hoyUTC, 6);
+
+  cl("PROGRA", fecha.toISOString());
 
   const conf = await prisma.configuracionHorarios.findUnique({
     where: {
@@ -90,13 +93,13 @@ export async function POST(request: Request, { params }: { params: IParams }) {
     const bloque1Limit = 10;
     const bloque2Limit = 15;
 
-    console.log(conf);
+    //console.log(conf);
 
-    console.log("cambio horario tests.......");
-    console.log(fecha);
-    console.log(hoy);
+    //console.log("cambio horario tests.......");
+    //console.log(fecha);
+    //console.log(hoy);
 
-    console.log("cambio horario tests<<<<<.......>>>>>");
+    //console.log("cambio horario tests<<<<<.......>>>>>");
 
     if (hoyDate == fechaDate) {
       if (fecha.getDay() == 6) {

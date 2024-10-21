@@ -7,20 +7,6 @@ import { authOptions } from "@/pages/api/auth/[...nextauth]";
 
 export async function GET(req: Request) {
   try {
-    // get page and lastCursor from query
-
-    /* const currentUser = await getCurrentUser();
-
-  if (!currentUser) {
-    return NextResponse.error();
-  } */
-
-    /*  const currentUser = await getCurrentUser();
-
-    if (!currentUser) {
-      return NextResponse.error();
-    } */
-
     const url = new URL(req.url);
 
     const pedidoId = url.searchParams.get("pedidoId");

@@ -7,31 +7,27 @@ interface IParams {
   direccionId?: string;
 }
 
-export async function POST(
-  request: Request, 
-  { params }: { params: IParams }
-) {
-
+export async function POST(request: Request, { params }: { params: IParams }) {
   const currentUser = await getCurrentUser();
 
   if (!currentUser) {
-    return NextResponse.error();
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
   const { direccionId } = params;
 
-  if (!direccionId || typeof direccionId !== 'string') {
-    throw new Error('Invalid ID');
+  if (!direccionId || typeof direccionId !== "string") {
+    throw new Error("Invalid ID");
   }
 
   const mark = await prisma.user.update({
     where: {
-      id: currentUser.id
+      id: currentUser.id,
     },
     data: {
-        direccionDefaultId: parseInt(direccionId)
-    }
-  }); 
+      direccionDefaultId: parseInt(direccionId),
+    },
+  });
 
   return NextResponse.json(mark);
 }

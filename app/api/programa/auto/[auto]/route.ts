@@ -19,7 +19,7 @@ export async function GET(request: Request, { params }: { params: IParams }) {
   const { auto } = params;
 
   if (!currentUser || !auto) {
-    return NextResponse.error();
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
   const bloque1Limit = 10;
@@ -50,7 +50,7 @@ export async function GET(request: Request, { params }: { params: IParams }) {
     },
   });
 
-  console.log("recs: ", blocked);
+  //console.log("recs: ", blocked);
 
   let newDate = hoy;
   let newBloque = 1;
@@ -65,7 +65,7 @@ export async function GET(request: Request, { params }: { params: IParams }) {
     newDate = hoy;
     newBloque = 2;
   } else if (hoyHora >= bloque2Limit) {
-    console.log("bloque 2 limit reached");
+    //console.log("bloque 2 limit reached");
     newDate = addDays(hoy, 1);
     newBloque = 1;
   }
@@ -159,8 +159,8 @@ export async function GET(request: Request, { params }: { params: IParams }) {
   //console.log("final ent date: ", entDate);
   //console.log("final ent bloque: ", entBloque);
 
-  console.log(startOfDay(recDate));
-  console.log(startOfDay(entDate));
+  //console.log(startOfDay(recDate));
+  //console.log(startOfDay(entDate));
 
   const response = {
     recDate: startOfDay(recDate),
