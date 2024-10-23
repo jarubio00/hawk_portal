@@ -30,14 +30,14 @@ const LoginForm: React.FC<LoginFormProps> = ({ currentUser }) => {
     password: Yup.string().required("La contraseña no puede estar vacía"),
   });
 
-  //let redirectUrl = "https://hawkportal.lamensajeria.mx/portal/adm/mispedidos";
-  let redirectUrl = "http://localhost:3010/portal/adm/mispedidos";
+  let redirectUrl = "https://hawkportal.lamensajeria.mx/portal/adm/mispedidos";
+  //let redirectUrl = "http://localhost:3010/portal/adm/mispedidos";
 
   if (currentUser) {
     const url = new URL(location.href);
     redirectUrl = url.searchParams.get("callbackUrl") || redirectUrl;
     router.push("/portal/adm/mispedidos");
-    console.log(redirectUrl);
+    //console.log(redirectUrl);
   }
 
   useEffect(() => {
