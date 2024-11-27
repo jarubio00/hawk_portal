@@ -392,7 +392,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
           onClick={handleBack}
           disabled={isAutoLoading}
         />
-        {/* <Button
+        <Button
           label="Siguiente"
           onClick={handleNext}
           disabled={
@@ -404,8 +404,8 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
             !pedido?.programa?.fechaEntrega ||
             pedido?.programa?.bloqueEntrega == 3
           }
-        /> */}
-        <AlertDialog>
+        />
+        {/* <AlertDialog>
           <AlertDialogTrigger asChild>
             <Button
               label="Siguiente"
@@ -470,7 +470,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
-        </AlertDialog>
+        </AlertDialog> */}
       </div>
     </div>
   );

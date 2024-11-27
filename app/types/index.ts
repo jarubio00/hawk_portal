@@ -14,6 +14,66 @@ import { CodeStatus, ConfirmationType } from "./constants";
 
 export type SafeDireccion = Omit<Direccion, "createdAt"> & {
   createdAt: string;
+  default?: Boolean;
+  municipio: any;
+};
+
+export type Tarifa = {
+  code: string;
+  name: string;
+  totalPrice: number;
+  transportSubTotal: number;
+  transportTax: number;
+  transportTotal: number;
+  fuelSubTotal: number;
+  fuelTax: number;
+  fuelTotal: number;
+  weightVolumetric: number;
+  weightProvided: number;
+  shipmentProtectionPrice?: number;
+  shipmentProtectionValue?: number;
+  estimatedDeliveryDateAndTime?: Date;
+};
+
+export type NacionalDestino = {
+  cpId: string;
+  colonia: string;
+  municipioId: string;
+  calle: string;
+  numero: string;
+  numeroInt: string;
+  empresa?: string;
+  referencias: string;
+  contactoNombre: string;
+  contactoTel: string;
+  otraColoniaNombre: string;
+  countryCode: string;
+  save: boolean;
+};
+
+export type NacionalOrigen = {
+  cpId: string;
+  colonia: string;
+  municipioId: string;
+  calle: string;
+  numero: string;
+  numeroInt: string;
+  empresa?: string;
+  referencias: string;
+  contactoNombre: string;
+  contactoTel: string;
+  otraColoniaNombre: string;
+  countryCode: string;
+  save: boolean;
+};
+
+export type NacionalPaquete = {
+  typeCode: string;
+  weight: number;
+  length: number;
+  width: number;
+  height: number;
+  description: string;
 };
 
 export type SafePaquete = Omit<Paquete, "createdAt"> & {
@@ -166,4 +226,92 @@ export type SafeRastreoOrig = {
   incidenciaRecAt?: Date;
   incidenciaEnt?: boolean;
   incidenciaEntAt?: Date;
+};
+
+export type ShipmentRequest = {
+  plannedShippingDateAndTime: Date;
+  pickup: false;
+  productCode: string;
+  shipperDetails: {
+    postalAdrress: PostalAddress;
+    contactInformation: contactInformation;
+  };
+  receiverDetails: {
+    postalAdrress: PostalAddress;
+    contactInformation: contactInformation;
+  };
+  packageContent: ShipmentContent;
+};
+
+export type PostalAddress = {
+  postalCode: string;
+  cityName: string;
+  countryCode: string;
+  addressLine1: string;
+  addressLine2: string;
+  addressLine3: string;
+  countryName: string;
+  addressType: string;
+};
+
+export type contactInformation = {
+  email: string;
+  phone: string;
+  mobilePhone: string;
+  companyName: string;
+  fullName: string;
+};
+
+export type ShipmentContent = {
+  packageType: string;
+  weight: number;
+  length: number;
+  width: number;
+  height: number;
+  description: string;
+};
+
+export type NacionalShipment = {
+  partnerId: number;
+  partnerClienteId: string;
+  sellPrice: number;
+  plannedShippingDateAndTime: string;
+  pickup: boolean;
+  productCode: string;
+  shipperDetails: NacionalAddressDetails;
+  receiverDetails: NacionalAddressDetails;
+  packageContent: NacionalPackageContent;
+};
+
+export type NacionalPackageContent = {
+  packageType: string;
+  weight: number;
+  length: number;
+  width: number;
+  height: number;
+  description: string;
+};
+
+export type NacionalAddressDetails = {
+  postalAddress: NacionalPostalAddress;
+  contactInformation: NacionalContactInformation;
+  addressTypeCode: string;
+};
+
+export type NacionalContactInformation = {
+  email: string;
+  phone: string;
+  mobilePhone: string;
+  companyName: string;
+  fullName: string;
+};
+
+export type NacionalPostalAddress = {
+  postalCode: string;
+  cityName: string;
+  countryCode: string;
+  addressLine1: string;
+  addressLine2: string;
+  addressLine3: string;
+  countryName: string;
 };

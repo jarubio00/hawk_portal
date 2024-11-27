@@ -2,49 +2,42 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import useLoader from "@/app/hooks/useLoader";
-import NacionalWidget from "./NacionalWidget";
-
-const useMediaQuery = (width: any) => {
-  const [targetReached, setTargetReached] = useState(false);
-
-  const updateTarget = useCallback((e: any) => {
-    if (e.matches) {
-      setTargetReached(true);
-    } else {
-      setTargetReached(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    const media = window.matchMedia(`(max-width: ${width}px)`);
-    media.addEventListener("change", updateTarget);
-
-    // Check on mount (callback is not called until a change occurs)
-    if (media.matches) {
-      setTargetReached(true);
-    }
-
-    return () => media.removeEventListener("change", updateTarget);
-  }, []);
-
-  return targetReached;
-};
+import AutocompleteWidget from "./AutocompleteWidget";
+import NacionalHeader from "./components/NacionalHeader";
+import { useNacionalCrearStore } from "../store/nacional/nacionalCrear/nacional-crear";
+import NacionalCotizarStep from "./steps/NacionalCotizarStep";
+import CotizarPaquete from "./components/CotizarPaquete";
+import NacionalStepper from "./components/NacionalStepper";
+import NacionalDestinoStep from "./steps/NacionalDestinoStep";
+import NacionalConfirmarStep from "./steps/NacionalConfirmarStep";
 
 const NacionalClient = (props: any) => {
-  const breakpoints = {
-    isSm: useMediaQuery(700),
-    isMd: useMediaQuery(720),
-    isLg: useMediaQuery(960),
-    isXl: useMediaQuery(1140),
-    is2xl: useMediaQuery(1320),
-  };
   const router = useRouter();
   const loader = useLoader();
   const [isLoading, setIsLoading] = useState(false);
+  const { direcciones, getDirecciones, activeStep, updateCurrentUser } =
+    useNacionalCrearStore();
+
+  useEffect(() => {
+    getDirecciones();
+    updateCurrentUser(props.currentUser);
+    console.log(props.currentUser);
+  }, []);
+
+  useEffect(() => {
+    console.log(direcciones);
+  }, [direcciones]);
 
   return (
-    <div>
-      <NacionalWidget />
+    <div className="flex flex-col  ">
+      <NacionalHeader />
+      <div className="h-full flex flex-col mt-4">
+        <NacionalStepper />
+
+        {activeStep === 1 && <NacionalCotizarStep />}
+        {activeStep === 2 && <NacionalDestinoStep />}
+        {activeStep === 3 && <NacionalConfirmarStep />}
+      </div>
     </div>
   );
 };

@@ -34,13 +34,36 @@ export function namedDateStringFull(dateString) {
   return result;
 }
 
+export function namedDateStringMid(dateString) {
+  const date = new Date(dateString);
+  let result = "No hay fecha";
+  if (isDate(date)) {
+    result = format(date, `d 'de' MMMM HH:mm:ss`, {
+      locale: esLocale,
+    });
+  }
+  return result;
+}
+
 export function dateString(dateString) {
   const date = new Date(dateString);
   let result = "No hay fecha";
   if (isDate(date)) {
-    result = format(addHours(date, 6), `dd/MM/yyyy HH:mm:ss `, {
+    result = format(addHours(date, 0), `dd/MM/yyyy HH:mm:ss `, {
       locale: esLocale,
     });
+  }
+  return result.trim();
+}
+
+export function dateStringDHL(date) {
+  let result = "--";
+  if (isDate(date)) {
+    const finalDate = addHours(date, 8);
+    const fecha = format(finalDate, `yyyy-MM-dd`);
+    const hora = format(finalDate, `HH:mm:ss`);
+    const gmt = "GMT-06:00";
+    result = `${fecha}T${hora} ${gmt}`;
   }
   return result.trim();
 }

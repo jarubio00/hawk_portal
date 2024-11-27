@@ -739,3 +739,15 @@ export async function confirmPhone(props: any) {
 
   return result;
 }
+
+export async function nacionalCotizar(props: any) {
+  const response = await axios.post("/api/nacional/cotiza", props);
+
+  return response.data;
+}
+
+export async function nacionalShipmentCreate(props: any) {
+  const response = await axios.post("/api/nacional/crear", props);
+
+  return response.data;
+}

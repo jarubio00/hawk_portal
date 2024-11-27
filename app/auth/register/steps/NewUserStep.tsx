@@ -130,7 +130,7 @@ const NewUserStep: React.FC<NewUserStepProps> = ({ data }) => {
           type: data.type,
         });
       }
-
+      console.log(result);
       if (result && result.status == 1) {
         setIsLoading(false);
         updateActiveStep(1);
