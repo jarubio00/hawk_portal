@@ -483,75 +483,84 @@ model AppRoute {
   createdBy   Int             @default(1)
   operador    Operadores      @relation(fields: [operadorId], references: [id])
   guias       AppRouteGuias[]
+  visitas     AppVisita[]
 }
 
 model AppRouteGuias {
-  id       Int           @id @default(autoincrement())
-  routeId  Int
-  pedidoId Int
-  tipo     RouteGuiaTipo
-  pedido   Pedido        @relation(fields: [pedidoId], references: [id])
-  route    AppRoute      @relation(fields: [routeId], references: [id])
+  id        Int           @id @default(autoincrement())
+  routeId   Int
+  pedidoId  Int
+  isDeleted Boolean       @default(false)
+  deletedAt DateTime?
+  deletedBy Int?
+  tipo      RouteGuiaTipo
+  pedido    Pedido        @relation(fields: [pedidoId], references: [id])
+  route     AppRoute      @relation(fields: [routeId], references: [id])
 }
 
 model AppVisita {
-  id           Int       @id @default(autoincrement())
+  id           Int                   @id @default(autoincrement())
   routeId      Int
-  uuid         String
+  uuid         String                @unique
+  tipoId       Int
   lat          String?
   lng          String?
-  pagoMonto    Float     @default(0)
-  pagoFaltante Float     @default(0)
-  cobroMonto   Float     @default(0)
-  isCanceled   Boolean   @default(false)
+  pagoMonto    Float                 @default(0)
+  pagoFaltante Float                 @default(0)
+  cobroMonto   Float                 @default(0)
+  isCanceled   Boolean               @default(false)
   canceledAt   DateTime?
   canceledBy   Int?
-  createdAt    DateTime  @default(dbgenerated("(now())"))
-  createdBy    Int       @default(1)
-}
-
-model AppVisitaEventos {
-  id         Int                      @id @default(autoincrement())
-  uuid       String
-  visitaId   Int?
-  visitaUuid String
-  tipoId     Int
-  pedidoId   Int
-  createdAt  DateTime                 @default(dbgenerated("(now())"))
-  createdBy  Int                      @default(1)
-  tipo       CatalogoAppVisitaEventos @relation(fields: [tipoId], references: [id])
-}
-
-model AppVisitaEventosEvidencias {
-  id           Int      @id @default(autoincrement())
-  eventoUuid   String
-  evidenciaUrl String   @db.LongText
-  createdAt    DateTime @default(dbgenerated("(now())"))
-  createdBy    Int      @default(1)
-}
-
-model AppVisitaEventosMods {
-  id           Int                   @id @default(autoincrement())
-  eventoUuid   String
-  evidenciaUrl String?               @db.LongText
-  tipoId       Int
   createdAt    DateTime              @default(dbgenerated("(now())"))
   createdBy    Int                   @default(1)
-  tipo         CatalogoAppVisitaMods @relation(fields: [tipoId], references: [id])
+  tipo         CatalogoAppVisitaTipo @relation(fields: [tipoId], references: [id])
+  route        AppRoute              @relation(fields: [routeId], references: [id])
+  evidencias   AppVisitaEvidencias[]
+  mods         AppVisitaGuiaMods[]
 }
 
-model CatalogoAppVisitaEventos {
-  id      Int                @id @default(autoincrement())
-  tipo    String
-  desc    String
-  eventos AppVisitaEventos[]
+model AppVisitaGuias {
+  id         Int      @id @default(autoincrement())
+  visitaUuid String
+  pedidoId   Int
+  createdAt  DateTime @default(dbgenerated("(now())"))
+  createdBy  Int      @default(1)
 }
 
-model CatalogoAppVisitaMods {
-  id      Int                    @id @default(autoincrement())
+model AppVisitaEvidencias {
+  id           Int       @id @default(autoincrement())
+  visitaUuid   String
+  evidenciaUrl String    @db.LongText
+  createdAt    DateTime  @default(dbgenerated("(now())"))
+  createdBy    Int       @default(1)
+  visita       AppVisita @relation(fields: [visitaUuid], references: [uuid])
+}
+
+model AppVisitaGuiaMods {
+  id         Int                        @id @default(autoincrement())
+  visitaUuid String
+  pedidoId   Int
+  tipoId     Int
+  original   String?
+  nuevo      String?
+  createdAt  DateTime                   @default(dbgenerated("(now())"))
+  createdBy  Int                        @default(1)
+  tipo       CatalogoAppVisitaModsTipos @relation(fields: [tipoId], references: [id])
+  visita     AppVisita                  @relation(fields: [visitaUuid], references: [uuid])
+}
+
+model CatalogoAppVisitaTipo {
+  id      Int         @id @default(autoincrement())
   tipo    String
   desc    String
-  eventos AppVisitaEventosMods[]
+  visitas AppVisita[]
+}
+
+model CatalogoAppVisitaModsTipos {
+  id    Int                 @id @default(autoincrement())
+  tipo  String
+  desc  String
+  guias AppVisitaGuiaMods[]
 }
 
 model Operadores {

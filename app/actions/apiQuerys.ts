@@ -4,7 +4,7 @@ import axios from "axios";
 import { ICotizaParams, IPedido } from "@/app/types/pedido";
 
 export async function addDireccion(props: any) {
-  console.log("apiquery", props);
+  //console.log("apiquery", props);
   const direccion = {
     clienteId: props.currentUser?.id,
     nombreDireccion: props.data.nombreDireccion,
@@ -14,7 +14,7 @@ export async function addDireccion(props: any) {
     calle: props.data.calle,
     numero: props.data.numero,
     numeroInt: props.data.interior,
-    colonia: props.data.colonia.label,
+    colonia: props.data.colonia,
     municipioId: props.data.municipio.id,
     empresa: props.data.empresa,
     referencias: props.data.referencias,

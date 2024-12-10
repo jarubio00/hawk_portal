@@ -34,6 +34,7 @@ import {
   FaWhatsapp,
 } from "react-icons/fa";
 import { MdEmail, MdPhone } from "react-icons/md";
+import AddColoniaFixDialog from "../components/AddColoniaFixDialog";
 
 interface RecoleccionStepProps {
   label?: string;
@@ -71,6 +72,7 @@ const RecoleccionStep: React.FC<RecoleccionStepProps> = ({
 
   const [direccion, setDireccion] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
+  const [openColoniaDialog, setOpenColoniaDialog] = useState(false);
 
   const onSelectDireccion = (direccion: any) => {
     setErrorMessage("");
@@ -95,15 +97,28 @@ const RecoleccionStep: React.FC<RecoleccionStepProps> = ({
   useEffect(() => {}, []);
 
   const handleNext = () => {
-    if (pedido?.recoleccion?.direccionId) {
-      updateActiveStep(1);
+    //if (!pedido?.recoleccion?.colonia) {
+    if (1 > 2) {
+      setOpenColoniaDialog(true);
     } else {
-      setErrorMessage("Selecciona una dirección de recolección");
+      if (pedido?.recoleccion?.direccionId) {
+        updateActiveStep(1);
+      } else {
+        setErrorMessage("Selecciona una dirección de recolección");
+      }
     }
+  };
+
+  const closeColoniaDialog = () => {
+    setOpenColoniaDialog(false);
   };
 
   return (
     <div className="px-2">
+      <AddColoniaFixDialog
+        open={openColoniaDialog}
+        onClose={closeColoniaDialog}
+      />
       <StepHeading
         title="Recolección"
         subtitle={
