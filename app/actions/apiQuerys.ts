@@ -56,7 +56,7 @@ export async function addDestino(props: any) {
     calle: props.data.calle,
     numero: props.data.numero,
     numeroInt: props.data.interior,
-    colonia: props.data.colonia.label,
+    colonia: props.data.colonia,
     municipioId: props.data.municipio.id,
     empresa: props.data.empresa,
     referencias: props.data.referencias,

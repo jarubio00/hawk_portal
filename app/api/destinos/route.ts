@@ -12,6 +12,7 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json();
+  console.log(body);
 
   const {
     clienteId,
@@ -38,8 +39,6 @@ export async function POST(request: Request) {
     }
   });
 
-  const coloniaVal = isOtraColonia ? otraColonia : colonia;
-
   const direccion = await prisma.destino.create({
     //@ts-ignore
     data: {
@@ -50,7 +49,7 @@ export async function POST(request: Request) {
       calle,
       numero,
       numeroInt,
-      colonia: coloniaVal,
+      colonia: colonia,
       municipioId,
       empresa,
       referencias,

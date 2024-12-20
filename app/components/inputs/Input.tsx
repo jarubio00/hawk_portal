@@ -1,12 +1,8 @@
-'use client';
+"use client";
 
-import { 
-  FieldErrors, 
-  FieldValues, 
-  UseFormRegister 
-} from "react-hook-form";
+import { FieldErrors, FieldValues, UseFormRegister } from "react-hook-form";
 import { BiDollar } from "react-icons/bi";
-import {ChangeEventHandler} from 'react';
+import { ChangeEventHandler } from "react";
 
 type RegisterForm = {
   email: string;
@@ -14,7 +10,7 @@ type RegisterForm = {
   password: string;
   confirmPassword: string;
   celular: string;
-}
+};
 
 interface InputProps {
   id: any;
@@ -24,11 +20,12 @@ interface InputProps {
   disabled?: boolean;
   formatPrice?: boolean;
   required?: boolean;
-  register: UseFormRegister<FieldValues>,
+  register: UseFormRegister<FieldValues>;
   errors: FieldErrors;
   width?: string;
   onChange?: ChangeEventHandler<HTMLInputElement>;
-  onFocus?: () => void;
+  onWheel?: (e: any) => void;
+  onFocus?: (e: any) => void;
   onBlur?: () => void;
   maxlength?: number;
 }
@@ -36,8 +33,8 @@ interface InputProps {
 const Input: React.FC<InputProps> = ({
   id,
   label,
-  type = "text", 
-  disabled, 
+  type = "text",
+  disabled,
   formatPrice,
   register,
   required,
@@ -46,16 +43,19 @@ const Input: React.FC<InputProps> = ({
   onChange,
   maxlength,
   value,
+  onWheel,
   onFocus,
-  onBlur
+  onBlur,
 }) => {
   return (
-    <div className={`
+    <div
+      className={`
      ${width ? `w-[${width}]` : "w-full"} 
-    relative`}>
+    relative`}
+    >
       {formatPrice && (
         <BiDollar
-          size={24}  
+          size={24}
           className="
             text-neutral-700
             absolute
@@ -65,7 +65,6 @@ const Input: React.FC<InputProps> = ({
         />
       )}
       <input
-      
         id={id}
         value={value}
         disabled={disabled}
@@ -73,7 +72,7 @@ const Input: React.FC<InputProps> = ({
         placeholder=" "
         type={type}
         //@ts-ignore
-        //onInput={(event)=>event.target.value=event.target.value.slice(0,event.target.maxLength)} 
+        //onInput={(event)=>event.target.value=event.target.value.slice(0,event.target.maxLength)}
         maxLength={maxlength}
         className={`
           peer
@@ -89,15 +88,16 @@ const Input: React.FC<InputProps> = ({
           transition
           disabled:opacity-70
           disabled:cursor-not-allowed
-          ${formatPrice ? 'pl-9' : 'pl-4'}
-          ${errors[id] ? 'border-red-500' : 'border-neutral-300'}
-          ${errors[id] ? 'focus:border-red-500' : 'focus:border-black'}
+          ${formatPrice ? "pl-9" : "pl-4"}
+          ${errors[id] ? "border-red-500" : "border-neutral-300"}
+          ${errors[id] ? "focus:border-red-500" : "focus:border-black"}
         `}
         onChange={onChange}
         onFocus={onFocus}
         onBlur={onBlur}
+        onWheel={onWheel}
       />
-      <label 
+      <label
         htmlFor={id}
         className={`
           cursor-text
@@ -110,18 +110,18 @@ const Input: React.FC<InputProps> = ({
           top-4 
           w-full
           origin-[0] 
-          ${formatPrice ? 'left-9 text-md' : 'left-4'}
+          ${formatPrice ? "left-9 text-md" : "left-4"}
           peer-placeholder-shown:scale-100
           peer-placeholder-shown:translate-y-0 
           peer-focus:scale-75
           peer-focus:-translate-y-4
-          ${errors[id] ? 'text-red-500' : 'text-zinc-400'}
+          ${errors[id] ? "text-red-500" : "text-zinc-400"}
         `}
       >
         {label}
       </label>
     </div>
-   );
-}
- 
+  );
+};
+
 export default Input;

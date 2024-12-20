@@ -267,6 +267,7 @@ model Pedido {
   labelPdfUrl            String?                 @db.LongText
   migrated               Boolean                 @default(false)
   compMigrated           Boolean                 @default(false)
+  compMissing            Boolean                 @default(false)
   migratedAt             DateTime?
   migratedBy             String?
   userCreated            Boolean                 @default(true)
@@ -517,14 +518,16 @@ model AppVisita {
   route        AppRoute              @relation(fields: [routeId], references: [id])
   evidencias   AppVisitaEvidencias[]
   mods         AppVisitaGuiaMods[]
+  guias        AppVisitaGuias[]
 }
 
 model AppVisitaGuias {
-  id         Int      @id @default(autoincrement())
+  id         Int       @id @default(autoincrement())
   visitaUuid String
   pedidoId   Int
-  createdAt  DateTime @default(dbgenerated("(now())"))
-  createdBy  Int      @default(1)
+  createdAt  DateTime  @default(dbgenerated("(now())"))
+  createdBy  Int       @default(1)
+  visita     AppVisita @relation(fields: [visitaUuid], references: [uuid])
 }
 
 model AppVisitaEvidencias {
@@ -552,14 +555,14 @@ model AppVisitaGuiaMods {
 model CatalogoAppVisitaTipo {
   id      Int         @id @default(autoincrement())
   tipo    String
-  desc    String
+  desc    String?
   visitas AppVisita[]
 }
 
 model CatalogoAppVisitaModsTipos {
   id    Int                 @id @default(autoincrement())
   tipo  String
-  desc  String
+  desc  String?
   guias AppVisitaGuiaMods[]
 }
 
@@ -576,6 +579,7 @@ model Operadores {
   fotoPath     String?
   createdAt    DateTime              @default(dbgenerated("(now())"))
   createdBy    Int                   @default(1)
+  rol          OperadorRol           @default(operador)
   isLocked     Boolean               @default(false)
   lockedAt     DateTime?
   lockedBy     Int?
@@ -1220,4 +1224,11 @@ enum EstatusPrintBatch {
 enum RouteGuiaTipo {
   Recoleccion
   entrega
+}
+
+enum OperadorRol {
+  operador
+  supervisor
+  admin
+  ultra
 }

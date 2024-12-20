@@ -350,6 +350,7 @@ const AgregarDestinoCrear: React.FC<AgregarDestinoCrearProps> = ({
           console.log("error colonia");
           setColoniaError(true);
         } else {
+          console.log("next else");
           setCustomValue("cp", cpFromSearch);
           console.log("handle next before submit");
           handleSubmit(onSubmit)();
@@ -622,6 +623,16 @@ const AgregarDestinoCrear: React.FC<AgregarDestinoCrearProps> = ({
             register={register}
             errors={errors}
             required
+            onWheel={(e) => e.target.blur()}
+            onFocus={(e) =>
+              e.target.addEventListener(
+                "wheel",
+                function (e: any) {
+                  e.preventDefault();
+                },
+                { passive: false }
+              )
+            }
             onChange={(event: any) => {
               //setContacto({...contacto,tel: event.target.value});
               setCustomValue("contactoTel", event.target.value);

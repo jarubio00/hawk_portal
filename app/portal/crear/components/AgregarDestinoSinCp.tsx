@@ -365,6 +365,15 @@ const AgregarDestinoSinCp: React.FC<AgregarDestinoSinCpProps> = ({
                   setCustomValue("contactoTel", event.target.value);
                   saveDestinoKey("contactoTel", event.target.value);
                 }}
+                onFocus={(e) =>
+                  e.target.addEventListener(
+                    "wheel",
+                    function (e: any) {
+                      e.preventDefault();
+                    },
+                    { passive: false }
+                  )
+                }
               />
             </div>
 

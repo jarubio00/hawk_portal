@@ -62,6 +62,7 @@ const AgregarDireccion: React.FC<AgregarDireccionProps> = ({
     register,
     handleSubmit,
     setValue,
+    setError,
     watch,
     formState: { errors },
     reset,
@@ -87,18 +88,26 @@ const AgregarDireccion: React.FC<AgregarDireccionProps> = ({
 
   const onSubmit: SubmitHandler<FieldValues> = async (data: any) => {
     loader.onOpen();
-    const apiData = {
-      data: {
-        ...data,
-        icon: nombreIcon,
-        color: nombreColor,
-        colonia: otraColoniaSelected ? otraColonia : data.colonia.label,
-      },
-      currentUser: currentUser,
-      otraColoniaSelected: otraColoniaSelected,
-    };
 
-    onClose({ apiData: apiData });
+    if (otraColoniaSelected && !data?.otraColonia) {
+      setError("otraColonia", {
+        type: "custom",
+        message: "La colonia es requerida",
+      });
+    } else {
+      const apiData = {
+        data: {
+          ...data,
+          icon: nombreIcon,
+          color: nombreColor,
+          colonia: otraColoniaSelected ? otraColonia : data.colonia.label,
+        },
+        currentUser: currentUser,
+        otraColoniaSelected: otraColoniaSelected,
+      };
+      //console.log(apiData);
+      onClose({ apiData: apiData });
+    }
   };
 
   const LoadingIndicator = (props: LoadingIndicatorProps<any>) => {
@@ -428,6 +437,15 @@ const AgregarDireccion: React.FC<AgregarDireccionProps> = ({
               //setContacto({...contacto,tel: event.target.value});
               setCustomValue("contactoTel", event.target.value);
             }}
+            onFocus={(e) =>
+              e.target.addEventListener(
+                "wheel",
+                function (e: any) {
+                  e.preventDefault();
+                },
+                { passive: false }
+              )
+            }
           />
         </div>
 
@@ -512,9 +530,7 @@ const AgregarDireccion: React.FC<AgregarDireccionProps> = ({
         isOpen={openBuscarDialog}
       />
       <div className="w-full  flex flex-col gap-2   py-2 ">
-        <div className="text-sm font-bold text-gray-700">
-          Domicilio de recolección
-        </div>
+        <div className="text-sm font-bold text-gray-700">Domicilio destino</div>
         <div className="w-56 pr-4">
           <CpInput
             id="cp"
@@ -556,7 +572,7 @@ const AgregarDireccion: React.FC<AgregarDireccionProps> = ({
             </div>
           </div>
         )}
-        {!cpActive && !coloniasLoading && tipo == "destino" && (
+        {/* {!cpActive && !coloniasLoading && tipo == "destino" && (
           <div className="text-sm font-medium w-48 mt-0">
             <Button
               outline
@@ -565,7 +581,7 @@ const AgregarDireccion: React.FC<AgregarDireccionProps> = ({
               onClick={() => {}}
             />
           </div>
-        )}
+        )} */}
         {cpActive ? addContent("conCP") : ""}
       </div>
     </>
