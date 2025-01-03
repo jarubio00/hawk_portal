@@ -45,17 +45,17 @@ const DestinoForm: React.FC<DestinoFormProps> = ({ data }) => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       cpId: direccionSelected?.cpId ? direccionSelected?.cpId.toString() : "",
-      colonia: "Torremolinos",
+      colonia: "",
       municipioId: direccionSelected?.municipio
         ? direccionSelected?.municipio?.municipio
         : "",
-      calle: "Vascongadas",
-      numero: "3505",
+      calle: "",
+      numero: "",
       numeroInt: "",
-      empresa: "Xinet",
-      referencias: "Plaza comercial esquina",
-      contactoNombre: "CatalinaRubio",
-      contactoTel: "8115995194",
+      empresa: "",
+      referencias: "",
+      contactoNombre: "",
+      contactoTel: "",
       otraColoniaNombre: "",
       countryCode: "52",
       save: false,
@@ -121,6 +121,7 @@ const DestinoForm: React.FC<DestinoFormProps> = ({ data }) => {
                     <FormControl>
                       <Input
                         placeholder="Código postal"
+                        disabled
                         {...field}
                         onChange={(e) => {
                           const val = e.target.value;
@@ -166,7 +167,7 @@ const DestinoForm: React.FC<DestinoFormProps> = ({ data }) => {
                       <Input
                         placeholder="Municipio"
                         {...field}
-                        disabled={Boolean(errors?.cpId)}
+                        disabled={true}
                       />
                     </FormControl>
                     <FormMessage />
