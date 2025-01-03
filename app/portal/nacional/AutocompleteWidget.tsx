@@ -6,32 +6,37 @@ import { Input } from "@/components/ui/input";
 import useLoader from "@/app/hooks/useLoader";
 import { MdClear } from "react-icons/md";
 import { useNacionalCrearStore } from "../store/nacional/nacionalCrear/nacional-crear";
+import { nacionalCpFind } from "@/app/actions/apiQuerys";
+import { MoonLoader, PulseLoader } from "react-spinners";
 
 const libraries: any[] = ["places"];
 
 interface AutocompleteWidgetProps {
   data?: string;
+  disabled?: boolean;
 }
 
-const AutocompleteWidget: React.FC<AutocompleteWidgetProps> = ({ data }) => {
+const AutocompleteWidget: React.FC<AutocompleteWidgetProps> = ({
+  data,
+  disabled = false,
+}) => {
   const {
     direccionesLoading,
     cpValue,
     municipioValue,
     updateCpValue,
     updateMunicipioValue,
+    cpFound,
+    updateCpFound,
+    cpSelected,
+    updateCpSelected,
   } = useNacionalCrearStore();
   const [input, setInput] = useState({});
   const [cpInput, setCpInput] = useState("");
   const [municipioInput, setMunicipioInput] = useState("");
+  const [cpLoading, setCpLoading] = useState(false);
 
   const loader = useLoader();
-  //const inputRef = useRef(document.createElement("input"));
-  const inputRef = useRef<HTMLInputElement>(null);
-  const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: "AIzaSyCaguwbXRMYip8y2w04TISgKN90tdu24-M",
-    libraries,
-  });
 
   useEffect(() => {
     if (loader.isOpen) {
@@ -39,141 +44,80 @@ const AutocompleteWidget: React.FC<AutocompleteWidgetProps> = ({ data }) => {
     }
   }, []);
 
-  useEffect(() => {
-    if (!isLoaded || loadError) return;
+  const handleChange = async (val: any) => {
+    updateCpValue(val);
+    updateMunicipioValue("");
 
-    const options = {
-      componentRestrictions: { country: "mx" },
-      //types: ["locality", "political"],
-      fields: ["address_components", "geometry"],
-    };
+    if (val.length == 5) {
+      setCpLoading(true);
 
-    if (inputRef.current !== null) {
-      const autocomplete = new google.maps.places.Autocomplete(
-        inputRef.current,
-        options
-      );
-      autocomplete.addListener("place_changed", () =>
-        handlePlaceChanged(autocomplete)
-      );
-    }
+      try {
+        const cpFind = await nacionalCpFind(parseInt(val).toString());
+        if (cpFind.statusCode === 200) {
+          updateCpSelected(cpFind.data);
+          updateMunicipioValue(cpFind.data.municipio);
+          const timer = setTimeout(() => {
+            setCpLoading(false);
+          }, 100);
+        } else {
+          setCpLoading(false);
 
-    // return () => autocomplete.removeListener("place_changed", handlePlaceChanged);
-  }, [isLoaded, loadError]);
-
-  const handleChange = (event: any) => {
-    const { name, value } = event.target;
-    setInput((values) => ({ ...values, [name]: value }));
-  };
-
-  const handlePlaceChanged = async (address: any) => {
-    if (!isLoaded) return;
-    const place = address.getPlace();
-
-    if (!place || !place.geometry) {
-      setInput({});
-      return;
-    }
-    console.log(place);
-    formData(place);
-  };
-
-  const formData = (data: any) => {
-    const addressComponents = data?.address_components;
-
-    const componentMap: any = {
-      subPremise: "",
-      premise: "",
-      street_number: "",
-      route: "",
-      country: "",
-      postal_code: "",
-      administrative_area_level_2: "",
-      administrative_area_level_1: "",
-      locality: "",
-    };
-
-    for (const component of addressComponents) {
-      const componentType = component.types[0];
-      if (componentMap.hasOwnProperty(componentType)) {
-        componentMap[componentType] = component.long_name;
+          setMunicipioInput("Ingresa el municipio destino");
+        }
+      } catch (e) {
+        console.log(e);
+        setCpLoading(false);
+        setMunicipioInput("Ingresa el municipio destino");
       }
     }
-
-    const formattedAddress =
-      `${componentMap.subPremise} ${componentMap.premise} ${componentMap.street_number} ${componentMap.route}`.trim();
-    const latitude = data?.geometry?.location?.lat();
-    const longitude = data?.geometry?.location?.lng();
-
-    setInput((values) => ({
-      ...values,
-      streetAddress: formattedAddress,
-      country: componentMap.country,
-      zipCode: componentMap.postal_code,
-      city: componentMap.locality,
-      state: componentMap.administrative_area_level_1,
-      latitude: latitude,
-      longitude: longitude,
-    }));
-
-    updateCpValue(componentMap.postal_code);
-    updateMunicipioValue(componentMap.locality);
-
-    console.log({
-      streetAddress: formattedAddress,
-      country: componentMap.country,
-      zipCode: componentMap.postal_code,
-      city: componentMap.locality,
-      state: componentMap.administrative_area_level_1,
-      latitude: latitude,
-      longitude: longitude,
-    });
   };
-
-  const clearValue = useCallback(() => {
-    if (inputRef && inputRef.current) {
-      inputRef.current.value = "";
-    }
-  }, []);
 
   return (
     <div className="flex flex-col gap-4 p-4 bg-neutral-100 rounded-lg">
-      <div className="w-[480px] relative">
-        <Input
-          ref={inputRef}
-          className=" h-12 pr-8"
-          type="text"
-          name="direccion"
-          onChange={handleChange}
-          placeholder="Escribe la ciudad destino"
-          required
-          disabled={direccionesLoading}
-        />
-        <div className="absolute top-3 right-1" onClick={() => clearValue()}>
-          <MdClear size={22} className="text-neutral-500" />
-        </div>
-      </div>
       <div className="flex flex-row gap-4 items-center">
-        <Input
-          value={cpValue}
-          className=" h-8"
-          type="text"
-          name="direccion"
-          onChange={(e) => updateCpValue(e.target.value)}
-          placeholder="cp"
-          required
-          disabled={direccionesLoading}
-        />
-        <Input
-          value={municipioValue}
-          className=" h-8"
-          type="text"
-          name="direccion"
-          onChange={(e) => updateMunicipioValue(e.target.value)}
-          placeholder="Municipio"
-          required
-          disabled={direccionesLoading}
-        />
+        <div className="flex flex-col gap-1">
+          <div className="relative">
+            <Input
+              value={cpValue}
+              className=" h-8"
+              type="text"
+              name="direccion"
+              onChange={(e) => handleChange(e.target.value)}
+              placeholder="cp"
+              required
+              disabled={disabled || cpLoading}
+            />
+            <div className="absolute right-2 top-1">
+              {cpLoading ? (
+                <PulseLoader size={6} color="#acadac" />
+              ) : (
+                <div></div>
+              )}
+            </div>
+          </div>
+          <p className="h-4"></p>
+        </div>
+        <div className="flex flex-col gap-1">
+          <Input
+            value={municipioValue}
+            className=" h-8"
+            type="text"
+            name="direccion"
+            onChange={(e) => {
+              setMunicipioInput("");
+              updateMunicipioValue(e.target.value);
+            }}
+            placeholder="Municipio"
+            required
+            readOnly={cpFound}
+            disabled={disabled || cpLoading}
+          />
+          {municipioInput ? (
+            <p className="text-[11px] text-red-500">{municipioInput}</p>
+          ) : (
+            <p className="h-4"></p>
+          )}
+        </div>
       </div>
     </div>
   );

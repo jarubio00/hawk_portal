@@ -9,9 +9,13 @@ import { dateString, namedDate } from "@/app/components/utils/helpers";
 
 interface CotizarDatePickupProps {
   data?: string;
+  disabled?: boolean;
 }
 
-const CotizarDatePickup: React.FC<CotizarDatePickupProps> = ({ data }) => {
+const CotizarDatePickup: React.FC<CotizarDatePickupProps> = ({
+  data,
+  disabled = false,
+}) => {
   const {
     datetime,
     datePickerOpen,
@@ -24,10 +28,7 @@ const CotizarDatePickup: React.FC<CotizarDatePickupProps> = ({ data }) => {
     updateDateSelected(value);
   };
   return (
-    <div className="flex flex-row items-center justify-between">
-      <p className="text-blue-500">
-        {dateSelected ? namedDate(dateSelected) : ""}
-      </p>
+    <div className="flex flex-row items-center justify-between p-4 bg-neutral-100 rounded-lg">
       <LocalizationProvider
         dateAdapter={AdapterDateFns}
         adapterLocale={esLocale}
@@ -39,9 +40,10 @@ const CotizarDatePickup: React.FC<CotizarDatePickupProps> = ({ data }) => {
           onChange={(newValue) => handleDateChange(newValue)}
           bloqued={[]}
           datetime={datetime}
-          disabled={false}
+          disabled={disabled}
         />
       </LocalizationProvider>
+      <p className="">{dateSelected ? namedDate(dateSelected) : ""}</p>
     </div>
   );
 };

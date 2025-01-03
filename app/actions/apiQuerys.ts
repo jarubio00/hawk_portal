@@ -751,3 +751,9 @@ export async function nacionalShipmentCreate(props: any) {
 
   return response.data;
 }
+
+export async function nacionalCpFind(cp: string) {
+  const response = await axios.get(`/api/nacional/cotiza/cp/${cp}`);
+
+  return response.data;
+}

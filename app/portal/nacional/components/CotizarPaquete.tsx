@@ -6,9 +6,13 @@ import { useNacionalCrearStore } from "../../store/nacional/nacionalCrear/nacion
 
 interface CotizarPaqueteProps {
   data?: string;
+  disabled?: boolean;
 }
 
-const CotizarPaquete: React.FC<CotizarPaqueteProps> = ({ data }) => {
+const CotizarPaquete: React.FC<CotizarPaqueteProps> = ({
+  data,
+  disabled = false,
+}) => {
   const {
     largoValue,
     anchoValue,
@@ -20,7 +24,7 @@ const CotizarPaquete: React.FC<CotizarPaqueteProps> = ({ data }) => {
     updatePesoValue,
   } = useNacionalCrearStore();
   return (
-    <div className="flex flex-row items-center gap-4">
+    <div className="flex flex-row items-center gap-4 p-4 bg-neutral-100 rounded-lg">
       <div className="relative ">
         <Input
           value={largoValue}
@@ -31,6 +35,7 @@ const CotizarPaquete: React.FC<CotizarPaqueteProps> = ({ data }) => {
           onChange={(e) => {
             updateLargoValue(e.target.value);
           }}
+          disabled={disabled}
         />
         <div className="absolute h-6 w-6 top-2 right-2 text-[10px]  rounded-full bg-neutral-400 text-white pl-[4px] py-[4px]">
           cm
@@ -46,6 +51,7 @@ const CotizarPaquete: React.FC<CotizarPaqueteProps> = ({ data }) => {
           onChange={(e) => {
             updateAnchoValue(e.target.value);
           }}
+          disabled={disabled}
         />
         <div className="absolute h-6 w-6 top-2 right-2 text-[10px]  rounded-full bg-neutral-400 text-white pl-[4px] py-[4px]">
           cm
@@ -61,6 +67,7 @@ const CotizarPaquete: React.FC<CotizarPaqueteProps> = ({ data }) => {
           onChange={(e) => {
             updateAltoValue(e.target.value);
           }}
+          disabled={disabled}
         />
         <div className="absolute h-6 w-6 top-2 right-2 text-[10px]  rounded-full bg-neutral-400 text-white pl-[4px] py-[4px]">
           cm
@@ -77,6 +84,7 @@ const CotizarPaquete: React.FC<CotizarPaqueteProps> = ({ data }) => {
           onChange={(e) => {
             updatePesoValue(e.target.value);
           }}
+          disabled={disabled}
         />
         <div className="absolute h-6 w-6 top-2 right-2 text-[10px]  rounded-full bg-neutral-400 text-white pl-[6px] py-[4px]">
           kg

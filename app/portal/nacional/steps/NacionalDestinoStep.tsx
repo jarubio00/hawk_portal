@@ -11,8 +11,10 @@ interface NacionalDestinoStepProps {
 const NacionalDestinoStep: React.FC<NacionalDestinoStepProps> = ({ data }) => {
   const { activeStep, updateActiveStep } = useNacionalCrearStore();
   return (
-    <div className="flex flex-col w-full">
-      <DestinoForm />
+    <div className="w-full flex flex-col gap-0 items-center ">
+      <div className="w-3/4 flex flex-col gap-4 items-center ">
+        <DestinoForm />
+      </div>
     </div>
   );
 };

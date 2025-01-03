@@ -19,7 +19,7 @@ const CotizacionCard: React.FC<CotizacionCardProps> = ({ data }) => {
     useNacionalCrearStore();
   return (
     <div
-      className={`flex flex-col mx-2 border rounded-md shadow-lg justify-center px-2 py-4 my-4 ${
+      className={`flex flex-col mx-2 border rounded-md shadow-lg justify-center px-2 py-4 my-4 hover:bg-neutral-100 ${
         data?.code === cotizacionSelected?.code && "border-rose-500 border-2"
       }`}
     >
@@ -46,13 +46,15 @@ const CotizacionCard: React.FC<CotizacionCardProps> = ({ data }) => {
         </div>
       </div>
       <div className="flex flex-row justify-between items-center mt-2">
-        <div className="flex flex-col gap-0">
-          <p className="text-xs text-blue-500 uppercase">
-            <p className="text-xs uppercase text-gray-400">Entrega estimada</p>
+        <div className="flex flex-row gap-2">
+          <p className="text-[11px] uppercase text-gray-400">
+            Entrega estimada:
+          </p>
+          <p className="text-[11px] text-blue-500 uppercase">
             {namedDateStringMid(data?.estimatedDeliveryDateAndTime)}
           </p>
         </div>
-        <Button
+        {/* <Button
           size={"sm"}
           onClick={() => updateCotizacionSelected(data)}
           disabled={cotizacionSelected?.code == data.code}
@@ -62,7 +64,7 @@ const CotizacionCard: React.FC<CotizacionCardProps> = ({ data }) => {
               ? "Seleccionar"
               : "Seleccionado"}
           </p>
-        </Button>
+        </Button> */}
       </div>
     </div>
   );

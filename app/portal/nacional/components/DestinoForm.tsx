@@ -103,14 +103,14 @@ const DestinoForm: React.FC<DestinoFormProps> = ({ data }) => {
 
     updateDestino(destino);
 
-    updateActiveStep(3);
+    updateActiveStep(2);
   }
 
   return (
     <div className="w-full  flex flex-col justify-center items-center my-6 ">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4  ">
             <div className="col-span-1 lg:col-span-2 xl:col-span-1">
               <FormField
                 control={form.control}
@@ -351,12 +351,12 @@ const DestinoForm: React.FC<DestinoFormProps> = ({ data }) => {
             variant="outline"
             className="w-30 ml-6"
             size={"lg"}
-            onClick={() => updateActiveStep(1)}
+            onClick={() => updateActiveStep(0)}
           >
             Atras
           </Button>
           <Button
-            className="bg-rose-500 hover:bg-orange-900 w-30 ml-6"
+            className=" ml-6"
             size={"lg"}
             onClick={handleSubmit(onSubmit)}
           >

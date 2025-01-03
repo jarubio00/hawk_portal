@@ -23,6 +23,7 @@ const CotizarDirecciones: React.FC<CotizarDireccionesProps> = ({ data }) => {
     direccionDefault,
     direccionesLoading,
     direccionValue,
+    direccionesFetched,
     updateDireccionValue,
   } = useNacionalCrearStore();
   return (
@@ -31,7 +32,10 @@ const CotizarDirecciones: React.FC<CotizarDireccionesProps> = ({ data }) => {
         value={direccionValue}
         onValueChange={(val) => updateDireccionValue(val)}
       >
-        <SelectTrigger className="w-[480px] h-12 bg-white" disabled={false}>
+        <SelectTrigger
+          className="w-[480px] h-12 bg-white"
+          disabled={direccionesLoading || !direccionesFetched}
+        >
           <SelectValue placeholder="Direcciones" />
         </SelectTrigger>
         <SelectContent>

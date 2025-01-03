@@ -5,6 +5,7 @@ import { NacionalShipment } from "@/app/types";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
+import { MdDownload } from "react-icons/md";
 import { BarLoader } from "react-spinners";
 import { useNacionalCrearStore } from "../../store/nacional/nacionalCrear/nacional-crear";
 
@@ -95,53 +96,136 @@ const ConfirmarCard: React.FC<ConfirmarCardProps> = ({ data }) => {
   };
 
   return (
-    <div className="flex flex-col gap-8 w-1/2">
-      <div className="flex flex-col gap-2 bg-gray-100   rounded-md px-4 py-2">
-        <p className="text-center text-xl uppercase font-bold">RESUMEN</p>
-        <Separator />
-        <div className="flex flex-row justify-between items-center">
-          <div className="flex flex-col">
-            <p className="text-md uppercase">{cotizacionSelected?.name}</p>
-            <div className="p-1 w-16 bg-yellow-700">
-              {" "}
-              <img src="/images/nacional/dhl-logo.svg" className="w-16" />
+    <div className="flex flex-col gap-2 w-1/2 mt-4">
+      <div className="flex flex-col gap-2 bg-gray-100   rounded-md px-0 py-0">
+        <div className="p-1 bg-neutral-900 text-white rounded-t-md">
+          <p className="text-center text-xl uppercase font-bold">RESUMEN</p>
+        </div>
+
+        <div className="px-4 my-2">
+          <div className="flex flex-row justify-between items-center">
+            <div className="flex flex-col">
+              <p className="text-xs uppercase">RECOLECCIÓN</p>
+            </div>
+            <div className="flex flex-col justify-end items-end">
+              <p className="text-xs ">
+                {direccionSelected?.calle} {direccionSelected?.numero}{" "}
+                {direccionSelected?.numeroInt}, {direccionSelected?.colonia}
+              </p>
+              <p className="text-xs font-bold">
+                {direccionSelected?.municipio.municipio}, CP:{" "}
+                {direccionSelected?.cpId}
+              </p>
             </div>
           </div>
-          <div className="flex flex-col ">
-            <p className="text-xl font-bold">
-              MXN ${cotizacionSelected?.totalPrice.toFixed(2)}
-            </p>
-            {cotizacionSelected?.shipmentProtectionPrice &&
-            cotizacionSelected?.shipmentProtectionPrice != 0 ? (
-              <p className="text-[11px]">
-                + MXN {cotizacionSelected?.shipmentProtectionPrice} seguro
+          <Separator className="my-2" />
+          <div className="flex flex-row justify-between items-center">
+            <div className="flex flex-col">
+              <p className="text-xs uppercase">DESTINO</p>
+            </div>
+            <div className="flex flex-col justify-end items-end">
+              <p className="text-xs ">
+                {destinoSelected?.calle} {destinoSelected?.numero}{" "}
+                {destinoSelected?.numeroInt}, {destinoSelected?.colonia}
               </p>
-            ) : (
-              <p></p>
-            )}
+              <p className="text-xs font-bold">
+                {destinoSelected?.municipioId}, CP: {destinoSelected?.cpId}
+              </p>
+            </div>
+          </div>
+          <Separator className="my-2" />
+          <div className="flex flex-row justify-between items-center">
+            <div className="flex flex-col">
+              <p className="text-xs uppercase">PAQUETE</p>
+            </div>
+            <div className="flex flex-col justify-end items-end">
+              <p className="text-xs ">
+                {largoValue} cm x {anchoValue} cm x {altoValue} cm
+              </p>
+              <p className="text-xs font-bold">{pesoValue} kg</p>
+            </div>
+          </div>
+          <Separator className="my-2" />
+          <div className="flex flex-row justify-between items-center">
+            <div className="flex flex-col">
+              <p className="text-md uppercase">{cotizacionSelected?.name}</p>
+              <div className="p-1 w-16 bg-yellow-700">
+                {" "}
+                <img src="/images/nacional/dhl-logo.svg" className="w-16" />
+              </div>
+            </div>
+            <div className="flex flex-col items-end">
+              <p className="text-sm font-bold">
+                MXN ${cotizacionSelected?.totalPrice.toFixed(2)}
+              </p>
+              {cotizacionSelected?.shipmentProtectionPrice &&
+              cotizacionSelected?.shipmentProtectionPrice != 0 ? (
+                <p className="text-[11px]">
+                  + MXN {cotizacionSelected?.shipmentProtectionPrice} seguro
+                </p>
+              ) : (
+                <p></p>
+              )}
+            </div>
+          </div>
+          <Separator className="my-2" />
+          <div className="flex flex-row justify-between items-center">
+            <div className="flex flex-col"></div>
+            <div className="flex flex-col ">
+              {cotizacionSelected?.totalPrice &&
+              cotizacionSelected?.shipmentProtectionPrice ? (
+                <p className="text-xl font-bold">
+                  MXN $
+                  {(
+                    cotizacionSelected?.totalPrice +
+                    cotizacionSelected?.shipmentProtectionPrice
+                  ).toFixed(2)}
+                </p>
+              ) : (
+                <p className="text-xl font-bold">
+                  MXN ${cotizacionSelected?.totalPrice.toFixed(2) ?? 0}
+                </p>
+              )}
+            </div>
           </div>
         </div>
       </div>
-      {shipmentLoading && <BarLoader width={"100%"} color="#f16e10" />}
-      <Button
-        onClick={() => {
-          onCreate();
-        }}
-        disabled={shipmentLoading}
-      >
-        Crear envío
-      </Button>
+
+      {!order && (
+        <Button
+          onClick={() => {
+            onCreate();
+          }}
+          disabled={shipmentLoading}
+        >
+          Crear envío
+        </Button>
+      )}
+      <div className="mb-2">
+        {shipmentLoading && <BarLoader width={"100%"} color="#f16e10" />}
+      </div>
       {!shipmentLoading && order && (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 justify-center items-center">
+          <p className="">Tu envío a sido generado.</p>
           <p className="text-lg font-bold">
-            {order.data.carrierTrackingNumber}
+            No.guía {order.data.carrierTrackingNumber}
           </p>
           <div className="flex flex-row gap-4">
             <a target="_blank" href={order.data.carrierLabelCloudUrl}>
-              Label
+              <Button className="px-4">
+                <div className="flex flex-row gap-2 items-center justify-center">
+                  <MdDownload />
+                  <p>Etiqueta</p>
+                </div>
+              </Button>
             </a>
             <a target="_blank" href={order.data.carrierWaybillCloudUrl}>
-              Waybill
+              <Button className="px-4">
+                <div className="flex flex-row gap-2 items-center justify-center">
+                  <MdDownload />
+                  <p>Recibo</p>
+                </div>
+              </Button>
             </a>
           </div>
         </div>

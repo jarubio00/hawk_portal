@@ -4,6 +4,7 @@ import getCurrentUser from "@/app/actions/getCurrentUser";
 import { NacionalPaquete, SafeDireccion, SafeUser, Tarifa } from "@/app/types";
 import { StateCreator } from "zustand";
 import { nacionalCotizar } from "@/app/actions/apiQuerys";
+import { NacionalCodigoPostalType } from "@/app/types/nacional";
 
 export interface CotizarSlice {
   direcciones: SafeDireccion[];
@@ -12,6 +13,7 @@ export interface CotizarSlice {
   direccionDefault: string;
   direccionValue: string;
   direccionSelected: SafeDireccion | undefined;
+  direccionesFetched: boolean;
   updateDireccionValue: (value: string) => void;
   cpValue: string;
   updateCpValue: (value: string) => void;
@@ -28,7 +30,8 @@ export interface CotizarSlice {
   fetchCotizacion: () => void;
   cotizacionLoading: boolean;
   updateCotizacionLoading: (value: boolean) => void;
-  cotizaciones: Tarifa[];
+  cotizaciones: Tarifa[] | undefined;
+  updateCotizaciones: (value: Tarifa[]) => void;
   cotizacionSelected: Tarifa | undefined;
   updateCotizacionSelected: (cot: Tarifa) => void;
   datePickerOpen: boolean;
@@ -42,20 +45,27 @@ export interface CotizarSlice {
   updateShipmentValue: (val: string) => void;
   currentUser: SafeUser | undefined;
   updateCurrentUser: (user: SafeUser) => void;
+  cpFound: boolean;
+  updateCpFound: (val: boolean) => void;
+  cotizarDialogOpen: boolean;
+  updateCotizarDialogOpen: (val: boolean) => void;
+  cpSelected: NacionalCodigoPostalType | undefined;
+  updateCpSelected: (val: NacionalCodigoPostalType) => void;
 }
 
 const initialState = {
   direcciones: [],
   direccionesLoading: false,
+  direccionesFetched: false,
   direccionDefault: "",
   direccionValue: "",
   direccionSelected: undefined,
-  cpValue: "64850",
-  municipioValue: "Monterrey",
-  largoValue: "2",
-  anchoValue: "2",
-  altoValue: "2",
-  pesoValue: "2",
+  cpValue: "",
+  municipioValue: "",
+  largoValue: "",
+  anchoValue: "",
+  altoValue: "",
+  pesoValue: "",
   cotizaciones: [],
   cotizacionLoading: false,
   cotizacionSelected: undefined,
@@ -63,8 +73,11 @@ const initialState = {
   dateSelected: undefined,
   datetime: new Date(),
   seguroSelected: false,
-  shipmentValue: "0",
+  shipmentValue: "",
   currentUser: undefined,
+  cpFound: false,
+  cotizarDialogOpen: false,
+  cpSelected: undefined,
 };
 
 export const createCotizarSlice: StateCreator<CotizarSlice> = (set, get) => ({
@@ -85,6 +98,7 @@ export const createCotizarSlice: StateCreator<CotizarSlice> = (set, get) => ({
         }
       });
       set({ direccionesLoading: false });
+      set({ direccionesFetched: true });
     }, 2500);
   },
   updateDireccionValue: (value: string) => {
@@ -121,7 +135,9 @@ export const createCotizarSlice: StateCreator<CotizarSlice> = (set, get) => ({
       height: parseFloat(get().altoValue),
       plannedShippingDate: "2024-11-25",
       shipmentProtection: get().seguroSelected ?? false,
-      shipmentValue: parseFloat(get().shipmentValue) ?? 0,
+      shipmentValue: get().seguroSelected
+        ? parseFloat(get().shipmentValue ?? 0)
+        : 0,
     };
     const result = await nacionalCotizar(apiData);
     set({ cotizaciones: result.data });
@@ -148,5 +164,18 @@ export const createCotizarSlice: StateCreator<CotizarSlice> = (set, get) => ({
   },
   updateCurrentUser: (user: SafeUser) => {
     set({ currentUser: user });
+  },
+  updateCpFound: (value: boolean) => {
+    set({ cpFound: value });
+  },
+  updateCotizarDialogOpen: (value: boolean) => {
+    set({ cotizarDialogOpen: value });
+  },
+  updateCpSelected: (value: NacionalCodigoPostalType) => {
+    set({ cpSelected: value });
+  },
+  updateCotizaciones: (value: Tarifa[] | undefined) => {
+    set({ cotizacionSelected: undefined });
+    set({ cotizaciones: value });
   },
 });

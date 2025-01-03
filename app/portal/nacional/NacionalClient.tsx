@@ -34,9 +34,9 @@ const NacionalClient = (props: any) => {
       <div className="h-full flex flex-col mt-4">
         <NacionalStepper />
 
-        {activeStep === 1 && <NacionalCotizarStep />}
-        {activeStep === 2 && <NacionalDestinoStep />}
-        {activeStep === 3 && <NacionalConfirmarStep />}
+        {activeStep === 0 && <NacionalCotizarStep />}
+        {activeStep === 1 && <NacionalDestinoStep />}
+        {activeStep === 2 && <NacionalConfirmarStep />}
       </div>
     </div>
   );

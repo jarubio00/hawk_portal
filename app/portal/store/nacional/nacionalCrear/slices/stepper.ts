@@ -6,7 +6,7 @@ export interface StepperSlice {
 }
 
 const initialState = {
-  activeStep: 1,
+  activeStep: 0,
 };
 
 export const createStepperSlice: StateCreator<StepperSlice> = (set, get) => ({
