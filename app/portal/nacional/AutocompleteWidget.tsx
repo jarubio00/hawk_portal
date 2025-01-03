@@ -50,7 +50,7 @@ const AutocompleteWidget: React.FC<AutocompleteWidgetProps> = ({
 
     if (val.length == 5) {
       setCpLoading(true);
-
+      setMunicipioInput("");
       try {
         const cpFind = await nacionalCpFind(parseInt(val).toString());
         if (cpFind.statusCode === 200) {
