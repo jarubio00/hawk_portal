@@ -47,6 +47,7 @@ const AutocompleteWidget: React.FC<AutocompleteWidgetProps> = ({
   const handleChange = async (val: any) => {
     updateCpValue(val);
     updateMunicipioValue("");
+    setMunicipioInput("");
 
     if (val.length == 5) {
       setCpLoading(true);

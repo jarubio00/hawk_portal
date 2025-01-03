@@ -38,17 +38,17 @@ const DestinoForm: React.FC<DestinoFormProps> = ({ data }) => {
     updateDestino,
     destinoSelected,
     updateActiveStep,
+    cpValue,
+    municipioValue,
   } = useNacionalCrearStore();
   const formSchema = getSchema();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      cpId: direccionSelected?.cpId ? direccionSelected?.cpId.toString() : "",
+      cpId: cpValue ? cpValue.toString() : "",
       colonia: "",
-      municipioId: direccionSelected?.municipio
-        ? direccionSelected?.municipio?.municipio
-        : "",
+      municipioId: municipioValue ? municipioValue : "",
       calle: "",
       numero: "",
       numeroInt: "",
