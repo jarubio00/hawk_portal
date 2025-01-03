@@ -7,6 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 import { MdDownload } from "react-icons/md";
 import { BarLoader } from "react-spinners";
+import NacionalEtiquetaDialog from "../../adm/mispedidos/components/tabs/components/NacionalEtiquetaDialog";
 import { useNacionalCrearStore } from "../../store/nacional/nacionalCrear/nacional-crear";
 
 interface ConfirmarCardProps {
@@ -211,22 +212,30 @@ const ConfirmarCard: React.FC<ConfirmarCardProps> = ({ data }) => {
             No.guía {order.data.carrierTrackingNumber}
           </p>
           <div className="flex flex-row gap-4">
-            <a target="_blank" href={order.data.carrierLabelCloudUrl}>
+            {/*  <a target="_blank" href={order.data.carrierLabelCloudUrl}>
               <Button className="px-4">
                 <div className="flex flex-row gap-2 items-center justify-center">
                   <MdDownload />
                   <p>Etiqueta</p>
                 </div>
               </Button>
-            </a>
-            <a target="_blank" href={order.data.carrierWaybillCloudUrl}>
+            </a> */}
+            <NacionalEtiquetaDialog
+              url={order.data.carrierLabelCloudUrl}
+              title={"Etiqueta"}
+            />
+            <NacionalEtiquetaDialog
+              url={order.data.carrierWaybillCloudUrl}
+              title={"Recibo"}
+            />
+            {/* <a target="_blank" href={order.data.carrierWaybillCloudUrl}>
               <Button className="px-4">
                 <div className="flex flex-row gap-2 items-center justify-center">
                   <MdDownload />
                   <p>Recibo</p>
                 </div>
               </Button>
-            </a>
+            </a> */}
           </div>
         </div>
       )}
