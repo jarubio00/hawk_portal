@@ -26,6 +26,24 @@ import { ApiResponse, SafeUser } from "@/app/types";
 import MuiDatePicker from "../components/MuiDatePicker";
 import ProgramaTimer from "../components/ProgramaTimer";
 import { namedDate, namedDateString } from "@/app/components/utils/helpers";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
+  FaFacebook,
+  FaFacebookF,
+  FaInstagram,
+  FaWhatsapp,
+} from "react-icons/fa";
+import { MdEmail, MdPhone } from "react-icons/md";
 import NavidadDialog from "./dialogs/NavidadDialog";
 import LluviaDialog from "./dialogs/LluviaDialog";
 
@@ -206,9 +224,6 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
   const [isEntLoading, setIsEntLoading] = useState(false);
   const [isAutoLoading, setIsAutoLoading] = useState(false);
   const [dpEntOpen, setDpEntOpen] = useState(false);
-  const [bloquedEntrega, setBloquedEntrega] = useState<any>([]);
-  const [horariosLabelRec, setHorariosLabelRec] = useState("10:00am - 7:00pm");
-  const [horariosLabelEnt, setHorariosLabelEnt] = useState("10:00am - 7:00pm");
 
   const handleBack = () => {
     updateActiveStep(2);
@@ -256,8 +271,43 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
         subtitle="Obten las fechas disponibles automáticamente o seleccionalas manualmente"
       />
 
+      <div className="my-8 flex flex-row items-center gap-4">
+        {/* <div
+          className={`w-44 md:w-60 border-2 bg-rose-500 border-rose-500 text-xs 
+                  shadow-md rounded-md py-1 px-2 cursor-pointer
+          ${
+            tipoPrograma == "auto"
+              ? "bg-rose-500 text-white border-rose-500"
+              : "bg-white  border-neutral-800"
+          }
+             `}
+          onClick={() => handleProgramaSection("auto")}
+        >
+          <p className=" text-center text">Lo antes posible</p>
+        </div> */}
+        <div
+          className={`border-2 w-44 md:w-60  text-xs 
+          shadow-md rounded-md py-1 px-2 cursor-pointer
+          ${
+            tipoPrograma == "custom"
+              ? "bg-rose-500 text-white border-rose-500"
+              : "bg-white  border-neutral-800"
+          }
+           `}
+          onClick={() => handleProgramaSection("custom")}
+        >
+          <p className=" text-center">Seleccionar fechas</p>
+        </div>
+      </div>
+
+      {/* {tipoPrograma == "auto" && (
+        <div className="grid mx-4 md:mx-2 grid-cols-1 md:grid-cols-2  lg:grid-cols-3 gap-4">
+          <ProgramarAutoRec />
+          <ProgramarAutoEnt />
+        </div>
+      )} */}
       {tipoPrograma == "custom" && (
-        <div className="mt-2 md:mt-6 grid mx-4 md:mx-2 grid-cols-1 md:grid-cols-1  lg:grid-cols-2 xl:grid-cols-3 gap-4">
+        <div className="grid mx-4 md:mx-2 grid-cols-1 md:grid-cols-1  lg:grid-cols-2 xl:grid-cols-3 gap-4">
           <ProgramarRecoleccion />
           <ProgramarEntrega />
         </div>
@@ -306,16 +356,8 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
     //console.log(pedido?.programa?.fechaRecoleccion);
 
     const handleDateChange = async (e: any) => {
-      if (e.getDay() == 6) {
-        setHorariosLabelRec("10:00am - 3:00pm");
-      } else {
-        setHorariosLabelRec("10:00am - 7:00pm");
-      }
-
-      setBloquedEntrega(data.bloquedEnt);
       setIsRecLoading(true);
       console.log(new Date(addHours(e, 6)));
-      setBloquedEntrega((old: any) => [...old, e]);
 
       saveRecoleccionState({ ...recoleccionState, am: false, pm: false });
       saveEntregaState({
@@ -474,9 +516,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
                     value={1}
                     name="recoleccion"
                     label={
-                      <p className="text-sm font-semibold">
-                        {horariosLabelRec}
-                      </p>
+                      <p className="text-sm font-semibold">10:00am - 3:00pm</p>
                     }
                     onChange={(event) =>
                       handleBloqueChange(parseInt(event.target.value))
@@ -525,12 +565,13 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
 
   function ProgramarEntrega() {
     const handleDateChange = async (e: any) => {
-      if (e.getDay() == 6) {
-        setHorariosLabelEnt("10:00am - 3:00pm");
-      } else {
-        setHorariosLabelEnt("10:00am - 7:00pm");
-      }
+      //setBloquesEntShow(true);
 
+      /*  console.log(
+        "fecha rec: ",
+        pedido?.programa?.fechaRecoleccion.toISOString().slice(0, 10)
+      ); */
+      //console.log("fehcaServer: ", e.toISOString().slice(0, 10));
       if (
         pedido?.programa?.fechaRecoleccion.toISOString().slice(0, 10) ==
         e.toISOString().slice(0, 10)
@@ -595,7 +636,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
                 setDpOpen={(val) => setDpEntOpen(val)}
                 value={pedido?.programa?.fechaEntrega}
                 onChange={(newValue) => handleDateChange(newValue)}
-                bloqued={bloquedEntrega}
+                bloqued={data.bloquedEnt}
                 datetime={datetime}
                 startDate={entregaState?.startDate}
                 disabled={!entregaState?.enabled}
@@ -618,7 +659,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
                   value={1}
                   name="entrega"
                   label={
-                    <p className="text-sm font-semibold">{horariosLabelEnt}</p>
+                    <p className="text-sm font-semibold">10:00am - 3:00pm</p>
                   }
                   onChange={(event) =>
                     handleBloqueChange(parseInt(event.target.value))
@@ -648,6 +689,81 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
                 pedido?.programa?.bloqueEntrega == 3 && (
                   <div className="text-sm">No hay horarios disponibles</div>
                 )
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  function ProgramarAutoRec() {
+    return (
+      <div className="my-2 border border-neutral-300 shadow-md rounded-lg p-2 px-2 md:px-6">
+        <div className="flex flex-col">
+          <p className="text-md font-bold">Recolección</p>
+
+          {isAutoLoading && !append ? (
+            <div className="mt-2 mx-4">
+              <PulseLoader
+                //@ts-ignore
+                size={10}
+                color="#FF6B00"
+              />
+            </div>
+          ) : (
+            <div className="mt-1 flex flex-col">
+              {pedido?.programa?.fechaRecoleccion && (
+                <p className="text-xs text-neutral-500">
+                  {namedDateString(pedido?.programa?.fechaRecoleccion)}
+                </p>
+              )}
+              {pedido?.programa?.bloqueRecoleccion && (
+                <p className="text-xs text-blue-500">
+                  {pedido?.programa?.bloqueRecoleccion == 1
+                    ? "10:00am - 3:00pm"
+                    : "4:00pm - 9:00pm"}
+                </p>
+              )}
+              {pedido?.append?.enabled && (
+                <p className="text-[11px]">
+                  Agregando envío a recolección {pedido.append.recoleccion?.id}
+                </p>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  function ProgramarAutoEnt() {
+    return (
+      <div className="my-2 border border-neutral-300 shadow-md rounded-lg p-2 px-2 md:px-6">
+        <div className="flex flex-col">
+          <p className="text-md font-bold">Entrega</p>
+
+          {isAutoLoading ? (
+            <div className="mt-2 mx-4">
+              <PulseLoader
+                //@ts-ignore
+                size={10}
+                color="#FF6B00"
+              />
+            </div>
+          ) : (
+            <div className="mt-1 flex flex-col">
+              {pedido?.programa?.fechaEntrega && (
+                <p className="text-xs text-neutral-500">
+                  {namedDateString(pedido?.programa?.fechaEntrega)}
+                </p>
+              )}
+              {pedido?.programa?.bloqueEntrega && (
+                <p className="text-xs text-blue-500">
+                  {pedido?.programa?.bloqueEntrega == 1
+                    ? "10:00am - 3:00pm"
+                    : "4:00pm - 9:00pm"}
+                </p>
               )}
             </div>
           )}

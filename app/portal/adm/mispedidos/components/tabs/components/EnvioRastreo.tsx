@@ -2,8 +2,10 @@
 
 import {
   dateString,
+  dateStringRastreo,
   namedDateString,
   namedDateStringFull,
+  namedDateStringFullRastreo,
 } from "@/app/components/utils/helpers";
 import GuiaShare from "@/app/portal/crear/components/GuiaShare";
 import { SafePedido, SafeRastreo } from "@/app/types";
@@ -83,7 +85,7 @@ const EnvioRastreo: React.FC<EnvioRastreoProps> = ({ id }) => {
                 </TimelineHeader>
                 <TimelineBody className="pb-4">
                   <p className="text-xs text-neutral-400">
-                    {namedDateStringFull(data?.createdAt)}
+                    {namedDateStringFullRastreo(data?.createdAt)}
                   </p>
                 </TimelineBody>
               </TimelineItem>
@@ -196,7 +198,7 @@ const EnvioRastreo: React.FC<EnvioRastreoProps> = ({ id }) => {
                       <div className="flex flex-col ">
                         <p className={`text-xs  `}>
                           {rastreo.leyendaInciEnt} (
-                          {dateString(rastreo.timeStampUltimaInciEnt)})
+                          {dateStringRastreo(rastreo.timeStampUltimaInciEnt)})
                         </p>
                         <p className={`text-[11px] text-blue-500`}>
                           {rastreo.motivoUltimaInciEnt}

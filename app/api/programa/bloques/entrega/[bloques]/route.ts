@@ -76,15 +76,8 @@ export async function POST(request: Request, { params }: { params: IParams }) {
       } else {
         if (hoyUTC.getHours() < bloque1Limit) {
           amDisponible = true;
-          pmDisponible = true;
-        } else if (
-          hoyUTC.getHours() >= bloque1Limit &&
-          hoyUTC.getHours() < bloque2Limit
-        ) {
-          pmDisponible = true;
         } else {
           amDisponible = false;
-          pmDisponible = false;
         }
       }
     } else {
@@ -92,7 +85,6 @@ export async function POST(request: Request, { params }: { params: IParams }) {
         amDisponible = true;
       } else {
         amDisponible = true;
-        pmDisponible = true;
       }
     }
   }

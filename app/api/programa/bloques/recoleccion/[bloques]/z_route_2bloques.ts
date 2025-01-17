@@ -81,10 +81,10 @@ export async function POST(request: Request, { params }: { params: IParams }) {
   let bloque2LimitTotal = 14 * 60 + 30;
   let nowMinutes = hoyUTC.getHours() * 60 + hoyUTC.getMinutes();
 
-  /*  if (conf) {
+  if (conf) {
     bloque1LimitTotal = conf.bloque1HoraLimit * 60 + conf.bloque1MinutosLimit;
     bloque2LimitTotal = conf.bloque2HoraLimit * 60 + conf.bloque2MinutosLimit;
-  } */
+  }
 
   if (fechaQuery) {
     const hoyDate = format(hoy, `yyyy-MM-dd`);
@@ -109,6 +109,15 @@ export async function POST(request: Request, { params }: { params: IParams }) {
       } else {
         if (nowMinutes < bloque1LimitTotal) {
           amDisponible = true;
+          pmDisponible = true;
+        } else if (
+          nowMinutes >= bloque1LimitTotal &&
+          nowMinutes < bloque2LimitTotal
+        ) {
+          pmDisponible = true;
+        } else {
+          amDisponible = false;
+          pmDisponible = false;
         }
       }
     } else {
@@ -116,6 +125,7 @@ export async function POST(request: Request, { params }: { params: IParams }) {
         amDisponible = true;
       } else {
         amDisponible = true;
+        pmDisponible = true;
       }
     }
   }

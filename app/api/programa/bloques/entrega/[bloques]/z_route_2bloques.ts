@@ -4,11 +4,6 @@ import prisma from "@/app/libs/prismadb";
 import getCurrentUser from "@/app/actions/getCurrentUser";
 import { format, subHours, addHours } from "date-fns";
 import { utcToZonedTime } from "date-fns-tz";
-import {
-  checkLimitRecolecciones,
-  checkRecolecciones,
-} from "../../../auto/[auto]/utils";
-import { cl } from "@/app/api/utils/utils";
 
 interface IParams {
   bloques?: string;
@@ -16,11 +11,8 @@ interface IParams {
 
 export async function POST(request: Request, { params }: { params: IParams }) {
   const currentUser = await getCurrentUser();
-  const body = await request.json();
 
-  const { direccionId } = body;
-
-  if (!currentUser || !direccionId) {
+  if (!currentUser) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
@@ -38,19 +30,11 @@ export async function POST(request: Request, { params }: { params: IParams }) {
   const fecha = addHours(fechaUTC, 6);
   const hoy = subHours(hoyUTC, 6);
 
-  cl("PROGRA", fecha.toISOString());
-
-  const conf = await prisma.configuracionHorarios.findUnique({
-    where: {
-      id: 1,
-    },
-  });
-
   const blocked = await prisma.fechasBloqueadas.findMany({
     where: {
       AND: [
         {
-          tipo: "REC",
+          tipo: "ENT",
         },
         {
           fecha: { lte: fechaUTC, gte: fechaUTC },
@@ -77,15 +61,6 @@ export async function POST(request: Request, { params }: { params: IParams }) {
     });
   }
 
-  let bloque1LimitTotal = 9 * 60 + 30;
-  let bloque2LimitTotal = 14 * 60 + 30;
-  let nowMinutes = hoyUTC.getHours() * 60 + hoyUTC.getMinutes();
-
-  /*  if (conf) {
-    bloque1LimitTotal = conf.bloque1HoraLimit * 60 + conf.bloque1MinutosLimit;
-    bloque2LimitTotal = conf.bloque2HoraLimit * 60 + conf.bloque2MinutosLimit;
-  } */
-
   if (fechaQuery) {
     const hoyDate = format(hoy, `yyyy-MM-dd`);
     const fechaDate = format(fecha, `yyyy-MM-dd`);
@@ -93,22 +68,23 @@ export async function POST(request: Request, { params }: { params: IParams }) {
     const bloque1Limit = 10;
     const bloque2Limit = 15;
 
-    //console.log(conf);
-
-    //console.log("cambio horario tests.......");
-    //console.log(fecha);
-    //console.log(hoy);
-
-    //console.log("cambio horario tests<<<<<.......>>>>>");
-
     if (hoyDate == fechaDate) {
       if (fecha.getDay() == 6) {
-        if (nowMinutes < bloque1LimitTotal) {
+        if (hoyUTC.getHours() < bloque1Limit) {
           amDisponible = true;
         }
       } else {
-        if (nowMinutes < bloque1LimitTotal) {
+        if (hoyUTC.getHours() < bloque1Limit) {
           amDisponible = true;
+          pmDisponible = true;
+        } else if (
+          hoyUTC.getHours() >= bloque1Limit &&
+          hoyUTC.getHours() < bloque2Limit
+        ) {
+          pmDisponible = true;
+        } else {
+          amDisponible = false;
+          pmDisponible = false;
         }
       }
     } else {
@@ -116,33 +92,14 @@ export async function POST(request: Request, { params }: { params: IParams }) {
         amDisponible = true;
       } else {
         amDisponible = true;
+        pmDisponible = true;
       }
     }
   }
 
-  //console.log("fecha: ", fecha);
-  //console.log("dir id: ", direccionId);
-
-  const recCheck1 = await checkRecolecciones(
-    currentUser.id,
-    fecha,
-    1,
-    direccionId
-  );
-  const recCheck2 = await checkRecolecciones(
-    currentUser.id,
-    fecha,
-    2,
-    direccionId
-  );
-
   const result = {
     am: matchAm ? false : amDisponible,
     pm: matchPm ? false : pmDisponible,
-    recsB1: recCheck1.length >= 1,
-    recsB1Data: recCheck1,
-    recsB2: recCheck2.length >= 1,
-    recsB2Data: recCheck2,
   };
 
   //console.log(result);

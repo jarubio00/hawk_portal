@@ -34,6 +34,21 @@ export function namedDateStringFull(dateString) {
   return result;
 }
 
+export function namedDateStringFullRastreo(dateString) {
+  const date = new Date(dateString);
+  let result = "No hay fecha";
+  if (isDate(date)) {
+    result = format(
+      addHours(date, 6),
+      `EEEE, d 'de' MMMM 'de' yyyy  HH:mm:ss`,
+      {
+        locale: esLocale,
+      }
+    );
+  }
+  return result;
+}
+
 export function namedDateStringMid(dateString) {
   const date = new Date(dateString);
   let result = "No hay fecha";
@@ -50,6 +65,17 @@ export function dateString(dateString) {
   let result = "No hay fecha";
   if (isDate(date)) {
     result = format(addHours(date, 0), `dd/MM/yyyy HH:mm:ss `, {
+      locale: esLocale,
+    });
+  }
+  return result.trim();
+}
+
+export function dateStringRastreo(dateString) {
+  const date = new Date(dateString);
+  let result = "No hay fecha";
+  if (isDate(date)) {
+    result = format(addHours(date, 6), `dd/MM/yyyy HH:mm:ss `, {
       locale: esLocale,
     });
   }

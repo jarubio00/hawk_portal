@@ -9,6 +9,7 @@ export default async function getBloquedDays() {
     //console.log(currentUser);
     const hoyUTC = new Date();
     const ayerUTC = subDays(hoyUTC, 1);
+    const localDate = subHours(hoyUTC, 6);
 
     const data = await prisma.fechasBloqueadas.findMany({
       where: {
@@ -26,6 +27,9 @@ export default async function getBloquedDays() {
     let bloquedRec: any[] = [];
     let bloquedEnt: any[] = [];
 
+    let nowMinutes = hoyUTC.getHours() * 60 + hoyUTC.getMinutes();
+    let bloque1LimitTotal = 9 * 60 + 30;
+
     data.map((date) => {
       if (date.tipo == "AMBOS") {
         bloquedEnt.push(date.fecha);
@@ -36,6 +40,11 @@ export default async function getBloquedDays() {
         bloquedEnt.push(date.fecha);
       }
     });
+    bloquedEnt.push(localDate);
+
+    if (nowMinutes > bloque1LimitTotal) {
+      bloquedRec.push(localDate);
+    }
 
     const result = { bloquedRec: bloquedRec, bloquedEnt: bloquedEnt };
 
