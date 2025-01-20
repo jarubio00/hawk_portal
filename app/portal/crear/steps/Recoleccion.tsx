@@ -35,6 +35,7 @@ import {
 } from "react-icons/fa";
 import { MdEmail, MdPhone } from "react-icons/md";
 import AddColoniaFixDialog from "../components/AddColoniaFixDialog";
+import AvisoEnRecoleccionDialog from "./dialogs/AvisoEnRecoleccionDialog";
 
 interface RecoleccionStepProps {
   label?: string;
@@ -73,6 +74,8 @@ const RecoleccionStep: React.FC<RecoleccionStepProps> = ({
   const [direccion, setDireccion] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
   const [openColoniaDialog, setOpenColoniaDialog] = useState(false);
+  const [nextEnabled, setNextEnabled] = useState(false);
+  const [avisoDialog, setAvisoDialog] = useState(false);
 
   const onSelectDireccion = (direccion: any) => {
     setErrorMessage("");
@@ -94,7 +97,12 @@ const RecoleccionStep: React.FC<RecoleccionStepProps> = ({
     });
   }, []);
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setAvisoDialog(true);
+      setNextEnabled(true);
+    }, 1000);
+  }, []);
 
   const handleNext = () => {
     //if (!pedido?.recoleccion?.colonia) {
@@ -115,6 +123,11 @@ const RecoleccionStep: React.FC<RecoleccionStepProps> = ({
 
   return (
     <div className="px-2">
+      <AvisoEnRecoleccionDialog
+        openDialog={avisoDialog}
+        disabled={false}
+        onNext={() => setAvisoDialog(false)}
+      />
       <AddColoniaFixDialog
         open={openColoniaDialog}
         onClose={closeColoniaDialog}
@@ -204,7 +217,11 @@ const RecoleccionStep: React.FC<RecoleccionStepProps> = ({
       <div>
         {pedido?.recoleccion?.municipioId !== 10 ? (
           <div className="my-4">
-            <Button label="Siguiente" onClick={handleNext} />
+            <Button
+              label="Siguiente"
+              onClick={handleNext}
+              disabled={!nextEnabled}
+            />
           </div>
         ) : (
           <AlertDialog>

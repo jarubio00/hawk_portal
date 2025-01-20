@@ -28,6 +28,7 @@ import ProgramaTimer from "../components/ProgramaTimer";
 import { namedDate, namedDateString } from "@/app/components/utils/helpers";
 import NavidadDialog from "./dialogs/NavidadDialog";
 import LluviaDialog from "./dialogs/LluviaDialog";
+import FrioDialog from "./dialogs/FrioDialog";
 
 interface ProgramacionStepProps {
   data?: any;
@@ -270,7 +271,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
           onClick={handleBack}
           disabled={isAutoLoading}
         />
-        <Button
+        {/* <Button
           label="Siguiente"
           onClick={handleNext}
           disabled={
@@ -282,6 +283,18 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
             !pedido?.programa?.fechaEntrega ||
             pedido?.programa?.bloqueEntrega == 3
           }
+        /> */}
+        <FrioDialog
+          disabled={
+            isAutoLoading ||
+            isRecLoading ||
+            isEntLoading ||
+            !pedido?.programa?.fechaRecoleccion ||
+            pedido?.programa?.bloqueRecoleccion == 3 ||
+            !pedido?.programa?.fechaEntrega ||
+            pedido?.programa?.bloqueEntrega == 3
+          }
+          onNext={handleNext}
         />
         {/* <NavidadDialog
           disabled={
