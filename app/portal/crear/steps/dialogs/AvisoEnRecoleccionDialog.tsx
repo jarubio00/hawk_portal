@@ -32,7 +32,7 @@ const AvisoEnRecoleccionDialog: React.FC<AvisoEnRecoleccionDialogProps> = ({
 }) => {
   return (
     <AlertDialog open={openDialog}>
-      <AlertDialogContent className="bg-[url('/images/avisos/avisoBloques3.png')] bg-orange-300 bg-no-repeat bg-cover h-[600px]">
+      <AlertDialogContent className="bg-[url('/images/avisos/avisoBloques3.png')] bg-orange-300 bg-no-repeat bg-cover h-[600px] w-full md:w-[550px]">
         <AlertDialogHeader className="h-[450px]"></AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogAction className="px-4 mx-4" onClick={onNext}>
