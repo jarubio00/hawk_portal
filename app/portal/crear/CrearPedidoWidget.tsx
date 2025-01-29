@@ -202,7 +202,7 @@ const CrearPedidoWidget: React.FC<CrearPedidoWidgetProps> = ({
             />
           )}
           {activeStep === 1 && <DestinoStep municipios={data.municipios} />}
-          {activeStep === 2 && <PaqueteStep />}
+          {activeStep === 2 && <PaqueteStep currentUser={currentUser} />}
           {activeStep === 3 && (
             <ProgramacionStep
               data={data.bloquedDates}

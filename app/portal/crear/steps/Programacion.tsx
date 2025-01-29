@@ -271,7 +271,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
           onClick={handleBack}
           disabled={isAutoLoading}
         />
-        {/* <Button
+        <Button
           label="Siguiente"
           onClick={handleNext}
           disabled={
@@ -283,8 +283,8 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
             !pedido?.programa?.fechaEntrega ||
             pedido?.programa?.bloqueEntrega == 3
           }
-        /> */}
-        <FrioDialog
+        />
+        {/* <FrioDialog
           disabled={
             isAutoLoading ||
             isRecLoading ||
@@ -295,7 +295,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
             pedido?.programa?.bloqueEntrega == 3
           }
           onNext={handleNext}
-        />
+        /> */}
         {/* <NavidadDialog
           disabled={
             isAutoLoading ||

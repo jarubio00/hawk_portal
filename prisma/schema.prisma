@@ -10,54 +10,56 @@ datasource db {
 
 //updatedAt          DateTime                   @updatedAt
 model User {
-  id                   Int                           @id @default(autoincrement())
-  nombre               String?
-  email                String                        @unique
-  imagen               String?
-  hashedPassword       String?
-  nivelId              Int                           @default(1)
-  categoriaId          Int                           @default(1)
-  saldo                Float                         @default(0)
-  tipo                 Int                           @default(0)
-  credito              Boolean                       @default(false)
-  limiteCredito        Float                         @default(0)
-  direccionDefaultId   Int?
-  loggedIn             Boolean                       @default(false)
-  createdAt            DateTime                      @default(dbgenerated("(now())"))
-  createdBy            Int                           @default(1)
-  updatedAt            DateTime                      @default(dbgenerated("(now())"))
-  lastLoginAt          DateTime?
-  countryCode          String?
-  celular              String?
-  empresa              String?
-  kommoContactId       Int?
-  whatsappEnabled      Boolean?                      @default(false)
-  cobrosPermitidos     Boolean                       @default(false)
-  deleted              Boolean                       @default(false)
-  deletedAt            DateTime?
-  deletedBy            Int?
-  disabled             Boolean                       @default(false)
-  disabledAt           DateTime?
-  disabledBy           Int?
-  passwordType         String                        @default("bcrypt")
-  md5Pass              String?
-  sysopTel             String?
-  migrated             Boolean                       @default(true)
-  accounts             Account[]
-  checklist            ClientesChecklist?
-  cobros               CobrosDestino[]
-  destinos             Destino[]
-  direcciones          Direccion[]
-  paquetes             Paquete[]
-  pedidos              Pedido[]
-  pedidosHistory       PedidoHistory[]
-  recolecciones        Recoleccion[]
-  cobrosCortes         CobrosCortes[]
-  kommoSync            KommoSync[]
-  recoleccionesHistory RecoleccionHistory[]
-  nivel                CatalogoNivelesClientes       @relation(fields: [nivelId], references: [id], onDelete: NoAction)
-  categoria            CatalogoCategoriasClientes    @relation(fields: [categoriaId], references: [id], onDelete: NoAction)
-  actividad            ActividadPlataformaClientes[]
+  id                      Int                           @id @default(autoincrement())
+  nombre                  String?
+  email                   String                        @unique
+  imagen                  String?
+  hashedPassword          String?
+  nivelId                 Int                           @default(1)
+  categoriaId             Int                           @default(1)
+  saldo                   Float                         @default(0)
+  tipo                    Int                           @default(0)
+  credito                 Boolean                       @default(false)
+  limiteCredito           Float                         @default(0)
+  direccionDefaultId      Int?
+  loggedIn                Boolean                       @default(false)
+  createdAt               DateTime                      @default(dbgenerated("(now())"))
+  createdBy               Int                           @default(1)
+  updatedAt               DateTime                      @default(dbgenerated("(now())"))
+  lastLoginAt             DateTime?
+  countryCode             String?
+  celular                 String?
+  empresa                 String?
+  kommoContactId          Int?
+  whatsappEnabled         Boolean?                      @default(false)
+  cobrosPermitidos        Boolean                       @default(false)
+  deleted                 Boolean                       @default(false)
+  deletedAt               DateTime?
+  deletedBy               Int?
+  disabled                Boolean                       @default(false)
+  disabledAt              DateTime?
+  disabledBy              Int?
+  passwordType            String                        @default("bcrypt")
+  md5Pass                 String?
+  sysopTel                String?
+  migrated                Boolean                       @default(true)
+  accounts                Account[]
+  checklist               ClientesChecklist?
+  cobros                  CobrosDestino[]
+  destinos                Destino[]
+  direcciones             Direccion[]
+  paquetes                Paquete[]
+  pedidos                 Pedido[]
+  pedidosHistory          PedidoHistory[]
+  recolecciones           Recoleccion[]
+  cobrosCortes            CobrosCortes[]
+  kommoSync               KommoSync[]
+  recoleccionesHistory    RecoleccionHistory[]
+  nivel                   CatalogoNivelesClientes       @relation(fields: [nivelId], references: [id], onDelete: NoAction)
+  categoria               CatalogoCategoriasClientes    @relation(fields: [categoriaId], references: [id], onDelete: NoAction)
+  actividad               ActividadPlataformaClientes[]
+  pedidosNacionales       NacionalPedido[]
+  recoleccionesNacionales NacionalRecoleccion[]
 
   @@fulltext([nombre])
   @@fulltext([email])
@@ -591,29 +593,30 @@ model Operadores {
 }
 
 model UsuariosHawk {
-  id             Int                           @id @default(autoincrement())
-  nombre         String
-  password       String
-  correo         String                        @unique
-  rol            UsuariosHawkRoles
-  departamentoId Int                           @default(1)
-  tipoId         Int                           @default(1)
-  celular        String?
-  countryCode    String?
-  fotoUrl        String?                       @db.LongText
-  fotoPublicId   String?                       @db.LongText
-  fotoPath       String?
-  createdAt      DateTime                      @default(dbgenerated("(now())"))
-  createdBy      Int                           @default(1)
-  isLocked       Boolean                       @default(false)
-  lockedAt       DateTime?
-  lockedBy       Int?
-  isDeleted      Boolean                       @default(false)
-  deletedAt      DateTime?
-  deletedBy      Int?
-  departamento   CatalogoUsuariosDepartamentos @relation(fields: [departamentoId], references: [id])
-  tipo           CatalogoUsuariosTipos         @relation(fields: [tipoId], references: [id])
-  actividades    ActividadOperaciones[]
+  id                  Int                            @id @default(autoincrement())
+  nombre              String
+  password            String
+  correo              String                         @unique
+  rol                 UsuariosHawkRoles
+  departamentoId      Int                            @default(1)
+  tipoId              Int                            @default(1)
+  celular             String?
+  countryCode         String?
+  fotoUrl             String?                        @db.LongText
+  fotoPublicId        String?                        @db.LongText
+  fotoPath            String?
+  createdAt           DateTime                       @default(dbgenerated("(now())"))
+  createdBy           Int                            @default(1)
+  isLocked            Boolean                        @default(false)
+  lockedAt            DateTime?
+  lockedBy            Int?
+  isDeleted           Boolean                        @default(false)
+  deletedAt           DateTime?
+  deletedBy           Int?
+  departamento        CatalogoUsuariosDepartamentos  @relation(fields: [departamentoId], references: [id])
+  tipo                CatalogoUsuariosTipos          @relation(fields: [tipoId], references: [id])
+  actividades         ActividadOperaciones[]
+  actividadesNacional NacionalActividadOperaciones[]
 }
 
 model CatalogoUsuariosEmpresas {
@@ -918,11 +921,12 @@ model CatalogoActividadClientes {
 }
 
 model CatalogoEstatusPago {
-  id             Int             @id @default(autoincrement())
-  estatus        String
-  descripcion    String?
-  pedido         Pedido[]
-  pedidosHistory PedidoHistory[]
+  id                Int              @id @default(autoincrement())
+  estatus           String
+  descripcion       String?
+  pedido            Pedido[]
+  pedidosHistory    PedidoHistory[]
+  pedidosNacionales NacionalPedido[]
 }
 
 model CatalogoTiposClientes {
@@ -1231,4 +1235,230 @@ enum OperadorRol {
   supervisor
   admin
   ultra
+}
+
+//Nacional --------------------->//
+
+model NacionalRecoleccion {
+  id                   Int                                  @id @default(autoincrement())
+  clienteId            Int
+  estatusRecoleccionId Int                                  @default(1)
+  recolectorId         Int                                  @default(1)
+  fecha                DateTime
+  direccionId          Int?
+  direccionIcon        String?
+  direccionColor       String?
+  contactoNombre       String
+  contactoTel          String
+  cp                   String
+  calle                String
+  numero               String
+  numeroInt            String
+  colonia              String
+  otraColonia          Boolean                              @default(false)
+  municipio            String
+  empresa              String?
+  referencias          String?                              @db.LongText
+  lat                  String?
+  lng                  String?
+  createdAt            DateTime                             @default(now()) @db.DateTime(0)
+  updatedAt            DateTime?                            @default(now()) @db.DateTime(0)
+  updatedBy            Int?
+  migrated             Boolean                              @default(false)
+  pedidos              NacionalPedido[]
+  cliente              User                                 @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  estatus              NacionalCatalogoEstatusRecolecciones @relation(fields: [estatusRecoleccionId], references: [id], onDelete: Cascade)
+  recolector           NacionalCatalogoRecolectores         @relation(fields: [recolectorId], references: [id])
+
+  @@index([clienteId], map: "Recolecciones_clienteId_fkey")
+  @@index([estatusRecoleccionId], map: "Recolecciones_estatusRecoleccionId_fkey")
+  @@map("RecoleccionesNacionales")
+}
+
+model NacionalCatalogoRecolectores {
+  id            Int                   @id @default(autoincrement())
+  nombre        String
+  desc          String?
+  fotoUrl       String?               @db.LongText
+  recolecciones NacionalRecoleccion[]
+}
+
+model NacionalPedido {
+  id                    Int                            @id @default(autoincrement())
+  codigoRastreo         String?
+  clienteId             Int
+  recoleccionId         Int
+  estatusPedidoId       Int                            @default(1)
+  fechaEntrega          DateTime
+  entregaContactoNombre String?
+  entregaContactoTel    String?
+  entregaCp             String?
+  entregaCalle          String
+  entregaNumero         String?
+  entregaNumeroInt      String?
+  entregaColonia        String
+  entregaOtraColonia    Boolean                        @default(false)
+  entregaMunicipio      String
+  entregaEmpresa        String?
+  entregaReferencias    String?                        @db.LongText
+  entregaLat            String?
+  entregaLng            String?
+  paqEmpaqueId          Int                            @default(1)
+  paqAncho              Float
+  paqLargo              Float
+  paqAlto               Float
+  paqPeso               Float
+  paqContenido          String?
+  paqPesoVol            Float
+  precioVenta           Float
+  formaPagoId           Int                            @default(1)
+  estatusPagoId         Int                            @default(1)
+  batched               Boolean                        @default(false)
+  printBatchId          Int?
+  printBatchNumber      Int?
+  printed               Boolean?                       @default(false)
+  createdAt             DateTime                       @default(dbgenerated("(now())"))
+  updatedAt             DateTime?                      @default(now()) @db.DateTime(0)
+  updatedBy             Int?                           @default(1)
+  migrated              Boolean                        @default(false)
+  migratedAt            DateTime?
+  migratedBy            String?
+  userCreated           Boolean                        @default(true)
+  user                  User                           @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  estatusPago           CatalogoEstatusPago            @relation(fields: [estatusPagoId], references: [id], onDelete: Cascade)
+  estatusPedido         NacionalCatalogoEstatusPedidos @relation(fields: [estatusPedidoId], references: [id], onDelete: Cascade)
+  formaPago             NacionalCatalogoMetodosPago    @relation(fields: [formaPagoId], references: [id], onDelete: Cascade)
+  recoleccion           NacionalRecoleccion            @relation(fields: [recoleccionId], references: [id], onDelete: Cascade)
+  printBatch            NacionalPrintBatch?            @relation(fields: [printBatchId], references: [id])
+  incidencias           IncidenciaNacional[]
+  actividad             NacionalActividadOperaciones[]
+
+  @@index([clienteId], map: "Pedidos_clienteId_fkey")
+  @@index([estatusPagoId], map: "Pedidos_estatusPagoId_fkey")
+  @@index([formaPagoId], map: "Pedidos_formaPagoId_fkey")
+  @@index([recoleccionId], map: "Pedidos_recoleccionId_fkey")
+  @@index([estatusPedidoId], map: "Pedidos_estatusPedidoId_fkey")
+  @@index([createdAt], map: "Pedidos_dateInxs_fkey")
+  @@map("PedidosNacionales")
+}
+
+model NacionalPrintBatch {
+  id        Int                @id @default(autoincrement())
+  corteId   Int
+  nombre    String?
+  grupo     Int?
+  printer   Int?
+  printed   Boolean            @default(false)
+  printedAt DateTime?
+  createdAt DateTime           @default(dbgenerated("(now())"))
+  createdBy Int                @default(1)
+  corte     NacionalPrintCorte @relation(fields: [corteId], references: [id])
+  pedidos   NacionalPedido[]
+}
+
+model NacionalPrintCorte {
+  id              Int                  @id @default(autoincrement())
+  nombre          String?
+  fecha           DateTime             @db.Date
+  bloque          Int
+  createdAt       DateTime             @default(dbgenerated("(now())"))
+  createdBy       Int                  @default(1)
+  batchesNacional NacionalPrintBatch[]
+}
+
+model NacionalActividadOperaciones {
+  id         Int                                  @id @default(autoincrement())
+  pedidoId   Int?
+  tipoId     Int
+  isChange   Boolean                              @default(false)
+  changeOld  String?                              @db.LongText
+  changeNew  String?                              @db.LongText
+  changeType String?
+  changeData String?                              @db.LongText
+  createdAt  DateTime                             @default(dbgenerated("(now())"))
+  createdBy  Int
+  tipo       NacionalCatalogoActividadOperaciones @relation(fields: [tipoId], references: [id])
+  pedido     NacionalPedido?                      @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+  user       UsuariosHawk                         @relation(fields: [createdBy], references: [id])
+}
+
+model NacionalCatalogoActividadOperaciones {
+  id          Int                                            @id @default(autoincrement())
+  clave       String
+  actividad   String
+  categoriaId Int
+  desc        String?
+  actividades NacionalActividadOperaciones[]
+  categoria   NacionalCatalogoCategoriasActividadOperaciones @relation(fields: [categoriaId], references: [id])
+}
+
+model NacionalCatalogoCategoriasActividadOperaciones {
+  id          Int                                    @id @default(autoincrement())
+  clave       String
+  categoria   String
+  desc        String?
+  actividades NacionalCatalogoActividadOperaciones[]
+}
+
+model IncidenciaNacional {
+  id             Int                              @id @default(autoincrement())
+  pedidoId       Int
+  tipoId         Int                              @default(1)
+  motivoId       Int                              @default(1)
+  comentarios    String?
+  lat            String?
+  lng            String?
+  createdAt      DateTime                         @default(dbgenerated("(now())"))
+  createdBy      Int                              @default(1)
+  fotos          NacionalIncidenciaFoto[]
+  NacionalPedido NacionalPedido                   @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+  motivo         NacionalCatalogoIncidenciaMotivo @relation(fields: [motivoId], references: [id], onDelete: Cascade)
+  tipo           NacionalCatalogoIncidenciaTipo   @relation(fields: [tipoId], references: [id], onDelete: Cascade)
+}
+
+model NacionalIncidenciaFoto {
+  id           Int                @id @default(autoincrement())
+  incidenciaId Int
+  fotoUrl      String             @db.LongText
+  takenAt      DateTime?
+  createdAt    DateTime           @default(dbgenerated("(now())"))
+  createdBy    Int                @default(1)
+  incidencia   IncidenciaNacional @relation(fields: [incidenciaId], references: [id], onDelete: Cascade)
+}
+
+model NacionalCatalogoIncidenciaMotivo {
+  id          Int                  @id @default(autoincrement())
+  motivo      String
+  desc        String?
+  incidencias IncidenciaNacional[]
+}
+
+model NacionalCatalogoIncidenciaTipo {
+  id          Int                  @id @default(autoincrement())
+  tipo        String
+  desc        String?
+  incidencias IncidenciaNacional[]
+}
+
+model NacionalCatalogoMetodosPago {
+  id              Int              @id @default(autoincrement())
+  tipo            String
+  descripcion     String?
+  comprobante_req Boolean          @default(false)
+  activo          Boolean          @default(true)
+  NacionalPedido  NacionalPedido[]
+}
+
+model NacionalCatalogoEstatusRecolecciones {
+  id            Int                   @id @default(autoincrement())
+  estatus       String
+  desc          String?
+  recolecciones NacionalRecoleccion[]
+}
+
+model NacionalCatalogoEstatusPedidos {
+  id      Int              @id @default(autoincrement())
+  estatus String
+  desc    String?
+  pedidos NacionalPedido[]
 }

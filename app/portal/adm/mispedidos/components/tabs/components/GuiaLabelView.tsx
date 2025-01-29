@@ -91,7 +91,7 @@ const GuiaLabelView: React.FC<GuiaLabelViewProps> = ({ data }) => {
               {data?.recoleccion?.fecha.toString().slice(0, 10)}
             </p>
             <p className=" h-5 w-5 bg-gray-900 text-white text-[10px] text-center pt-[2px] ml-1">
-              AM
+              {/* AM */}
             </p>
           </div>
           <p className=" h-12 w-20 bg-gray-900 text-white text-[30px] text-center pt-[2px] ml-1">
@@ -159,7 +159,7 @@ const GuiaLabelView: React.FC<GuiaLabelViewProps> = ({ data }) => {
               {data?.fechaEntrega.toString().slice(0, 10)}
             </p>
             <p className=" h-5 w-5 bg-gray-900 text-white text-[10px] text-center pt-[2px] ml-1">
-              PM
+              {/*  PM */}
             </p>
           </div>
           <p className=" h-12 w-20 bg-gray-900 text-white text-[30px] text-center pt-[2px] ml-1">

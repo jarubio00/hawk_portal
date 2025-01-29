@@ -192,16 +192,16 @@ const ConfirmarCard: React.FC<ConfirmarCardProps> = ({ data }) => {
         </div>
       </div>
 
-      {!order && (
-        <Button
-          onClick={() => {
-            onCreate();
-          }}
-          disabled={shipmentLoading}
-        >
-          Crear envío
-        </Button>
-      )}
+      <Button
+        onClick={() => {
+          onCreate();
+        }}
+        //disabled={shipmentLoading}
+        disabled={false}
+      >
+        Crear envío
+      </Button>
+
       <div className="mb-2">
         {shipmentLoading && <BarLoader width={"100%"} color="#f16e10" />}
       </div>
