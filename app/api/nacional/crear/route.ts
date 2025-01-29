@@ -5,6 +5,7 @@ import getCurrentUser from "@/app/actions/getCurrentUser";
 import { userActivityRegister } from "@/app/api/utils/activity";
 import axios from "axios";
 import { NacionalShipment } from "@/app/types";
+import { confirmNacionalShipment } from "../../utils/nacionalUtils";
 
 export async function POST(req: Request) {
   try {
@@ -28,7 +29,11 @@ export async function POST(req: Request) {
       body
     );
 
-    console.log(response.data);
+    //console.log(response.data);
+
+    const confirmShipment = await confirmNacionalShipment(response.data);
+
+    console.log(confirmShipment);
 
     const data: any[] = [];
 

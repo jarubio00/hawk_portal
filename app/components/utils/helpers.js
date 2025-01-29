@@ -97,7 +97,7 @@ export function dateStringDHL(date) {
 export function bloqueToString(bloque) {
   let result = "";
   if (bloque === 1) {
-    result = "10:00am - 3:00pm";
+    result = "10:00am - 7:00pm";
   } else if (bloque === 2) {
     result = "5:00pm - 9:00pm";
   }

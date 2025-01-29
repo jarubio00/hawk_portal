@@ -27,6 +27,7 @@ export const createCartSlice: StateCreator<CartSlice> = (set, get) => ({
   createShipment: async (data: NacionalShipment) => {
     set({ shipmentLoading: true });
     const result = await nacionalShipmentCreate(data);
+    console.log(result);
     set({ order: result });
     set({ shipmentLoading: false });
   },

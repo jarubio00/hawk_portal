@@ -108,6 +108,10 @@ const AgregarPaqueteCrear: React.FC<AgregarPaqueteCrearProps> = ({
   }, [saved]);
 
   useEffect(() => {
+    console.log(currentUser);
+  }, []);
+
+  useEffect(() => {
     console.log(paquete);
     if (paquete && saved) {
       setCpActive(true);
@@ -366,12 +370,13 @@ const AgregarPaqueteCrear: React.FC<AgregarPaqueteCrearProps> = ({
                   register={register}
                   isSearchable={false}
                   isClearable
-                  //@ts-ignore
                   value={
+                    //@ts-ignore
                     tipoPaq ? { label: tipoPaq.tipo, value: tipoPaq.id } : null
                   }
                   //@ts-ignore
                   options={
+                    //@ts-ignore
                     tipoPaq ? { label: tipoPaq.tipo, value: tipoPaq.id } : null
                   }
                   isDisabled={true}
@@ -449,37 +454,47 @@ const AgregarPaqueteCrear: React.FC<AgregarPaqueteCrearProps> = ({
               </div>
             </div>
           )}
-
-          {/*  {pedido && !pedido?.cobro ? <div className="flex flex-row  items-center text-md text-neutral-500 my-10 gap-2 cursor-pointer underline" 
-                onClick={() => {
-                  setResetCobro(false)
-                  setCobrosDialogOpen(true)}}
-              >
-                <AiFillDollarCircle size={22} className="text-rose-500"/>
-                <div className="text-sm font-medium text-rose-500 underline  ">
-                  Agregar cobro a destinatario
-                
+          {currentUser?.cobrosPermitidos && (
+            <div>
+              {pedido && !pedido?.cobro ? (
+                <div
+                  className="flex flex-row  items-center text-md text-neutral-500 my-10 gap-2 cursor-pointer underline"
+                  onClick={() => {
+                    setResetCobro(false);
+                    setCobrosDialogOpen(true);
+                  }}
+                >
+                  <AiFillDollarCircle size={22} className="text-rose-500" />
+                  <div className="text-sm font-medium text-rose-500 underline  ">
+                    Agregar cobro a destinatario
+                  </div>
                 </div>
-              </div> : 
-
-              <div className="flex flex-col my-10">
-                <div className="flex flex-row  items-center text-md text-blue-500  gap-2">
-                    <AiFillDollarCircle size={22} className=""/>
+              ) : (
+                <div className="flex flex-col my-10">
+                  <div className="flex flex-row  items-center text-md text-blue-500  gap-2">
+                    <AiFillDollarCircle size={22} className="" />
                     <div className="text-sm font-medium  ">
-                      Se cobrarán <span className="font-semibold">${pedido?.cobroCantidad && currencyFormat(pedido?.cobroCantidad)}</span> al destinatario
+                      Se cobrarán{" "}
+                      <span className="font-semibold">
+                        $
+                        {pedido?.cobroCantidad &&
+                          currencyFormat(pedido?.cobroCantidad)}
+                      </span>{" "}
+                      al destinatario
                     </div>
-                </div>
-                <div  className="flex flex-row gap-2 ml-10">
-                  <div  className="cursor-pointer" onClick={handleEditCobro}>
-                    <span className="text-xs text-neutral-600">Editar</span>
                   </div>
-                  <div className="cursor-pointer" onClick={handleCancelCobro}>
-                    <span className="text-xs text-neutral-600">Quitar</span>
+                  <div className="flex flex-row gap-2 ml-10">
+                    <div className="cursor-pointer" onClick={handleEditCobro}>
+                      <span className="text-xs text-neutral-600">Editar</span>
+                    </div>
+                    <div className="cursor-pointer" onClick={handleCancelCobro}>
+                      <span className="text-xs text-neutral-600">Quitar</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            } */}
-
+              )}
+            </div>
+          )}
           <div className="my-4 flex flex-row items-center gap-4">
             <Button outline label="Atras" onClick={handleBack} />
             <Button label="Siguiente" onClick={handleNext} />
