@@ -58,12 +58,17 @@ const TabSection: React.FC<TabSectionProps> = ({
               Recolecciones
             </div>
           </Tab>
-          {/* <Tab  value={'cobros'} className="w-36 text-sm font-semibold py-1 pb-2">
-              <div className="flex items-center gap-2">
-                {React.createElement(FaCircleDollarToSlot, { className: "w-4 h-4" })}
-                Cobros
-              </div>
-            </Tab> */}
+          {/*  <Tab
+            value={"cobros"}
+            className="w-36 text-sm font-semibold py-1 pb-2"
+          >
+            <div className="flex items-center gap-2">
+              {React.createElement(FaCircleDollarToSlot, {
+                className: "w-4 h-4",
+              })}
+              Cobros
+            </div>
+          </Tab> */}
         </TabsHeader>
         <TabsBody className="m-0 p-0">
           <TabPanel value={"envios"} className="m-0 p-0">
@@ -73,8 +78,8 @@ const TabSection: React.FC<TabSectionProps> = ({
             <RecoleccionesSection />
           </TabPanel>
           {/* <TabPanel value="cobros" className="m-0 p-0">
-              <CobrosTab onView={onCobroView}/>
-            </TabPanel> */}
+            <CobrosTab onView={onCobroView} />
+          </TabPanel> */}
         </TabsBody>
       </Tabs>
     </div>
