@@ -21,7 +21,7 @@ import {
 } from "@material-tailwind/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { MdHome, MdCheck } from "react-icons/md";
+import { MdHome, MdCheck, MdClear } from "react-icons/md";
 import { rastreoSanitizer } from "@/app/components/utils/rastreoHelper";
 import PulseLoader from "react-spinners/PulseLoader";
 import { IoIosWarning } from "react-icons/io";
@@ -78,15 +78,35 @@ const EnvioRastreo: React.FC<EnvioRastreoProps> = ({ id }) => {
               <TimelineItem>
                 <TimelineConnector className="text-rose-500 border-rose-500" />
                 <TimelineHeader>
-                  <TimelineIcon className="p-2 bg-rose-500 ">
-                    <MdCheck className="h-4 w-4" />
+                  <TimelineIcon
+                    className={`p-2 ${
+                      rastreo.estatusGuia == 5 ? "bg-red-500" : "bg-rose-500"
+                    }`}
+                  >
+                    <div>
+                      {rastreo.estatusGuia == 5 ? (
+                        <MdClear className="h-4 w-4" />
+                      ) : (
+                        <MdCheck className="h-4 w-4" />
+                      )}
+                    </div>
                   </TimelineIcon>
-                  <p className="text-sm font-bold ">Envío programado</p>
+                  <div>
+                    {rastreo.estatusGuia == 5 ? (
+                      <p className="text-sm font-bold text-red-500">
+                        Envío cancelado
+                      </p>
+                    ) : (
+                      <p className="text-sm font-bold ">Envío programado</p>
+                    )}
+                  </div>
                 </TimelineHeader>
                 <TimelineBody className="pb-4">
-                  <p className="text-xs text-neutral-400">
-                    {namedDateStringFullRastreo(data?.createdAt)}
-                  </p>
+                  {rastreo.estatusGuia != 5 && (
+                    <p className="text-xs text-neutral-400">
+                      {namedDateStringFullRastreo(data?.createdAt)}
+                    </p>
+                  )}
                 </TimelineBody>
               </TimelineItem>
               <TimelineItem>

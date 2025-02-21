@@ -209,6 +209,7 @@ export type SafeRastreo = {
   motivoUltimaInciEnt?: string;
   timeStampUltimaInciEnt?: Date;
   leyendaInciEnt?: string;
+  estatusGuia?: Number;
 };
 
 export type SafeRastreoOrig = {
