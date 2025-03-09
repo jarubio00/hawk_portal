@@ -17,6 +17,7 @@ export async function POST(request: Request) {
     municipioRecoleccionId,
     municipioEntregaId,
     paqPesoVol,
+    mismoDia,
   } = body;
 
   Object.keys(body).forEach((value: any) => {
@@ -29,6 +30,10 @@ export async function POST(request: Request) {
 
   if (municipioRecoleccionId == 10 || municipioEntregaId == 10) {
     coberturaId = 3;
+  }
+
+  if (mismoDia) {
+    coberturaId = 5;
   }
 
   const cotiza = await prisma.catalogoProductos.findMany({

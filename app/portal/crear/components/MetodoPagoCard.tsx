@@ -141,7 +141,12 @@ const MetodoPagoCard: React.FC<MetodoPagoCardProps> = ({ data }) => {
                               `}
               onClick={() => {}}
             >
-              <p className=" text-center text-xs">Efectivo al recolectar</p>
+              <div className="flex flex-col items-center justify-center">
+                <p className=" text-center text-xs">Efectivo al recolectar</p>
+                <p className=" text-center text-sm font-bold">
+                  ${pedido?.cotizacion?.precio}.00
+                </p>
+              </div>
             </div>
           </AlertDialogTrigger>
           <AlertDialogContent className=" ">
@@ -218,7 +223,12 @@ const MetodoPagoCard: React.FC<MetodoPagoCardProps> = ({ data }) => {
                         `}
               onClick={() => {}}
             >
-              <p className=" text-center">Transferencia o depósito</p>
+              <div className="flex flex-col items-center justify-center">
+                <p className=" text-center">Transferencia o depósito</p>
+                <p className=" text-center text-sm  font-bold">
+                  ${pedido?.cotizacion?.precio}.00
+                </p>
+              </div>
             </div>
           </AlertDialogTrigger>
           <AlertDialogContent className=" ">

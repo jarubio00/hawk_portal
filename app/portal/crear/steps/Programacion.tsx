@@ -4,7 +4,10 @@ import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { PedidoContext } from "@/app/portal/crear/context/PedidoContext";
 import { PedidoContextType } from "@/app/types/pedido";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { LocalizationProvider } from "@mui/x-date-pickers";
+import {
+  dateTimePickerTabsClasses,
+  LocalizationProvider,
+} from "@mui/x-date-pickers";
 import esLocale from "date-fns/locale/es";
 import {
   getBloquesRecoleccion,
@@ -12,7 +15,13 @@ import {
   autoPrograma,
   autoAppend,
 } from "@/app/actions/apiQuerys";
-import { addDays, addHours, format } from "date-fns";
+import {
+  addDays,
+  addHours,
+  eachDayOfInterval,
+  format,
+  nextSaturday,
+} from "date-fns";
 import { Radio } from "@material-tailwind/react";
 import { PulseLoader } from "react-spinners";
 import { toast } from "react-hot-toast";
@@ -29,6 +38,8 @@ import { namedDate, namedDateString } from "@/app/components/utils/helpers";
 import NavidadDialog from "./dialogs/NavidadDialog";
 import LluviaDialog from "./dialogs/LluviaDialog";
 import FrioDialog from "./dialogs/FrioDialog";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 
 interface ProgramacionStepProps {
   data?: any;
@@ -64,6 +75,8 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
     setProgramaRun,
     programaRun,
     pedido,
+    tipoEntrega,
+    updateTipoEntrega,
   } = useContext(PedidoContext) as PedidoContextType;
 
   const isInitialMount = useRef(true);
@@ -258,7 +271,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
       />
 
       {tipoPrograma == "custom" && (
-        <div className="mt-2 md:mt-6 grid mx-4 md:mx-2 grid-cols-1 md:grid-cols-1  lg:grid-cols-2 xl:grid-cols-3 gap-4">
+        <div className="mt-2 md:mt-6 grid mx-4 md:mx-2 grid-cols-1 md:grid-cols-1  lg:grid-cols-2 xl:grid-cols-2 gap-4">
           <ProgramarRecoleccion />
           <ProgramarEntrega />
         </div>
@@ -318,6 +331,37 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
   function ProgramarRecoleccion() {
     //console.log(pedido?.programa?.fechaRecoleccion);
 
+    const [startDateRecoleccion, setStartDateRecoleccion] =
+      useState<Date | null>();
+    const [bloquedRecoleccion, setBloquedRecoleccion] = useState([]);
+
+    useEffect(() => {
+      const nowMinutes = datetime.getHours() * 60 + datetime.getMinutes();
+      const limitMinutes = 9 * 60 + 30;
+      if (pedido?.recoleccion?.municipioId == 10) {
+        const alldays = eachDayOfInterval({
+          start: datetime,
+          end: addDays(datetime, 30),
+        });
+        const weekdays = alldays.filter((day) => day.getDay() != 6);
+        let bloquedFinal = data.bloquedRec.concat(weekdays);
+        if (datetime.getDay() == 6 && nowMinutes > limitMinutes) {
+          bloquedFinal.push(datetime);
+        }
+        setBloquedRecoleccion(bloquedFinal);
+      } else {
+        setBloquedRecoleccion(data.bloquedRec);
+      }
+    }, []);
+
+    /*   if (pedido?.recoleccion?.municipioId == 10 && new Date().getDay() != 6) {
+        if (nowMinutes <= limitMinutes) {
+          setStartDateRecoleccion(nextSaturday(datetime));
+        } else {
+          setStartDateRecoleccion(nextSaturday(addDays(datetime, 1)));
+        }
+      } */
+
     const handleDateChange = async (e: any) => {
       if (e.getDay() == 6) {
         setHorariosLabelRec("10:00am - 3:00pm");
@@ -325,9 +369,10 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
         setHorariosLabelRec("10:00am - 7:00pm");
       }
 
-      setBloquedEntrega(data.bloquedEnt);
+      console.log(nextSaturday(e));
+
       setIsRecLoading(true);
-      console.log(new Date(addHours(e, 6)));
+
       setBloquedEntrega((old: any) => [...old, e]);
 
       saveRecoleccionState({ ...recoleccionState, am: false, pm: false });
@@ -366,6 +411,19 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
             setIsRecLoading(false);
           }, 500);
         }
+      }
+
+      if (pedido?.destino?.municipioId == 10) {
+        const alldays = eachDayOfInterval({
+          start: e,
+          end: addDays(e, 30),
+        });
+        const weekdays = alldays.filter((day) => day.getDay() != 6);
+        let bloquedFinal = data.bloquedEnt.concat(weekdays);
+
+        setBloquedEntrega(bloquedFinal);
+      } else {
+        setBloquedEntrega(data.bloquedEnt);
       }
     };
 
@@ -446,6 +504,12 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
 
     return (
       <div className="my-4 border border-neutral-300 shadow-md rounded-lg p-2 px-2 md:px-2">
+        <RecoleccionNormal />
+      </div>
+    );
+
+    function RecoleccionNormal() {
+      return (
         <div className="flex flex-col">
           <p className="text-md font-bold">Recolección</p>
           <p className="text-xs text-neutral-500">
@@ -459,12 +523,16 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
               {tipoPrograma == "custom" && (
                 <MuiDatePicker
                   dpOpen={dpRecOpen}
-                  setDpOpen={(val) => setDpRecOpen(val)}
+                  setDpOpen={(val) => {
+                    setDpRecOpen(val);
+                  }}
                   value={pedido?.programa?.fechaRecoleccion}
                   onChange={(newValue) => handleDateChange(newValue)}
-                  bloqued={data.bloquedRec}
+                  bloqued={bloquedRecoleccion}
                   datetime={datetime}
                   disabled={append ? append : false}
+                  startDate={startDateRecoleccion}
+                  maxDate={addDays(datetime, 30)}
                 />
               )}
             </LocalizationProvider>
@@ -521,23 +589,25 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
                     <div className="text-sm">No hay horarios disponibles</div>
                   )}
               </div>
-              <div className="my-2">
+              {/*  <div className="my-2">
                 {pedido?.append?.enabled && (
                   <p className="text-xs">
-                    Agregando envío a recolección{" "}
+                    Asignando envío a recolección{" "}
                     {pedido?.append?.recoleccion?.id}
                   </p>
                 )}
-              </div>
+              </div> */}
             </>
           )}
         </div>
-      </div>
-    );
+      );
+    }
   }
 
   function ProgramarEntrega() {
     const handleDateChange = async (e: any) => {
+      updateTipoEntrega("1");
+      //savePrograma({ ...pedido?.programa, mismoDia: false });
       if (e.getDay() == 6) {
         setHorariosLabelEnt("10:00am - 3:00pm");
       } else {
@@ -553,7 +623,12 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
 
       saveEntregaState({ ...entregaState, show: true });
       setIsEntLoading(true);
-      savePrograma({ ...pedido?.programa, bloqueEntrega: 3, fechaEntrega: e });
+      savePrograma({
+        ...pedido?.programa,
+        bloqueEntrega: 3,
+        fechaEntrega: e,
+        mismoDia: false,
+      });
 
       const fechaString = format(e, `yyyy-MM-dd`);
       const res: ApiResponse = await getBloquesEntrega(fechaString);
@@ -598,6 +673,98 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
           <p className="text-xs text-neutral-500">
             Selecciona la fecha y horario de entrega
           </p>
+          <div className="flex flex-col gap-2 mt-2">
+            <RadioGroup
+              value={tipoEntrega}
+              onValueChange={(value) => {
+                updateTipoEntrega(value);
+                if (value === "2") {
+                  savePrograma({
+                    ...pedido?.programa,
+                    bloqueEntrega: 2,
+                    fechaEntrega: pedido?.programa?.fechaRecoleccion,
+                    mismoDia: true,
+                  });
+                  saveEntregaState({
+                    ...entregaState,
+                    am: false,
+                    pm: false,
+                    show: false,
+                  });
+                  console.log("mismo dia");
+                }
+              }}
+            >
+              <div className="flex items-center space-x-2 ">
+                <RadioGroupItem
+                  value="1"
+                  id="EntregaNormal"
+                  disabled={
+                    !pedido?.programa?.fechaRecoleccion ||
+                    pedido.programa.bloqueRecoleccion === 3
+                  }
+                />
+                <Label htmlFor="EntregaNormal" className="cursor-pointer">
+                  {<EntregaNormal />}
+                </Label>
+              </div>
+              {(pedido?.programa?.fechaRecoleccion?.getDay() != 6 ||
+                pedido?.destino?.municipioId != 10) && (
+                <div className="flex items-center space-x-2 ">
+                  <RadioGroupItem
+                    value="2"
+                    id="EntregaMismoDia"
+                    disabled={
+                      !pedido?.programa?.fechaRecoleccion ||
+                      pedido.programa.bloqueRecoleccion === 3 ||
+                      pedido?.programa?.fechaRecoleccion?.getDay() == 6
+                    }
+                  />
+                  <Label htmlFor="EntregaMismoDia" className="cursor-pointer">
+                    {<EntregaMismoDia />}
+                  </Label>
+                </div>
+              )}
+            </RadioGroup>
+
+            {/* <Radio
+              id="EntregaNormal"
+              value={10}
+              name="entrega_normal"
+              label={<EntregaNormal />}
+              onChange={(event) => {
+                console.log(event.target.value);
+              }}
+              defaultChecked={true}
+              disabled={!entregaState?.enabled}
+            />
+            <Radio
+              id="EntregaMismoDia"
+              value={11}
+              name="entrega_mismo_dia"
+              label={<EntregaMismoDia />}
+              onChange={(event) => {
+                console.log(event.target.value);
+              }}
+              defaultChecked={false}
+              disabled={!entregaState?.enabled}
+            /> */}
+          </div>
+        </div>
+      </div>
+    );
+
+    function EntregaNormal() {
+      return (
+        <div
+          className={`flex flex-col p-2  rounded-md w-[230px] ${
+            tipoEntrega == "1" &&
+            pedido?.programa?.fechaRecoleccion &&
+            pedido?.programa?.bloqueRecoleccion != 3
+              ? "border-2 border-black "
+              : "border"
+          }`}
+        >
           <div className="mt-2 md:mt-4">
             <LocalizationProvider
               dateAdapter={AdapterDateFns}
@@ -606,7 +773,11 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
               <MuiDatePicker
                 dpOpen={dpEntOpen}
                 setDpOpen={(val) => setDpEntOpen(val)}
-                value={pedido?.programa?.fechaEntrega}
+                value={
+                  pedido?.programa?.mismoDia
+                    ? null
+                    : pedido?.programa?.fechaEntrega
+                }
                 onChange={(newValue) => handleDateChange(newValue)}
                 bloqued={bloquedEntrega}
                 datetime={datetime}
@@ -625,48 +796,95 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
             </div>
           ) : (
             <div className="mt-2 p-3 flex flex-col">
-              {(entregaState?.am || pedido?.programa?.bloqueEntrega == 1) && (
-                <Radio
-                  id="EntAm"
-                  value={1}
-                  name="entrega"
-                  label={
-                    <p className="text-sm font-semibold">{horariosLabelEnt}</p>
-                  }
-                  onChange={(event) =>
-                    handleBloqueChange(parseInt(event.target.value))
-                  }
-                  defaultChecked={pedido?.programa?.bloqueEntrega == 1}
-                />
-              )}
-              {(entregaState?.pm || pedido?.programa?.bloqueEntrega == 2) && (
-                <Radio
-                  id="EntPm"
-                  value={2}
-                  name="entrega"
-                  label={
-                    <p className="text-sm font-semibold">4:00pm - 9:00pm</p>
-                  }
-                  onChange={(event) =>
-                    handleBloqueChange(parseInt(event.target.value))
-                  }
-                  defaultChecked={pedido?.programa?.bloqueEntrega == 2}
-                />
-              )}
-              {!entregaState?.show ? (
-                <div></div>
-              ) : (
-                !entregaState?.am &&
+              {(entregaState?.am || pedido?.programa?.bloqueEntrega == 1) &&
+                tipoEntrega === "1" && (
+                  <Radio
+                    id="EntAm"
+                    value={1}
+                    name="entrega"
+                    label={
+                      <p className="text-sm font-semibold">
+                        {horariosLabelEnt}
+                      </p>
+                    }
+                    onChange={(event) =>
+                      handleBloqueChange(parseInt(event.target.value))
+                    }
+                    defaultChecked={pedido?.programa?.bloqueEntrega == 1}
+                  />
+                )}
+              {/*  {(entregaState?.pm || pedido?.programa?.bloqueEntrega == 2) &&
+                tipoEntrega === "1" && (
+                  <Radio
+                    id="EntPm"
+                    value={2}
+                    name="entrega"
+                    label={
+                      <p className="text-sm font-semibold">4:00pm - 9:00pm</p>
+                    }
+                    onChange={(event) =>
+                      handleBloqueChange(parseInt(event.target.value))
+                    }
+                    defaultChecked={pedido?.programa?.bloqueEntrega == 2}
+                  />
+                )} */}
+              {!entregaState?.am &&
                 !entregaState?.pm &&
                 pedido?.programa?.bloqueEntrega == 3 && (
-                  <div className="text-sm">No hay horarios disponibles</div>
-                )
-              )}
+                  <div>
+                    {pedido?.programa?.fechaEntrega && (
+                      <p className="text-sm">No hay horarios disponibles</p>
+                    )}
+                  </div>
+                )}
             </div>
           )}
         </div>
-      </div>
-    );
+      );
+    }
+
+    function EntregaMismoDia() {
+      return (
+        <div className="relative">
+          <div
+            className={`flex flex-col p-2 mt-2 rounded-md w-[230px] ${
+              tipoEntrega == "2" ? "border-2 border-black " : "border"
+            }`}
+          >
+            <div className="flex flex-col">
+              <p
+                className={`text-xs font-bold ${
+                  (!pedido?.programa?.fechaRecoleccion ||
+                    pedido?.programa?.bloqueRecoleccion === 3 ||
+                    pedido?.programa?.fechaRecoleccion?.getDay() == 6) &&
+                  "text-neutral-300 italic"
+                }`}
+              >
+                Entrega el mismo día
+              </p>
+              <p
+                className={`text-xs text-muted-foreground ${
+                  (!pedido?.programa?.fechaRecoleccion ||
+                    pedido?.programa?.bloqueRecoleccion === 3 ||
+                    pedido?.programa?.fechaRecoleccion?.getDay() == 6) &&
+                  "text-neutral-300 italic"
+                }`}
+              >
+                +$42.00 MXN
+              </p>
+              <div className="p-1 mt-2 rounded-sm bg-blue-500">
+                <p className="text-xs text-white">
+                  No aplica en envíos agregados
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="absolute -top-2 -right-4 w-12 h-6 pl-[8px] pt-1 bg-red-500 text-xs text-white rounded-sm">
+            Nuevo
+          </div>
+        </div>
+      );
+    }
   }
 };
 

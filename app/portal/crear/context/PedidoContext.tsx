@@ -32,6 +32,7 @@ const PedidoProvider: React.FC<Props> = ({ children }) => {
   const [recoleccion, setRecoleccion] = useState<IRecoleccion>();
   const [append, setAppend] = useState<IAppend>();
   const [tipoPrograma, setTipoPrograma] = useState("custom");
+  const [tipoEntrega, setTipoEntrega] = useState("1");
   //const [tipoPrograma, setTipoPrograma] = useState("custom");
   const [programaRun, setProgramaRun] = useState(1);
   const [tipoPago, setTipoPago] = useState("");
@@ -77,6 +78,7 @@ const PedidoProvider: React.FC<Props> = ({ children }) => {
       comprobante: false,
       comprobanteSelected: false,
     });
+    setTipoEntrega("1");
   };
 
   const saveRecoleccion = (rec: any) => {
@@ -154,6 +156,7 @@ const PedidoProvider: React.FC<Props> = ({ children }) => {
         bloqueRecoleccion: programa.bloqueRecoleccion,
         fechaEntrega: programa.fechaEntrega,
         bloqueEntrega: programa.bloqueEntrega,
+        mismoDia: programa.mismoDia,
       },
     });
   };
@@ -305,6 +308,10 @@ const PedidoProvider: React.FC<Props> = ({ children }) => {
     setTipoPrograma(tipo);
   };
 
+  const updateTipoEntrega = (tipo: string) => {
+    setTipoEntrega(tipo);
+  };
+
   const updateTipoPago = (tipo: string) => {
     setTipoPago(tipo);
   };
@@ -361,6 +368,8 @@ const PedidoProvider: React.FC<Props> = ({ children }) => {
         setProgramaRun,
         programaRun,
         saveProgramaAppend,
+        tipoEntrega,
+        updateTipoEntrega,
       }}
     >
       {children}
