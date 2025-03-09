@@ -547,7 +547,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
             </div>
           ) : (
             <>
-              <div className="mt-2 p-3 flex flex-col">
+              <div className="mt-2 p-3 flex flex-col w-[300px]">
                 {(recoleccionState?.am ||
                   pedido?.programa?.bloqueRecoleccion == 1) && (
                   <Radio
@@ -845,7 +845,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
 
     function EntregaMismoDia() {
       return (
-        <div className="relative">
+        <div className="relative w-[230px]">
           <div
             className={`flex flex-col p-2 mt-2 rounded-md w-[230px] ${
               tipoEntrega == "2" ? "border-2 border-black " : "border"
