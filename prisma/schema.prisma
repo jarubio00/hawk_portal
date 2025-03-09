@@ -43,6 +43,7 @@ model User {
   md5Pass                 String?
   sysopTel                String?
   migrated                Boolean                       @default(true)
+  mismoDiaEnabled         Boolean                       @default(false)
   accounts                Account[]
   checklist               ClientesChecklist?
   cobros                  CobrosDestino[]
@@ -273,6 +274,8 @@ model Pedido {
   migratedAt             DateTime?
   migratedBy             String?
   userCreated            Boolean                 @default(true)
+  mismoDia               Boolean                 @default(false)
+  mismoDiaPrecioVenta    Float                   @default(0)
   cobro                  CobrosDestino?
   operaciones            Operaciones?
   user                   User                    @relation(fields: [clienteId], references: [id], onDelete: Cascade)

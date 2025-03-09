@@ -50,6 +50,7 @@ const ConfirmarStep: React.FC<ConfirmarStepProps> = ({
       tipoProductoId: props.tipoProductoId,
       municipioRecoleccionId: props.municipioRecoleccionId,
       municipioEntregaId: props.municipioEntregaId,
+      mismoDia: props.mismoDia,
     };
     const cotizacion = await cotizaPaqueteById(params);
 
@@ -80,6 +81,7 @@ const ConfirmarStep: React.FC<ConfirmarStepProps> = ({
         tipoProductoId: pedido.paquete.paqTipoId,
         municipioRecoleccionId: pedido.recoleccion.municipioId,
         municipioEntregaId: pedido.destino.municipioId,
+        mismoDia: pedido.programa?.mismoDia,
       });
     } else {
       setError(true);
@@ -165,6 +167,7 @@ const ConfirmarStep: React.FC<ConfirmarStepProps> = ({
               {JSON.stringify(pedido,null,2)}
           </pre>
         </div> */}
+
       <div className=" my-4 ml-4 flex flex-row gap-6">
         <Button
           outline

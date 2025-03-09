@@ -62,6 +62,8 @@ export async function POST(request: Request) {
       comprobante: p.metodoPago?.comprobante,
       comprobanteUrl: p.metodoPago?.comprobanteUrl,
       cobroDestino: p.cobro,
+      mismoDia: p.programa.mismoDia,
+      mismoDiaPrecioVenta: 42,
       operaciones: {
         create: {
           punteoRecoleccion: false,

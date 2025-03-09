@@ -36,6 +36,9 @@ const DestinoStep: React.FC<DestinoStepProps> = ({
     pedido,
     updateDestinoCaptured,
     useDrawer,
+    savePrograma,
+    saveRecoleccionState,
+    recoleccionState,
   } = useContext(PedidoContext) as PedidoContextType;
   const router = useRouter();
   const loader = useLoader();
@@ -60,6 +63,19 @@ const DestinoStep: React.FC<DestinoStepProps> = ({
     setDireccion({});
     updateDestinoSelected(0);
     saveDestino({});
+    savePrograma({
+      ...pedido?.programa,
+      fechaEntrega: null,
+      bloqueEntrega: 3,
+      bloqueRecoleccion: 3,
+      fechaRecoleccion: null,
+    });
+    saveRecoleccionState({
+      ...recoleccionState,
+      show: false,
+      am: false,
+      pm: false,
+    });
   };
 
   const handleSinCp = (value: boolean) => {

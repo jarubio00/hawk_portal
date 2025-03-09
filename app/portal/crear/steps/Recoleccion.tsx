@@ -97,12 +97,13 @@ const RecoleccionStep: React.FC<RecoleccionStepProps> = ({
     });
   }, []);
 
-  useEffect(() => {
+  //Aviso al abrir recoleccion
+  /*  useEffect(() => {
     const timer = setTimeout(() => {
       setAvisoDialog(true);
       setNextEnabled(true);
     }, 1000);
-  }, []);
+  }, []); */
 
   const handleNext = () => {
     //if (!pedido?.recoleccion?.colonia) {
@@ -220,7 +221,7 @@ const RecoleccionStep: React.FC<RecoleccionStepProps> = ({
             <Button
               label="Siguiente"
               onClick={handleNext}
-              disabled={!nextEnabled}
+              disabled={!pedido?.recoleccion?.direccionId}
             />
           </div>
         ) : (

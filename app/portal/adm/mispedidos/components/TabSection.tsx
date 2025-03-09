@@ -58,7 +58,7 @@ const TabSection: React.FC<TabSectionProps> = ({
               Recolecciones
             </div>
           </Tab>
-          {/*  <Tab
+          <Tab
             value={"cobros"}
             className="w-36 text-sm font-semibold py-1 pb-2"
           >
@@ -68,7 +68,7 @@ const TabSection: React.FC<TabSectionProps> = ({
               })}
               Cobros
             </div>
-          </Tab> */}
+          </Tab>
         </TabsHeader>
         <TabsBody className="m-0 p-0">
           <TabPanel value={"envios"} className="m-0 p-0">
@@ -77,9 +77,9 @@ const TabSection: React.FC<TabSectionProps> = ({
           <TabPanel value={"recolecciones"} className="m-0 p-0">
             <RecoleccionesSection />
           </TabPanel>
-          {/* <TabPanel value="cobros" className="m-0 p-0">
+          <TabPanel value="cobros" className="m-0 p-0">
             <CobrosTab onView={onCobroView} />
-          </TabPanel> */}
+          </TabPanel>
         </TabsBody>
       </Tabs>
     </div>
