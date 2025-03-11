@@ -708,21 +708,28 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
                   {<EntregaNormal />}
                 </Label>
               </div>
-              {(pedido?.programa?.fechaRecoleccion?.getDay() != 6 ||
-                pedido?.destino?.municipioId != 10) && (
-                <div className="flex items-center space-x-2 ">
-                  <RadioGroupItem
-                    value="2"
-                    id="EntregaMismoDia"
-                    disabled={
-                      !pedido?.programa?.fechaRecoleccion ||
-                      pedido.programa.bloqueRecoleccion === 3 ||
-                      pedido?.programa?.fechaRecoleccion?.getDay() == 6
-                    }
-                  />
-                  <Label htmlFor="EntregaMismoDia" className="cursor-pointer">
-                    {<EntregaMismoDia />}
-                  </Label>
+              {pedido?.programa?.fechaRecoleccion?.getDay() != 6 && (
+                <div>
+                  {pedido?.destino?.municipioId != 10 && (
+                    <div className="flex items-center space-x-2 ">
+                      <RadioGroupItem
+                        value="2"
+                        id="EntregaMismoDia"
+                        disabled={
+                          !pedido?.programa?.fechaRecoleccion ||
+                          pedido.programa.bloqueRecoleccion === 3 ||
+                          pedido?.programa?.fechaRecoleccion?.getDay() == 6 ||
+                          pedido?.destino?.municipioId == 10
+                        }
+                      />
+                      <Label
+                        htmlFor="EntregaMismoDia"
+                        className="cursor-pointer"
+                      >
+                        {<EntregaMismoDia />}
+                      </Label>
+                    </div>
+                  )}
                 </div>
               )}
             </RadioGroup>
