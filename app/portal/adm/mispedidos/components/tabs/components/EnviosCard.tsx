@@ -1,5 +1,6 @@
 "use client";
 import {
+  bloqueEntregaToString,
   bloqueToString,
   dateString,
   namedDateString,
@@ -39,7 +40,14 @@ const EnviosCards = forwardRef<Ref, EnviosCardsProps>((props, ref) => {
   return (
     <div className="flex flex-col border border-neutral-300 bg-white shadow-lg rounded-lg  cursor-pointer my-2 py-1 mx-2 hover:scale-y-[1.04] hover:scale-x-[1.01]">
       <div className="flex flex-row items-center justify-between px-2 py-1">
-        <p className="font-semibold text-foreground text-sm ">{data.id}</p>
+        <div className="flex flex-row gap-2">
+          <p className="font-semibold text-foreground text-sm ">{data.id}</p>
+          {data.mismoDia && (
+            <p className="py-[2px] px-2 bg-rose-500 rounded-sm text-[10px] text-white">
+              MISMO DÍA
+            </p>
+          )}
+        </div>
         <div className="flex ">
           {statusIdToString(data.estatusPedidoId, "small")}
         </div>
@@ -70,7 +78,7 @@ const EnviosCards = forwardRef<Ref, EnviosCardsProps>((props, ref) => {
             {namedDateString(data.fechaEntrega)}
           </p>
           <p className="text-[11px] text-neutral-500">
-            {bloqueToString(data.bloqueEntrega)}
+            {bloqueEntregaToString(data.bloqueEntrega, data.mismoDia)}
           </p>
           <p className="text-[11px] text-neutral-500 truncate">
             {coloniaEntregaDisplay}, {data?.municipio?.abrev}

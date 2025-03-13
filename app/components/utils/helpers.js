@@ -104,6 +104,16 @@ export function bloqueToString(bloque) {
   return result;
 }
 
+export function bloqueEntregaToString(bloque, md) {
+  let result = "";
+  if (md) {
+    result = "10:00am - 9:00pm";
+  } else {
+    result = "10:00am - 7:00pm";
+  }
+  return result;
+}
+
 export function statusIdToString(status, size) {
   let result = "";
   const intStatus = isNaN(status) ? parseInt(status) : status;
