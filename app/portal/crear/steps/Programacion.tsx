@@ -200,9 +200,12 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
   }, []);
 
   const serverDateFunction = useCallback(async () => {
+    console.log("server date init");
     const res = await serverDate("now");
+
     //@ts-ignore
     const dateString = res.response?.data;
+    console.log(dateString);
     if (dateString) {
       const date = new Date(dateString);
       setDatetime(date);
@@ -515,6 +518,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
           <p className="text-xs text-neutral-500">
             Selecciona la fecha y horario de recolección
           </p>
+          <p>{datetime.toString()}</p>
           <div className="mt-2 md:mt-4">
             <LocalizationProvider
               dateAdapter={AdapterDateFns}
@@ -531,7 +535,8 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
                   bloqued={bloquedRecoleccion}
                   datetime={datetime}
                   disabled={append ? append : false}
-                  startDate={startDateRecoleccion}
+                  //startDate={startDateRecoleccion}
+                  startDate={datetime}
                   maxDate={addDays(datetime, 30)}
                 />
               )}
