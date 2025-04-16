@@ -19,8 +19,11 @@ import {
   addDays,
   addHours,
   eachDayOfInterval,
+  endOfDay,
   format,
+  isWithinInterval,
   nextSaturday,
+  startOfDay,
 } from "date-fns";
 import { Radio } from "@material-tailwind/react";
 import { PulseLoader } from "react-spinners";
@@ -518,7 +521,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
           <p className="text-xs text-neutral-500">
             Selecciona la fecha y horario de recolección
           </p>
-          <p>{datetime.toString()}</p>
+
           <div className="mt-2 md:mt-4">
             <LocalizationProvider
               dateAdapter={AdapterDateFns}
@@ -724,7 +727,12 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
                           !pedido?.programa?.fechaRecoleccion ||
                           pedido.programa.bloqueRecoleccion === 3 ||
                           pedido?.programa?.fechaRecoleccion?.getDay() == 6 ||
-                          pedido?.destino?.municipioId == 10
+                          pedido?.destino?.municipioId == 10 ||
+                          isWithinInterval(pedido?.programa?.fechaRecoleccion, {
+                            start: startOfDay(new Date("2025-04-17T00:00:00")),
+                            end: endOfDay(new Date("2025-04-17T00:00:00")),
+                          })
+                          //||pedido?.programa?.fechaRecoleccion == new Date("2025-04-17T00:00:00")
                         }
                       />
                       <Label
@@ -868,7 +876,11 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
                 className={`text-xs font-bold ${
                   (!pedido?.programa?.fechaRecoleccion ||
                     pedido?.programa?.bloqueRecoleccion === 3 ||
-                    pedido?.programa?.fechaRecoleccion?.getDay() == 6) &&
+                    pedido?.programa?.fechaRecoleccion?.getDay() == 6 ||
+                    isWithinInterval(pedido?.programa?.fechaRecoleccion, {
+                      start: startOfDay(new Date("2025-04-17T00:00:00")),
+                      end: endOfDay(new Date("2025-04-17T00:00:00")),
+                    })) &&
                   "text-neutral-300 italic"
                 }`}
               >
@@ -878,7 +890,11 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
                 className={`text-xs text-muted-foreground ${
                   (!pedido?.programa?.fechaRecoleccion ||
                     pedido?.programa?.bloqueRecoleccion === 3 ||
-                    pedido?.programa?.fechaRecoleccion?.getDay() == 6) &&
+                    pedido?.programa?.fechaRecoleccion?.getDay() == 6 ||
+                    isWithinInterval(pedido?.programa?.fechaRecoleccion, {
+                      start: startOfDay(new Date("2025-04-17T00:00:00")),
+                      end: endOfDay(new Date("2025-04-17T00:00:00")),
+                    })) &&
                   "text-neutral-300 italic"
                 }`}
               >
