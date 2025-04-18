@@ -226,9 +226,11 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
   const [isEntLoading, setIsEntLoading] = useState(false);
   const [isAutoLoading, setIsAutoLoading] = useState(false);
   const [dpEntOpen, setDpEntOpen] = useState(false);
+
   const [bloquedEntrega, setBloquedEntrega] = useState<any>([]);
   const [horariosLabelRec, setHorariosLabelRec] = useState("10:00am - 7:00pm");
   const [horariosLabelEnt, setHorariosLabelEnt] = useState("10:00am - 7:00pm");
+  const [mismoDiaBlocked, setMismoDiaBlocked] = useState(false);
 
   const handleBack = () => {
     updateActiveStep(2);
@@ -407,7 +409,14 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
 
       if (res.status == 1) {
         if (res.response?.data) {
+          console.log(res.response?.data.md);
           saveRecoleccionState({ ...recoleccionState, ...res.response.data });
+          if (!res.response?.data?.md) {
+            console.log("bloqueando MD");
+            setMismoDiaBlocked(true);
+          } else {
+            setMismoDiaBlocked(false);
+          }
           const timer = setTimeout(() => {
             setIsRecLoading(false);
           }, 500);
@@ -716,31 +725,40 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
                   {<EntregaNormal />}
                 </Label>
               </div>
+
               {pedido?.programa?.fechaRecoleccion?.getDay() != 6 && (
                 <div>
                   {pedido?.destino?.municipioId != 10 && (
-                    <div className="flex items-center space-x-2 ">
-                      <RadioGroupItem
-                        value="2"
-                        id="EntregaMismoDia"
-                        disabled={
-                          !pedido?.programa?.fechaRecoleccion ||
-                          pedido.programa.bloqueRecoleccion === 3 ||
-                          pedido?.programa?.fechaRecoleccion?.getDay() == 6 ||
-                          pedido?.destino?.municipioId == 10 ||
-                          isWithinInterval(pedido?.programa?.fechaRecoleccion, {
-                            start: startOfDay(new Date("2025-04-17T00:00:00")),
-                            end: endOfDay(new Date("2025-04-17T00:00:00")),
-                          })
-                          //||pedido?.programa?.fechaRecoleccion == new Date("2025-04-17T00:00:00")
-                        }
-                      />
-                      <Label
-                        htmlFor="EntregaMismoDia"
-                        className="cursor-pointer"
-                      >
-                        {<EntregaMismoDia />}
-                      </Label>
+                    <div>
+                      {!mismoDiaBlocked ? (
+                        <div className="flex items-center space-x-2 ">
+                          <RadioGroupItem
+                            value="2"
+                            id="EntregaMismoDia"
+                            disabled={
+                              !pedido?.programa?.fechaRecoleccion ||
+                              pedido.programa.bloqueRecoleccion === 3 ||
+                              pedido?.programa?.fechaRecoleccion?.getDay() ==
+                                6 ||
+                              pedido?.destino?.municipioId == 10
+                              //||pedido?.programa?.fechaRecoleccion == new Date("2025-04-17T00:00:00")
+                            }
+                          />
+                          <Label
+                            htmlFor="EntregaMismoDia"
+                            className="cursor-pointer"
+                          >
+                            {<EntregaMismoDia />}
+                          </Label>
+                        </div>
+                      ) : (
+                        <div className="ml-6 flex flex-col p-2  rounded-md w-[230px] border">
+                          <p className="p-2 text-xs text-neutral-400 italic">
+                            El servicio de entrega el mismo día no está
+                            disponible en esta fecha.
+                          </p>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -876,11 +894,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
                 className={`text-xs font-bold ${
                   (!pedido?.programa?.fechaRecoleccion ||
                     pedido?.programa?.bloqueRecoleccion === 3 ||
-                    pedido?.programa?.fechaRecoleccion?.getDay() == 6 ||
-                    isWithinInterval(pedido?.programa?.fechaRecoleccion, {
-                      start: startOfDay(new Date("2025-04-17T00:00:00")),
-                      end: endOfDay(new Date("2025-04-17T00:00:00")),
-                    })) &&
+                    pedido?.programa?.fechaRecoleccion?.getDay() == 6) &&
                   "text-neutral-300 italic"
                 }`}
               >
@@ -890,11 +904,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
                 className={`text-xs text-muted-foreground ${
                   (!pedido?.programa?.fechaRecoleccion ||
                     pedido?.programa?.bloqueRecoleccion === 3 ||
-                    pedido?.programa?.fechaRecoleccion?.getDay() == 6 ||
-                    isWithinInterval(pedido?.programa?.fechaRecoleccion, {
-                      start: startOfDay(new Date("2025-04-17T00:00:00")),
-                      end: endOfDay(new Date("2025-04-17T00:00:00")),
-                    })) &&
+                    pedido?.programa?.fechaRecoleccion?.getDay() == 6) &&
                   "text-neutral-300 italic"
                 }`}
               >

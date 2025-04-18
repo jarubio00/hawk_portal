@@ -1183,6 +1183,7 @@ enum TipoBloques {
   AM
   PM
   DIA
+  MD
 }
 
 enum TipoFecha {
