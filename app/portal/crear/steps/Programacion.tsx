@@ -754,8 +754,8 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
                       ) : (
                         <div className="ml-6 flex flex-col p-2  rounded-md w-[230px] border">
                           <p className="p-2 text-xs text-neutral-400 italic">
-                            El servicio de entrega el mismo día no está
-                            disponible en esta fecha.
+                            El servicio de entrega el mismo día alcanzó el
+                            límite, ya no está disponible en esta fecha.
                           </p>
                         </div>
                       )}
