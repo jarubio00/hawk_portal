@@ -64,6 +64,7 @@ export async function POST(request: Request, { params }: { params: IParams }) {
 
   let matchAm = false;
   let matchPm = false;
+  let matchMD = false;
   let amDisponible = false;
   let pmDisponible = false;
 
@@ -73,6 +74,8 @@ export async function POST(request: Request, { params }: { params: IParams }) {
         matchAm = true;
       } else if (val.bloque == "PM") {
         matchPm = true;
+      } else if (val.bloque == "MD") {
+        matchMD = true;
       }
     });
   }
@@ -139,6 +142,7 @@ export async function POST(request: Request, { params }: { params: IParams }) {
   const result = {
     am: matchAm ? false : amDisponible,
     pm: matchPm ? false : pmDisponible,
+    md: matchMD ? false : true,
     recsB1: recCheck1.length >= 1,
     recsB1Data: recCheck1,
     recsB2: recCheck2.length >= 1,
