@@ -43,7 +43,7 @@ const CobrosTab: React.FC<CobrosTabProps> = ({ onView }) => {
 
   return (
     <div className=" w-full py-2 flex flex-col gap-2">
-      <CobrosDash data={data} />
+      {/* <CobrosDash data={data} /> */}
       <div className="my-4 flex flex-row items-center gap-4 overflow-x-auto touch-auto no-scrollbar">
         <Badge
           variant={filter == "1" ? "default" : "secondary"}
