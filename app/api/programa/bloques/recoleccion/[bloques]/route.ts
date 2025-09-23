@@ -9,6 +9,8 @@ import {
   checkRecolecciones,
 } from "../../../auto/[auto]/utils";
 import { cl } from "@/app/api/utils/utils";
+import { getServerDate } from "@/app/api/utils/validatorUtils";
+import { ServerDate } from "@/app/types";
 
 interface IParams {
   bloques?: string;
@@ -37,6 +39,13 @@ export async function POST(request: Request, { params }: { params: IParams }) {
   const hoyUTC = new Date();
   const fecha = addHours(fechaUTC, 6);
   const hoy = subHours(hoyUTC, 6);
+  const sd: ServerDate = await getServerDate();
+
+  console.log(fechaQuery);
+  console.log(fechaUTC);
+  console.log("--------");
+  console.log(sd);
+  console.log("--------");
 
   cl("PROGRA", fecha.toISOString());
 

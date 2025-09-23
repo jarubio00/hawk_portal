@@ -72,6 +72,8 @@ export interface IPrograma {
   fechaEntrega?: Datetime;
   bloqueEntrega?: number;
   mismoDia?: Boolean;
+  fechaRecString?: string;
+  fechaEntString?: string;
 }
 
 export interface IDrawer {
@@ -117,6 +119,20 @@ export interface ICotizaParams {
   mismoDia?: Boolean;
 }
 
+export interface IValidatorParams {
+  fechaRecoleccion: Date;
+  fechaEntrega: Date;
+}
+
+export interface IValidatorResponse {
+  valid: Boolean;
+  issues?: ValidatorStatus[];
+}
+
+export type ValidatorStatus = {
+  issueCode: Number;
+  issueMessage: String;
+};
 export interface ICotizaItem {
   sku?: string;
   descripcion?: string;
@@ -146,6 +162,7 @@ export interface IAppend {
 export type PedidoContextType = {
   pedido?: IPedido;
   resetContext: () => void;
+  resetPrograma: () => void;
   saveRecoleccion: (recoleccion: IRecoleccion) => void;
   saveDestino: (destino: IDestino) => void;
   saveDestinoKey: (key: string, value: any) => void;
@@ -166,7 +183,7 @@ export type PedidoContextType = {
   useDrawer: (props: IDrawer) => void;
   saveCobro: (cantidad: number) => void;
   saveProgramaKey: (key: string, value: any) => void;
-  savePrograma: (programa: IPrograma) => void;
+  savePrograma: (programa: IPrograma) => Promise<boolean>;
   tipoPrograma: string;
   updateTipoPrograma: (tipo: string) => void;
   saveRecoleccionState: (state: IProgramaState) => void;

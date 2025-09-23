@@ -23,6 +23,7 @@ import { IoMdClose } from "react-icons/io";
 import { PedidoContextType } from "@/app/types/pedido";
 import { FaInfoCircle } from "react-icons/fa";
 import ConfirmDialog from "@/app/components/modals/ConfirmDialog";
+import CrearNextButton from "./CrearNextButton";
 
 interface AgregarDestinoSinCpProps {
   title: string;
@@ -401,9 +402,8 @@ const AgregarDestinoSinCp: React.FC<AgregarDestinoSinCpProps> = ({
           </div>
         </div>
 
-        <div className="my-4 flex flex-row items-center gap-4">
-          <Button outline label="Atras" onClick={handleBack} />
-          <Button label="Siguiente" onClick={handleNext} />
+        <div className="flex w-full md:w-1/2 mt-6 mb-2">
+          <CrearNextButton onClick={handleNext} />
         </div>
       </div>
     </>

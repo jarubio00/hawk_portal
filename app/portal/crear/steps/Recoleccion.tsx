@@ -36,6 +36,7 @@ import {
 import { MdEmail, MdPhone } from "react-icons/md";
 import AddColoniaFixDialog from "../components/AddColoniaFixDialog";
 import AvisoEnRecoleccionDialog from "./dialogs/AvisoEnRecoleccionDialog";
+import CrearNextButton from "../components/CrearNextButton";
 
 interface RecoleccionStepProps {
   label?: string;
@@ -133,18 +134,19 @@ const RecoleccionStep: React.FC<RecoleccionStepProps> = ({
         open={openColoniaDialog}
         onClose={closeColoniaDialog}
       />
-      <StepHeading
+      {/* <StepHeading
         title="Recolección"
         subtitle={
           !append
             ? "Selecciona la dirección de recolección"
             : "No se puede modificar la dirección de recolección"
         }
-      />
+      /> */}
       <div className="flex mt-2">
         {!append && (
           <div
             className="
+          
           text-white flex-wrap
           font-semibold
           text-xs
@@ -217,9 +219,8 @@ const RecoleccionStep: React.FC<RecoleccionStepProps> = ({
 
       <div>
         {pedido?.recoleccion?.municipioId !== 10 ? (
-          <div className="my-4">
-            <Button
-              label="Siguiente"
+          <div className="flex w-full md:w-1/2 mt-6 mb-2">
+            <CrearNextButton
               onClick={handleNext}
               disabled={!pedido?.recoleccion?.direccionId}
             />
@@ -227,7 +228,9 @@ const RecoleccionStep: React.FC<RecoleccionStepProps> = ({
         ) : (
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button label="Siguiente" onClick={() => {}} disabled={false} />
+              <div className="flex w-full md:w-1/2 mt-6 mb-2">
+                <CrearNextButton onClick={() => {}} disabled={false} />
+              </div>
             </AlertDialogTrigger>
             <AlertDialogContent className=" ">
               <AlertDialogHeader>

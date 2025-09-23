@@ -43,6 +43,7 @@ import LluviaDialog from "./dialogs/LluviaDialog";
 import FrioDialog from "./dialogs/FrioDialog";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { useProgramaStore } from "../store/crear-store";
 
 interface ProgramacionStepProps {
   data?: any;
@@ -58,6 +59,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
   append = false,
   recoleccion,
 }) => {
+  const { updateAviso } = useProgramaStore();
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -305,6 +307,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
             pedido?.programa?.bloqueEntrega == 3
           }
         />
+
         {/* <FrioDialog
           disabled={
             isAutoLoading ||
@@ -518,7 +521,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
     };
 
     return (
-      <div className="my-4 border border-neutral-300 shadow-md rounded-lg p-2 px-2 md:px-2">
+      <div className="my-4 border border-neutral-300 shadow-md rounded-lg p-2 px-2 md:px-2 bg-white">
         <RecoleccionNormal />
       </div>
     );
@@ -684,7 +687,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
     };
 
     return (
-      <div className="my-4 border border-neutral-300 shadow-md rounded-lg p-2 px-2 md:px-2">
+      <div className="my-4 border border-neutral-300 shadow-md rounded-lg p-2 px-2 md:px-2 bg-white">
         <div className="flex flex-col">
           <p className="text-md font-bold">Entrega</p>
           <p className="text-xs text-neutral-500">

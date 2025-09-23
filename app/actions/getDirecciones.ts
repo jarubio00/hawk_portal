@@ -5,7 +5,7 @@ import getCurrentUser from "./getCurrentUser";
 export default async function getDirecciones() {
   try {
     const currentUser = await getCurrentUser();
-    console.log(currentUser);
+    //console.log(currentUser);
 
     const listings = await prisma.direccion.findMany({
       where: {

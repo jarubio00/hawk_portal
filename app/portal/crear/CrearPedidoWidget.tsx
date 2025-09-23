@@ -30,6 +30,9 @@ import {
   namedDateString,
 } from "@/app/components/utils/helpers";
 import { calcularTipoPaquete } from "@/app/actions/utils";
+import ProgramacionV2Step from "./steps/ProgramacionV2";
+import AvisosProgramacion from "./steps/components/AvisosProgramacion";
+import PagoStep from "./steps/Pago";
 
 interface CrearPedidoWidgetProps {
   title?: string;
@@ -79,8 +82,8 @@ const CrearPedidoWidget: React.FC<CrearPedidoWidgetProps> = ({
   }, []);
 
   const dialogContent = {
-    title: "Estas seguro de salir?",
-    notes: "Los avances no se guardarán",
+    title: "¿Salir sin guardar?",
+    notes: "Si sales ahora, perderás la información capturada en este envío.",
     tipo: "salir",
   };
 
@@ -192,36 +195,64 @@ const CrearPedidoWidget: React.FC<CrearPedidoWidgetProps> = ({
           </div>
         </div>
       )}
-      <div className="w-full md:w-3/4 py-4 px-1 md:px-8 mx-auto">
+      <div className="">
         <div className={`${append ? "pt-0" : "pt-16"}`}>
           {activeStep === 0 && (
-            <RecoleccionStep
-              direcciones={data.direcciones}
-              append={append}
-              recoleccion={recoleccion}
-            />
+            <div className="w-full md:w-3/4 py-4 px-1 md:px-8 mx-auto">
+              <RecoleccionStep
+                direcciones={data.direcciones}
+                append={append}
+                recoleccion={recoleccion}
+              />
+            </div>
           )}
-          {activeStep === 1 && <DestinoStep municipios={data.municipios} />}
-          {activeStep === 2 && <PaqueteStep currentUser={currentUser} />}
+          {activeStep === 1 && (
+            <div className="w-full md:w-3/4 py-4 px-1 md:px-8 mx-auto">
+              <DestinoStep municipios={data.municipios} />
+            </div>
+          )}
+          {activeStep === 2 && (
+            <div className="w-full md:w-3/4 py-4 px-1 md:px-8 mx-auto">
+              <PaqueteStep currentUser={currentUser} />
+            </div>
+          )}
+          {activeStep === 8 && (
+            <div className="w-full   mx-auto">
+              <AvisosProgramacion>
+                <ProgramacionStep
+                  data={data.bloquedDates}
+                  append={append}
+                  recoleccion={recoleccion}
+                />
+              </AvisosProgramacion>
+            </div>
+          )}
           {activeStep === 3 && (
-            <ProgramacionStep
-              data={data.bloquedDates}
-              append={append}
-              recoleccion={recoleccion}
-            />
+            <div className="w-full py-0 px-0 md:px-0 mx-auto">
+              <AvisosProgramacion>
+                <ProgramacionV2Step />
+              </AvisosProgramacion>
+            </div>
           )}
           {activeStep === 4 && (
-            <ConfirmarStep append={append} recoleccion={recoleccion} />
+            <div className="w-full md:w-3/4 py-4 px-1 md:px-8 mx-auto">
+              <ConfirmarStep append={append} recoleccion={recoleccion} />
+            </div>
+          )}
+          {activeStep === 5 && (
+            <div className="w-full md:w-3/4 py-0 md:py-4 px-1 md:px-8 mx-auto">
+              <PagoStep />
+            </div>
           )}
         </div>
-        <div className="my-4 w-full block md:hidden">
+        {/* <div className="my-4 w-full block md:hidden">
           <Button
             onClick={() => setConfirmSalirOpen(true)}
             className="mt-4 gap-3 py-1 px-4 bg-red-500 hover:bg-red-500/80 w-full "
           >
             Cancelar envío
           </Button>
-        </div>
+        </div> */}
       </div>
     </>
   );

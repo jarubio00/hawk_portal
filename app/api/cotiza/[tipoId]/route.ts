@@ -26,14 +26,12 @@ export async function POST(request: Request) {
     }
   });
 
+  let result = [];
+
   let coberturaId = 1;
 
   if (municipioRecoleccionId == 10 || municipioEntregaId == 10) {
     coberturaId = 3;
-  }
-
-  if (mismoDia) {
-    coberturaId = 5;
   }
 
   const cotiza = await prisma.catalogoProductos.findMany({
@@ -49,6 +47,18 @@ export async function POST(request: Request) {
     },
   });
 
+  result.push(cotiza[0]);
+
+  if (mismoDia) {
+    const cotizaMd = await prisma.catalogoProductos.findMany({
+      where: {
+        id: 18,
+      },
+    });
+
+    result.push(cotizaMd[0]);
+  }
+
   //console.log(cotiza);
-  return NextResponse.json(cotiza[0]);
+  return NextResponse.json(result);
 }

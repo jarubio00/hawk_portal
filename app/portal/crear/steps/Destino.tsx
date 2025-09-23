@@ -103,10 +103,10 @@ const DestinoStep: React.FC<DestinoStepProps> = ({
 
   return (
     <div className="px-2">
-      <StepHeading
+      {/* <StepHeading
         title="Destino"
         subtitle="Ingresa la dirección del destino"
-      />
+      /> */}
       <div className="flex flex-col gap-2">
         <div className="flex mt-2 ">
           <div className="">
