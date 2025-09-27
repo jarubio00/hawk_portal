@@ -1,6 +1,5 @@
 "use client";
 
-import { IconType } from "react-icons";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { PedidoContext } from "@/app/portal/crear/context/PedidoContext";
 import {
@@ -9,21 +8,12 @@ import {
   PedidoContextType,
 } from "@/app/types/pedido";
 import Button from "@/app/components/Button";
-import StepHeading from "../components/StepHeading";
 import ResumenCard from "../components/ResumenCard";
 import CotizaCard from "../components/CotizaCard";
-import MetodoPagoCard from "../components/MetodoPagoCard";
 import { ICotizaParams, ICotizaItem } from "@/app/types/pedido";
-import {
-  cotizaPaqueteById,
-  crearPedido,
-  pedidoValidator,
-} from "@/app/actions/apiQuerys";
+import { cotizaPaqueteById, pedidoValidator } from "@/app/actions/apiQuerys";
 import { PulseLoader } from "react-spinners";
 import useCreandoPedidoModal from "@/app/hooks/useCreandoPedidoModal";
-import BolsasDialog from "../components/BolsasDialog";
-import { isDate } from "date-fns";
-import { ServerDate } from "@/app/types";
 import { useProgramaStore } from "../store/crear-store";
 import { CotizaSkeleton } from "../components/CotizaSkeleton";
 import ResumenCobroCard from "../components/ResumenCobroCard";
@@ -48,9 +38,7 @@ const ConfirmarStep: React.FC<ConfirmarStepProps> = ({
     pedido,
     saveCotizacion,
     saveMetodoPago,
-    updateTipoPago,
     tipoPago,
-    saveAppend,
     resetPrograma,
   } = useContext(PedidoContext) as PedidoContextType;
   const [isLoading, setIsLoading] = useState(false);
@@ -77,8 +65,8 @@ const ConfirmarStep: React.FC<ConfirmarStepProps> = ({
 
     const c = cot?.response?.data;
     setCotizacion(c);
-    console.log(c);
-    console.log(cot.status);
+    c;
+    cot.status;
     if (cot.status == 1) {
       saveCotizacion({
         descripcion: c[0].descripcion,
@@ -97,11 +85,11 @@ const ConfirmarStep: React.FC<ConfirmarStepProps> = ({
   }, []);
 
   useEffect(() => {
-    console.log(pedido?.programa);
+    pedido?.programa;
     setIsLoading(true);
 
     if (pedido?.recoleccion && pedido.destino && pedido.paquete) {
-      console.log("cotizando");
+      ("cotizando");
       getCotizaServer({
         tipoProductoId: pedido.paquete.paqTipoId,
         municipioRecoleccionId: pedido.recoleccion.municipioId,
@@ -137,11 +125,11 @@ const ConfirmarStep: React.FC<ConfirmarStepProps> = ({
       fechaEntrega: pedido?.programa?.fechaEntrega,
     };
     const res = await pedidoValidator(props);
-    //console.log(result?.response?.data);
+    //(result?.response?.data);
     const sd: IValidatorResponse = res?.response?.data;
     setValidator(sd);
 
-    console.log(sd);
+    sd;
 
     const timer = setTimeout(() => {
       setIsValidateLoading(false);
@@ -192,7 +180,7 @@ const ConfirmarStep: React.FC<ConfirmarStepProps> = ({
         )}
       </div>
 
-      <div className="flex w-full md:w-1/2 mt-6 mb-2">
+      <div className="flex w-full md:w-1/4 mt-6 mb-2">
         <CrearNextButton onClick={handleNext} disabled={isLoading} />
       </div>
 

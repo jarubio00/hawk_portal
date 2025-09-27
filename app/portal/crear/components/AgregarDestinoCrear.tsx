@@ -139,7 +139,6 @@ const AgregarDestinoCrear: React.FC<AgregarDestinoCrearProps> = ({
 
   //console.log('agr dir:', direccion)
   useEffect(() => {
-    console.log("saved", saved);
     if (!saved) {
       reset();
       setCpActive(false);
@@ -784,13 +783,13 @@ const AgregarDestinoCrear: React.FC<AgregarDestinoCrearProps> = ({
 
         <div>
           {pedido?.destino?.municipioId !== 10 ? (
-            <div className="flex w-full md:w-1/2 mt-6 mb-2">
+            <div className="flex w-full md:w-1/4 mt-6 mb-2">
               <CrearNextButton onClick={handleNext} />
             </div>
           ) : (
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <div className="flex w-full md:w-1/2 mt-6 mb-2">
+                <div className="flex w-full md:w-1/4 mt-6 mb-2">
                   <CrearNextButton onClick={() => {}} disabled={false} />
                 </div>
               </AlertDialogTrigger>

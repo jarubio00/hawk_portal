@@ -56,6 +56,7 @@ export interface ProgramaV2Slice {
   //Timeout
   timeoutDialogOpen: boolean;
   updateTimeoutDialogOpen: (val: boolean) => void;
+  updateProgramaClear: () => void;
 }
 
 const initialState = {
@@ -109,7 +110,7 @@ export const createProgramaV2Slice: StateCreator<ProgramaV2Slice> = (
     set({ today: t });
 
     const result = await getRecDatesV2({ municipioRecId: municipioRecId });
-    console.log(result);
+    result;
     set({
       recBlockedDates: result.map((d: any) => parseYMDLocal(d.fechaString)),
     });
@@ -129,7 +130,7 @@ export const createProgramaV2Slice: StateCreator<ProgramaV2Slice> = (
       fechaString: fechaString,
       municipioEntId: municipioEntId,
     });
-    console.log(result);
+    result;
     set({ mismoDiaEnabled: result.mismoDia.enabled });
     set({ mismoDiaCustomMessage: result.mismoDia.customMessage });
     set({
@@ -146,12 +147,13 @@ export const createProgramaV2Slice: StateCreator<ProgramaV2Slice> = (
   },
   getTodayDate: async () => {
     const t: ServerDate = await getTodayServerDate();
-    console.log(t);
+    t;
     set({ today: t });
   },
   updateFinalDates: async () => {
     const dr = get().recSelectedDate;
     const de = get().entSelectedDate;
+    const md = get().mismoDiaSelected;
     if (dr) {
       const iso = dr.toLocaleDateString();
       const ds = iso.split("/");
@@ -165,10 +167,23 @@ export const createProgramaV2Slice: StateCreator<ProgramaV2Slice> = (
           localeDate: dr,
         },
       });
-      console.log(get().recoleccionDate);
+      get().recoleccionDate;
     }
 
-    if (de) {
+    if (md && dr) {
+      const iso = dr.toLocaleDateString();
+      const ds = iso.split("/");
+      const dateString = `${ds[2]}-${padGlobal2(ds[1])}-${padGlobal2(ds[0])}`;
+      const datetimeString = dateString + " 10:00:00";
+      set({
+        entregaDate: {
+          dateString: dateString,
+          datetimeString: datetimeString,
+          formatLong: formatLongEs(dr),
+          localeDate: dr,
+        },
+      });
+    } else if (de) {
       const iso = de.toLocaleDateString();
       const ds = iso.split("/");
       const dateString = `${ds[2]}-${padGlobal2(ds[1])}-${padGlobal2(ds[0])}`;
@@ -181,12 +196,16 @@ export const createProgramaV2Slice: StateCreator<ProgramaV2Slice> = (
           localeDate: de,
         },
       });
-      console.log(get().entregaDate);
     }
+
+    get().entregaDate;
 
     return true;
   },
   updateTimeoutDialogOpen: (val: boolean) => {
     set({ timeoutDialogOpen: val });
+  },
+  updateProgramaClear: () => {
+    set({ ...initialState });
   },
 });

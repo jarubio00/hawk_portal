@@ -109,11 +109,11 @@ const AgregarPaqueteCrear: React.FC<AgregarPaqueteCrearProps> = ({
   }, [saved]);
 
   useEffect(() => {
-    console.log(currentUser);
+    currentUser;
   }, []);
 
   useEffect(() => {
-    console.log(paquete);
+    paquete;
     if (paquete && saved) {
       setCpActive(true);
       setCustomValue("paqAncho", paquete.paqAncho);
@@ -501,7 +501,7 @@ const AgregarPaqueteCrear: React.FC<AgregarPaqueteCrearProps> = ({
             <Button label="Siguiente" onClick={handleNext} />
             <Button label="Siguiente V2" onClick={() => updateActiveStep(6)} />
           </div> */}
-          <div className="flex w-full md:w-1/2 mt-4 mb-2">
+          <div className="flex w-full md:w-1/4 mt-4 mb-2">
             <CrearNextButton onClick={handleNext} />
           </div>
         </div>

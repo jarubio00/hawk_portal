@@ -115,7 +115,7 @@ const ComprobanteInput: React.FC<ComprobanteInputProps> = ({ onChange }) => {
       setImageName(file.name);
       setFileSelected(true);
     } else if (fileType == "pdf") {
-      console.log("usando pdf");
+      ("usando pdf");
       setFileType("pdf");
       setImage(pdfPlaceholder);
       setImageName(file.name);
@@ -123,19 +123,6 @@ const ComprobanteInput: React.FC<ComprobanteInputProps> = ({ onChange }) => {
     }
 
     event.target.value = null;
-
-    saveMetodoPago({
-      ...pedido?.metodoPago,
-      formaPagoId: 2,
-      passed: true,
-      comprobante: true,
-      comprobanteUrl: "",
-      comprobanteFileType: fileType,
-      comprobanteSelected: true,
-      comprobanteString:
-        fileType == "imagen" ? URL.createObjectURL(file) : pdfPlaceholder,
-      comprobanteImageFile: file,
-    });
 
     const filetoUpload: UploadFile = {
       file: file,
@@ -174,7 +161,7 @@ const ComprobanteInput: React.FC<ComprobanteInputProps> = ({ onChange }) => {
       //const up = await preUploadFile(formData);
       const up = await directUpload(formData);
     } else {
-      console.log("no comprobanteFile");
+      ("no comprobanteFile");
     }
   };
 
@@ -190,16 +177,23 @@ const ComprobanteInput: React.FC<ComprobanteInputProps> = ({ onChange }) => {
         pv2.updateComprobanteUrl(url ?? "");
         stopProgress();
         pv2.updateComprobanteUploaded(isValid);
+        saveMetodoPago({
+          ...pedido?.metodoPago,
+          formaPagoId: 2,
+          passed: true,
+          comprobante: true,
+          comprobanteUrl: url ?? "",
+        });
       })
       .catch((error) => {
-        console.log("Error en preupload");
-        console.log(error);
+        ("Error en preupload");
+        error;
         pv2.updateComprobanteLoading(false);
       });
   };
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col w-full ">
       <div className={`${pv2.comprobanteFile ? "mb-2" : "mb-6"} `}>
         <p className="text-xl text-rose-500 font-bold mb-0">BANREGIO</p>
 
@@ -211,7 +205,7 @@ const ComprobanteInput: React.FC<ComprobanteInputProps> = ({ onChange }) => {
       </div>
 
       {!pv2.comprobanteFile ? (
-        <label htmlFor="file">
+        <label htmlFor="file" className="w-full">
           <input
             id="file"
             type="file"
@@ -261,7 +255,7 @@ const ComprobanteInput: React.FC<ComprobanteInputProps> = ({ onChange }) => {
                 onOpen={pv2.comprobanteLoading ? () => {} : () => setOpen(true)}
               />
               <div
-                className="absolute -top-[10px] -right-[10px] flex items-center justify-center "
+                className="absolute -top-[10px] -right-[10px] flex items-center justify-center cursor-pointer "
                 onClick={
                   pv2.comprobanteLoading ? () => {} : () => handleQuitarFile()
                 }

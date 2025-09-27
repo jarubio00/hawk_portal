@@ -16,7 +16,6 @@ import CobrosDash from "./components/CobrosDash";
 
 const pedidosQuery = async () => {
   const response = await axios.get("/api/cobros/counts");
-  console.log(response.data);
   return response?.data;
 };
 

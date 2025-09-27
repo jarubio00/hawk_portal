@@ -129,7 +129,7 @@ const AgregarDestinoSinCp: React.FC<AgregarDestinoSinCpProps> = ({
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     //loader.onOpen();
-    console.log("sumbit");
+    ("sumbit");
 
     const destino = {
       ...data,
@@ -137,8 +137,6 @@ const AgregarDestinoSinCp: React.FC<AgregarDestinoSinCpProps> = ({
       cpId: 99989,
       sincp: true,
     };
-
-    console.log("destino", destino);
 
     saveDestino(destino);
     updateDestinoCaptured(true);
@@ -182,8 +180,8 @@ const AgregarDestinoSinCp: React.FC<AgregarDestinoSinCpProps> = ({
   const handleNext = () => {
     //updateActiveStep(4);
 
-    console.log("next");
-    console.log(errors);
+    ("next");
+    errors;
     handleSubmit(onSubmit)();
   };
 
@@ -402,7 +400,7 @@ const AgregarDestinoSinCp: React.FC<AgregarDestinoSinCpProps> = ({
           </div>
         </div>
 
-        <div className="flex w-full md:w-1/2 mt-6 mb-2">
+        <div className="flex w-full md:w-1/4 mt-6 mb-2">
           <CrearNextButton onClick={handleNext} />
         </div>
       </div>

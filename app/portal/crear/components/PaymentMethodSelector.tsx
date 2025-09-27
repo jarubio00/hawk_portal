@@ -1,5 +1,12 @@
 "use client";
 
+import { useCallback, useContext, useEffect, useState } from "react";
+import { PedidoContext } from "@/app/portal/crear/context/PedidoContext";
+import {
+  IValidatorParams,
+  IValidatorResponse,
+  PedidoContextType,
+} from "@/app/types/pedido";
 import Image from "next/image";
 import {
   Collapsible,
@@ -54,7 +61,43 @@ export default function PaymentMethodSelector({
   value,
   onChange,
 }: PaymentMethodSelectorProps) {
+  const { pedido, saveMetodoPago, updateTipoPago, tipoPago, saveAppend } =
+    useContext(PedidoContext) as PedidoContextType;
   const pv2 = useProgramaStore();
+
+  const handleEfectivoTipo = async () => {
+    pv2.updateTransferOpen(false);
+    pv2.updateTransferSelected(false);
+    pv2.updateMetodoPago(1);
+    pv2.updateEfectivoOpen(true);
+    pv2.updateEfectivoSelected(true);
+    pv2.updateComprobanteFile(undefined);
+    pv2.updateComprobanteUploaded(false);
+
+    saveMetodoPago({
+      ...pedido?.metodoPago,
+      formaPagoId: 1,
+      passed: true,
+      comprobante: false,
+      comprobanteUrl: "",
+      comprobanteFileType: "",
+      comprobanteString: "",
+      comprobanteSelected: false,
+    });
+  };
+
+  const handleTransferenciaTipo = async () => {
+    pv2.updateEfectivoOpen(false);
+    pv2.updateEfectivoSelected(false);
+    pv2.updateMetodoPago(2);
+    pv2.updateTransferOpen(true);
+
+    saveMetodoPago({
+      ...pedido?.metodoPago,
+      formaPagoId: 2,
+    });
+  };
+
   return (
     <div className="flex flex-col gap-6">
       <div className="w-full rounded-md border border-gray-200 divide-y divide-gray-400 overflow-hidden">
@@ -67,13 +110,7 @@ export default function PaymentMethodSelector({
           >
             <div
               className="flex flex-row gap-4 items-center w-full cursor-pointer my-4 px-4"
-              onClick={async () => {
-                pv2.updateTransferOpen(false);
-                pv2.updateTransferSelected(false);
-                pv2.updateMetodoPago(1);
-                pv2.updateEfectivoOpen(true);
-                pv2.updateEfectivoSelected(true);
-              }}
+              onClick={handleEfectivoTipo}
             >
               <Image
                 src={"/icons/efectivo2.png"}
@@ -117,12 +154,7 @@ export default function PaymentMethodSelector({
           >
             <div
               className="flex flex-row gap-4 items-center w-full cursor-pointer my-4 px-4"
-              onClick={() => {
-                pv2.updateEfectivoOpen(false);
-                pv2.updateEfectivoSelected(false);
-                pv2.updateMetodoPago(2);
-                pv2.updateTransferOpen(true);
-              }}
+              onClick={handleTransferenciaTipo}
             >
               <Image
                 src={"/icons/transfer2.png"}
@@ -165,7 +197,6 @@ export default function PaymentMethodSelector({
         después de generado el envío, este puede ser desfasado en tiempo de
         entrega debido a la revisión del pago.
       </p>
-      {pv2.metodoPago == 1 ? "Efectivo" : "Transferencia"}
     </div>
   );
 }

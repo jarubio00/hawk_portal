@@ -4,10 +4,7 @@ import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { PedidoContext } from "@/app/portal/crear/context/PedidoContext";
 import { PedidoContextType } from "@/app/types/pedido";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import {
-  dateTimePickerTabsClasses,
-  LocalizationProvider,
-} from "@mui/x-date-pickers";
+import { LocalizationProvider } from "@mui/x-date-pickers";
 import esLocale from "date-fns/locale/es";
 import {
   getBloquesRecoleccion,
@@ -15,16 +12,7 @@ import {
   autoPrograma,
   autoAppend,
 } from "@/app/actions/apiQuerys";
-import {
-  addDays,
-  addHours,
-  eachDayOfInterval,
-  endOfDay,
-  format,
-  isWithinInterval,
-  nextSaturday,
-  startOfDay,
-} from "date-fns";
+import { addDays, eachDayOfInterval, format, nextSaturday } from "date-fns";
 import { Radio } from "@material-tailwind/react";
 import { PulseLoader } from "react-spinners";
 import { toast } from "react-hot-toast";
@@ -89,11 +77,11 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
   const [activeRecData, setActiveRecData] = useState<any>({});
 
   useEffect(() => {
-    //console.log("entering tipoPrograma");
+    //("entering tipoPrograma");
 
     if (programaRun == 1) {
       if (tipoPrograma == "custom" && append && recoleccion) {
-        //console.log("entering custom");
+        //("entering custom");
         savePrograma({
           fechaRecoleccion: recoleccion.fecha,
           bloqueRecoleccion: recoleccion.bloque,
@@ -120,7 +108,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
       }
 
       if (tipoPrograma == "auto") {
-        //console.log("entering auto");
+        //("entering auto");
         if (append && recoleccion) {
           setIsAutoLoading(true);
           getAutoAppend();
@@ -148,8 +136,8 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
         ); */
         autoDates = await autoPrograma(pedido?.recoleccion?.direccionId);
         data = autoDates?.response?.data;
-        console.log("saving programa");
-        console.log(data.recDate);
+        ("saving programa");
+        data.recDate;
         if (data && data?.recs) {
           //.log('active recs true')
           setActiveRec(true);
@@ -177,8 +165,8 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
           }, 1000);
         }
       } catch (e) {
-        ////console.log("try error");
-        ////console.log(e);
+        ////("try error");
+        ////(e);
         setIsAutoLoading(false);
       }
     } else {
@@ -191,7 +179,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
       fecha: recoleccion.fecha,
       bloque: recoleccion.bloque,
     });
-    //console.log("append dates: ", autoDates);
+    //("append dates: ", autoDates);
 
     const data = autoDates?.response?.data;
 
@@ -205,12 +193,12 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
   }, []);
 
   const serverDateFunction = useCallback(async () => {
-    console.log("server date init");
+    ("server date init");
     const res = await serverDate("now");
 
     //@ts-ignore
     const dateString = res.response?.data;
-    console.log(dateString);
+    dateString;
     if (dateString) {
       const date = new Date(dateString);
       setDatetime(date);
@@ -340,7 +328,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
   /*   */
 
   function ProgramarRecoleccion() {
-    //console.log(pedido?.programa?.fechaRecoleccion);
+    //(pedido?.programa?.fechaRecoleccion);
 
     const [startDateRecoleccion, setStartDateRecoleccion] =
       useState<Date | null>();
@@ -380,7 +368,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
         setHorariosLabelRec("10:00am - 7:00pm");
       }
 
-      console.log(nextSaturday(e));
+      nextSaturday(e);
 
       setIsRecLoading(true);
 
@@ -408,14 +396,14 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
         pedido?.recoleccion
       );
 
-      //console.log(res.response?.data);
+      //(res.response?.data);
 
       if (res.status == 1) {
         if (res.response?.data) {
-          console.log(res.response?.data.md);
+          res.response?.data.md;
           saveRecoleccionState({ ...recoleccionState, ...res.response.data });
           if (!res.response?.data?.md) {
-            console.log("bloqueando MD");
+            ("bloqueando MD");
             setMismoDiaBlocked(true);
           } else {
             setMismoDiaBlocked(false);
@@ -448,7 +436,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
     const handleBloqueChange = async (b: number) => {
       //savePrograma({...pedido?.programa, fechaEntrega: null, bloqueEntrega: 3, bloqueRecoleccion: b});
       //handleTimerOn();
-      ////console.log({ recoleccionState });
+      ////({ recoleccionState });
 
       if (b == 1) {
         if (recoleccionState?.recsB1) {
@@ -638,7 +626,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
         pedido?.programa?.fechaRecoleccion.toISOString().slice(0, 10) ==
         e.toISOString().slice(0, 10)
       ) {
-        //console.log("match");
+        //("match");
       }
 
       saveEntregaState({ ...entregaState, show: true });
@@ -711,7 +699,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
                     pm: false,
                     show: false,
                   });
-                  console.log("mismo dia");
+                  ("mismo dia");
                 }
               }}
             >
@@ -774,7 +762,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
               name="entrega_normal"
               label={<EntregaNormal />}
               onChange={(event) => {
-                console.log(event.target.value);
+                (event.target.value);
               }}
               defaultChecked={true}
               disabled={!entregaState?.enabled}
@@ -785,7 +773,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
               name="entrega_mismo_dia"
               label={<EntregaMismoDia />}
               onChange={(event) => {
-                console.log(event.target.value);
+                (event.target.value);
               }}
               defaultChecked={false}
               disabled={!entregaState?.enabled}

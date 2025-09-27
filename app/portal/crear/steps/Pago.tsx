@@ -1,52 +1,47 @@
 "use client";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { PedidoContext } from "@/app/portal/crear/context/PedidoContext";
 import {
   IValidatorParams,
   IValidatorResponse,
   PedidoContextType,
 } from "@/app/types/pedido";
-import Button from "@/app/components/Button";
-import {
-  cotizaPaqueteById,
-  crearPedido,
-  pedidoValidator,
-} from "@/app/actions/apiQuerys";
+import { pedidoValidator } from "@/app/actions/apiQuerys";
 import PaymentMethodSelector from "../components/PaymentMethodSelector";
 import { useProgramaStore } from "../store/crear-store";
 import CrearNextButton from "../components/CrearNextButton";
+import useCreandoPedidoModal from "@/app/hooks/useCreandoPedidoModal";
 
 interface PagoStepProps {
   data?: string;
 }
 
 const PagoStep: React.FC<PagoStepProps> = ({ data }) => {
-  const {
-    updateActiveStep,
-    pedido,
-    saveCotizacion,
-    saveMetodoPago,
-    updateTipoPago,
-    tipoPago,
-    saveAppend,
-    resetPrograma,
-  } = useContext(PedidoContext) as PedidoContextType;
+  const { updateActiveStep, pedido, savePrograma, resetPrograma } = useContext(
+    PedidoContext
+  ) as PedidoContextType;
   const [isLoading, setIsLoading] = useState(false);
   const [validator, setValidator] = useState<IValidatorResponse>();
   const [isValidateLoading, setIsValidateLoading] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState("credit_card");
 
   const pv2 = useProgramaStore();
+  const CreandoPedidoModal = useCreandoPedidoModal();
 
   useEffect(() => {
-    //console.log(pedido);
+    savePrograma({
+      fechaEntString: pv2.entregaDate?.datetimeString,
+      fechaRecString: pv2.recoleccionDate?.datetimeString,
+      mismoDia: pv2.mismoDiaSelected,
+    });
   }, []);
   const handleBack = () => {
     updateActiveStep(4);
   };
 
   const handleNext = async () => {
-    console.log(pedido);
+    pedido;
+    CreandoPedidoModal.onOpen();
   };
 
   const validate = async () => {
@@ -57,11 +52,11 @@ const PagoStep: React.FC<PagoStepProps> = ({ data }) => {
       fechaEntrega: pedido?.programa?.fechaEntrega,
     };
     const res = await pedidoValidator(props);
-    //console.log(result?.response?.data);
+    //(result?.response?.data);
     const sd: IValidatorResponse = res?.response?.data;
     setValidator(sd);
 
-    console.log(sd);
+    sd;
 
     const timer = setTimeout(() => {
       setIsValidateLoading(false);
@@ -69,7 +64,7 @@ const PagoStep: React.FC<PagoStepProps> = ({ data }) => {
   };
 
   return (
-    <div className="flex flex-col gap-1 px-4 py-0 w-full  bg-white">
+    <div className="flex flex-col gap-1 px-4 py-0 w-full lg:w-2/4 bg-white ">
       <div className="flex flex-row items-center justify-between">
         <p></p>
         <div className="flex flex-col items-center justify-center">
@@ -86,7 +81,7 @@ const PagoStep: React.FC<PagoStepProps> = ({ data }) => {
           onChange={setSelectedMethod}
         />
       </div>
-      <div className=" my-4 ml-4 flex flex-row gap-6">
+      <div className=" my-4  flex flex-row gap-6">
         {/* <Button
           outline
           label="Anterior"
@@ -106,6 +101,7 @@ const PagoStep: React.FC<PagoStepProps> = ({ data }) => {
           disabled={
             isLoading || (!pv2.transferSelected && !pv2.efectivoSelected)
           }
+          last
         />
       </div>
     </div>

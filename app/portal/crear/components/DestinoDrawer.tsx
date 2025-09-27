@@ -1,11 +1,10 @@
-'use client';
+"use client";
 
 import { useContext, useEffect, useState } from "react";
-import {PedidoContext} from "@/app/portal/crear/context/PedidoContext"
-import {PedidoContextType} from "@/app/types/pedido"
-import { useRouter } from 'next/navigation';
+import { PedidoContext } from "@/app/portal/crear/context/PedidoContext";
+import { PedidoContextType } from "@/app/types/pedido";
+import { useRouter } from "next/navigation";
 import useLoader from "@/app/hooks/useLoader";
-
 
 import Button from "@/app/components/Button";
 import AgregarDireccion from "@/app/components/portal/AgregarDireccion";
@@ -23,87 +22,83 @@ interface DestinoDrawerProps {
 }
 
 //se quito w-full , se agregp px-2
-const DestinoDrawer: React.FC<DestinoDrawerProps> = ({ 
-  title, 
+const DestinoDrawer: React.FC<DestinoDrawerProps> = ({
+  title,
   currentUser,
-  destinos
+  destinos,
 }) => {
+  const { useDrawer, updateDestinoSelected, saveDestino } = useContext(
+    PedidoContext
+  ) as PedidoContextType;
+  const router = useRouter();
+  const loader = useLoader();
 
-const {useDrawer,updateDestinoSelected, saveDestino} = useContext(PedidoContext) as PedidoContextType;
-const router = useRouter();
-const loader = useLoader();
+  const [isLoading, setIsLoading] = useState(false);
+  const [subtitle, setSubtitle] = useState(
+    "Administra tus direcciones de recolección"
+  );
 
-const [isLoading,setIsLoading] = useState(false);
-const [subtitle, setSubtitle] = useState('Administra tus direcciones de recolección')
+  const [direcciones, setDirecciones] = useState(destinos);
 
-const [direcciones,setDirecciones] = useState(destinos);
+  const onAddClose = async (props: any) => {
+    useDrawer({ open: false });
+    toast.success("Dirección creada!");
+    router.refresh();
+    loader.onClose();
+  };
 
-const onAddClose  = async (props: any) => {
+  const handleSearch = (data: any) => {
+    if (data) {
+      setDirecciones(data);
+    }
+  };
 
-  useDrawer({open: false});
-  toast.success('Dirección creada!');
-  router.refresh();
-  loader.onClose();
-   
-} 
+  const handleOnSelect = (direccion: any) => {
+    //('selected: ', direccion);
 
-const handleSearch = (data: any) => {
-  if (data) {
-   setDirecciones(data);
-  } 
-}
+    saveDestino(direccion);
+    updateDestinoSelected(direccion.id);
+    useDrawer({ open: false });
+  };
 
-const handleOnSelect = (direccion: any) => {
-
-  //console.log('selected: ', direccion);
-
-  saveDestino(direccion);
-  updateDestinoSelected(direccion.id);
-  useDrawer({open: false});
-
-}
-
-
-
-  return ( 
+  return (
     <div className="">
-       <div className=" mx-0 lg:mx-4 px-4">
-          <>
-            {destinos && destinos.length >=3 && <div className="flex mb-6 mt-2 mx-0 w-full sm:w-2/4 md:w-3/4  xl:w-2/4 ">
-              <ListSearch 
+      <div className=" mx-0 lg:mx-4 px-4">
+        <>
+          {destinos && destinos.length >= 3 && (
+            <div className="flex mb-6 mt-2 mx-0 w-full sm:w-2/4 md:w-3/4  xl:w-2/4 ">
+              <ListSearch
                 placeholder="Buscar destino"
                 inputArray={destinos}
-                keys={['contactoNombre', 'calle', 'colonia']}
+                keys={["contactoNombre", "calle", "colonia"]}
                 filteredData={handleSearch}
                 onReset={() => setDirecciones(destinos)}
                 minLength={2}
               />
-            </div>}
-
-            { direcciones && direcciones.length >= 1 ? direcciones?.map((direccion: SafeDireccion, i: number) => {
-              return (
-                
-              <div key={i}>
-                <DireccionesCardDrawer 
-                  tipo='destino' 
-                  direccion={direccion} 
-                  onSelect={handleOnSelect}
-                  />
-              </div>
-              )
-            })
-          
-            :
-
-            <div className="flex py-8 px-4 text-md text-neutral-700 ">
-                No se encontraron direcciones
             </div>
-          }
-            
-          </>
+          )}
+
+          {direcciones && direcciones.length >= 1 ? (
+            direcciones?.map((direccion: SafeDireccion, i: number) => {
+              return (
+                <div key={i}>
+                  <DireccionesCardDrawer
+                    tipo="destino"
+                    direccion={direccion}
+                    onSelect={handleOnSelect}
+                  />
+                </div>
+              );
+            })
+          ) : (
+            <div className="flex py-8 px-4 text-md text-neutral-700 ">
+              No se encontraron direcciones
+            </div>
+          )}
+        </>
       </div>
     </div>
-   );
-}
- 
+  );
+};
+
 export default DestinoDrawer;

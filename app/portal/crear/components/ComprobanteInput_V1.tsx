@@ -102,7 +102,7 @@ const ComprobanteInput: React.FC<ComprobanteInputProps> = ({ onChange }) => {
       setImageName(file.name);
       setFileSelected(true);
     } else if (fileType == "pdf") {
-      console.log("usando pdf");
+      ("usando pdf");
       setFileType("pdf");
       setImage(pdfPlaceholder);
       setImageName(file.name);
@@ -157,7 +157,7 @@ const ComprobanteInput: React.FC<ComprobanteInputProps> = ({ onChange }) => {
 
       //const up = await preUploadFile(formData);
       const up = await directUpload(formData);
-      console.log(up);
+      up;
     }
   };
 
@@ -167,17 +167,17 @@ const ComprobanteInput: React.FC<ComprobanteInputProps> = ({ onChange }) => {
     const result = await axios
       .post(`/api/preupload`, props)
       .then((response) => {
-        console.log(response);
-        console.log("Termino preupload");
+        response;
+        ("Termino preupload");
         stopProgress();
       })
       .catch((error) => {
-        console.log("Error en preupload");
-        console.log(error);
+        ("Error en preupload");
+        error;
         setIsUploading(false);
       });
 
-    console.log(result);
+    result;
   };
 
   const toBase64 = (file: File) =>
@@ -189,11 +189,9 @@ const ComprobanteInput: React.FC<ComprobanteInputProps> = ({ onChange }) => {
     });
 
   const handleUploadFileBAK = async () => {
-    console.log("up file", pedido?.metodoPago?.comprobanteImageFile);
-
     if (pedido?.metodoPago?.comprobanteImageFile) {
       const base64 = await toBase64(pedido?.metodoPago?.comprobanteImageFile);
-      //console.log(base64);
+      //(base64);
 
       let formData = new FormData();
       formData.append("file", pedido?.metodoPago?.comprobanteImageFile);

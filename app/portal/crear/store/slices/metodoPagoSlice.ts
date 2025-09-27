@@ -20,6 +20,7 @@ export interface MetodoPagoSlice {
   updateComprobanteUrl: (url: string) => void;
   updateComprobanteLoading: (val: boolean) => void;
   updateComprobanteUploaded: (val: boolean) => void;
+  updateTimeoutMpClear: () => void;
 }
 
 const initialState = {
@@ -66,5 +67,18 @@ export const createMetodoPagoSlice: StateCreator<MetodoPagoSlice> = (
   },
   updateComprobanteUploaded: (val: boolean) => {
     set({ comprobanteUploaded: val });
+  },
+  updateTimeoutMpClear: () => {
+    set({
+      metodoPago: undefined,
+      efectivoOpen: false,
+      efectivoSelected: false,
+      transferOpen: false,
+      transferSelected: false,
+      comprobanteFile: undefined,
+      comprobanteUrl: "",
+      comprobanteLoading: false,
+      comprobanteUploaded: false,
+    });
   },
 });

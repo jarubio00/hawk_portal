@@ -119,11 +119,11 @@ const AvisosProgramacion: React.FC<{ children: React.ReactNode }> = ({
               backgroundPosition: "right",
             }}
           >
-            <div className="flex flex-col items-center justify-center h-full gap-6 p-2">
+            <div className="flex flex-col items-center justify-center h-full gap-6 p-2 w-full md:w-3/4">
               {children}
               <div
                 className="flex flex-col bg-black rounded-md w-full md:w-1/2 text-white items-center p-4"
-                onClick={() => console.log(mobileBackgroundImage)}
+                onClick={() => mobileBackgroundImage}
               >
                 <p className="text-xl font-bold">AVISO IMPORTANTE</p>
                 <p className="text-xs text-center">{text1}</p>
@@ -172,10 +172,8 @@ const AvisosProgramacion: React.FC<{ children: React.ReactNode }> = ({
                   </p>
                 </div>
               </div>
-              <div className="my-4 flex flex-row items-center gap-4">
-                <Button outline label="Atras" onClick={handleBack} />
-                <Button
-                  label="Siguiente"
+              <div className="flex w-full md:w-1/4 mt-6 mb-2 mx-2 bg-blue-200">
+                <CrearNextButton
                   onClick={handleNext}
                   disabled={
                     !pv2.recSelectedDate ||
@@ -187,27 +185,17 @@ const AvisosProgramacion: React.FC<{ children: React.ReactNode }> = ({
           </div>
         </div>
       ) : (
-        <div className="w-full h-screen overflow-hidden text-black">
-          <div className="flex flex-col items-center py-4 px-1 md:px-8 mx-auto h-full gap-6 p-2">
+        <div className="w-full md:w-3/4 h-screen overflow-hidden text-black">
+          <div className="flex flex-col w-full  py-4 px-1 md:px-8  h-full gap-6 p-2">
             {children}
-            <div className="my-4 flex flex-row items-center gap-4 w-full">
-              {/* <Button
-                label="Siguiente"
+            <div className="flex w-full md:w-1/4 mt-6 mb-2 mx-2 bg-blue-200">
+              <CrearNextButton
                 onClick={handleNext}
                 disabled={
                   !pv2.recSelectedDate ||
                   (!pv2.entSelectedDate && !pv2.mismoDiaSelected)
                 }
-              /> */}
-              <div className="flex w-full md:w-1/2 mt-6 mb-2 mx-2">
-                <CrearNextButton
-                  onClick={handleNext}
-                  disabled={
-                    !pv2.recSelectedDate ||
-                    (!pv2.entSelectedDate && !pv2.mismoDiaSelected)
-                  }
-                />
-              </div>
+              />
             </div>
           </div>
         </div>

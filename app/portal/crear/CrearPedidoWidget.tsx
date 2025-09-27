@@ -1,15 +1,10 @@
 "use client";
 
-import { IconType } from "react-icons";
-import { FaCog, FaPlus, FaHome, FaMapMarkedAlt, FaClock } from "react-icons/fa";
-import { MdNightlightRound, MdLocationOn, MdViewInAr } from "react-icons/md";
-import { BsFillBoxSeamFill } from "react-icons/bs";
 import { useEffect, useState, useContext } from "react";
 import { useRouter } from "next/navigation";
 import useLoader from "@/app/hooks/useLoader";
 import RecoleccionStep from "./steps/Recoleccion";
 import CrearNavbar from "./components/CrearNavbar";
-import { Button } from "@/components/ui/button";
 import ConfirmDialog from "@/app/components/modals/ConfirmDialog";
 import { PedidoContext } from "@/app/portal/crear/context/PedidoContext";
 import { PedidoContextType, IDrawer } from "@/app/types/pedido";
@@ -21,18 +16,16 @@ import DestinoStep from "./steps/Destino";
 import DestinoDrawer from "./components/DestinoDrawer";
 import PaqueteStep from "./steps/Paquete";
 import PaqueteDrawer from "./components/PaqueteDrawer";
-import ProgramacionStep from "./steps/Programacion";
-import ProgramaTimer from "./components/ProgramaTimer";
-import TimerDialog from "@/app/components/modals/TimerDialog";
 import CreandoPedidoModal from "@/app/portal/crear/components/CreandoPedidoModal";
 import {
   bloqueToString,
   namedDateString,
 } from "@/app/components/utils/helpers";
-import { calcularTipoPaquete } from "@/app/actions/utils";
 import ProgramacionV2Step from "./steps/ProgramacionV2";
 import AvisosProgramacion from "./steps/components/AvisosProgramacion";
 import PagoStep from "./steps/Pago";
+import { useProgramaStore } from "./store/crear-store";
+import TimeoutDialog from "@/app/components/modals/TimeoutDialog";
 
 interface CrearPedidoWidgetProps {
   title?: string;
@@ -51,7 +44,7 @@ const CrearPedidoWidget: React.FC<CrearPedidoWidgetProps> = ({
   append = false,
   recoleccion,
 }) => {
-  //console.log('isSm:', data.direcciones);
+  //('isSm:', data.direcciones);
   const router = useRouter();
   const loader = useLoader();
   const {
@@ -75,10 +68,14 @@ const CrearPedidoWidget: React.FC<CrearPedidoWidgetProps> = ({
   const [openDrawer, setOpenDrawer] = useState(false);
   const [drawerContent, setDrawerContent] = useState();
 
-  //console.log(append);
-  //console.log(recoleccion);
+  const pv2 = useProgramaStore();
+
+  //(append);
+  //(recoleccion);
   useEffect(() => {
     loader.isOpen && loader.onClose();
+    pv2.updateProgramaClear();
+    pv2.updateTimeoutMpClear();
   }, []);
 
   const dialogContent = {
@@ -141,18 +138,12 @@ const CrearPedidoWidget: React.FC<CrearPedidoWidgetProps> = ({
   const timeToClose = new Date();
   timeToClose.setSeconds(timeToClose.getSeconds() + 10); // 10 minutes timer
 
-  const handleOnExpireTimer = () => {
-    console.log("expired......................");
-    useTimer({ isOpen: false, time: null });
-    setTimerConfirmOpen(true);
-  };
-
-  const handleOnCloseTimerConfirm = () => {
-    setTimerConfirmOpen(false);
+  const handleOnTimeout = () => {
+    pv2.updateTimeoutDialogOpen(false);
+    pv2.updateRecSelectedDate(undefined);
+    pv2.updateEntSelectedDate(undefined);
+    pv2.updateTimeoutMpClear();
     updateActiveStep(3);
-    saveRecoleccionState({});
-    saveEntregaState({});
-    savePrograma({});
   };
 
   return (
@@ -162,24 +153,14 @@ const CrearPedidoWidget: React.FC<CrearPedidoWidgetProps> = ({
         onClose={handleConfirmSalir}
         dialogContent={dialogContent}
       />
-      <TimerDialog
-        isOpen={timerConfirmOpen}
-        onClose={handleOnCloseTimerConfirm}
-      />
       <UtilDrawer
         props={drawer}
         onClose={() => setOpenDrawer(false)}
         size={sm ? 700 : 1050}
         content={handleDrawerComponent(drawer?.tipo)}
       />
+      <TimeoutDialog isOpen={pv2.timeoutDialogOpen} onClose={handleOnTimeout} />
       <CreandoPedidoModal />
-      {timer?.time && (
-        <ProgramaTimer
-          expiryTimestamp={timer?.time}
-          onExpire={handleOnExpireTimer}
-          isOpen={timer?.isOpen}
-        />
-      )}
       <CrearNavbar onClose={() => setConfirmSalirOpen(true)} />
       {append && (
         <div className=" pt-16 bg-neutral-800 w-full">
@@ -216,19 +197,8 @@ const CrearPedidoWidget: React.FC<CrearPedidoWidgetProps> = ({
               <PaqueteStep currentUser={currentUser} />
             </div>
           )}
-          {activeStep === 8 && (
-            <div className="w-full   mx-auto">
-              <AvisosProgramacion>
-                <ProgramacionStep
-                  data={data.bloquedDates}
-                  append={append}
-                  recoleccion={recoleccion}
-                />
-              </AvisosProgramacion>
-            </div>
-          )}
           {activeStep === 3 && (
-            <div className="w-full py-0 px-0 md:px-0 mx-auto">
+            <div className="w-full  py-0 px-0 md:px-0 mx-auto">
               <AvisosProgramacion>
                 <ProgramacionV2Step />
               </AvisosProgramacion>
@@ -245,14 +215,6 @@ const CrearPedidoWidget: React.FC<CrearPedidoWidgetProps> = ({
             </div>
           )}
         </div>
-        {/* <div className="my-4 w-full block md:hidden">
-          <Button
-            onClick={() => setConfirmSalirOpen(true)}
-            className="mt-4 gap-3 py-1 px-4 bg-red-500 hover:bg-red-500/80 w-full "
-          >
-            Cancelar envío
-          </Button>
-        </div> */}
       </div>
     </>
   );

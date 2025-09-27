@@ -45,14 +45,11 @@ const EnvioRastreo: React.FC<EnvioRastreoProps> = ({ id }) => {
   const getData = async () => {
     const result = await pedidoQuery({ pedidoId: id });
     if (!result) {
-      //console.log("no se encontro la guia");
       setIsLoading(false);
     } else {
       setData(result);
-      //console.log("Rastreo tapped");
-      //console.log({ result });
+
       const rastreoData = rastreoSanitizer(result);
-      console.log({ rastreoData });
       setRastreo(rastreoData);
       const timer = setTimeout(() => {
         setIsLoading(false);
@@ -65,10 +62,6 @@ const EnvioRastreo: React.FC<EnvioRastreoProps> = ({ id }) => {
     getData();
   }, []);
 
-  /* useEffect(() => {
-    console.log(rastreoData);
-  }, [rastreoData]);
- */
   return (
     <div className="w-full m-6 flex flex-col gap-4">
       {!isLoading ? (

@@ -116,7 +116,6 @@ const PedidoProvider: React.FC<Props> = ({ children }) => {
   };
 
   const saveDestino = (dest: IDestino) => {
-    console.log("save: ", dest.save);
     setPedido({
       ...pedido,
       destino: {
@@ -266,7 +265,7 @@ const PedidoProvider: React.FC<Props> = ({ children }) => {
   };
 
   const saveAppend = (append: IAppend) => {
-    console.log("context save append");
+    ("context save append");
     setPedido({
       ...pedido,
       append: {

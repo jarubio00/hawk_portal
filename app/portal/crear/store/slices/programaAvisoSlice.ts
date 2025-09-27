@@ -49,7 +49,7 @@ export const createProgramaAvisoSlice: StateCreator<ProgramaAvisoSlice> = (
     mobileBackgroundImage: string;
     text1: string;
   }) => {
-    console.log("slice");
+    ("slice");
     set({
       backgroundColor,
       backgroundImage,
@@ -57,12 +57,12 @@ export const createProgramaAvisoSlice: StateCreator<ProgramaAvisoSlice> = (
       text1,
     });
     //await new Promise((resolve) => setTimeout(resolve, 100));
-    console.log(mobileBackgroundImage);
+    mobileBackgroundImage;
     set({ avisoActivo: avisoActivo });
   },
   getAvisoActivo: async () => {
     const a = await getAvisoActivo();
-    console.log(a);
+    a;
     if (a.length >= 1) {
       set({
         backgroundColor: a[0]?.backgroundColor ?? "",
@@ -72,6 +72,15 @@ export const createProgramaAvisoSlice: StateCreator<ProgramaAvisoSlice> = (
       });
       await new Promise((resolve) => setTimeout(resolve, 100));
       set({ avisoActivo: true });
+    } else {
+      set({
+        backgroundColor: "",
+        backgroundImage: "",
+        mobileBackgroundImage: "",
+        text1: "",
+      });
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      set({ avisoActivo: false });
     }
     //set({ today: t });
   },

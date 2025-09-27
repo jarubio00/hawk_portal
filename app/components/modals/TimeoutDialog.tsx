@@ -30,7 +30,7 @@ const TimeoutDialog: React.FC<TimeoutDialogProps> = ({ isOpen, onClose }) => {
 
   return (
     <>
-      <Dialog open={isOpen}>
+      <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent
           className=" "
           onEscapeKeyDown={(e) => e.preventDefault()}
@@ -44,12 +44,12 @@ const TimeoutDialog: React.FC<TimeoutDialogProps> = ({ isOpen, onClose }) => {
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="gap-2 sm:gap-0">
-            <Button variant="destructive" onClick={onClose} className="px-2">
+            {/* <Button variant="destructive" onClick={onClose} className="px-2">
               Cancelar envío
-            </Button>
-            {/* <Button variant="secondary" onClick={onClose} className="px-2">
-              Seleccionar fechas
             </Button> */}
+            <Button onClick={onClose} className="px-2 bg-rose-500">
+              Seleccionar fechas
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

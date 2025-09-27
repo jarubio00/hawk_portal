@@ -5,8 +5,8 @@ import { cn } from "@/lib/utils";
 
 export function EntregaSkeleton({ className }: { className?: string }) {
   return (
-    <div className="flex flex-col gap-2">
-      <Skeleton className="h-3 w-[80px] border rounded-sm mb-2" />
+    <div className="flex flex-col gap-1">
+      <Skeleton className="h-3 w-[80px] border rounded-sm mb-0" />
       <Skeleton className="h-14 w-[350px] border rounded-sm mb-2" />
       <Skeleton className="h-14 w-[350px] border rounded-sm" />
       <Skeleton className="h-3 w-[180px] border rounded-sm" />

@@ -8,7 +8,7 @@ export function CotizaSkeleton({ className }: { className?: string }) {
   const pv2 = useProgramaStore();
   return (
     <div className={cn("inline-block rounded-md  p-0  w-full", className)}>
-      <div className="flex flex-col ">
+      <div className="flex flex-col gap-1 w-full  lg:w-2/4  ">
         <div className="m-3">
           <div className="flex w-full flex-row justify-between items-center ">
             <Skeleton className="h-4 w-12 rounded-sm" />

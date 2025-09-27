@@ -88,11 +88,11 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
   const [activeRecData, setActiveRecData] = useState<any>({});
 
   useEffect(() => {
-    //console.log("entering tipoPrograma");
+    //("entering tipoPrograma");
 
     if (programaRun == 1) {
       if (tipoPrograma == "custom" && append && recoleccion) {
-        //console.log("entering custom");
+        //("entering custom");
         savePrograma({
           fechaRecoleccion: recoleccion.fecha,
           bloqueRecoleccion: recoleccion.bloque,
@@ -119,7 +119,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
       }
 
       if (tipoPrograma == "auto") {
-        //console.log("entering auto");
+        //("entering auto");
         if (append && recoleccion) {
           setIsAutoLoading(true);
           getAutoAppend();
@@ -147,8 +147,8 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
         ); */
         autoDates = await autoPrograma(pedido?.recoleccion?.direccionId);
         data = autoDates?.response?.data;
-        console.log("saving programa");
-        console.log(data.recDate);
+        ("saving programa");
+        data.recDate;
         if (data && data?.recs) {
           //.log('active recs true')
           setActiveRec(true);
@@ -176,8 +176,8 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
           }, 1000);
         }
       } catch (e) {
-        ////console.log("try error");
-        ////console.log(e);
+        ////("try error");
+        ////(e);
         setIsAutoLoading(false);
       }
     } else {
@@ -190,7 +190,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
       fecha: recoleccion.fecha,
       bloque: recoleccion.bloque,
     });
-    //console.log("append dates: ", autoDates);
+    //("append dates: ", autoDates);
 
     const data = autoDates?.response?.data;
 
@@ -353,11 +353,11 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
   /*   */
 
   function ProgramarRecoleccion() {
-    //console.log(pedido?.programa?.fechaRecoleccion);
+    //(pedido?.programa?.fechaRecoleccion);
 
     const handleDateChange = async (e: any) => {
       setIsRecLoading(true);
-      console.log(new Date(addHours(e, 6)));
+      new Date(addHours(e, 6));
 
       saveRecoleccionState({ ...recoleccionState, am: false, pm: false });
       saveEntregaState({
@@ -381,7 +381,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
         pedido?.recoleccion
       );
 
-      //console.log(res.response?.data);
+      //(res.response?.data);
 
       if (res.status == 1) {
         if (res.response?.data) {
@@ -401,7 +401,7 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
     const handleBloqueChange = async (b: number) => {
       //savePrograma({...pedido?.programa, fechaEntrega: null, bloqueEntrega: 3, bloqueRecoleccion: b});
       //handleTimerOn();
-      ////console.log({ recoleccionState });
+      ////({ recoleccionState });
 
       if (b == 1) {
         if (recoleccionState?.recsB1) {
@@ -567,16 +567,16 @@ const ProgramacionStep: React.FC<ProgramacionStepProps> = ({
     const handleDateChange = async (e: any) => {
       //setBloquesEntShow(true);
 
-      /*  console.log(
+      /*  (
         "fecha rec: ",
         pedido?.programa?.fechaRecoleccion.toISOString().slice(0, 10)
       ); */
-      //console.log("fehcaServer: ", e.toISOString().slice(0, 10));
+      //("fehcaServer: ", e.toISOString().slice(0, 10));
       if (
         pedido?.programa?.fechaRecoleccion.toISOString().slice(0, 10) ==
         e.toISOString().slice(0, 10)
       ) {
-        //console.log("match");
+        //("match");
       }
 
       saveEntregaState({ ...entregaState, show: true });

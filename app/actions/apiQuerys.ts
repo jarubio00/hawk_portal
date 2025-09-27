@@ -546,6 +546,29 @@ export async function crearPedido(pedido: IPedido) {
   return result;
 }
 
+export async function crearPedidoV2(pedido: IPedido) {
+  const result = await axios
+    .post(`/api/pedido/v2`, pedido)
+    .then((response) => {
+      const responseData: ApiResponse = {
+        status: 1,
+        statusMessage: "OK",
+        response: { data: response.data },
+      };
+      return responseData;
+    })
+    .catch((error) => {
+      const response: ApiResponse = {
+        status: 2,
+        statusMessage: error.message,
+        response: { data: {}, error: error },
+      };
+      return response;
+    });
+
+  return result;
+}
+
 export async function appendPedido(pedido: IPedido, recoleccion: number) {
   const result = await axios
     .post(`/api/pedido/append/`, { p: pedido, r: recoleccion })

@@ -12,13 +12,19 @@ import { MdErrorOutline } from "react-icons/md";
 import useCreandoPedidoModal from "@/app/hooks/useCreandoPedidoModal";
 import useLoader from "@/app/hooks/useLoader";
 
-import { appendPedido, crearPedido } from "@/app/actions/apiQuerys";
+import {
+  appendPedido,
+  crearPedido,
+  crearPedidoV2,
+} from "@/app/actions/apiQuerys";
 import { PulseLoader } from "react-spinners";
 
 import Button from "../../../components/Button";
 import ModalCreando from "./ModalCreando";
 import GuiaShare from "@/app/portal/crear/components/GuiaShare";
 import { uploadFile } from "@/app/actions/apiQuerys";
+import ProgramacionV2Step from "../steps/ProgramacionV2";
+import { useProgramaStore } from "../store/crear-store";
 
 type UploadFile = {
   file: File;
@@ -44,7 +50,7 @@ const CreandoPedidoModal = () => {
     saveMetodoPago,
     resetContext,
   } = useContext(PedidoContext) as PedidoContextType;
-
+  const pv2 = useProgramaStore();
   useEffect(() => {
     if (CreandoPedidoModal.isOpen) {
       setCreated(false);
@@ -52,12 +58,12 @@ const CreandoPedidoModal = () => {
       setError(false);
       setErrorMessage("");
       setIsLoading(true);
-      //console.log(pedido);
+      //(pedido);
       if (pedido?.append?.enabled) {
         if (pedido.append.recoleccion) {
           handleAppendPedido(pedido.append.recoleccion.id);
         } else {
-          //console.log('Error en la recoleccion')
+          //('Error en la recoleccion')
         }
       } else {
         handleCrearPedido();
@@ -78,8 +84,8 @@ const CreandoPedidoModal = () => {
 
   const handleCrearPedido = async () => {
     if (pedido) {
-      const pedidoResult = await crearPedido(pedido);
-      //console.log(pedidoResult);
+      const pedidoResult = await crearPedidoV2(pedido);
+      //(pedidoResult);
 
       if (pedidoResult.status == 1) {
         if (pedido.metodoPago?.formaPagoId == 2) {
@@ -94,7 +100,7 @@ const CreandoPedidoModal = () => {
             };
             const upload = await handleuploadFile(file);
           } else {
-            console.log("algo salio mal");
+            ("algo salio mal");
           }
         }
         setPedidoCreado(pedidoResult?.response?.data);
@@ -102,6 +108,8 @@ const CreandoPedidoModal = () => {
           setIsLoading(false);
           setGuiaBox(true);
           setCreated(true);
+          pv2.updateProgramaClear();
+          pv2.updateTimeoutMpClear();
         }, 500);
       } else if (pedidoResult.status == 2) {
         setError(true);
@@ -114,7 +122,7 @@ const CreandoPedidoModal = () => {
   const handleAppendPedido = async (recoleccionId: number) => {
     if (pedido) {
       const pedidoResult = await appendPedido(pedido, recoleccionId);
-      console.log(pedidoResult);
+      pedidoResult;
 
       if (pedidoResult.status == 1) {
         if (pedido.metodoPago?.formaPagoId == 2) {
@@ -129,7 +137,7 @@ const CreandoPedidoModal = () => {
             };
             const upload = await handleuploadFile(file);
           } else {
-            console.log("algo salio mal");
+            ("algo salio mal");
           }
         }
         setPedidoCreado(pedidoResult?.response?.data);

@@ -3,16 +3,11 @@
 import { useContext, useEffect, useState } from "react";
 import { PedidoContext } from "@/app/portal/crear/context/PedidoContext";
 import { PedidoContextType } from "@/app/types/pedido";
-import Button from "@/app/components/Button";
 import { useRouter } from "next/navigation";
 import useLoader from "@/app/hooks/useLoader";
-import StepHeading from "../components/StepHeading";
-import AgregarDestinoCrear from "../components/AgregarDestinoCrear";
 import { SafeUser } from "@/app/types";
 import { FaPlus } from "react-icons/fa";
 import { IoMdClose } from "react-icons/io";
-import AgregarDestinoSinCp from "../components/AgregarDestinoSinCp";
-import { TiArrowBack } from "react-icons/ti";
 import AgregarPaqueteCrear from "../components/AgregarPaqueteCrear";
 
 interface PaqueteStepProps {
@@ -23,15 +18,12 @@ interface PaqueteStepProps {
 //se quito w-full , se agregp px-2
 const PaqueteStep: React.FC<PaqueteStepProps> = ({ title, currentUser }) => {
   const {
-    updateActiveStep,
     savePaquete,
     paqueteSelected,
     updatePaqueteSelected,
     pedido,
     useDrawer,
   } = useContext(PedidoContext) as PedidoContextType;
-  const router = useRouter();
-  const loader = useLoader();
 
   const [saved, setSaved] = useState(false);
   const [paquete, setPaquete] = useState({});
@@ -46,8 +38,8 @@ const PaqueteStep: React.FC<PaqueteStepProps> = ({ title, currentUser }) => {
       setSaved(true);
       setPaquete(pedido.paquete);
     }
-    //console.log(destinoSelected);
-    //console.log(pedido?.destino);
+    //(destinoSelected);
+    //(pedido?.destino);
   }, [paqueteSelected]);
 
   const onCancelSaved = () => {

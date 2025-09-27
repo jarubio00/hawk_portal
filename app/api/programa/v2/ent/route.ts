@@ -14,11 +14,13 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
+
     const { fechaString, municipioEntId } = body as {
       fechaString: string; // "YYYY-MM-DD" (recolección)
       municipioEntId: number;
     };
 
+    const sd: ServerDate = await getServerDate();
     // Fecha base (recolección) en local, 00:00
     const pickupDate = parseYMDLocal(fechaString);
 

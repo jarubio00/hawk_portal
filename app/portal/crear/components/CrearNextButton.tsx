@@ -1,6 +1,6 @@
 "use client";
 
-import { FaArrowRight } from "react-icons/fa";
+import { FaArrowRight, FaPlus, FaPlusCircle } from "react-icons/fa";
 
 interface CrearNextButtonProps {
   last?: boolean;
@@ -30,16 +30,26 @@ const CrearNextButton: React.FC<CrearNextButtonProps> = ({
             disabled && "border-gray-400"
           }`}
         >
-          <FaArrowRight
-            className={` h-3 w-3 ${disabled ? "text-gray-400" : "text-white"}`}
-          />
+          {!last ? (
+            <FaArrowRight
+              className={` h-3 w-3 ${
+                disabled ? "text-gray-400" : "text-white"
+              }`}
+            />
+          ) : (
+            <FaPlus
+              className={` h-3 w-3 ${
+                disabled ? "text-gray-400" : "text-white"
+              }`}
+            />
+          )}
         </div>
         <p
           className={`text-sm  ${
             disabled ? "text-gray-400 italic" : "text-white"
           }`}
         >
-          Siguiente
+          {!last ? "Siguiente" : "Crear envío"}
         </p>
       </div>
     </button>

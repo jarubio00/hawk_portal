@@ -49,9 +49,9 @@ const CrearPedidoClient = (props: any) => {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  //console.log(breakpoints);
+  //(breakpoints);
 
-  //console.log(props);
+  //(props);
 
   return (
     <ClientOnly>

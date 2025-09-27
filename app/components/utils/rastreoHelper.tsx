@@ -6,7 +6,6 @@ import {
 } from "@/app/types";
 
 export function rastreoSanitizer(data: SafePedido) {
-  console.log(data);
   const ops = data?.operaciones || {};
   const incis = data?.incidencias || [];
   const incisRecArray = incis.filter((inci) => inci.tipoId === 2);

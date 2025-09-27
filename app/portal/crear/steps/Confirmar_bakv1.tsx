@@ -72,7 +72,7 @@ const ConfirmarStep: React.FC<ConfirmarStepProps> = ({
     const cotizacion = await cotizaPaqueteById(params);
 
     const c = cotizacion?.response?.data;
-    console.log(cotizacion.status);
+    cotizacion.status;
     if (cotizacion.status == 1) {
       saveCotizacion({
         descripcion: c.descripcion,
@@ -89,11 +89,11 @@ const ConfirmarStep: React.FC<ConfirmarStepProps> = ({
   }, []);
 
   useEffect(() => {
-    console.log(pedido?.programa);
+    pedido?.programa;
     setIsLoading(true);
 
     if (pedido?.recoleccion && pedido.destino && pedido.paquete) {
-      console.log("cotizando");
+      ("cotizando");
       getCotizaServer({
         tipoProductoId: pedido.paquete.paqTipoId,
         municipioRecoleccionId: pedido.recoleccion.municipioId,
@@ -129,11 +129,11 @@ const ConfirmarStep: React.FC<ConfirmarStepProps> = ({
       fechaEntrega: pedido?.programa?.fechaEntrega,
     };
     const res = await pedidoValidator(props);
-    //console.log(result?.response?.data);
+    //(result?.response?.data);
     const sd: IValidatorResponse = res?.response?.data;
     setValidator(sd);
 
-    console.log(sd);
+    sd;
 
     const timer = setTimeout(() => {
       setIsValidateLoading(false);
@@ -155,7 +155,7 @@ const ConfirmarStep: React.FC<ConfirmarStepProps> = ({
     creandoModal.onOpen();
     /* if (pedido) {
     const pedidoResult = await crearPedido(pedido);
-    console.log(pedidoResult);
+    (pedidoResult);
   } */
   };
 

@@ -72,7 +72,7 @@ const CrearNavbar: React.FC<CrearNavbarProps> = ({
             <PickupCountdown
               recSelectedDate={pv2.recSelectedDate}
               onTimeout={() => {}}
-              durationMs={1 * 10 * 1000}
+              durationMs={5 * 60 * 1000}
             />
             <button
               onClick={onClose}

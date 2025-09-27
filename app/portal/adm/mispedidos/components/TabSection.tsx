@@ -32,7 +32,6 @@ const TabSection: React.FC<TabSectionProps> = ({
   onView,
   onCobroView,
 }) => {
-  console.log(currentUser);
   return (
     <div>
       <Tabs value="envios" className="w-full z-40">

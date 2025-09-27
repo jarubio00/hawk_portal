@@ -1,11 +1,10 @@
-'use client';
+"use client";
 
 import { useContext, useEffect, useState } from "react";
-import {PedidoContext} from "@/app/portal/crear/context/PedidoContext"
-import {PedidoContextType} from "@/app/types/pedido"
-import { useRouter } from 'next/navigation';
+import { PedidoContext } from "@/app/portal/crear/context/PedidoContext";
+import { PedidoContextType } from "@/app/types/pedido";
+import { useRouter } from "next/navigation";
 import useLoader from "@/app/hooks/useLoader";
-
 
 import Button from "@/app/components/Button";
 import AgregarDireccion from "@/app/components/portal/AgregarDireccion";
@@ -22,87 +21,83 @@ interface PaqueteDrawerProps {
 }
 
 //se quito w-full , se agregp px-2
-const PaqueteDrawer: React.FC<PaqueteDrawerProps> = ({ 
-  title, 
+const PaqueteDrawer: React.FC<PaqueteDrawerProps> = ({
+  title,
   currentUser,
-  paquetesList
+  paquetesList,
 }) => {
+  const { useDrawer, updatePaqueteSelected, savePaquete } = useContext(
+    PedidoContext
+  ) as PedidoContextType;
+  const router = useRouter();
+  const loader = useLoader();
 
-const {useDrawer,updatePaqueteSelected, savePaquete} = useContext(PedidoContext) as PedidoContextType;
-const router = useRouter();
-const loader = useLoader();
+  const [isLoading, setIsLoading] = useState(false);
+  const [subtitle, setSubtitle] = useState(
+    "Administra tus paquetes de recolección"
+  );
 
-const [isLoading,setIsLoading] = useState(false);
-const [subtitle, setSubtitle] = useState('Administra tus paquetes de recolección')
+  const [paquetes, setPaquetes] = useState(paquetesList);
 
-const [paquetes,setPaquetes] = useState(paquetesList);
+  const onAddClose = async (props: any) => {
+    useDrawer({ open: false });
+    toast.success("Dirección creada!");
+    router.refresh();
+    loader.onClose();
+  };
 
-const onAddClose  = async (props: any) => {
+  const handleSearch = (data: any) => {
+    if (data) {
+      setPaquetes(data);
+    }
+  };
 
-  useDrawer({open: false});
-  toast.success('Dirección creada!');
-  router.refresh();
-  loader.onClose();
-   
-} 
+  const handleOnSelect = (paquete: any) => {
+    //('selected: ', direccion);
 
-const handleSearch = (data: any) => {
-  if (data) {
-   setPaquetes(data);
-  } 
-}
+    savePaquete(paquete);
+    updatePaqueteSelected(paquete.id);
+    useDrawer({ open: false });
+  };
 
-const handleOnSelect = (paquete: any) => {
-
-  //console.log('selected: ', direccion);
-  console.log('paq sel: ', paquete);
-  savePaquete(paquete);
-  updatePaqueteSelected(paquete.id);
-  useDrawer({open: false});
-
-}
-
-
-
-  return ( 
+  return (
     <div className="">
-       <div className=" mx-0 lg:mx-4 px-4">
-          <>
-            {paquetesList && paquetesList.length >=3 && <div className="flex mb-6 mt-2 mx-0 w-full sm:w-2/4 md:w-3/4  xl:w-2/4 ">
-              <ListSearch 
+      <div className=" mx-0 lg:mx-4 px-4">
+        <>
+          {paquetesList && paquetesList.length >= 3 && (
+            <div className="flex mb-6 mt-2 mx-0 w-full sm:w-2/4 md:w-3/4  xl:w-2/4 ">
+              <ListSearch
                 placeholder="Buscar paquete"
                 inputArray={paquetesList}
-                keys={['contactoNombre', 'calle', 'colonia']}
+                keys={["contactoNombre", "calle", "colonia"]}
                 filteredData={handleSearch}
                 onReset={() => setPaquetes(paquetesList)}
                 minLength={2}
               />
-            </div>}
-
-            { paquetes && paquetes.length >= 1 ? paquetes?.map((paquete: SafePaquete, i: number) => {
-              return (
-                
-              <div key={i}>
-                <PaquetesCardDrawer 
-                  tipo='destino' 
-                  paquete={paquete} 
-                  onSelect={handleOnSelect}
-                  />
-              </div>
-              )
-            })
-          
-            :
-
-            <div className="flex py-8 px-4 text-md text-neutral-700 ">
-                No se encontraron paquetes
             </div>
-          }
-            
-          </>
+          )}
+
+          {paquetes && paquetes.length >= 1 ? (
+            paquetes?.map((paquete: SafePaquete, i: number) => {
+              return (
+                <div key={i}>
+                  <PaquetesCardDrawer
+                    tipo="destino"
+                    paquete={paquete}
+                    onSelect={handleOnSelect}
+                  />
+                </div>
+              );
+            })
+          ) : (
+            <div className="flex py-8 px-4 text-md text-neutral-700 ">
+              No se encontraron paquetes
+            </div>
+          )}
+        </>
       </div>
     </div>
-   );
-}
- 
+  );
+};
+
 export default PaqueteDrawer;
