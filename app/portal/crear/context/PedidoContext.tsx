@@ -81,6 +81,16 @@ const PedidoProvider: React.FC<Props> = ({ children }) => {
     setTipoEntrega("1");
   };
 
+  const resetPrograma = () => {
+    setPedido({
+      ...pedido,
+      programa: {},
+    });
+    setRecoleccionState({});
+    setEntregaState({});
+    setActiveStep(3);
+  };
+
   const saveRecoleccion = (rec: any) => {
     setPedido({
       ...pedido,
@@ -106,7 +116,6 @@ const PedidoProvider: React.FC<Props> = ({ children }) => {
   };
 
   const saveDestino = (dest: IDestino) => {
-    console.log("save: ", dest.save);
     setPedido({
       ...pedido,
       destino: {
@@ -148,7 +157,7 @@ const PedidoProvider: React.FC<Props> = ({ children }) => {
     });
   };
 
-  const savePrograma = (programa: IPrograma) => {
+  const savePrograma = async (programa: IPrograma) => {
     setPedido({
       ...pedido,
       programa: {
@@ -157,8 +166,11 @@ const PedidoProvider: React.FC<Props> = ({ children }) => {
         fechaEntrega: programa.fechaEntrega,
         bloqueEntrega: programa.bloqueEntrega,
         mismoDia: programa.mismoDia,
+        fechaEntString: programa.fechaEntString,
+        fechaRecString: programa.fechaRecString,
       },
     });
+    return true;
   };
 
   const saveRecoleccionState = (state: IProgramaState) => {
@@ -253,7 +265,7 @@ const PedidoProvider: React.FC<Props> = ({ children }) => {
   };
 
   const saveAppend = (append: IAppend) => {
-    console.log("context save append");
+    ("context save append");
     setPedido({
       ...pedido,
       append: {
@@ -329,6 +341,7 @@ const PedidoProvider: React.FC<Props> = ({ children }) => {
       value={{
         pedido,
         resetContext,
+        resetPrograma,
         saveRecoleccion,
         saveDestino,
         saveDestinoKey,

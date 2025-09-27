@@ -21,6 +21,7 @@ import { Switch } from "@headlessui/react";
 import PaqInput from "@/app/components/inputs/PaqInput";
 import { AiFillDollarCircle } from "react-icons/ai";
 import CobrosDialog from "./dialogs/CobrosDialog";
+import CrearNextButton from "./CrearNextButton";
 
 const fotoAncho = "/images/paq/paqsAncho.png";
 const fotoAlto = "/images/paq/paqsAlto.png";
@@ -108,11 +109,11 @@ const AgregarPaqueteCrear: React.FC<AgregarPaqueteCrearProps> = ({
   }, [saved]);
 
   useEffect(() => {
-    console.log(currentUser);
+    currentUser;
   }, []);
 
   useEffect(() => {
-    console.log(paquete);
+    paquete;
     if (paquete && saved) {
       setCpActive(true);
       setCustomValue("paqAncho", paquete.paqAncho);
@@ -495,9 +496,13 @@ const AgregarPaqueteCrear: React.FC<AgregarPaqueteCrearProps> = ({
               )}
             </div>
           )}
-          <div className="my-4 flex flex-row items-center gap-4">
+          {/* <div className="my-4 flex flex-row items-center gap-4">
             <Button outline label="Atras" onClick={handleBack} />
             <Button label="Siguiente" onClick={handleNext} />
+            <Button label="Siguiente V2" onClick={() => updateActiveStep(6)} />
+          </div> */}
+          <div className="flex w-full md:w-1/4 mt-4 mb-2">
+            <CrearNextButton onClick={handleNext} />
           </div>
         </div>
       </div>

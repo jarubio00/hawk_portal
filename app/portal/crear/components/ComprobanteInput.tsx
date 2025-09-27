@@ -1,16 +1,30 @@
 "use client";
 
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 import { PedidoContext } from "@/app/portal/crear/context/PedidoContext";
 import { PedidoContextType } from "@/app/types/pedido";
 import { GrCloudUpload } from "react-icons/gr";
 import { MdCloudUpload } from "react-icons/md";
 import Image from "next/image";
-import { uploadFile } from "@/app/actions/apiQuerys";
+import { preUploadFile, uploadFile } from "@/app/actions/apiQuerys";
+import axios from "axios";
+import { FaCircleMinus } from "react-icons/fa6";
+import { TiDelete } from "react-icons/ti";
+import { useProgramaStore } from "../store/crear-store";
+import ReceiptPreview from "./ComprobanteImage";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import FileLightboxContent from "./ComprobanteViewer";
+import PdfImageDialog from "./ComprobanteDialogViewer";
 
 interface ComprobanteInputProps {
   onChange: (props: any) => void;
 }
+
+type UploadFile = {
+  file: File;
+  fileName: string;
+  pedidoId: number;
+};
 
 //se quito w-full , se agregp px-2
 const ComprobanteInput: React.FC<ComprobanteInputProps> = ({ onChange }) => {
@@ -27,7 +41,29 @@ const ComprobanteInput: React.FC<ComprobanteInputProps> = ({ onChange }) => {
   const [fileSelected, setFileSelected] = useState(false);
   const [progressUpload, setProgressUpload] = useState(0);
   const [downloadURL, setDownloadURL] = useState("");
-  const [isUploading, setIsUploading] = useState(false);
+  const [progress, setProgress] = useState<number>(0);
+  const progressInterval = useRef<NodeJS.Timeout | null>(null);
+  const [open, setOpen] = useState(false);
+  const pv2 = useProgramaStore();
+
+  const simulateProgress = () => {
+    setProgress(0);
+    progressInterval.current = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 95) return prev; // Espera la respuesta final para llegar a 100%
+        return prev + Math.random() * 5;
+      });
+    }, 200);
+  };
+
+  const stopProgress = () => {
+    if (progressInterval.current) clearInterval(progressInterval.current);
+    setProgress(100);
+    setTimeout(() => {
+      pv2.updateComprobanteLoading(false);
+      pv2.updateTransferSelected(true);
+    }, 500); // pequeño delay para transición
+  };
 
   const handleInputFile = async (event: any) => {
     let file = null;
@@ -35,11 +71,11 @@ const ComprobanteInput: React.FC<ComprobanteInputProps> = ({ onChange }) => {
 
     if (event.target.files[0].type.match(/^image\//)) {
       file = event.target.files[0];
-      setImageFile(event.target.files[0]);
+      await pv2.updateComprobanteFile(event.target.files[0]);
       fileType = "imagen";
     } else if (event.target.files[0].type.match(/\/pdf/)) {
       file = event.target.files[0];
-      setImageFile(event.target.files[0]);
+      await pv2.updateComprobanteFile(event.target.files[0]);
       fileType = "pdf";
     } else {
       setErrorMessage("Formato no soportado");
@@ -51,9 +87,11 @@ const ComprobanteInput: React.FC<ComprobanteInputProps> = ({ onChange }) => {
     }
 
     if (file) {
-      const fileMb = file.size / 1024 ** 10;
+      //setImageFile(file);
+      const fileMb = parseFloat((file.size / (1024 * 1024)).toFixed(2));
 
-      if (fileMb >= 2) {
+      if (fileMb >= 10) {
+        pv2.updateComprobanteFile(undefined);
         setErrorMessage("El archivo excede el tamaño máximo (10Mb)");
         saveMetodoPago({
           ...pedido?.metodoPago,
@@ -77,7 +115,7 @@ const ComprobanteInput: React.FC<ComprobanteInputProps> = ({ onChange }) => {
       setImageName(file.name);
       setFileSelected(true);
     } else if (fileType == "pdf") {
-      console.log("usando pdf");
+      ("usando pdf");
       setFileType("pdf");
       setImage(pdfPlaceholder);
       setImageName(file.name);
@@ -86,76 +124,88 @@ const ComprobanteInput: React.FC<ComprobanteInputProps> = ({ onChange }) => {
 
     event.target.value = null;
 
-    saveMetodoPago({
-      ...pedido?.metodoPago,
-      formaPagoId: 2,
-      passed: true,
-      comprobante: true,
-      comprobanteUrl: "",
-      comprobanteFileType: fileType,
-      comprobanteSelected: true,
-      comprobanteString:
-        fileType == "imagen" ? URL.createObjectURL(file) : pdfPlaceholder,
-      comprobanteImageFile: file,
-    });
+    const filetoUpload: UploadFile = {
+      file: file,
+      fileName: file.name,
+      pedidoId: 88443322,
+    };
+
+    const upload = await handleuploadFile(filetoUpload);
   };
 
   const handleQuitarFile = () => {
     setFileSelected(false);
+    pv2.updateComprobanteFile(undefined);
+    pv2.updateComprobanteUploaded(false);
+    pv2.updateTransferSelected(false);
     saveMetodoPago({
       ...pedido?.metodoPago,
       comprobanteSelected: false,
-      passed: false,
-    });
-    setImage("");
-    setErrorMessage("");
-    saveMetodoPago({
-      ...pedido?.metodoPago,
+      comprobanteString: "",
       comprobanteError: false,
       comprobanteErrorMessage: "",
+      passed: false,
     });
+
+    setImage("");
+    setErrorMessage("");
   };
 
-  const handleUploadFile = async () => {
-    console.log("up file", pedido?.metodoPago?.comprobanteImageFile);
-
-    if (pedido?.metodoPago?.comprobanteImageFile) {
-      const base64 = await toBase64(pedido?.metodoPago?.comprobanteImageFile);
-      //console.log(base64);
-
+  const handleuploadFile = async (file: UploadFile) => {
+    if (file.file) {
       let formData = new FormData();
-      formData.append("file", pedido?.metodoPago?.comprobanteImageFile);
-      formData.append("fileName", imageName);
-      formData.append("pedido", "768909");
+      formData.append("file", file?.file);
+      formData.append("fileName", file?.fileName);
+      formData.append("pedido", `${file.pedidoId}`);
 
-      const up = await uploadFile(formData);
+      //const up = await preUploadFile(formData);
+      const up = await directUpload(formData);
+    } else {
+      ("no comprobanteFile");
     }
   };
 
-  const toBase64 = (file: File) =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = (error) => reject(error);
-    });
+  const directUpload = async (props: FormData) => {
+    pv2.updateComprobanteLoading(true);
+    simulateProgress();
+    const result = await axios
+      .post(`/api/preupload`, props)
+      .then((response) => {
+        const url: string = response.data.downloadUrl ?? "";
+        const isValid = url.includes("googleapis");
+
+        pv2.updateComprobanteUrl(url ?? "");
+        stopProgress();
+        pv2.updateComprobanteUploaded(isValid);
+        saveMetodoPago({
+          ...pedido?.metodoPago,
+          formaPagoId: 2,
+          passed: true,
+          comprobante: true,
+          comprobanteUrl: url ?? "",
+        });
+      })
+      .catch((error) => {
+        ("Error en preupload");
+        error;
+        pv2.updateComprobanteLoading(false);
+      });
+  };
 
   return (
-    <div className="flex flex-col">
-      <div className="my-2 ">
-        <p className="text-2xl text-rose-500 font-bold mb-1">BANREGIO</p>
+    <div className="flex flex-col w-full ">
+      <div className={`${pv2.comprobanteFile ? "mb-2" : "mb-6"} `}>
+        <p className="text-xl text-rose-500 font-bold mb-0">BANREGIO</p>
 
-        <p className="text-sm font-semibold">Eslo Regiomontana S.A. DE C.V.</p>
-        <p className="text-sm text-neutral-400">CUENTA: 025-03606-001-1</p>
-        <p className="text-sm text-neutral-400">
+        <p className="text-xs font-semibold">Eslo Regiomontana S.A. DE C.V.</p>
+        <p className="text-xs text-neutral-400">CUENTA: 025-03606-001-1</p>
+        <p className="text-xs text-neutral-400">
           CLABE: 0585 8025 0360 6001 16
         </p>
       </div>
-      <p className="my-1 text-xs text-neutral-500">
-        Carga tu comprobante de pago
-      </p>
-      {!pedido?.metodoPago?.comprobanteSelected && (
-        <label htmlFor="file">
+
+      {!pv2.comprobanteFile ? (
+        <label htmlFor="file" className="w-full">
           <input
             id="file"
             type="file"
@@ -169,66 +219,76 @@ const ComprobanteInput: React.FC<ComprobanteInputProps> = ({ onChange }) => {
                 text-white flex-wrap
                 font-normal
                 text-xs
-                mb-0
+                mb-2
+                mt-4
                 flex
                 flex-row
                 gap-2
                 items-center
                 cursor-pointer
-                bg-blue-500
-                hover:bg-blue-300
+                border-2
+                hover:bg-neutral-100
                 rounded-md
-                px-2
-                py-1
-                w-32
+                px-4
+                py-4
+                w-full
                 justify-center
                 "
           >
-            <MdCloudUpload className="text-white" size={16} color="#FFFFFF" />
-            <p>Seleccionar</p>
+            <MdCloudUpload className="text-rose-500" size={16} />
+            <p className="text-black">Cargar comprobante</p>
           </div>
           <p className="text-xs text-red-600 m-2">
             {pedido?.metodoPago?.comprobanteErrorMessage}
           </p>
         </label>
-      )}
-      {pedido?.metodoPago?.comprobanteSelected &&
-        pedido?.metodoPago?.comprobanteString != "" && (
-          <div className="my-2 mx-3 flex flex-col">
-            <Image
-              src={
-                pedido?.metodoPago?.comprobanteString
-                  ? pedido?.metodoPago?.comprobanteString
-                  : pdfPlaceholder
-              }
-              width={100}
-              height={150}
-              alt="Comprobante"
-            />
-            <p className="text-xs text-blue-500">{imageName}</p>
-            <div className="flex flex-row gap-2 mt-2">
-              <div>
-                <label htmlFor="file">
-                  <input
-                    id="file"
-                    type="file"
-                    accept="image/*, application/pdf"
-                    name="file"
-                    className="hidden"
-                    onChange={handleInputFile}
-                  ></input>
-                  <p className="text-neutral-500 text-xs cursor-pointer">
-                    Cambiar
-                  </p>
-                </label>
-              </div>
-              <div onClick={handleQuitarFile}>
-                <p className="text-red-500 text-xs cursor-pointer">Quitar</p>
+      ) : (
+        <div className="my-2 flex flex-col w-full justify-center items-center">
+          <div className="flex flex-row gap-8">
+            <div
+              className={`relative ${pv2.comprobanteLoading ? "blur-sm " : ""}`}
+            >
+              <ReceiptPreview
+                file={pv2.comprobanteFile}
+                portraitSize={{ width: 100, height: 180 }}
+                landscapeSize={{ width: 210, height: 140 }}
+                onOpen={pv2.comprobanteLoading ? () => {} : () => setOpen(true)}
+              />
+              <div
+                className="absolute -top-[10px] -right-[10px] flex items-center justify-center cursor-pointer "
+                onClick={
+                  pv2.comprobanteLoading ? () => {} : () => handleQuitarFile()
+                }
+              >
+                {
+                  <TiDelete
+                    className={`text-black w-[24px] h-[24px] bg-white rounded-full`}
+                  />
+                }
               </div>
             </div>
-            <p className="text-xs text-red-600 mt-2">{errorMessage}</p>
           </div>
-        )}
+          <PdfImageDialog
+            open={open}
+            onOpenChange={setOpen}
+            file={pv2.comprobanteFile}
+            title="Comprobante"
+          />
+
+          {pv2.comprobanteLoading && (
+            <div className="w-[200px] h-3 bg-gray-300">
+              <div
+                className="h-full bg-blue-600 transition-all text-[9px] text-white"
+                style={{ width: `${progress}%` }}
+              >
+                <p className="ml-3">{progress.toFixed(0)}%</p>
+              </div>
+            </div>
+          )}
+
+          <p className="text-xs text-red-600 mt-2">{errorMessage}</p>
+        </div>
+      )}
 
       {/*  <button onClick={handleUploadFile}>Cargar archivo</button> */}
     </div>

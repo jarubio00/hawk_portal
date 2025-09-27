@@ -61,6 +61,8 @@ model User {
   actividad               ActividadPlataformaClientes[]
   pedidosNacionales       NacionalPedido[]
   recoleccionesNacionales NacionalRecoleccion[]
+  mercadoPagoCustomer     MercadoPagoCustomer[]
+  mercadoPagoTransaction  MercadoPagoTransaction[]
 
   @@fulltext([nombre])
   @@fulltext([email])
@@ -620,6 +622,7 @@ model UsuariosHawk {
   tipo                CatalogoUsuariosTipos          @relation(fields: [tipoId], references: [id])
   actividades         ActividadOperaciones[]
   actividadesNacional NacionalActividadOperaciones[]
+  bloques             BloqueoServicios[]
 }
 
 model CatalogoUsuariosEmpresas {
@@ -1465,4 +1468,91 @@ model NacionalCatalogoEstatusPedidos {
   estatus String
   desc    String?
   pedidos NacionalPedido[]
+}
+
+//INTEGRACION MERCADO PAGO
+
+model MercadoPagoOAuth {
+  id          Int      @id @default(autoincrement())
+  accessToken String
+  expiresAt   DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model MercadoPagoCustomer {
+  id           Int    @id @default(autoincrement())
+  userId       Int    @unique
+  mpCustomerId String @unique
+
+  cards MercadoPagoCard[]
+  user  User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model MercadoPagoCard {
+  id         Int    @id @default(autoincrement())
+  customerId Int
+  mpCardId   String @unique
+
+  customer  MercadoPagoCustomer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+}
+
+model MercadoPagoTransaction {
+  id            Int     @id @default(autoincrement())
+  userId        Int
+  mpOrderId     String  @unique
+  status        String
+  amount        Float
+  paymentMethod String?
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model BloqueoServicios {
+  id            Int           @id @default(autoincrement())
+  fecha         DateTime      @db.Date
+  servicio      TipoServicios @default(REC)
+  tipo          String        @default("normal")
+  customMessage String?
+  createdAt     DateTime      @default(dbgenerated("(now())"))
+  createdBy     Int           @default(1)
+  user          UsuariosHawk  @relation(fields: [createdBy], references: [id])
+}
+
+enum TipoServicios {
+  REC
+  ENT
+  MD
+  TODO
+}
+
+model AvisosProgramacion {
+  id        Int                        @id @default(autoincrement())
+  inicio    DateTime                   @db.Date
+  fin       DateTime                   @db.Date
+  avisoId   Int
+  activo    Boolean                    @default(false)
+  pausa     Boolean                    @default(false)
+  createdAt DateTime                   @default(dbgenerated("(now())"))
+  aviso     AvisoProgramacionContenido @relation(fields: [avisoId], references: [id])
+  createdBy Int                        @default(1)
+}
+
+model AvisoProgramacionContenido {
+  id                    Int                  @id @default(autoincrement())
+  nombre                String
+  desc                  String?              @db.Text
+  backgroundColor       String
+  backgroundImage       String               @db.Text
+  mobileBackgroundImage String?              @db.Text
+  message               String               @db.Text
+  avisos                AvisosProgramacion[]
 }

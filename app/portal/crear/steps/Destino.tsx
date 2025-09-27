@@ -3,10 +3,8 @@
 import { useContext, useEffect, useState } from "react";
 import { PedidoContext } from "@/app/portal/crear/context/PedidoContext";
 import { PedidoContextType } from "@/app/types/pedido";
-import Button from "@/app/components/Button";
 import { useRouter } from "next/navigation";
 import useLoader from "@/app/hooks/useLoader";
-import StepHeading from "../components/StepHeading";
 import AgregarDestinoCrear from "../components/AgregarDestinoCrear";
 import { SafeUser } from "@/app/types";
 import { FaPlus } from "react-icons/fa";
@@ -27,7 +25,6 @@ const DestinoStep: React.FC<DestinoStepProps> = ({
   municipios,
 }) => {
   const {
-    updateActiveStep,
     saveDestino,
     destinoSelected,
     updateDestinoSelected,
@@ -40,22 +37,18 @@ const DestinoStep: React.FC<DestinoStepProps> = ({
     saveRecoleccionState,
     recoleccionState,
   } = useContext(PedidoContext) as PedidoContextType;
-  const router = useRouter();
-  const loader = useLoader();
 
   const [saved, setSaved] = useState(false);
   const [direccion, setDireccion] = useState({});
   const [sinCpSelected, setSinCpSelected] = useState(false);
 
   useEffect(() => {
-    console.log("des sel: ", destinoSelected);
     if (destinoSelected && destinoSelected != 0 && pedido?.destino) {
       setSaved(true);
       setDireccion(pedido?.destino);
-      console.log("des :", pedido?.destino);
     }
-    //console.log(destinoSelected);
-    //console.log(pedido?.destino);
+    //(destinoSelected);
+    //(pedido?.destino);
   }, [destinoSelected]);
 
   const onCancelSaved = () => {
@@ -84,7 +77,7 @@ const DestinoStep: React.FC<DestinoStepProps> = ({
       updateDestinoSinCp(value);
     } else {
       //setSinCpSelected(false);
-      console.log("aqui fue");
+      ("aqui fue");
       updateDestinoSinCp(value);
 
       setDireccion({});
@@ -103,10 +96,10 @@ const DestinoStep: React.FC<DestinoStepProps> = ({
 
   return (
     <div className="px-2">
-      <StepHeading
+      {/* <StepHeading
         title="Destino"
         subtitle="Ingresa la dirección del destino"
-      />
+      /> */}
       <div className="flex flex-col gap-2">
         <div className="flex mt-2 ">
           <div className="">

@@ -1,6 +1,5 @@
 "use client";
 import { useContext, useEffect, useState } from "react";
-import AgregarDireccion from "@/app/components/portal/AgregarDireccion";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination } from "swiper";
 
@@ -13,9 +12,7 @@ import "./styles.css";
 import DireccionCard from "../components/DireccionCard";
 import { PedidoContext } from "../context/PedidoContext";
 import { PedidoContextType, IRecoleccion } from "@/app/types/pedido";
-import Button from "@/app/components/Button";
 import { FaPlus } from "react-icons/fa";
-import StepHeading from "../components/StepHeading";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,15 +24,11 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import {
-  FaFacebook,
-  FaFacebookF,
-  FaInstagram,
-  FaWhatsapp,
-} from "react-icons/fa";
+import { FaWhatsapp } from "react-icons/fa";
 import { MdEmail, MdPhone } from "react-icons/md";
 import AddColoniaFixDialog from "../components/AddColoniaFixDialog";
 import AvisoEnRecoleccionDialog from "./dialogs/AvisoEnRecoleccionDialog";
+import CrearNextButton from "../components/CrearNextButton";
 
 interface RecoleccionStepProps {
   label?: string;
@@ -69,7 +62,7 @@ const RecoleccionStep: React.FC<RecoleccionStepProps> = ({
     direccionSelected,
   } = useContext(PedidoContext) as PedidoContextType;
 
-  console.log(append);
+  append;
 
   const [direccion, setDireccion] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
@@ -79,7 +72,6 @@ const RecoleccionStep: React.FC<RecoleccionStepProps> = ({
 
   const onSelectDireccion = (direccion: any) => {
     setErrorMessage("");
-    console.log("on sel:", direccion);
     updateDireccionSelected(direccion.id);
     //setDireccion(direccion);
     saveRecoleccion(direccion);
@@ -87,7 +79,7 @@ const RecoleccionStep: React.FC<RecoleccionStepProps> = ({
 
   useEffect(() => {
     direcciones.map((val: any) => {
-      console.log(val);
+      val;
       const timer = setTimeout(() => {
         if (val.default) {
           updateDireccionSelected(val.id);
@@ -96,14 +88,6 @@ const RecoleccionStep: React.FC<RecoleccionStepProps> = ({
       }, 500);
     });
   }, []);
-
-  //Aviso al abrir recoleccion
-  /*  useEffect(() => {
-    const timer = setTimeout(() => {
-      setAvisoDialog(true);
-      setNextEnabled(true);
-    }, 1000);
-  }, []); */
 
   const handleNext = () => {
     //if (!pedido?.recoleccion?.colonia) {
@@ -133,18 +117,19 @@ const RecoleccionStep: React.FC<RecoleccionStepProps> = ({
         open={openColoniaDialog}
         onClose={closeColoniaDialog}
       />
-      <StepHeading
+      {/* <StepHeading
         title="Recolección"
         subtitle={
           !append
             ? "Selecciona la dirección de recolección"
             : "No se puede modificar la dirección de recolección"
         }
-      />
+      /> */}
       <div className="flex mt-2">
         {!append && (
           <div
             className="
+          
           text-white flex-wrap
           font-semibold
           text-xs
@@ -192,7 +177,7 @@ const RecoleccionStep: React.FC<RecoleccionStepProps> = ({
           }}
         >
           {direcciones.map((dir: any, i: number) => {
-            //console.log(dir)
+            //(dir)
             return (
               <SwiperSlide key={i}>
                 <DireccionSlideCard
@@ -217,9 +202,8 @@ const RecoleccionStep: React.FC<RecoleccionStepProps> = ({
 
       <div>
         {pedido?.recoleccion?.municipioId !== 10 ? (
-          <div className="my-4">
-            <Button
-              label="Siguiente"
+          <div className="flex w-full md:w-1/4 mt-6 mb-2">
+            <CrearNextButton
               onClick={handleNext}
               disabled={!pedido?.recoleccion?.direccionId}
             />
@@ -227,7 +211,9 @@ const RecoleccionStep: React.FC<RecoleccionStepProps> = ({
         ) : (
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button label="Siguiente" onClick={() => {}} disabled={false} />
+              <div className="flex w-full md:w-1/4 mt-6 mb-2">
+                <CrearNextButton onClick={() => {}} disabled={false} />
+              </div>
             </AlertDialogTrigger>
             <AlertDialogContent className=" ">
               <AlertDialogHeader>

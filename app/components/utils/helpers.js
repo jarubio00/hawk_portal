@@ -64,7 +64,7 @@ export function dateString(dateString) {
   const date = new Date(dateString);
   let result = "No hay fecha";
   if (isDate(date)) {
-    result = format(addHours(date, 0), `dd/MM/yyyy HH:mm:ss `, {
+    result = format(addHours(date, 6), `dd/MM/yyyy HH:mm:ss `, {
       locale: esLocale,
     });
   }

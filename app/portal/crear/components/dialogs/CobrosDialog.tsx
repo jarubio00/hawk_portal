@@ -54,7 +54,7 @@ const CobrosDialog: React.FC<CobrosDialogProps> = ({
   }, [resetCobro]);
 
   useEffect(() => {
-    console.log("editcobro");
+    ("editcobro");
     if (editCobro) {
       setConfirmarMonto(false);
     }
@@ -63,8 +63,8 @@ const CobrosDialog: React.FC<CobrosDialogProps> = ({
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     //loader.onOpen();
 
-    console.log(data);
-    console.log(currencyFormat(parseFloat(data.montoCobro)));
+    data;
+    currencyFormat(parseFloat(data.montoCobro));
 
     setConfirmarMonto(true);
     setMontoFormato(currencyFormat(parseFloat(data.montoCobro)));
@@ -189,7 +189,7 @@ const CobrosDialog: React.FC<CobrosDialogProps> = ({
                           errors={errors}
                           onChange={(event: any) => {
                             setCustomValue("terms", event.target.checked);
-                            console.log(event.target.checked);
+                            event.target.checked;
                           }}
                         />
                         <div

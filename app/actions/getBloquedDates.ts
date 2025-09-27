@@ -1,6 +1,8 @@
 "use server";
 import prisma from "@/app/libs/prismadb";
 import getCurrentUser from "./getCurrentUser";
+import { getServerDate } from "@/app/api/utils/validatorUtils";
+import { ServerDate } from "@/app/types";
 import { format, subHours, addHours, subDays } from "date-fns";
 
 export default async function getBloquedDays() {
@@ -10,6 +12,10 @@ export default async function getBloquedDays() {
     const hoyUTC = new Date();
     const ayerUTC = subDays(hoyUTC, 1);
     const localDate = subHours(hoyUTC, 6);
+    const sd: ServerDate = await getServerDate();
+
+    console.log(hoyUTC);
+    console.log(sd);
 
     const data = await prisma.fechasBloqueadas.findMany({
       where: {

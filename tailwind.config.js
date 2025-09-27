@@ -1,14 +1,16 @@
 const withMT = require("@material-tailwind/react/utils/withMT");
 
+const colors = require("tailwindcss/colors");
+
 /** @type {import('tailwindcss').Config} */
 module.exports = withMT({
   darkMode: ["class"],
   content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
-	],
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
+  ],
   theme: {
     container: {
       center: true,
@@ -78,8 +80,12 @@ module.exports = withMT({
           700: "#404040",
           800: "#262626",
           900: "#171717",
-          950: "#0a0a0a"
-        }
+          950: "#0a0a0a",
+        },
+        violet: colors.violet,
+        indigo: colors.indigo,
+        purple: colors.purple,
+        pink: colors.pink,
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -96,21 +102,31 @@ module.exports = withMT({
           to: { height: 0 },
         },
         scaleIn: {
-          from: { opacity: 0, transform: 'rotateX(-10deg) scale(0.5)' },
-          to: { opacity: 1, transform: 'rotateX(0deg) scale(1)' },
+          from: { opacity: 0, transform: "rotateX(-10deg) scale(0.5)" },
+          to: { opacity: 1, transform: "rotateX(0deg) scale(1)" },
         },
         fadeIn: {
           from: { opacity: 0 },
           to: { opacity: 1 },
         },
+        progressbar: {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(100%)" },
+        },
+        progressFill: {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(0)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        scaleIn: 'scaleIn 1500ms ease',
-        fadeIn: 'fadeIn 1500ms ease',
+        scaleIn: "scaleIn 1500ms ease",
+        fadeIn: "fadeIn 1500ms ease",
+        progressbar: "progressbar 1.5s linear infinite",
+        progressFill: "progressFill var(--duration, 2s) linear forwards",
       },
     },
   },
   plugins: [require("tailwindcss-animate")],
-})
+});

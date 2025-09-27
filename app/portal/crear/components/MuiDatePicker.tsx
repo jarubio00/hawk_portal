@@ -92,7 +92,7 @@ const MuiDatePicker: React.FC<MuiDatePickerProps> = ({
   }
 
   const disableWeekends = (date: any) => {
-    //console.log(date.toISOString().slice(0, 10))
+    //(date.toISOString().slice(0, 10))
     let bMatched = false;
     if (date.getDay() === 0) {
       return true;

@@ -50,6 +50,7 @@ import {
   FaWhatsapp,
 } from "react-icons/fa";
 import { MdEmail, MdPhone } from "react-icons/md";
+import CrearNextButton from "./CrearNextButton";
 
 interface AgregarDestinoCrearProps {
   title: string;
@@ -138,7 +139,6 @@ const AgregarDestinoCrear: React.FC<AgregarDestinoCrearProps> = ({
 
   //console.log('agr dir:', direccion)
   useEffect(() => {
-    console.log("saved", saved);
     if (!saved) {
       reset();
       setCpActive(false);
@@ -783,14 +783,15 @@ const AgregarDestinoCrear: React.FC<AgregarDestinoCrearProps> = ({
 
         <div>
           {pedido?.destino?.municipioId !== 10 ? (
-            <div className="my-4 flex flex-row items-center gap-4">
-              <Button outline label="Atras" onClick={handleBack} />
-              <Button label="Siguiente" onClick={handleNext} />
+            <div className="flex w-full md:w-1/4 mt-6 mb-2">
+              <CrearNextButton onClick={handleNext} />
             </div>
           ) : (
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button label="Siguiente" onClick={() => {}} disabled={false} />
+                <div className="flex w-full md:w-1/4 mt-6 mb-2">
+                  <CrearNextButton onClick={() => {}} disabled={false} />
+                </div>
               </AlertDialogTrigger>
               <AlertDialogContent className=" ">
                 <AlertDialogHeader>

@@ -1,7 +1,7 @@
 import useLoader from "@/app/hooks/useLoader";
 import { SafeUser, ApiResponse } from "@/app/types";
 import axios from "axios";
-import { ICotizaParams, IPedido } from "@/app/types/pedido";
+import { ICotizaParams, IPedido, IValidatorParams } from "@/app/types/pedido";
 
 export async function addDireccion(props: any) {
   //console.log("apiquery", props);
@@ -450,6 +450,29 @@ export async function cotizaPaqueteById(props: ICotizaParams) {
   return result;
 }
 
+export async function pedidoValidator(props: IValidatorParams) {
+  const result = await axios
+    .post(`/api/pedido/validator`, props)
+    .then((response) => {
+      const responseData: ApiResponse = {
+        status: 1,
+        statusMessage: "OK",
+        response: { data: response.data },
+      };
+      return responseData;
+    })
+    .catch((error) => {
+      const response: ApiResponse = {
+        status: 2,
+        statusMessage: error.message,
+        response: { data: {}, error: error },
+      };
+      return response;
+    });
+
+  return result;
+}
+
 export async function uploadFile(props: FormData) {
   const timer = setTimeout(async () => {
     const result = await axios
@@ -475,9 +498,57 @@ export async function uploadFile(props: FormData) {
   }, 3000);
 }
 
+export async function preUploadFile(props: FormData) {
+  const timer = setTimeout(async () => {
+    const result = await axios
+      .post(`/api/preupload`, props)
+      .then((response) => {
+        const responseData: ApiResponse = {
+          status: 1,
+          statusMessage: "OK",
+          response: { data: response.data },
+        };
+        return responseData;
+      })
+      .catch((error) => {
+        const response: ApiResponse = {
+          status: 2,
+          statusMessage: "Error de API",
+          response: { data: {}, error: error },
+        };
+        return response;
+      });
+
+    return result;
+  }, 3000);
+}
+
 export async function crearPedido(pedido: IPedido) {
   const result = await axios
     .post(`/api/pedido`, pedido)
+    .then((response) => {
+      const responseData: ApiResponse = {
+        status: 1,
+        statusMessage: "OK",
+        response: { data: response.data },
+      };
+      return responseData;
+    })
+    .catch((error) => {
+      const response: ApiResponse = {
+        status: 2,
+        statusMessage: error.message,
+        response: { data: {}, error: error },
+      };
+      return response;
+    });
+
+  return result;
+}
+
+export async function crearPedidoV2(pedido: IPedido) {
+  const result = await axios
+    .post(`/api/pedido/v2`, pedido)
     .then((response) => {
       const responseData: ApiResponse = {
         status: 1,
@@ -754,6 +825,51 @@ export async function nacionalShipmentCreate(props: any) {
 
 export async function nacionalCpFind(cp: string) {
   const response = await axios.get(`/api/nacional/cotiza/cp/${cp}`);
+
+  return response.data;
+}
+
+function parseYMDLocal(ymd: string): Date {
+  const [y, m, d] = ymd.split("-").map(Number);
+  return new Date(y, m - 1, d); // mes - 1 porque Date usa meses base 0
+}
+
+export async function getRecDatesV2({
+  municipioRecId,
+}: {
+  municipioRecId: Number;
+}) {
+  const response = await axios.post(`/api/programa/v2/rec`, {
+    municipioRecId,
+  });
+
+  //return response.data.map(parseYMDLocal);
+  return response.data;
+}
+
+export async function getEntDatesV2({
+  fechaString,
+  municipioEntId,
+}: {
+  fechaString: String;
+  municipioEntId: Number;
+}) {
+  const response = await axios.post(`/api/programa/v2/ent`, {
+    fechaString,
+    municipioEntId,
+  });
+
+  return response.data;
+}
+
+export async function getTodayServerDate() {
+  const response = await axios.get(`/api/programa/date/today`);
+
+  return response.data;
+}
+
+export async function getAvisoActivo() {
+  const response = await axios.get(`/api/programa/avisos`);
 
   return response.data;
 }

@@ -1,4 +1,4 @@
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import NextAuth, { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GithubProvider from "next-auth/providers/github";
@@ -30,7 +30,7 @@ export const authOptions: AuthOptions = {
       },
       // @ts-ignore
       async authorize(credentials) {
-        console.log("creds: ", credentials);
+        //console.log("creds: ", credentials);
         if (!credentials?.email || !credentials?.password) {
           throw new Error("Invalid credentials");
         }
@@ -72,7 +72,7 @@ export const authOptions: AuthOptions = {
           );
         }
 
-        console.log(isCorrectPassword);
+        //console.log(isCorrectPassword);
 
         if (!isCorrectPassword) {
           throw new Error("Contraseña incorrecta");

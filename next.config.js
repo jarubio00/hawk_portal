@@ -6,12 +6,9 @@ const nextConfig = {
       "firebasestorage.googleapis.com",
       "res.cloudinary.com",
       "www.googleapis.com",
+      "img.mlstatic.com",
     ],
   },
-  experimental: {
-    appDir: true,
-  },
-  future: { webpack5: true },
   webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
     config.resolve.alias.canvas = false;
     config.resolve.alias.encoding = false;

@@ -110,6 +110,19 @@ export type ApiResponse = {
   response?: Response;
 };
 
+export type ServerDate = {
+  hours: number;
+  minutes: number;
+  seconds: number;
+  month: number;
+  year: number;
+  dayNumber: number;
+  day: number;
+  totalMinutes: number;
+  composedFullDate: Date;
+  composedDate: Date;
+};
+
 export type SafeRecoleccion = Omit<Recoleccion, "pedidos"> & {
   id: number;
   estatus: any;
@@ -315,4 +328,13 @@ export type NacionalPostalAddress = {
   addressLine2: string;
   addressLine3: string;
   countryName: string;
+};
+
+//Programa V2
+
+export type DateV2 = {
+  dateString: string;
+  datetimeString: string;
+  formatLong: string;
+  localeDate: Date;
 };

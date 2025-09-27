@@ -78,7 +78,7 @@ const MetodoPagoCard: React.FC<MetodoPagoCardProps> = ({ data }) => {
     }
   };
   const handleInputFile = (props: any) => {
-    console.log(props);
+    props;
   };
 
   const cardToken = async () => {
@@ -87,7 +87,6 @@ const MetodoPagoCard: React.FC<MetodoPagoCardProps> = ({ data }) => {
       identificationType: "<BUYER_IDENTIFICATION_TYPE>",
       identificationNumber: "<BUYER_IDENTIFICATION_NUMBER>",
     });
-    console.log("Card Token Response = ", response);
   };
 
   return (

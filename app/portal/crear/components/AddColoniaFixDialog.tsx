@@ -34,7 +34,7 @@ const AddColoniaFixDialog: React.FC<AddColoniaFixDialogProps> = ({
       setError("El nombre de la colonia es requerido");
     }
 
-    console.log(colonia);
+    colonia;
   };
   return (
     <AlertDialog open={open}>

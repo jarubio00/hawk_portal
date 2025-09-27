@@ -22,7 +22,7 @@ const CrearPedido = async ({ searchParams }: CrearPedidoProps) => {
     recoleccion = await getRecoleccion(rec);
   }
 
-  console.log("page page");
+  //("page page");
   const currentUser = await getCurrentUser();
   const direcciones = await getDirecciones();
   const destinos = await getDestinos();
