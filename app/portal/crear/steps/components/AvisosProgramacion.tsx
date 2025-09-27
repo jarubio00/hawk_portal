@@ -119,7 +119,7 @@ const AvisosProgramacion: React.FC<{ children: React.ReactNode }> = ({
               backgroundPosition: "right",
             }}
           >
-            <div className="flex flex-col items-center justify-center h-full gap-6 p-2 w-full md:w-3/4">
+            <div className="flex flex-col items-center justify-center h-full gap-6 p-2 ">
               {children}
               <div
                 className="flex flex-col bg-black rounded-md w-full md:w-1/2 text-white items-center p-4"
@@ -172,7 +172,7 @@ const AvisosProgramacion: React.FC<{ children: React.ReactNode }> = ({
                   </p>
                 </div>
               </div>
-              <div className="flex w-full md:w-1/4 mt-6 mb-2 mx-2 bg-blue-200">
+              <div className="flex  md:w-1/4 mt-6 mb-2 mx-2 ">
                 <CrearNextButton
                   onClick={handleNext}
                   disabled={
@@ -185,10 +185,10 @@ const AvisosProgramacion: React.FC<{ children: React.ReactNode }> = ({
           </div>
         </div>
       ) : (
-        <div className="w-full md:w-3/4 h-screen overflow-hidden text-black">
-          <div className="flex flex-col w-full  py-4 px-1 md:px-8  h-full gap-6 p-2">
+        <div className=" w-full h-screen overflow-hidden text-black">
+          <div className="flex flex-col  items-center md:items-start py-4 px-1 md:px-8  h-full gap-6 p-2">
             {children}
-            <div className="flex w-full md:w-1/4 mt-6 mb-2 mx-2 bg-blue-200">
+            <div className="flex w-full md:w-1/4 mt-6 mb-2 md:mx-2 ">
               <CrearNextButton
                 onClick={handleNext}
                 disabled={

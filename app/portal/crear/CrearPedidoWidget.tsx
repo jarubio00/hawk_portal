@@ -198,7 +198,7 @@ const CrearPedidoWidget: React.FC<CrearPedidoWidgetProps> = ({
             </div>
           )}
           {activeStep === 3 && (
-            <div className="w-full  py-0 px-0 md:px-0 mx-auto">
+            <div className="w-full md:w-3/4 py-0 px-0 md:px-0 mx-auto">
               <AvisosProgramacion>
                 <ProgramacionV2Step />
               </AvisosProgramacion>

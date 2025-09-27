@@ -79,8 +79,7 @@ export async function isBlockedDate(dr: ServerDate, type: "REC" | "ENT") {
     .toString()
     .padStart(2, "0")}T23:23:59.999Z`;
   const gte = new Date(gteString);
-  console.log("prisma check 1");
-  console.log(gte);
+
   try {
     const blocked = await prisma.fechasBloqueadas.findMany({
       where: {
@@ -102,9 +101,6 @@ export async function isBlockedDate(dr: ServerDate, type: "REC" | "ENT") {
         fecha: "desc",
       },
     });
-
-    console.log("prisma check");
-    console.log(blocked);
 
     if (blocked.length) {
       result = true;

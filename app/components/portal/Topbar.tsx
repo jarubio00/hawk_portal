@@ -1,18 +1,18 @@
-'use client';
+"use client";
 import { Fragment } from "react";
-import { BiSearch } from 'react-icons/bi';
+import { BiSearch } from "react-icons/bi";
 import { Menu, Transition, Popover } from "@headlessui/react";
 import Link from "next/link";
 import { AiOutlineMenu } from "react-icons/ai";
 
-interface TopbarProps { 
-    showNav: boolean;
-    setShowNav:  (open: boolean) => void;
+interface TopbarProps {
+  showNav: boolean;
+  setShowNav: (open: boolean) => void;
 }
-const Topbar: React.FC<TopbarProps> = ({ showNav, setShowNav}) => {
+const Topbar: React.FC<TopbarProps> = ({ showNav, setShowNav }) => {
   return (
     <div
-      className={`fixed w-full h-16 bg-gray-100 flex justify-between items-center transition-all duration-[400ms] ${
+      className={`fixed w-full h-16 bg-gray-100 flex justify-between items-center transition-all duration-\[400ms] ${
         showNav ? "pl-56" : ""
       }`}
     >
@@ -163,6 +163,6 @@ const Topbar: React.FC<TopbarProps> = ({ showNav, setShowNav}) => {
       </div>
     </div>
   );
-}
+};
 
 export default Topbar;

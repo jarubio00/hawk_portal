@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useState, useEffect, useCallback, Fragment } from "react";
 import Sidebar from "./Sidebar";
@@ -10,7 +10,6 @@ import useSidebar from "@/app/hooks/useSidebar";
 
 const useMediaQuery = (width: any) => {
   const loader = useLoader();
- 
 
   const [targetReached, setTargetReached] = useState(false);
 
@@ -31,7 +30,7 @@ const useMediaQuery = (width: any) => {
       setTargetReached(true);
     }
 
-    return () => media.removeEventListener("change",updateTarget);
+    return () => media.removeEventListener("change", updateTarget);
   }, []);
 
   useEffect(() => {
@@ -44,8 +43,8 @@ const useMediaQuery = (width: any) => {
 };
 
 interface PortalLayoutProps {
-  children: React.ReactNode
-};
+  children: React.ReactNode;
+}
 
 const PortalLayout: React.FC<PortalLayoutProps> = ({ children }) => {
   const sidebar = useSidebar();
@@ -55,12 +54,12 @@ const PortalLayout: React.FC<PortalLayoutProps> = ({ children }) => {
   const [firstLoad, setFirstLoad] = useState(true);
 
   useEffect(() => {
-   setFirstLoad(false)
+    setFirstLoad(false);
   }, []);
 
   useEffect(() => {
-    setLoaded(false)
-    if(isBreakpoint) {
+    setLoaded(false);
+    if (isBreakpoint) {
       sidebar.onClose();
       setIsMobile(true);
       setLoaded(true);
@@ -70,10 +69,10 @@ const PortalLayout: React.FC<PortalLayoutProps> = ({ children }) => {
       setLoaded(true);
     }
   }, [isBreakpoint]);
-  
+
   return (
     <>
-      {!loaded ?  (
+      {!loaded ? (
         <div className="mx-auto pl-96 pt-36 ">Loading...</div>
       ) : (
         <div className="pt-0">
@@ -81,32 +80,30 @@ const PortalLayout: React.FC<PortalLayoutProps> = ({ children }) => {
           <Transition
             as={Fragment}
             show={sidebar.isOpen}
-            enter="transform transition duration-[400ms]"
+            enter="transform transition duration-\[400ms]"
             enterFrom="-translate-x-full"
             enterTo="translate-x-0"
-            leave="transform duration-[400ms] transition ease-in-out"
+            leave="transform duration-\[400ms] transition ease-in-out"
             leaveFrom="translate-x-0"
             leaveTo="-translate-x-full"
           >
             <Sidebar showNav={sidebar.isOpen} />
           </Transition>
           <main
-            className={`transition-all duration-[400ms] ${
+            className={`transition-all duration-\[400ms] ${
               sidebar.isOpen && !isMobile ? "pl-56" : ""
             }`}
-            >
-          <div className="p-2 md:p-4 pt-1 md:pt-2  bg-gray-50 min-h-[98vh] overflow-y-auto">
-            <div className=" bg-white rounded-lg pb-4 shadow-md">
-              {children}
-            </div>
-            
-            
+          >
+            <div className="p-2 md:p-4 pt-1 md:pt-2  bg-gray-50 min-h-[98vh] overflow-y-auto">
+              <div className=" bg-white rounded-lg pb-4 shadow-md">
+                {children}
+              </div>
             </div>
           </main>
         </div>
       )}
     </>
   );
-}
+};
 
 export default PortalLayout;

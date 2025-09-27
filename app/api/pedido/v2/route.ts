@@ -109,9 +109,6 @@ export async function POST(request: Request) {
       // Intentar REUSAR recolección del mismo cliente/dirección y MISMO DÍA (ignora la hora)
       let recoleccionId: number | null = null;
 
-      console.log(startUtc);
-      console.log(endUtc);
-
       if (direccionId) {
         const existente = await tx.recoleccion.findFirst({
           where: {
@@ -124,7 +121,7 @@ export async function POST(request: Request) {
           },
           select: { id: true },
         });
-        console.log(existente);
+
         if (existente) recoleccionId = existente.id;
       }
 

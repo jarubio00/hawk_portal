@@ -24,7 +24,6 @@ export async function GET(req: Request) {
       WHERE inicio <= ${hoyString} AND fin >= ${hoyString} AND (activo = 1 AND pausa = 0) ORDER BY id DESC
     `;
 
-    console.log(aviso);
     let result: any[] = [];
 
     if (aviso.length >= 1) {
