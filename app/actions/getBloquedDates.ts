@@ -14,9 +14,6 @@ export default async function getBloquedDays() {
     const localDate = subHours(hoyUTC, 6);
     const sd: ServerDate = await getServerDate();
 
-    console.log(hoyUTC);
-    console.log(sd);
-
     const data = await prisma.fechasBloqueadas.findMany({
       where: {
         AND: [

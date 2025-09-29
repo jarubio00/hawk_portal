@@ -1,4 +1,4 @@
-export const appVersion = "2.3.1";
+export const appVersion = "2.3.2";
 
 /* 
 2.1.20
@@ -23,5 +23,10 @@ Actualización portal crear envio.
     -paso Pago 
     -Preupload comprobante 
     -Timer programacion
+
+2.3.2 
+29/09/2025 12:47pm
+Cambio en calculo de fechas en programaV2Slice, se elimino getLocaleDate
+
 
  */

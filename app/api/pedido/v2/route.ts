@@ -56,14 +56,6 @@ export async function POST(request: Request) {
     const fechaEntregaUtc = naiveStrToUTCDate(p.programa.fechaEntString); // "YYYY-MM-DD HH:mm:ss"
     const fechaRecoUtc = naiveStrToUTCDate(p.programa.fechaRecString);
 
-    console.log("------------");
-    console.log(p?.programa?.fechaRecString);
-    console.log(p?.programa?.fechaEntString);
-    console.log("------------");
-    console.log(currentUser.email);
-    console.log(fechaEntregaUtc);
-    console.log(fechaRecoUtc);
-
     // Prepara el payload de Pedido para reusarlo (bajo recolección existente o nueva)
     const pedidoCrearData = {
       clienteId: currentUser.id,
@@ -241,8 +233,14 @@ export async function POST(request: Request) {
       }
 
       await userActivityRegister(currentUser.id, 15);
-      console.log(pedidoId);
-      console.log("||||||||||||||||||||||||||");
+
+      console.log(
+        `${pedidoId} | ${currentUser.email} -- ${
+          p?.programa?.fechaRecString
+        }/${fechaRecoUtc.toISOString()} ->  ${
+          p?.programa?.fechaEntString
+        }/${fechaEntregaUtc.toISOString()}`
+      );
 
       return {
         recoleccionId, // reusada o creada
