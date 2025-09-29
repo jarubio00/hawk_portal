@@ -36,12 +36,12 @@ export async function POST(request: Request) {
     const dr: ServerDate = parseStringDate(fechaRecoleccion);
     const de: ServerDate = parseStringDate(fechaEntrega);
 
-    console.log(sd);
+    /*  console.log(sd);
     console.log(sd.composedDate);
     console.log(dr.composedDate);
     console.log(fechaRecoleccion);
     console.log(fechaEntrega);
-    console.log(sameDay(sd, dr));
+    console.log(sameDay(sd, dr)); */
 
     const isBlockedRec = await isBlockedDate(dr, "REC");
     const isBlockedEnt = await isBlockedDate(de, "ENT");

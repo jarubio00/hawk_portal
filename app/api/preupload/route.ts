@@ -11,7 +11,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  console.log("Preupload route");
+  //console.log("Preupload route");
   const body = await request.formData();
 
   const pedidoId = body.get("pedido")?.toString() || "";
@@ -29,7 +29,7 @@ export async function POST(request: Request) {
         percentCompleted = Math.round(
           (progressEvent.loaded * 100) / progressEvent.total
         );
-        console.log(`Upload Progress: ${percentCompleted}%`);
+        //console.log(`Upload Progress: ${percentCompleted}%`);
       }
     },
   })
@@ -58,8 +58,8 @@ export async function POST(request: Request) {
   }
 
   function getDateSegment(date: Date) {
-    console.log(date);
-    console.log(date.getDay());
+    //console.log(date);
+    //console.log(date.getDay());
   }
 
   return NextResponse.json(response);

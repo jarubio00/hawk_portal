@@ -33,7 +33,7 @@ export async function POST(req: Request) {
 
     const confirmShipment = await confirmNacionalShipment(response.data);
 
-    console.log(confirmShipment);
+    //console.log(confirmShipment);
 
     const data: any[] = [];
 

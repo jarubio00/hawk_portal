@@ -80,7 +80,7 @@ export async function POST(request: Request) {
     },
   });
 
-  console.log(currentUser);
+  //console.log(currentUser);
 
   if (!currentUser.direccionDefaultId) {
     const mark = await prisma.user.update({

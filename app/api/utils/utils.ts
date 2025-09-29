@@ -5,11 +5,11 @@ export async function cl(type: string, log: any) {
   const currentUser = await getCurrentUser();
   const fecha = new Date();
   const hoy = subHours(fecha, 6);
-  console.log(
+  /* console.log(
     `${fecha.toISOString()} | ${hoy.toISOString()} |${
       currentUser?.id ?? "noid"
     } | ${currentUser?.email ?? "noemail"} | ${type} |-> ${log}`
-  );
+  ); */
 }
 
 // "2025-09-20 11:00:00"  ->  Date construido con Date.UTC (naive -> UTC)

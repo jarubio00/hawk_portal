@@ -27,7 +27,7 @@ export async function POST(req: Request) {
       body
     );
 
-    console.log(response.data);
+    //console.log(response.data);
 
     const data: any[] = [];
 
