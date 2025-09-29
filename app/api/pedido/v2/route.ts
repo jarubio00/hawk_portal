@@ -55,6 +55,10 @@ export async function POST(request: Request) {
     // Convertimos los strings a Date (UTC) con helper
     const fechaEntregaUtc = naiveStrToUTCDate(p.programa.fechaEntString); // "YYYY-MM-DD HH:mm:ss"
     const fechaRecoUtc = naiveStrToUTCDate(p.programa.fechaRecString);
+
+    console.log("------------");
+    console.log(p?.programa?.fechaRecString);
+    console.log(p?.programa?.fechaEntString);
     console.log("------------");
     console.log(currentUser.email);
     console.log(fechaEntregaUtc);
@@ -237,6 +241,8 @@ export async function POST(request: Request) {
       }
 
       await userActivityRegister(currentUser.id, 15);
+      console.log(pedidoId);
+      console.log("||||||||||||||||||||||||||");
 
       return {
         recoleccionId, // reusada o creada

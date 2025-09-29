@@ -1,4 +1,4 @@
-export const appVersion = "2.3.0";
+export const appVersion = "2.3.1";
 
 /* 
 2.1.20
