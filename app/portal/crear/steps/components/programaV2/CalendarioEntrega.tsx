@@ -84,11 +84,10 @@ const CalendarioEntrega: React.FC<CalendarioEntregaProps> = ({ data }) => {
                   onSelect={(d) => pv2.updateEntSelectedDate(d)}
                   className="rounded-md border shadow-sm w-full bg-transparent"
                   classNames={{
-                    selected: `text-white`,
+                    day_selected: `text-white`,
                     day: `h-[42px] w-[42px]`,
-                    weekday: `text-muted-foreground flex-1 select-none rounded-md text-[1rem] font-normal mr-2`,
+                    head_cell: `text-muted-foreground flex-1 select-none rounded-md text-[1rem] font-normal`,
                   }}
-                  captionLayout="label"
                   locale={es}
                   onDayClick={async () => {
                     await sleep(100);

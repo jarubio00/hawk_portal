@@ -103,11 +103,10 @@ const CalendarioRecoleccion: React.FC<CalendarioRecoleccionProps> = ({
                   }}
                   className="rounded-md border shadow-sm w-full bg-transparent"
                   classNames={{
-                    selected: `text-white`,
+                    day_selected: `bg-neutral-900 text-white`,
                     day: `h-[42px] w-[42px]`,
-                    weekday: `text-muted-foreground flex-1 select-none rounded-md text-[1rem] font-normal mr-2`,
+                    head_cell: `text-muted-foreground flex-1 select-none rounded-md text-[1rem] font-normal`,
                   }}
-                  captionLayout="label"
                   locale={es}
                   onDayClick={async () => {
                     await sleep(100);
