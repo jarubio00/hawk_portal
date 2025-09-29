@@ -55,6 +55,10 @@ export async function POST(request: Request) {
     // Convertimos los strings a Date (UTC) con helper
     const fechaEntregaUtc = naiveStrToUTCDate(p.programa.fechaEntString); // "YYYY-MM-DD HH:mm:ss"
     const fechaRecoUtc = naiveStrToUTCDate(p.programa.fechaRecString);
+    console.log("------------");
+    console.log(currentUser.email);
+    console.log(fechaEntregaUtc);
+    console.log(fechaRecoUtc);
 
     // Prepara el payload de Pedido para reusarlo (bajo recolección existente o nueva)
     const pedidoCrearData = {
