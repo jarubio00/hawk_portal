@@ -8,7 +8,7 @@ import MisdireccionesClient from "./Misdirecciones";
 const Misdirecciones = async () => {
   const direcciones = await getDirecciones();
   const currentUser = await getCurrentUser();
-  console.log(currentUser);
+  //console.log(currentUser);
 
   return (
     <ClientOnly>

@@ -142,7 +142,7 @@ export const createCotizarSlice: StateCreator<CotizarSlice> = (set, get) => ({
     const result = await nacionalCotizar(apiData);
     set({ cotizaciones: result.data });
     set({ cotizacionLoading: false });
-    console.log(result);
+    //console.log(result);
   },
   updateCotizacionLoading: (value: boolean) => {
     set({ cotizacionLoading: value });

@@ -22,7 +22,7 @@ import { PedidoContext } from "@/app/portal/crear/context/PedidoContext";
 import { IoMdClose } from "react-icons/io";
 import { PedidoContextType } from "@/app/types/pedido";
 import { FaInfoCircle } from "react-icons/fa";
-import ConfirmDialog from "@/app/components/modals/ConfirmDialog";
+import PedidoConfirmDialog from "@/app/components/modals/PedidoConfirmDialog";
 import CrearNextButton from "./CrearNextButton";
 
 interface AgregarDestinoSinCpProps {
@@ -268,7 +268,7 @@ const AgregarDestinoSinCp: React.FC<AgregarDestinoSinCpProps> = ({
                   options={municipios}
                   isLoading={coloniasLoading}
                   styles={{
-                    control: (provided, state) =>
+                    control: (provided: any, state: any) =>
                       errors.municipio
                         ? {
                             ...provided,
@@ -282,7 +282,7 @@ const AgregarDestinoSinCp: React.FC<AgregarDestinoSinCpProps> = ({
                     input: () => "text-lg border-0",
                     option: () => "text-lg",
                   }}
-                  theme={(theme) => ({
+                  theme={(theme: any) => ({
                     ...theme,
                     borderRadius: 6,
                     colors: {

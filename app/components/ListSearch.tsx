@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import SearchInput from "@/app/components/inputs/SearchInput";
 import { useState } from "react";
@@ -14,75 +14,73 @@ interface ListSearchProps {
 }
 
 const ListSearch: React.FC<ListSearchProps> = ({
-   placeholder,
-    inputArray,
-    filteredData,
-    onReset,
-    keys,
-    disabled,
-    minLength=1
+  placeholder,
+  inputArray,
+  filteredData,
+  onReset,
+  keys,
+  disabled,
+  minLength = 1,
 }) => {
+  const [value, setValue] = useState("");
 
-    const [value, setValue] = useState('');
+  const handleSearch = (keyword: any) => {
+    if (keyword) {
+      //console.log(inputArray);
+      const filtered = inputArray.filter((row: any) => {
+        let matches = true;
 
-    const handleSearch = (keyword: any) => {
-    
-        if (keyword) {
-            //console.log(inputArray);
-            const filtered = inputArray.filter((row: any) => {
-              let matches = true;
-    
-              const searchKeys = keys;
-    
-              let containsQuery = false;
-    
-              searchKeys.forEach((key) => {
-                if (row[key].toString().toLowerCase().includes(keyword.toString().toLowerCase())) {
-                  containsQuery = true;
-                }
-              });
-    
-              if(!containsQuery) {
-                matches = false;
-              }
-    
-              return matches;
-    
-            });
-    
-           filteredData(filtered);
+        const searchKeys = keys;
+
+        let containsQuery = false;
+
+        searchKeys.forEach((key) => {
+          if (
+            row[key]
+              .toString()
+              .toLowerCase()
+              .includes(keyword.toString().toLowerCase())
+          ) {
+            containsQuery = true;
+          }
+        });
+
+        if (!containsQuery) {
+          matches = false;
         }
-    
-      }
 
-      const handleClear = () => {
-        setValue('');
-        onReset();
-      }
+        return matches;
+      });
 
+      filteredData(filtered);
+    }
+  };
+
+  const handleClear = () => {
+    setValue("");
+    onReset();
+  };
 
   return (
     <SearchInput
-        id="search"
-        label={placeholder}
-        value={value}
-        disabled={disabled}
-        onClear={handleClear}
-        onChange={(event: any) => {
-            const val = event.target.value;
-            setValue(val);
+      id="search"
+      label={placeholder}
+      value={value}
+      disabled={disabled}
+      onClear={handleClear}
+      onChange={(event: any) => {
+        const val = event.target.value;
+        setValue(val);
 
-            if (val.length >= minLength) {
-                handleSearch(val);
-            } else {
-                console.log('menos de 3')
-                onReset();
-            }
-            
+        if (val.length >= minLength) {
+          handleSearch(val);
+        } else {
+          //console.log('menos de 3')
+          onReset();
+        }
+      }}
+    />
+  );
+};
 
-        }}
-        />
-   );
-}
- 
 export default ListSearch;

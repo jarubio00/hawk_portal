@@ -24,6 +24,13 @@ export async function POST(req: Request) {
     // Fecha base (recolección) en local, 00:00
     const pickupDate = parseYMDLocal(fechaString);
 
+    console.log(
+      `${
+        currentUser.email
+      }|REC|${fechaString}->${sd.composedFullDate.toISOString()}`
+    );
+    //console.log(sd);
+
     // Trae bloqueos de BD a partir de la fecha de recolección
     const blockedData: any[] = await prisma.$queryRaw`
       SELECT *, DATE_FORMAT(fecha,'%Y-%m-%d') as fechaString

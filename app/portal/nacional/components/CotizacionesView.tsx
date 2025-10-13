@@ -27,7 +27,7 @@ const CotizacionesView: React.FC<CotizacionesViewProps> = ({ data }) => {
           {cotizaciones &&
             cotizaciones?.length >= 1 &&
             cotizaciones.map((cot: Tarifa, i: number) => {
-              console.log(cot);
+              //console.log(cot);
               return (
                 <div key={i}>
                   <CotizacionCard data={cot} />

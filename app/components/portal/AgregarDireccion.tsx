@@ -148,7 +148,7 @@ const AgregarDireccion: React.FC<AgregarDireccionProps> = ({
     axios
       .post(`/api/colonias/${cp}`)
       .then((response) => {
-        console.log("colonias", response.data);
+        //console.log("colonias", response.data);
         const r = response.data;
 
         if (r.status == 1) {
@@ -175,7 +175,7 @@ const AgregarDireccion: React.FC<AgregarDireccionProps> = ({
         loader.onClose();
       })
       .catch((error) => {
-        console.log(error);
+        //console.log(error);
       })
       .finally(() => {
         loader.onClose();
@@ -186,12 +186,12 @@ const AgregarDireccion: React.FC<AgregarDireccionProps> = ({
 
   const handleColor = (val: string) => {
     setNombreColor(val);
-    console.log(val);
+    //console.log(val);
   };
 
   const handleIcon = (val: string) => {
     setNombreIcon(val);
-    console.log(val);
+    //console.log(val);
   };
 
   const addContent = (type: any) => {
