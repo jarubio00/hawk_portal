@@ -66,7 +66,7 @@ const AutocompleteWidget: React.FC<AutocompleteWidgetProps> = ({
           setMunicipioInput("Ingresa el municipio destino");
         }
       } catch (e) {
-        console.log(e);
+        //console.log(e);
         setCpLoading(false);
         setMunicipioInput("Ingresa el municipio destino");
       }

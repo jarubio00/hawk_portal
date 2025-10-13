@@ -85,12 +85,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ currentUser }) => {
         redirect: false,
       })
         .then((callback) => {
-          console.log(callback);
+          //console.log(callback);
 
           if (callback?.ok) {
             setLoginSuccess(true);
             router.refresh();
-            console.log("login ok");
+            //console.log("login ok");
           }
 
           if (callback?.error) {

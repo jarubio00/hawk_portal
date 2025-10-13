@@ -83,7 +83,7 @@ const DestinoForm: React.FC<DestinoFormProps> = ({ data }) => {
   };
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+    //console.log(values);
 
     const destino: NacionalDestino = {
       cpId: values.cpId,

@@ -7,13 +7,13 @@ import { Dialog, Transition } from "@headlessui/react";
 
 import Button from "../Button";
 
-interface ConfirmDialogProps {
+interface PedidoConfirmDialogProps {
   isOpen?: boolean;
   onClose: (props: any) => void;
   dialogContent: any;
 }
 
-const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
+const PedidoConfirmDialog: React.FC<PedidoConfirmDialogProps> = ({
   isOpen,
   onClose,
   dialogContent,
@@ -83,9 +83,9 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
                       className={`  `}
                       onClick={() => onClose({ confirm: false })}
                     >
-                      <div className="py-2 px-4 flex flex-row gap-2 rounded-sm  border items-center justify-center">
+                      <button className="py-2 px-4 flex flex-row gap-2 rounded-sm  border items-center justify-center">
                         <p className={`text-sm  `}>Cancelar</p>
-                      </div>
+                      </button>
                     </div>
                     <button
                       className={` py-2 px-4 rounded-sm  bg-gradient-to-r from-orange-900 via-rose-500 to-orange-900 `}
@@ -131,4 +131,4 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   );
 };
 
-export default ConfirmDialog;
+export default PedidoConfirmDialog;

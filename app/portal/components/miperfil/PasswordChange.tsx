@@ -83,7 +83,7 @@ const PasswordChange: React.FC<PasswordChangeProps> = ({
         oldPassword: data.oldPassword,
         newPassword: data.newPassword,
       });
-      console.log("res:", result);
+      //console.log("res:", result);
     }
 
     if (result && result?.status === 1) {

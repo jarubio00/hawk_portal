@@ -29,7 +29,7 @@ const GuiaLabelView: React.FC<GuiaLabelViewProps> = ({ data }) => {
     data?.cobroDestinoCantidad ? data?.cobroDestinoCantidad : 0
   },"ot":1,"to":2}`;
 
-  console.log(qrRecoleccion);
+  //console.log(qrRecoleccion);
   return (
     <div className="w-72 h-96 border flex flex-col">
       <div className="flex flex-row justify-between">

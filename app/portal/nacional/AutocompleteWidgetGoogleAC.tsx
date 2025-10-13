@@ -74,7 +74,7 @@ const AutocompleteWidget: React.FC<AutocompleteWidgetProps> = ({ data }) => {
       setInput({});
       return;
     }
-    console.log(place);
+    //console.log(place);
     formData(place);
   };
 
