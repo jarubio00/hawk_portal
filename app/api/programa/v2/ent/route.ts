@@ -46,9 +46,10 @@ export async function POST(req: Request) {
 
     // (opcional) si siempre bloqueas la fecha de recolección para entrega:
     blockedData.push(createBlockedObject(fechaString, "ENT", "regla_base"));
-
+    let mismoDiaEnabled = true;
     // Reglas especiales: municipio 10 => solo sábados futuros dentro de 30 días
     if (municipioEntId === 10) {
+      mismoDiaEnabled = false;
       const horizonDays = 30; // hoy..+30 (31 días en total en el calendario)
       const extraBlocks = saturdayOnlyBlocksForDelivery(
         pickupDate,
@@ -59,7 +60,6 @@ export async function POST(req: Request) {
 
     const fechaRecDate = parseYMDLocal(fechaString);
 
-    let mismoDiaEnabled = true;
     if (mismoDiaBlocked.length) {
       mismoDiaEnabled = false;
     }
