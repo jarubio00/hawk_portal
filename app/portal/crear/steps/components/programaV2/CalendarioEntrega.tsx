@@ -73,42 +73,44 @@ const CalendarioEntrega: React.FC<CalendarioEntregaProps> = ({ data }) => {
           </div>
 
           <CollapsibleContent className="CollapsibleContent">
-            <div className="flex flex-row gap-8 mt-6 items-center justify-center">
-              {pv2.entCalLoading ? (
-                <CalendarSkeleton />
-              ) : (
-                <Calendar
-                  mode="single"
-                  required
-                  selected={pv2.entSelectedDate}
-                  onSelect={(d) => pv2.updateEntSelectedDate(d)}
-                  className="rounded-md border shadow-sm w-full bg-transparent"
-                  classNames={{
-                    day_selected: `text-white`,
-                    day: `h-[42px] w-[42px]`,
-                    head_cell: `text-muted-foreground flex-1 select-none rounded-md text-[1rem] font-normal`,
-                  }}
-                  locale={es}
-                  onDayClick={async () => {
-                    await sleep(100);
-                    pv2.updateEntCalOpen(false);
-                  }}
-                  disabled={[
-                    { dayOfWeek: [0] },
-                    { before: pv2.recSelectedDate ?? new Date("2023-08-23") },
-                    {
-                      after: pv2.today
-                        ? new Date(
-                            pv2.today?.year,
-                            pv2.today?.month - 1,
-                            pv2.today?.day + 35
-                          )
-                        : new Date(2050, 12, 30),
-                    },
-                    ...pv2.entBlockedDates,
-                  ]}
-                />
-              )}
+            <div className="min-h-fit pb-4">
+              <div className="flex flex-row gap-8 mt-6 items-center justify-center">
+                {pv2.entCalLoading ? (
+                  <CalendarSkeleton />
+                ) : (
+                  <Calendar
+                    mode="single"
+                    required
+                    selected={pv2.entSelectedDate}
+                    onSelect={(d) => pv2.updateEntSelectedDate(d)}
+                    className="rounded-md border shadow-sm w-full bg-transparent"
+                    classNames={{
+                      day_selected: `text-white`,
+                      day: `h-[42px] w-[42px]`,
+                      head_cell: `text-muted-foreground flex-1 select-none rounded-md text-[1rem] font-normal`,
+                    }}
+                    locale={es}
+                    onDayClick={async () => {
+                      await sleep(100);
+                      pv2.updateEntCalOpen(false);
+                    }}
+                    disabled={[
+                      { dayOfWeek: [0] },
+                      { before: pv2.recSelectedDate ?? new Date("2023-08-23") },
+                      {
+                        after: pv2.today
+                          ? new Date(
+                              pv2.today?.year,
+                              pv2.today?.month - 1,
+                              pv2.today?.day + 35
+                            )
+                          : new Date(2050, 12, 30),
+                      },
+                      ...pv2.entBlockedDates,
+                    ]}
+                  />
+                )}
+              </div>
             </div>
           </CollapsibleContent>
         </Collapsible>

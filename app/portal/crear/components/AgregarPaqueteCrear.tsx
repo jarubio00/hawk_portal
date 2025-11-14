@@ -13,7 +13,7 @@ import { BiSearch } from "react-icons/bi";
 import Input from "@/app/components/inputs/Input";
 import CpInput from "@/app/components/inputs/CpInput";
 import Button from "@/app/components/Button";
-
+import Image from "next/image";
 import toast from "react-hot-toast";
 import { SafeUser } from "@/app/types";
 import { calcularTipoPaquete } from "@/app/actions/utils";
@@ -21,7 +21,20 @@ import { Switch } from "@headlessui/react";
 import PaqInput from "@/app/components/inputs/PaqInput";
 import { AiFillDollarCircle } from "react-icons/ai";
 import CobrosDialog from "./dialogs/CobrosDialog";
+import TerminosDialog from "./dialogs/TerminosDialog";
 import CrearNextButton from "./CrearNextButton";
+import { useCodTutorialStore } from "@/app/portal/cod/store/useCodTutorialStore";
+import { CodTutorialModal } from "@/app/portal/cod/components/CodTutorialModal";
+import { Edit2, X } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { ShineBorder } from "@/components/ui/shine-border";
 
 const fotoAncho = "/images/paq/paqsAncho.png";
 const fotoAlto = "/images/paq/paqsAlto.png";
@@ -51,8 +64,18 @@ const AgregarPaqueteCrear: React.FC<AgregarPaqueteCrearProps> = ({
     PedidoContext
   ) as PedidoContextType;
 
+  const { serviceEnabled, openModal, loadChecklist, isLoading: isLoadingCobros, isModalOpen } = useCodTutorialStore();
+
   const loader = useLoader();
   const router = useRouter();
+
+  // Cargar el estado del servicio de cobros al montar el componente
+  useEffect(() => {
+    if (currentUser?.cobrosPermitidos) {
+      loadChecklist();
+    }
+  }, [currentUser?.cobrosPermitidos, loadChecklist]);
+
   const [isLoading, setIsLoading] = useState(false);
   const [fotoPaq, setFotoPaq] = useState("");
   const [notas, setNotas] = useState("");
@@ -70,6 +93,7 @@ const AgregarPaqueteCrear: React.FC<AgregarPaqueteCrearProps> = ({
   const [cpError, setCpError] = useState({ error: false, errorMessage: "" });
   const [buscarCp, setBuscarCP] = useState(true);
   const [cobrosDialogOpen, setCobrosDialogOpen] = useState(false);
+  const [terminosDialogOpen, setTerminosDialogOpen] = useState(false);
   const [saveEnabled, setSaveEnabled] = useState(
     pedido?.paquete?.save ? pedido?.paquete?.save : false
   );
@@ -222,11 +246,18 @@ const AgregarPaqueteCrear: React.FC<AgregarPaqueteCrearProps> = ({
 
   return (
     <>
+      <CodTutorialModal />
+      <TerminosDialog
+        isOpen={terminosDialogOpen}
+        onClose={() => setTerminosDialogOpen(false)}
+      />
       <CobrosDialog
         isOpen={cobrosDialogOpen}
         onClose={handleCobroDialogClose}
         resetCobro={resetCobro}
         editCobro={editCobro}
+        onOpenTerminos={() => setTerminosDialogOpen(true)}
+        currentAmount={pedido?.cobroCantidad}
       />
       <div className="w-full 2xl:w-3/4 flex flex-col gap-2 mx-0 md:mx-2 py-2">
         <div>
@@ -387,7 +418,7 @@ const AgregarPaqueteCrear: React.FC<AgregarPaqueteCrearProps> = ({
                     input: () => "text-lg",
                     option: () => "text-lg",
                   }}
-                  theme={(theme) => ({
+                  theme={(theme: any) => ({
                     ...theme,
                     borderRadius: 6,
                     colors: {
@@ -456,43 +487,114 @@ const AgregarPaqueteCrear: React.FC<AgregarPaqueteCrearProps> = ({
             </div>
           )}
           {currentUser?.cobrosPermitidos && (
-            <div>
+            <div className="mt-4">
               {pedido && !pedido?.cobro ? (
-                <div
-                  className="flex flex-row  items-center text-md text-neutral-500 my-10 gap-2 cursor-pointer underline"
-                  onClick={() => {
-                    setResetCobro(false);
-                    setCobrosDialogOpen(true);
-                  }}
-                >
-                  <AiFillDollarCircle size={22} className="text-rose-500" />
-                  <div className="text-sm font-medium text-rose-500 underline  ">
-                    Agregar cobro a destinatario
+                <div className="relative">
+                  <Card className="relative w-full md:max-w-[450px] overflow-hidden p-3 sm:p-5">
+                    <ShineBorder
+                      shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
+                    />
+                    {isLoadingCobros || isModalOpen ? (
+                      // Skeleton loader
+                      <div className="flex flex-col gap-2 sm:gap-3 animate-pulse">
+                        <div className="flex flex-row items-center gap-2 sm:gap-3">
+                          <div className="w-9 h-7 sm:w-[42px] sm:h-8 bg-gray-200 rounded-full"></div>
+                          <div className="h-5 bg-gray-200 rounded w-3/4"></div>
+                        </div>
+                        <div className="h-4 bg-gray-200 rounded w-full"></div>
+                        <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+                        <div className="h-9 bg-gray-200 rounded w-32"></div>
+                      </div>
+                    ) : !serviceEnabled ? (
+                      <div className="flex flex-col gap-2 sm:gap-3 animate-in fade-in duration-500">
+                        <div className="flex flex-row items-center gap-2 sm:gap-3">
+                          <Image
+                            src={"/images/cod/cod_icon2.png"}
+                            alt={"Efectivo"}
+                            width={36}
+                            height={28}
+                            className="rounded-full object-contain sm:w-[42px] sm:h-[32px]"
+                          />
+                          <div className="text-sm sm:text-md font-bold text-black">
+                            Servicio de cobro a destinatario
+                          </div>
+                        </div>
+                        <p className="text-xs sm:text-sm text-gray-600">
+                          Activa este servicio para cobrar al destinatario al
+                          momento de la entrega
+                        </p>
+                        <Button
+                          label="Habilitar servicio"
+                          onClick={openModal}
+                          small
+                        />
+                      </div>
+                    ) : (
+                      <div
+                        className="flex flex-row items-center justify-center text-sm sm:text-md gap-2 sm:gap-3 cursor-pointer animate-in fade-in slide-in-from-top-4 duration-700"
+                        onClick={() => {
+                          setResetCobro(false);
+                          setCobrosDialogOpen(true);
+                        }}
+                      >
+                        <Image
+                          src={"/images/cod/cod_icon2.png"}
+                          alt={"Efectivo"}
+                          width={36}
+                          height={28}
+                          className="rounded-full object-contain sm:w-[42px] sm:h-[32px]"
+                        />
+                        <div className="mt-1 font-bold text-black">
+                          Agregar cobro a destinatario
+                        </div>
+                      </div>
+                    )}
+                  </Card>
+                  <div className="absolute -top-2 left-0 sm:-left-4 h-6 w-14">
+                    <div className="relative w-full overflow-hidden h-6 bg-black rounded-sm border flex justify-center items-center">
+                      <p className="text-xs font-bold text-white">Nuevo</p>
+                    </div>
                   </div>
                 </div>
               ) : (
-                <div className="flex flex-col my-10">
-                  <div className="flex flex-row  items-center text-md text-blue-500  gap-2">
-                    <AiFillDollarCircle size={22} className="" />
-                    <div className="text-sm font-medium  ">
-                      Se cobrarán{" "}
-                      <span className="font-semibold">
-                        $
-                        {pedido?.cobroCantidad &&
-                          currencyFormat(pedido?.cobroCantidad)}
-                      </span>{" "}
-                      al destinatario
+                <Card className="w-full md:max-w-[450px] p-4 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200">
+                  <div className="flex flex-row items-center justify-between">
+                    <div className="flex flex-row items-center gap-3">
+                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                        <AiFillDollarCircle
+                          size={24}
+                          className="text-green-600"
+                        />
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-600 font-medium">
+                          Cobro a destinatario
+                        </p>
+                        <p className="text-lg font-bold text-green-700">
+                          $
+                          {pedido?.cobroCantidad &&
+                            currencyFormat(pedido?.cobroCantidad)}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex flex-row gap-2">
+                      <button
+                        onClick={handleEditCobro}
+                        className="p-2 rounded-lg hover:bg-green-100 transition-colors group"
+                        title="Editar cobro"
+                      >
+                        <Edit2 className="h-4 w-4 text-gray-600 group-hover:text-green-700" />
+                      </button>
+                      <button
+                        onClick={handleCancelCobro}
+                        className="p-2 rounded-lg hover:bg-red-100 transition-colors group"
+                        title="Quitar cobro"
+                      >
+                        <X className="h-4 w-4 text-gray-600 group-hover:text-red-700" />
+                      </button>
                     </div>
                   </div>
-                  <div className="flex flex-row gap-2 ml-10">
-                    <div className="cursor-pointer" onClick={handleEditCobro}>
-                      <span className="text-xs text-neutral-600">Editar</span>
-                    </div>
-                    <div className="cursor-pointer" onClick={handleCancelCobro}>
-                      <span className="text-xs text-neutral-600">Quitar</span>
-                    </div>
-                  </div>
-                </div>
+                </Card>
               )}
             </div>
           )}

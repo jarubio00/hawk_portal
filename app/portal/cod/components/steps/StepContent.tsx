@@ -11,6 +11,7 @@ const stepsData = [
     title: "Programa tu envío con cobro al destinatario",
     description:
       "Al programar un envío encontrarás una nueva opción de agregar un cobro, ingresa el monto y se prograra automáticamente para que el operador lo cobre al entregar el paquete.",
+    notes: "📢 El costo del envío se paga en la recolección.",
     image: "/images/cod/pasos/cod_paso1_c.png",
   },
   {
@@ -18,6 +19,8 @@ const stepsData = [
     description:
       "Tu dinero será resguardado durante una semana, durante esa semana podrás hacer los cobros que necesites, el monto se irá acumulando.",
     image: "/images/cod/pasos/cod_paso2_c.png",
+    notes:
+      "❗ El dinero almacenado no puede utilizarse para el pago de los envíos.",
   },
   {
     title: "Retorno del dinero cobrado",
@@ -44,9 +47,9 @@ export function StepContent({ step }: StepContentProps) {
   if (!currentStep) return null;
 
   return (
-    <div className="flex flex-col items-center space-y-4">
+    <div className="flex flex-col items-center space-y-3">
       {/* Imagen del paso */}
-      <div className="w-full h-64 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
+      <div className="w-full h-48 sm:h-56 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
         {step ? (
           <img
             src={currentStep.image}
@@ -63,16 +66,21 @@ export function StepContent({ step }: StepContentProps) {
 
       {/* Contenido del paso */}
       <div
-        className={`text-center space-y-3 px-4 flex flex-col justify-start ${
-          currentStep.description ? "min-h-[140px]" : "min-h-[50px]"
+        className={`text-center space-y-2 px-4 flex flex-col justify-start ${
+          currentStep.description ? "min-h-[120px]" : ""
         }`}
       >
-        <h2 className="text-2xl font-bold text-gray-900">
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
           {currentStep.title}
         </h2>
         {currentStep.description && (
-          <p className="text-gray-600 leading-relaxed">
+          <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
             {currentStep.description}
+          </p>
+        )}
+        {currentStep.notes && (
+          <p className="text-xs sm:text-sm text-black font-bold leading-relaxed mt-2">
+            {currentStep.notes}
           </p>
         )}
       </div>

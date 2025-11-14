@@ -116,6 +116,37 @@ const EnviosCards = forwardRef<Ref, EnviosCardsProps>((props, ref) => {
                 <p className="ml-1">{data.formaPago.tipo}</p>
               </div>
             </Badge>
+
+            {data.cod2Charges && data.cod2Charges.length > 0 && (
+              <Badge
+                variant="outline"
+                className="text-xs font-bold rounded-md px-1"
+              >
+                <div className="flex flex-row items-center">
+                  <p>Cobrar</p>
+                  <p className="ml-1">
+                    ${(data.cod2Charges[0].amountRequested / 100).toFixed(2)}
+                  </p>
+                  <HiCheckCircle
+                    size={14}
+                    className={`ml-1 ${
+                      data.cod2Charges[0].status === "COLLECTED" ||
+                      data.cod2Charges[0].status === "PARTIALLY_COLLECTED"
+                        ? "text-green-500"
+                        : "text-neutral-300"
+                    }`}
+                  />
+                  <HiCheckCircle
+                    size={14}
+                    className={`${
+                      data.cod2Charges[0].status === "HANDED_IN"
+                        ? "text-green-500"
+                        : "text-neutral-300"
+                    }`}
+                  />
+                </div>
+              </Badge>
+            )}
           </div>
         </div>
         <div className="flex flex-col gap-1 justify-end items-end ">

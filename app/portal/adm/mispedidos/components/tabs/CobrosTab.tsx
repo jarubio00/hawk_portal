@@ -1,49 +1,60 @@
 "use client";
-import { useContext, useEffect, useState } from "react";
-import axios from "axios";
-import { namedDate, namedDateString } from "@/app/components/utils/helpers";
-import { useQuery } from "@tanstack/react-query";
-import { Badge } from "@/components/ui/badge";
-import { MdAccessTimeFilled, MdCancel } from "react-icons/md";
-import { HiCheckCircle } from "react-icons/hi";
-import Activas from "./components/Activas";
-import Completadas from "./components/Completadas";
-import Canceladas from "./components/Canceladas";
-import EnviosDisplay from "./components/EnviosDisplay";
-import { SafeCobro, SafePedido } from "@/app/types";
-import CobrosDisplay from "./components/CobrosDisplay";
-import CobrosDash from "./components/CobrosDash";
+// import { useContext, useEffect, useState } from "react";
+// import axios from "axios";
+// import { namedDate, namedDateString } from "@/app/components/utils/helpers";
+// import { useQuery } from "@tanstack/react-query";
+// import { Badge } from "@/components/ui/badge";
+// import { MdAccessTimeFilled, MdCancel } from "react-icons/md";
+// import { HiCheckCircle } from "react-icons/hi";
+// import Activas from "./components/Activas";
+// import Completadas from "./components/Completadas";
+// import Canceladas from "./components/Canceladas";
+// import EnviosDisplay from "./components/EnviosDisplay";
+import { SafeCobro } from "@/app/types";
+// import CobrosDisplay from "./components/CobrosDisplay";
+// import CobrosDash from "./components/CobrosDash";
+import { CodClientDashboardCompact } from "@/app/portal/cod/client/components/CodClientDashboardCompact";
 
-const pedidosQuery = async () => {
-  const response = await axios.get("/api/cobros/counts");
-  return response?.data;
-};
+// const pedidosQuery = async () => {
+//   const response = await axios.get("/api/cobros/counts");
+//   return response?.data;
+// };
 
 interface CobrosTabProps {
   onView: (open: boolean, c: SafeCobro) => void;
+  currentUser?: any;
 }
 
-const CobrosTab: React.FC<CobrosTabProps> = ({ onView }) => {
-  const [filter, setFilter] = useState("1");
-  const [completadasOrder, setCompletadasOrder] = useState("desc");
+const CobrosTab: React.FC<CobrosTabProps> = ({ currentUser }) => {
+  console.log('[COBROS_TAB] Renderizado con currentUser:', currentUser);
+  console.log('[COBROS_TAB] currentUser.id:', currentUser?.id);
 
-  const changeFilter = (filter: string) => {
-    setFilter(filter);
-  };
+  // const [filter, setFilter] = useState("1");
+  // const [completadasOrder, setCompletadasOrder] = useState("desc");
 
-  const handleCompletadasOrder = (order: string) => {
-    setCompletadasOrder(order);
-  };
+  // const changeFilter = (filter: string) => {
+  //   setFilter(filter);
+  // };
 
-  const { data, error, isLoading, isSuccess } = useQuery({
-    queryFn: () => pedidosQuery(),
-    queryKey: ["cobrosCounts"],
-  });
+  // const handleCompletadasOrder = (order: string) => {
+  //   setCompletadasOrder(order);
+  // };
+
+  // const { data, error, isLoading, isSuccess } = useQuery({
+  //   queryFn: () => pedidosQuery(),
+  //   queryKey: ["cobrosCounts"],
+  // });
 
   return (
     <div className=" w-full py-2 flex flex-col gap-2">
+      {/* COD v2 Dashboard Compacto */}
+      {currentUser?.id && (
+        <CodClientDashboardCompact clienteId={currentUser.id} />
+      )}
+
+      {/* Sistema de cobros existente - comentado temporalmente */}
       {/* <CobrosDash data={data} /> */}
-      <div className="my-4 flex flex-row items-center gap-4 overflow-x-auto touch-auto no-scrollbar">
+      {/* <div className="my-4 flex flex-row items-center gap-4 overflow-x-auto touch-auto no-scrollbar">
         <Badge
           variant={filter == "1" ? "default" : "secondary"}
           className="cursor-pointer  pr-2 pl-2 py-1"
@@ -97,7 +108,7 @@ const CobrosTab: React.FC<CobrosTabProps> = ({ onView }) => {
           </div>
         </Badge>
       </div>
-      <CobrosDisplay filter={filter} onView={onView} />
+      <CobrosDisplay filter={filter} onView={onView} /> */}
     </div>
   );
 };

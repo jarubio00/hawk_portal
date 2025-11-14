@@ -1,6 +1,6 @@
 /* styles.css */
 .CollapsibleContent {
-	overflow: hidden;
+	overflow: visible;
 }
 .CollapsibleContent[data-state="open"] {
 	animation: slideDown 400ms ease-out;

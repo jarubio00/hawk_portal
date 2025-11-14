@@ -46,6 +46,7 @@ model User {
   mismoDiaEnabled         Boolean                       @default(false)
   accounts                Account[]
   checklist               ClientesChecklist?
+  cobrosChecklist         ClientesCobrosChecklist?
   cobros                  CobrosDestino[]
   destinos                Destino[]
   direcciones             Direccion[]
@@ -109,6 +110,16 @@ model ClientesChecklist {
   firstLogin          Boolean   @default(false)
   firstLoginAt        DateTime?
   clienteV2           Boolean   @default(true)
+  clienteEmail        String    @unique
+  email               User      @relation(fields: [clienteEmail], references: [email], onDelete: Cascade)
+}
+
+model ClientesCobrosChecklist {
+  id                  Int       @id @default(autoincrement())
+  cobrosEnabled       Boolean   @default(false)
+  cobrosEnabledAt     DateTime?
+  displayCobrosDialog Boolean   @default(true)
+  displayCobrosBanner Boolean   @default(true)
   clienteEmail        String    @unique
   email               User      @relation(fields: [clienteEmail], references: [email], onDelete: Cascade)
 }
@@ -292,6 +303,9 @@ model Pedido {
   incidencias            Incidencia[]
   actividad              ActividadOperaciones[]
   approute               AppRouteGuias[]
+  cod2Charges            Cod2Charge[]
+  despachoRecoleccion    DespachoRecoleccion[]
+  despachoEntrega        DespachoEntrega[]
 
   @@index([clienteId], map: "Pedidos_clienteId_fkey")
   @@index([estatusPagoId], map: "Pedidos_estatusPagoId_fkey")
@@ -449,6 +463,36 @@ model CatalogoCategoriasActividadOperaciones {
   actividades CatalogoActividadOperaciones[]
 }
 
+//Despacho Models
+
+model DespachoRecoleccion {
+  id         Int        @id @default(autoincrement())
+  pedidoId   Int
+  bloque     Int?
+  operadorId Int
+  createdAt  DateTime   @default(dbgenerated("(now())"))
+  createdBy  Int        @default(1)
+  isDeleted  Boolean    @default(false)
+  deletedAt  DateTime?
+  deletedBy  Int?
+  pedido     Pedido     @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+  operador   Operadores @relation(fields: [operadorId], references: [id])
+}
+
+model DespachoEntrega {
+  id         Int        @id @default(autoincrement())
+  pedidoId   Int
+  bloque     Int?
+  operadorId Int
+  createdAt  DateTime   @default(dbgenerated("(now())"))
+  createdBy  Int        @default(1)
+  isDeleted  Boolean    @default(false)
+  deletedAt  DateTime?
+  deletedBy  Int?
+  pedido     Pedido     @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+  operador   Operadores @relation(fields: [operadorId], references: [id])
+}
+
 model ActividadClientes {
   id        Int                       @id @default(autoincrement())
   pedidoId  Int
@@ -574,27 +618,29 @@ model CatalogoAppVisitaModsTipos {
 }
 
 model Operadores {
-  id           Int                   @id @default(autoincrement())
-  correo       String                @unique
-  nombre       String
-  password     String?
-  tipoId       Int                   @default(1)
-  celular      String?
-  countryCode  String?
-  fotoUrl      String?               @db.LongText
-  fotoPublicId String?               @db.LongText
-  fotoPath     String?
-  createdAt    DateTime              @default(dbgenerated("(now())"))
-  createdBy    Int                   @default(1)
-  rol          OperadorRol           @default(operador)
-  isLocked     Boolean               @default(false)
-  lockedAt     DateTime?
-  lockedBy     Int?
-  isDeleted    Boolean               @default(false)
-  deletedAt    DateTime?
-  deletedBy    Int?
-  routes       AppRoute[]
-  tipo         CatalogoUsuariosTipos @relation(fields: [tipoId], references: [id])
+  id                  Int                   @id @default(autoincrement())
+  correo              String                @unique
+  nombre              String
+  password            String?
+  tipoId              Int                   @default(1)
+  celular             String?
+  countryCode         String?
+  fotoUrl             String?               @db.LongText
+  fotoPublicId        String?               @db.LongText
+  fotoPath            String?
+  createdAt           DateTime              @default(dbgenerated("(now())"))
+  createdBy           Int                   @default(1)
+  rol                 OperadorRol           @default(operador)
+  isLocked            Boolean               @default(false)
+  lockedAt            DateTime?
+  lockedBy            Int?
+  isDeleted           Boolean               @default(false)
+  deletedAt           DateTime?
+  deletedBy           Int?
+  routes              AppRoute[]
+  despachoRecoleccion DespachoRecoleccion[]
+  despachoEntrega     DespachoEntrega[]
+  tipo                CatalogoUsuariosTipos @relation(fields: [tipoId], references: [id])
 }
 
 model UsuariosHawk {
@@ -602,9 +648,10 @@ model UsuariosHawk {
   nombre              String
   password            String
   correo              String                         @unique
-  rol                 UsuariosHawkRoles
+  oldRol              UsuariosHawkRoles?
   departamentoId      Int                            @default(1)
   tipoId              Int                            @default(1)
+  rolId               Int?
   celular             String?
   countryCode         String?
   fotoUrl             String?                        @db.LongText
@@ -620,9 +667,22 @@ model UsuariosHawk {
   deletedBy           Int?
   departamento        CatalogoUsuariosDepartamentos  @relation(fields: [departamentoId], references: [id])
   tipo                CatalogoUsuariosTipos          @relation(fields: [tipoId], references: [id])
+  rol                 CatalogoUsuariosRoles?         @relation(fields: [rolId], references: [id])
   actividades         ActividadOperaciones[]
   actividadesNacional NacionalActividadOperaciones[]
   bloques             BloqueoServicios[]
+}
+
+model CatalogoUsuariosRoles {
+  id        Int            @id @default(autoincrement())
+  rol       String
+  desc      String?
+  createdAt DateTime       @default(dbgenerated("(now())"))
+  createdBy Int            @default(1)
+  isDeleted Boolean        @default(false)
+  deletedAt DateTime?
+  deletedBy Int?
+  usuario   UsuariosHawk[]
 }
 
 model CatalogoUsuariosEmpresas {
@@ -1556,3 +1616,323 @@ model AvisoProgramacionContenido {
   message               String               @db.Text
   avisos                AvisosProgramacion[]
 }
+
+// ===================== COD v2 (separado) START =====================
+
+// Estados del cobro por envío
+enum Cod2ChargeStatus {
+  INITIATED
+  IN_ROUTE
+  ATTEMPTED
+  PARTIALLY_COLLECTED
+  COLLECTED
+  CANCELLED
+  UNCOLLECTIBLE
+  HANDED_IN
+  SETTLED_TO_CLIENT
+}
+
+// Resultado de un intento
+enum Cod2AttemptResult {
+  SUCCESS
+  PARTIAL
+  FAILED
+}
+
+// Método de retorno al cliente
+enum Cod2PayoutMethod {
+  DEPOSITO_BANCO
+  DEPOSITO_CONVENIENCIA
+  RECOGER_EN_OFICINA
+}
+
+// Estado del corte
+enum Cod2SettlementStatus {
+  DRAFT
+  GENERATED
+  APPROVED
+  PAID
+  RECONCILED
+}
+
+// Estado de la sesión de caja (uso interno, manejada por servidor)
+enum Cod2CashSessionStatus {
+  OPEN
+  CLOSED
+  VERIFIED
+}
+
+// Tipos de issues por cobro
+enum Cod2IssueType {
+  AMOUNT_LESS
+  AMOUNT_MORE
+  REFUSED_TO_PAY
+  RECIPIENT_ABSENT
+  INCORRECT_ADDRESS
+  COUNTERFEIT_BILL
+  OTHER
+}
+
+// Estado del issue
+enum Cod2IssueStatus {
+  OPEN
+  IN_REVIEW
+  RESOLVED
+  DISMISSED
+}
+
+// Config global de COD2 (comisión, costos, TZ de operaciones)
+model Cod2Config {
+  id              Int      @id @default(1)
+  commissionPct   Decimal  @db.Decimal(5, 4) // ej. 0.0450
+  bankFee         Int
+  convenienceFee  Int
+  courierTimezone String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("Cod2Config")
+}
+
+// Preferencias por cliente y ancla de su ventana/corte
+// Configuración de COD por cliente
+model Cod2ClientSettings {
+  id                  Int              @id @default(autoincrement())
+  clienteId           Int
+  defaultPayoutMethod Cod2PayoutMethod @default(RECOGER_EN_OFICINA)
+  // IMPORTANTE: activeAnchorAt es la fecha del ÚLTIMO CORTE (settlement)
+  // - Se actualiza cada vez que se genera un settlement
+  // - Si hay cobros pendientes (not collected) → activeAnchorAt = fecha del corte
+  // - Si NO hay cobros pendientes → activeAnchorAt = null
+  // - El período actual SIEMPRE es: desde activeAnchorAt hasta activeAnchorAt + 7 días
+  // - Los cobros del período son: createdAt >= activeAnchorAt AND settlementLine IS NULL
+  activeAnchorAt      DateTime?
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  @@unique([clienteId])
+  @@index([clienteId])
+  @@map("Cod2ClientSettings")
+}
+
+// Cobro por envío
+model Cod2Charge {
+  id              String           @id @default(cuid())
+  pedidoId        Int
+  clienteId       Int
+  courierId       Int?
+  amountRequested Int
+  amountCollected Int              @default(0)
+  status          Cod2ChargeStatus @default(INITIATED)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  pedido         Pedido              @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+  attempts       Cod2Attempt[]
+  payment        Cod2Payment?
+  settlementLine Cod2SettlementLine?
+  issues         Cod2Issue[]
+
+  @@index([clienteId, status])
+  @@index([clienteId, pedidoId, status])
+  @@index([pedidoId])
+  @@index([courierId])
+  @@map("Cod2Charge")
+}
+
+// Intento de cobro (operador → destinatario)
+model Cod2Attempt {
+  id           String            @id @default(cuid())
+  cod2ChargeId String
+  attemptedAt  DateTime          @default(now())
+  result       Cod2AttemptResult
+  amount       Int               @default(0)
+  reason       String?
+  geotagLat    Decimal?          @db.Decimal(10, 7)
+  geotagLng    Decimal?          @db.Decimal(10, 7)
+  evidenceUrl  String?
+  createdBy    Int // courierId
+
+  charge Cod2Charge @relation(fields: [cod2ChargeId], references: [id], onDelete: Cascade)
+
+  issues Cod2Issue[]
+
+  @@index([cod2ChargeId, attemptedAt])
+  @@map("Cod2Attempt")
+}
+
+// Pago consolidado por envío (calle) + conteo en oficina (por envío)
+model Cod2Payment {
+  id            String    @id @default(cuid())
+  cod2ChargeId  String    @unique
+  method        String // "EFECTIVO" | "TARJETA_MP"
+  amount        Int // total cobrado en calle
+  collectedAt   DateTime
+  collectedBy   Int // courierId
+  handedIn      Boolean   @default(false)
+  handedInAt    DateTime?
+  cashSessionId String?
+  notes         String?
+
+  // Conteo en oficina por pago (no por sesión)
+  officeCountedAmount Int?
+  officeNotes         String?
+  officeCountedAt     DateTime?
+  officeCountedBy     Int?
+
+  charge      Cod2Charge       @relation(fields: [cod2ChargeId], references: [id], onDelete: Cascade)
+  cashSession Cod2CashSession? @relation(fields: [cashSessionId], references: [id])
+
+  issues Cod2Issue[]
+
+  @@index([handedIn, handedInAt])
+  @@index([cashSessionId])
+  @@index([collectedBy, cashSessionId, handedInAt])
+  @@map("Cod2Payment")
+}
+
+// Sesión de caja (agrupador interno, manejada por servidor)
+model Cod2CashSession {
+  id            String                @id @default(cuid())
+  courierId     Int
+  status        Cod2CashSessionStatus @default(OPEN)
+  openedAt      DateTime              @default(now())
+  closedAt      DateTime?
+  verifiedAt    DateTime?
+  supervisorId  Int?
+  expectedTotal Int                   @default(0)
+  countedTotal  Int                   @default(0)
+  diffAmount    Int                   @default(0)
+  notes         String?
+
+  payments Cod2Payment[]
+
+  @@index([courierId, status])
+  @@index([openedAt])
+  @@map("Cod2CashSession")
+}
+
+// Corte semanal por cliente
+model Cod2Settlement {
+  id              String               @id @default(cuid())
+  clienteId       Int
+  periodStart     DateTime
+  periodEnd       DateTime
+  payoutMethod    Cod2PayoutMethod
+  status          Cod2SettlementStatus @default(DRAFT)
+  grossTotal      Int                  @default(0)
+  commissionTotal Int                  @default(0)
+  feesTotal       Int                  @default(0)
+  netTotal        Int                  @default(0)
+  generatedAt     DateTime?
+  approvedAt      DateTime?
+  paidAt          DateTime?
+  reconciledAt    DateTime?
+  notes           String?
+
+  lines   Cod2SettlementLine[]
+  payouts Cod2Payout[]
+
+  @@unique([clienteId, periodStart, periodEnd])
+  @@index([clienteId, status])
+  @@index([clienteId, periodStart, periodEnd, status])
+  @@map("Cod2Settlement")
+}
+
+// Línea del corte (por envío)
+model Cod2SettlementLine {
+  id              String  @id @default(cuid())
+  settlementId    String
+  cod2ChargeId    String  @unique
+  amountCollected Int
+  commission      Int
+  lineNet         Int
+  notes           String?
+
+  settlement Cod2Settlement @relation(fields: [settlementId], references: [id], onDelete: Cascade)
+  charge     Cod2Charge     @relation(fields: [cod2ChargeId], references: [id], onDelete: Cascade)
+
+  @@index([settlementId])
+  @@map("Cod2SettlementLine")
+}
+
+// Pago del corte al cliente (retorno)
+model Cod2Payout {
+  id                String           @id @default(cuid())
+  settlementId      String
+  method            Cod2PayoutMethod
+  amount            Int
+  feeApplied        Int
+  executedAt        DateTime?
+  reference         String?
+  status            String           @default("PENDING") // PENDING|ASSIGNED|COMPLETED|FAILED
+  notes             String?
+  assignedCourierId Int?
+  dueAt             DateTime?
+  receiptUrl        String?
+  amountDeposited   Int?
+
+  settlement Cod2Settlement  @relation(fields: [settlementId], references: [id], onDelete: Cascade)
+  fees       Cod2PayoutFee[] // NUEVO - relación con fees individuales
+
+  @@index([settlementId, status])
+  @@index([status, assignedCourierId, dueAt])
+  @@map("Cod2Payout")
+}
+
+// Issues de cobro (por envío; opcionalmente ligados a attempt/payment)
+model Cod2Issue {
+  id             String          @id @default(cuid())
+  cod2ChargeId   String
+  cod2AttemptId  String?
+  cod2PaymentId  String?
+  type           Cod2IssueType
+  status         Cod2IssueStatus @default(OPEN)
+  description    String?
+  evidenceUrl    String?
+  createdAt      DateTime        @default(now())
+  createdBy      Int?
+  updatedAt      DateTime        @updatedAt
+  resolvedAt     DateTime?
+  resolvedBy     Int?
+  resolutionNote String?
+
+  charge  Cod2Charge   @relation(fields: [cod2ChargeId], references: [id], onDelete: Cascade)
+  attempt Cod2Attempt? @relation(fields: [cod2AttemptId], references: [id], onDelete: SetNull)
+  payment Cod2Payment? @relation(fields: [cod2PaymentId], references: [id], onDelete: SetNull)
+
+  @@index([cod2ChargeId, status])
+  @@index([cod2AttemptId])
+  @@index([cod2PaymentId])
+  @@map("Cod2Issue")
+}
+
+// Auditoría simple
+model Cod2AuditLog {
+  id         String   @id @default(cuid())
+  entityType String
+  entityId   String
+  action     String
+  data       Json?
+  createdAt  DateTime @default(now())
+  createdBy  Int?
+
+  @@map("Cod2AuditLog")
+}
+
+// NUEVO MODELO - Fees/Cargos individuales del payout
+model Cod2PayoutFee {
+  id          String   @id @default(cuid())
+  payoutId    String
+  description String // "Comisión bancaria", "Cargo por depósito", "IVA", etc.
+  amount      Int // en centavos
+  createdAt   DateTime @default(now())
+  createdBy   Int?
+
+  payout Cod2Payout @relation(fields: [payoutId], references: [id], onDelete: Cascade)
+
+  @@index([payoutId])
+  @@map("Cod2PayoutFee")
+}
+
+// ====================== COD v2 (separado) END ======================

@@ -117,6 +117,11 @@ module.exports = withMT({
           "0%": { transform: "translateX(-100%)" },
           "100%": { transform: "translateX(0)" },
         },
+        shine: {
+          "0%": { backgroundPosition: "0% 0%" },
+          "50%": { backgroundPosition: "100% 100%" },
+          to: { backgroundPosition: "0% 0%" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -125,6 +130,7 @@ module.exports = withMT({
         fadeIn: "fadeIn 1500ms ease",
         progressbar: "progressbar 1.5s linear infinite",
         progressFill: "progressFill var(--duration, 2s) linear forwards",
+        shine: "shine var(--duration) infinite linear",
       },
     },
   },

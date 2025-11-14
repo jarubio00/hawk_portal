@@ -38,7 +38,7 @@ export async function POST(req: Request) {
       const extraBlocks = saturdayOnlyBlocks(datePrisma, 30); // hoy + 30 = 31 días visibles
       blockedData.push(...extraBlocks);
     }
-
+    console.log(blockedData);
     return new Response(JSON.stringify(blockedData), { status: 200 });
   } catch (error: any) {
     return new Response(

@@ -24,7 +24,7 @@ const ProgramacionV2Step: React.FC<ProgramacionV2StepProps> = ({ data }) => {
   }, []);
   return (
     <div className="flex flex-col gap-6 mt-8 ">
-      <div className="min-h-[250px]">
+      <div className="min-h-fit">
         <div className="flex flex-col gap-1 mb-8">
           <p className="text-xs font-bold uppercase">Recolección</p>
           <div className="ml-0">

@@ -86,49 +86,51 @@ const CalendarioRecoleccion: React.FC<CalendarioRecoleccionProps> = ({
             </div>
           </div>
           <CollapsibleContent className="CollapsibleContent">
-            <div className="flex flex-row gap-8 my-6 items-center justify-center ">
-              {pv2.recCalLoading ? (
-                <CalendarSkeleton />
-              ) : (
-                <Calendar
-                  mode="single"
-                  required
-                  selected={pv2.recSelectedDate}
-                  onSelect={(d) => {
-                    pv2.updateRecSelectedDate(d);
-                    pv2.getEntregaDates({
-                      fechaString: formatYMD(d),
-                      municipioEntId: pedido?.destino?.municipioId ?? 1,
-                    });
-                  }}
-                  className="rounded-md border shadow-sm w-full bg-transparent"
-                  classNames={{
-                    day_selected: `bg-neutral-900 text-white`,
-                    day: `h-[42px] w-[42px]`,
-                    head_cell: `text-muted-foreground flex-1 select-none rounded-md text-[1rem] font-normal`,
-                  }}
-                  locale={es}
-                  onDayClick={async () => {
-                    await sleep(100);
-                    pv2.updateRecCalOpen(false);
-                    await sleep(100);
-                  }}
-                  disabled={[
-                    { dayOfWeek: [0] },
-                    { before: new Date() },
-                    {
-                      after: pv2.today
-                        ? new Date(
-                            pv2.today?.year,
-                            pv2.today?.month - 1,
-                            pv2.today?.day + 30
-                          )
-                        : new Date(2050, 12, 30),
-                    },
-                    ...pv2.recBlockedDates,
-                  ]}
-                />
-              )}
+            <div className="min-h-fit pb-4">
+              <div className="flex flex-row gap-8 my-6 items-center justify-center ">
+                {pv2.recCalLoading ? (
+                  <CalendarSkeleton />
+                ) : (
+                  <Calendar
+                    mode="single"
+                    required
+                    selected={pv2.recSelectedDate}
+                    onSelect={(d) => {
+                      pv2.updateRecSelectedDate(d);
+                      pv2.getEntregaDates({
+                        fechaString: formatYMD(d),
+                        municipioEntId: pedido?.destino?.municipioId ?? 1,
+                      });
+                    }}
+                    className="rounded-md border shadow-sm w-full bg-transparent"
+                    classNames={{
+                      day_selected: `bg-neutral-900 text-white`,
+                      day: `h-[42px] w-[42px]`,
+                      head_cell: `text-muted-foreground flex-1 select-none rounded-md text-[1rem] font-normal`,
+                    }}
+                    locale={es}
+                    onDayClick={async () => {
+                      await sleep(100);
+                      pv2.updateRecCalOpen(false);
+                      await sleep(100);
+                    }}
+                    disabled={[
+                      { dayOfWeek: [0] },
+                      { before: new Date() },
+                      {
+                        after: pv2.today
+                          ? new Date(
+                              pv2.today?.year,
+                              pv2.today?.month - 1,
+                              pv2.today?.day + 30
+                            )
+                          : new Date(2050, 12, 30),
+                      },
+                      ...pv2.recBlockedDates,
+                    ]}
+                  />
+                )}
+              </div>
             </div>
           </CollapsibleContent>
         </Collapsible>

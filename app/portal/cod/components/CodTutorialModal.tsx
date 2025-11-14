@@ -1,6 +1,6 @@
 "use client";
 
-import { Dialog, DialogHeader, DialogClose } from "@/components/ui/dialog";
+import { Dialog, DialogHeader, DialogClose, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { CustomDialogContent } from "./CustomDialogContent";
@@ -36,10 +36,15 @@ export function CodTutorialModal() {
       modal
     >
       <CustomDialogContent
-        className="max-w-2xl max-h-[90vh] overflow-y-auto"
+        className="max-w-xl sm:max-w-2xl max-h-[85vh] overflow-y-auto"
         onPointerDownOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
+        {/* DialogTitle oculto visualmente para accesibilidad */}
+        <DialogTitle className="sr-only">
+          {isLoading ? "Habilitando servicio" : showSuccess ? "Servicio habilitado" : `Tutorial de cobro a destinatario - Paso ${currentStep}`}
+        </DialogTitle>
+
         {isLoading || showSuccess ? (
           // Pantalla de carga y éxito
           <div className="flex flex-col items-center justify-center py-12 px-6">

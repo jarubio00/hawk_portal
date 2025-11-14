@@ -90,7 +90,7 @@ const AvisosProgramacion: React.FC<{ children: React.ReactNode }> = ({
     <div>
       {avisoActivo ? (
         <div
-          className="w-full min-h-3/4 md:min-h-screen overflow-hidden text-black"
+          className="w-full min-h-3/4 md:min-h-screen overflow-visible text-black"
           style={{
             // degradado radial
             background: `radial-gradient(
@@ -106,7 +106,7 @@ const AvisosProgramacion: React.FC<{ children: React.ReactNode }> = ({
             //backgroundPosition: "top",
             //backgroundSize: "contain",
             inset: 0,
-            overflow: "hidden",
+            overflow: "visible",
             zIndex: 0,
           }}
         >
@@ -185,8 +185,8 @@ const AvisosProgramacion: React.FC<{ children: React.ReactNode }> = ({
           </div>
         </div>
       ) : (
-        <div className=" w-full h-screen overflow-hidden text-black">
-          <div className="flex flex-col  items-center md:items-start py-4 px-1 md:px-8  h-full gap-6 p-2">
+        <div className=" w-full min-h-screen overflow-visible text-black">
+          <div className="flex flex-col  items-center md:items-start py-4 px-1 md:px-8  min-h-full gap-6 p-2">
             {children}
             <div className="flex w-full md:w-1/4 mt-6 mb-2 md:mx-2 ">
               <CrearNextButton

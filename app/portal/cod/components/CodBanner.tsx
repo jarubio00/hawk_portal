@@ -47,40 +47,41 @@ export function CodBanner() {
           <X className="h-5 w-5 text-gray-500" />
         </button>
 
-      <CardContent className="p-4 flex flex-row items-center gap-4">
-        {/* Avatar circular con sombra */}
-        <div className="flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white p-2 shadow-lg border-2 border-gray-200">
-          <div className="relative w-full h-full rounded-full overflow-hidden">
-            <Image
-              src="https://firebasestorage.googleapis.com/v0/b/hawk-admin.appspot.com/o/portal%2Fimages%2Fcobros_avatar.png?alt=media&token=84fa2916-32b2-4a23-adc8-e9923861a7c8"
-              alt="Cobros avatar"
-              fill
-              className="object-contain"
-              sizes="80px"
-              priority
-            />
+        <CardContent className="p-4 flex flex-row items-center gap-4">
+          {/* Avatar circular con sombra */}
+          <div className="flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white p-2 shadow-lg border-2 border-gray-200">
+            <div className="relative w-full h-full rounded-full overflow-hidden">
+              <Image
+                src="https://firebasestorage.googleapis.com/v0/b/hawk-admin.appspot.com/o/portal%2Fimages%2Fcobros_avatar.png?alt=media&token=84fa2916-32b2-4a23-adc8-e9923861a7c8"
+                alt="Cobros avatar"
+                fill
+                className="object-contain"
+                sizes="80px"
+                priority
+              />
+            </div>
           </div>
-        </div>
 
-        {/* Texto + botón */}
-        <div className="flex-1 flex flex-col items-start pr-8">
-          <h3 className="text-lg font-semibold">
-            Ahora puedes programar cobros al destinatario de tus envíos
-          </h3>
-          <p className="text-sm text-muted-foreground mt-1">
-            Te depositamos el monto cobrado menos comisión. Habilítalo para
-            comenzar a usarlo en tus envíos.
-          </p>
-          <Button
-            className="mt-3 text-white"
-            style={{ backgroundColor: "#eb7711" }}
-            onClick={openModal}
-          >
-            Habilitar
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+          {/* Texto + botón */}
+          <div className="flex-1 flex flex-col items-start pr-8">
+            <h3 className="text-lg font-semibold">
+              ¡Cobro al destinatario disponible!
+            </h3>
+            <p className="text-sm text-muted-foreground mt-1">
+              Ahora puedes programar cobros al destinatario en tus envíos.
+              Habilita el servicio y comienza a cobrar a tus clientes a
+              domicilio.
+            </p>
+            <Button
+              className="mt-3 text-white"
+              style={{ backgroundColor: "#eb7711" }}
+              onClick={openModal}
+            >
+              Habilitar
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Dialog de confirmación */}
       <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>

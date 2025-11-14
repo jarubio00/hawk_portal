@@ -12,10 +12,15 @@ import { Button } from "@/components/ui/button";
 import { useCodTutorialStore } from "../store/useCodTutorialStore";
 
 export function CodLoginDialog() {
-  const { openModal, showLoginDialog, deferLoginDialog } = useCodTutorialStore();
+  const { openModal, showLoginDialog, deferLoginDialog } =
+    useCodTutorialStore();
 
   const handleHabilitar = () => {
     openModal();
+  };
+
+  const handleCloseDialog = () => {
+    useCodTutorialStore.setState({ showLoginDialog: false });
   };
 
   return (
@@ -33,7 +38,7 @@ export function CodLoginDialog() {
             src="https://firebasestorage.googleapis.com/v0/b/hawk-admin.appspot.com/o/portal%2Fimages%2Fcobros1.png?alt=media&token=8bac39b6-936b-4051-ac1b-ab32af75743a"
             alt="Cobros fondo"
             fill
-            className="object-cover"
+            className="object-cover object-[35%_20%] sm:object-center"
             priority
           />
           {/* Overlay oscuro tipo gradiente */}
@@ -61,35 +66,47 @@ export function CodLoginDialog() {
               ¡Cobro al destinatario disponible!
             </DialogTitle>
             <DialogDescription>
-              Ahora puedes programar cobros al destinatario de tus envíos. Te
-              depositamos el monto cobrado menos comisión.
+              Ahora puedes programar cobros al destinatario en tus envíos.
+              Habilita el servicio y comienza a cobrar a tus clientes a
+              domicilio.
             </DialogDescription>
           </DialogHeader>
 
-          <div className="flex flex-col items-center gap-4 mt-6">
-            <Button
-              size="lg"
-              className="w-full sm:w-auto text-white"
-              style={{ backgroundColor: "#eb7711" }}
-              onMouseEnter={(e) =>
-                ((e.target as HTMLButtonElement).style.backgroundColor =
-                  "#d5670f")
-              }
-              onMouseLeave={(e) =>
-                ((e.target as HTMLButtonElement).style.backgroundColor =
-                  "#eb7711")
-              }
-              onClick={handleHabilitar}
-            >
-              Habilitar
-            </Button>
+          <div className="flex flex-col items-center sm:items-end gap-4 mt-6">
+            <div className="flex flex-row gap-2 items-center w-full sm:w-auto">
+              <Button
+                size="lg"
+                className="flex-1 sm:flex-none text-white"
+                style={{ backgroundColor: "#eb7711" }}
+                onMouseEnter={(e) =>
+                  ((e.target as HTMLButtonElement).style.backgroundColor =
+                    "#d5670f")
+                }
+                onMouseLeave={(e) =>
+                  ((e.target as HTMLButtonElement).style.backgroundColor =
+                    "#eb7711")
+                }
+                onClick={handleHabilitar}
+              >
+                Habilitar
+              </Button>
+
+              <Button
+                size="lg"
+                variant="secondary"
+                className="text-gray-700"
+                onClick={handleCloseDialog}
+              >
+                En otro momento
+              </Button>
+            </div>
 
             {/* Botón invisible estilo texto, esquina inferior derecha */}
             <button
               onClick={deferLoginDialog}
               className="text-xs text-muted-foreground hover:underline self-end"
             >
-              En otro momento
+              No volver a mostrar
             </button>
           </div>
         </div>

@@ -4,24 +4,25 @@ import { useRouter } from "next/navigation";
 import useLoader from "@/app/hooks/useLoader";
 import ClientOnly from "@/app/components/ClientOnly";
 import PageHeader from "@/app/components/portal/PageHeader";
-import {
-  MisPedidosContext,
-  MisPedidosContextType,
-} from "./context/MisPedidosContext";
+
 import { BsFillBoxSeamFill } from "react-icons/bs";
 import { FaPlus, FaTimes } from "react-icons/fa";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
-import DashSection from "./components/DashSection";
 import TabSection from "./components/TabSection";
 import Drawer from "react-modern-drawer";
 import "react-modern-drawer/dist/index.css";
 import { SafeCobro, SafePedido } from "@/app/types";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import EnvioView from "./components/tabs/components/EnvioView";
 import { GrClose } from "react-icons/gr";
-import RecoleccionesSection from "./components/RecoleccionesSection";
 import CobroView from "./components/tabs/components/CobroView";
+import { useOnboardingStore } from "@/app/portal/store/cobros/onboardingStore";
+import { CobroDestinatarioLoginDialog } from "@/app/portal/adm/cobros/components/CobrosLoginDialog";
+import { CobroDestinatarioBanner } from "@/app/portal/adm/cobros/components/CobrosBanner";
+import { useCodTutorialStore } from "@/app/portal/cod/store/useCodTutorialStore";
+import { CodLoginDialog } from "@/app/portal/cod/components/CodLoginDialog";
+import { CodBanner } from "@/app/portal/cod/components/CodBanner";
+import { CodTutorialModal } from "@/app/portal/cod/components/CodTutorialModal";
 
 const PedidosClient = (props: any) => {
   const router = useRouter();
@@ -35,6 +36,20 @@ const PedidosClient = (props: any) => {
   const [drawerPedido, setDrawerPedido] = useState<SafePedido>();
   const [drawerCobro, setDrawerCobro] = useState<SafeCobro>();
   const [sheetOpen, setSheetOpen] = useState(false);
+  const { onLogin } = useOnboardingStore();
+  const { showLoginDialogOnce, loadChecklist } = useCodTutorialStore();
+
+  useEffect(() => {
+    // 👇 Simula "acabo de iniciar sesión"
+    useOnboardingStore.setState({ justLoggedIn: true });
+    onLogin();
+
+    // Cargar checklist de COD desde la base de datos
+    loadChecklist().then(() => {
+      // Mostrar dialog de COD solo una vez al entrar
+      showLoginDialogOnce();
+    });
+  }, [onLogin, showLoginDialogOnce, loadChecklist]);
   //saveRecolecciones(props.data.recolecciones);
 
   //savePedidos(props.data.pedidos);
@@ -97,8 +112,8 @@ const PedidosClient = (props: any) => {
           </div>
         </div>
       </Drawer>
-      <div className="flex flex-col gap-6 z-40">
-        <PageHeader
+      <div className="flex flex-col gap-6 z-40 py-2 px-2">
+        {/*  <PageHeader
           title="Mis envíos"
           subtitle={subtitle}
           icon={BsFillBoxSeamFill}
@@ -109,9 +124,17 @@ const PedidosClient = (props: any) => {
           adding={adding}
           disabled={false}
           noButton
-        />
+        /> */}
         {/* <DashSection /> */}
         {/* <RecoleccionesSection /> */}
+        {/*  <CobroDestinatarioLoginDialog />
+        <CobroDestinatarioBanner /> */}
+
+        {/* COD Components */}
+        <CodLoginDialog />
+        <CodBanner />
+        <CodTutorialModal />
+
         <TabSection
           onView={handleDrawerPedido}
           onCobroView={handleDrawerCobro}

@@ -59,7 +59,7 @@ export const useCodTutorialStore = create<CodTutorialStore>((set, get) => ({
   loginDialogShown: false,
 
   // Banner state
-  showBanner: true,
+  showBanner: false,
   bannerDismissed: false,
 
   // Loading state
