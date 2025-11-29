@@ -9,6 +9,10 @@ import {
   Operaciones,
   Incidencia,
   IncidenciaFoto,
+  Cod2Charge,
+  Cod2Attempt,
+  Cod2Payment,
+  Cod2Issue,
 } from "@prisma/client";
 import { CodeStatus, ConfirmationType } from "./constants";
 
@@ -130,6 +134,12 @@ export type SafeRecoleccion = Omit<Recoleccion, "pedidos"> & {
   municipio: any;
 };
 
+export type SafeCod2Charge = Cod2Charge & {
+  attempts?: Cod2Attempt[];
+  payment?: Cod2Payment | null;
+  issues?: Cod2Issue[];
+};
+
 export type SafePedido = Omit<Pedido, "pedidos"> & {
   id: number;
   estatus: any;
@@ -140,6 +150,7 @@ export type SafePedido = Omit<Pedido, "pedidos"> & {
   estatusPedido: any;
   operaciones: SafeOperaciones;
   incidencias: SafeIncidencia[];
+  cod2Charges?: SafeCod2Charge[];
 };
 
 export type SafeCobro = Omit<CobrosDestino, "cobros"> & {

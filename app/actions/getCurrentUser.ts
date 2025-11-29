@@ -21,6 +21,7 @@ export default async function getCurrentUser() {
       },
       include: {
         checklist: true,
+        cobrosChecklist: true,
       },
     });
 

@@ -1,16 +1,16 @@
 "use client";
 
-import { useCallback, useEffect, useState, Fragment } from "react";
-import { IoMdClose } from "react-icons/io";
-import { FaInfoCircle } from "react-icons/fa";
-import { Dialog, Transition } from "@headlessui/react";
-import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
-
-import Button from "@/app/components/Button";
-import CobroInput from "@/app/components/inputs/CobroInput";
-import { Checkbox } from "@material-tailwind/react";
-import CheckboxInput from "@/app/components/inputs/CheckboxInput";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { FileText } from "lucide-react";
 
 interface TerminosDialogProps {
   isOpen?: boolean;
@@ -18,155 +18,135 @@ interface TerminosDialogProps {
 }
 
 const TerminosDialog: React.FC<TerminosDialogProps> = ({ isOpen, onClose }) => {
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    watch,
-    formState: { errors },
-    reset,
-  } = useForm<FieldValues>({
-    defaultValues: {
-      montoCobro: "",
-    },
-  });
-
-  const [confirmarMonto, setConfirmarMonto] = useState(false);
-  const [montoFormato, setMontoFormato] = useState("");
-
-  const monto = watch("montoCobro");
-
-  if (!isOpen) {
-    return null;
-  }
-
-  const setCustomValue = (id: string, value: any) => {
-    setValue(id, value, {
-      shouldDirty: true,
-      shouldTouch: true,
-      shouldValidate: true,
-    });
-  };
-
-  function currencyFormat(num: number) {
-    return num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
-  }
-
-  const handleCancel = () => {
-    //reset();
-    onClose();
-  };
-
   return (
-    <>
-      <Transition appear show={isOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={() => onClose()}>
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <div className="fixed inset-0 bg-black bg-opacity-80" />
-          </Transition.Child>
-
-          <div className="fixed inset-0 overflow-y-auto">
-            <div className="flex min-h-full items-center justify-center p-2 text-center">
-              <Transition.Child
-                as={Fragment}
-                enter="ease-out duration-300"
-                enterFrom="opacity-0 scale-95"
-                enterTo="opacity-100 scale-100"
-                leave="ease-in duration-200"
-                leaveFrom="opacity-100 scale-100"
-                leaveTo="opacity-0 scale-95"
-              >
-                <Dialog.Panel className="w-full max-w-xl  m-4 md:m-0 transform  rounded-2xl bg-white p-4 text-left align-middle shadow-xl transition-all ">
-                  <Dialog.Title
-                    as="div"
-                    className="flex flex-row justify-between items-center mt-1 mb-3"
-                  >
-                    <p className="text-lg font-bold leading-6 uppercase ">
-                      Terminos y condiciones
-                    </p>
-                    <div></div>
-                  </Dialog.Title>
-                  <hr></hr>
-                  <Dialog.Description
-                    as="div"
-                    className="flex flex-row  items-center text-md text-neutral-500 "
-                  ></Dialog.Description>
-
-                  <ScrollArea className="h-[400px]">
-                    <ul className="list-disc text-xs p-8">
-                      <li>
-                        Llenado correcto de datos en guía, descripción exacta
-                        del producto que contiene el paquete, monto a cobrar
-                        neto.
-                      </li>
-                      <li>
-                        Marcado sin excepción del paquete. (Número de guía y
-                        nombre de destinatario).
-                      </li>
-                      <li>
-                        Pago del envío es independiente a la cobranza del
-                        producto; si seleccionas pago de tu envío en efectivo
-                        deberás pagar al operador que realiza la recolección en
-                        domicilio origen, si seleccionas pago del envío vía
-                        transferencia, deberás subir el comprobante de pago a la
-                        página antes de confirmar la guía. El pago del envío no
-                        se recibe en el domicilio de entrega.
-                      </li>
-                      <li>
-                        Se cobrará 4.5% por concepto de comisión sobre el valor
-                        declarado a cobrar.
-                      </li>
-                      <li>No manejamos seguro de la mercancía.</li>
-                      <li>
-                        No realizamos reembolso de mercancía dañada durante el
-                        trayecto.
-                      </li>
-                      <li>
-                        El empaque del producto debe ser el adecuado y a medida
-                        para proteger el producto.
-                      </li>
-                      <li>
-                        El retorno del efectivo cobrado se realizará una vez por
-                        semana sin opción a resguardarlo, administrarlo o
-                        dejarlo como saldo a favor para pago de envios.
-                      </li>
-                      <li>
-                        El retorno del efectivo cobrado podrá realizarse via
-                        depósito en banco o tienda de conveniencia. En caso de
-                        que se aplique comisión por parte del banco o tienda de
-                        conveniencia, dicho monto será descontado del efectivo a
-                        retornar. En esta opción se aplica un costo de $68 pesos
-                        por concepto del viaje a depositar.
-                      </li>
-                      <li>
-                        Puedes pasar a recoger el efectivo cobrado directamente
-                        a nuestras oficinas, en este caso no aplica cargo por
-                        viaje, solo la comisión sobre lo cobrado. De igual forma
-                        debe ser 1 vez por semana.
-                      </li>
-                    </ul>
-                  </ScrollArea>
-
-                  <div className="flex flex-row  items-center justify-end mt-6 mb-2">
-                    <div className="w-24 ml-2">
-                      <Button outline label="Regresar" onClick={handleCancel} />
-                    </div>
-                  </div>
-                </Dialog.Panel>
-              </Transition.Child>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-2xl max-h-[90vh]">
+        <DialogHeader>
+          <div className="flex items-center gap-3">
+            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+              <FileText className="h-5 w-5 text-blue-600" />
+            </div>
+            <div>
+              <DialogTitle className="text-xl sm:text-2xl">
+                Términos y Condiciones
+              </DialogTitle>
+              <DialogDescription className="mt-1">
+                Servicio de cobro a destinatario
+              </DialogDescription>
             </div>
           </div>
-        </Dialog>
-      </Transition>
-    </>
+        </DialogHeader>
+
+        <ScrollArea className="h-[400px] sm:h-[500px] pr-4">
+          <div className="space-y-4 text-sm sm:text-base">
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+              <h3 className="font-semibold text-amber-900 mb-2">
+                Información importante
+              </h3>
+              <p className="text-amber-800 text-sm">
+                Al utilizar este servicio, aceptas los siguientes términos y condiciones.
+                Por favor, léelos cuidadosamente.
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              <div className="border-l-4 border-blue-500 pl-4">
+                <h4 className="font-semibold mb-1">Llenado de datos</h4>
+                <p className="text-gray-600">
+                  Llenado correcto de datos en guía, descripción exacta del producto que
+                  contiene el paquete, monto a cobrar neto.
+                </p>
+              </div>
+
+              <div className="border-l-4 border-blue-500 pl-4">
+                <h4 className="font-semibold mb-1">Marcado del paquete</h4>
+                <p className="text-gray-600">
+                  Marcado sin excepción del paquete. (Número de guía y nombre de
+                  destinatario).
+                </p>
+              </div>
+
+              <div className="border-l-4 border-blue-500 pl-4">
+                <h4 className="font-semibold mb-1">Pago del envío</h4>
+                <p className="text-gray-600">
+                  Pago del envío es independiente a la cobranza del producto; si
+                  seleccionas pago de tu envío en efectivo deberás pagar al operador que
+                  realiza la recolección en domicilio origen, si seleccionas pago del
+                  envío vía transferencia, deberás subir el comprobante de pago a la
+                  página antes de confirmar la guía. El pago del envío no se recibe en el
+                  domicilio de entrega.
+                </p>
+              </div>
+
+              <div className="border-l-4 border-blue-500 pl-4">
+                <h4 className="font-semibold mb-1">Comisión del servicio</h4>
+                <p className="text-gray-600">
+                  Se cobrará 4.5% por concepto de comisión sobre el valor declarado a
+                  cobrar.
+                </p>
+              </div>
+
+              <div className="border-l-4 border-blue-500 pl-4">
+                <h4 className="font-semibold mb-1">Seguro de mercancía</h4>
+                <p className="text-gray-600">
+                  No manejamos seguro de la mercancía.
+                </p>
+              </div>
+
+              <div className="border-l-4 border-blue-500 pl-4">
+                <h4 className="font-semibold mb-1">Reembolsos</h4>
+                <p className="text-gray-600">
+                  No realizamos reembolso de mercancía dañada durante el trayecto.
+                </p>
+              </div>
+
+              <div className="border-l-4 border-blue-500 pl-4">
+                <h4 className="font-semibold mb-1">Empaque del producto</h4>
+                <p className="text-gray-600">
+                  El empaque del producto debe ser el adecuado y a medida para proteger
+                  el producto.
+                </p>
+              </div>
+
+              <div className="border-l-4 border-blue-500 pl-4">
+                <h4 className="font-semibold mb-1">Retorno del efectivo</h4>
+                <p className="text-gray-600">
+                  El retorno del efectivo cobrado se realizará una vez por semana sin
+                  opción a resguardarlo, administrarlo o dejarlo como saldo a favor para
+                  pago de envíos.
+                </p>
+              </div>
+
+              <div className="border-l-4 border-blue-500 pl-4">
+                <h4 className="font-semibold mb-1">Depósito bancario</h4>
+                <p className="text-gray-600">
+                  El retorno del efectivo cobrado podrá realizarse vía depósito en banco
+                  o tienda de conveniencia. En caso de que se aplique comisión por parte
+                  del banco o tienda de conveniencia, dicho monto será descontado del
+                  efectivo a retornar. En esta opción se aplica un costo de $68 pesos por
+                  concepto del viaje a depositar.
+                </p>
+              </div>
+
+              <div className="border-l-4 border-blue-500 pl-4">
+                <h4 className="font-semibold mb-1">Recolección en oficinas</h4>
+                <p className="text-gray-600">
+                  Puedes pasar a recoger el efectivo cobrado directamente a nuestras
+                  oficinas, en este caso no aplica cargo por viaje, solo la comisión
+                  sobre lo cobrado. De igual forma debe ser 1 vez por semana.
+                </p>
+              </div>
+            </div>
+          </div>
+        </ScrollArea>
+
+        <DialogFooter>
+          <Button onClick={onClose} className="w-full sm:w-auto">
+            Entendido
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };
 

@@ -303,6 +303,9 @@ model Pedido {
   incidencias            Incidencia[]
   actividad              ActividadOperaciones[]
   approute               AppRouteGuias[]
+  cod2Charges            Cod2Charge[]
+  despachoRecoleccion    DespachoRecoleccion[]
+  despachoEntrega        DespachoEntrega[]
 
   @@index([clienteId], map: "Pedidos_clienteId_fkey")
   @@index([estatusPagoId], map: "Pedidos_estatusPagoId_fkey")
@@ -460,6 +463,36 @@ model CatalogoCategoriasActividadOperaciones {
   actividades CatalogoActividadOperaciones[]
 }
 
+//Despacho Models
+
+model DespachoRecoleccion {
+  id         Int        @id @default(autoincrement())
+  pedidoId   Int
+  bloque     Int?
+  operadorId Int
+  createdAt  DateTime   @default(dbgenerated("(now())"))
+  createdBy  Int        @default(1)
+  isDeleted  Boolean    @default(false)
+  deletedAt  DateTime?
+  deletedBy  Int?
+  pedido     Pedido     @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+  operador   Operadores @relation(fields: [operadorId], references: [id])
+}
+
+model DespachoEntrega {
+  id         Int        @id @default(autoincrement())
+  pedidoId   Int
+  bloque     Int?
+  operadorId Int
+  createdAt  DateTime   @default(dbgenerated("(now())"))
+  createdBy  Int        @default(1)
+  isDeleted  Boolean    @default(false)
+  deletedAt  DateTime?
+  deletedBy  Int?
+  pedido     Pedido     @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+  operador   Operadores @relation(fields: [operadorId], references: [id])
+}
+
 model ActividadClientes {
   id        Int                       @id @default(autoincrement())
   pedidoId  Int
@@ -585,27 +618,29 @@ model CatalogoAppVisitaModsTipos {
 }
 
 model Operadores {
-  id           Int                   @id @default(autoincrement())
-  correo       String                @unique
-  nombre       String
-  password     String?
-  tipoId       Int                   @default(1)
-  celular      String?
-  countryCode  String?
-  fotoUrl      String?               @db.LongText
-  fotoPublicId String?               @db.LongText
-  fotoPath     String?
-  createdAt    DateTime              @default(dbgenerated("(now())"))
-  createdBy    Int                   @default(1)
-  rol          OperadorRol           @default(operador)
-  isLocked     Boolean               @default(false)
-  lockedAt     DateTime?
-  lockedBy     Int?
-  isDeleted    Boolean               @default(false)
-  deletedAt    DateTime?
-  deletedBy    Int?
-  routes       AppRoute[]
-  tipo         CatalogoUsuariosTipos @relation(fields: [tipoId], references: [id])
+  id                  Int                   @id @default(autoincrement())
+  correo              String                @unique
+  nombre              String
+  password            String?
+  tipoId              Int                   @default(1)
+  celular             String?
+  countryCode         String?
+  fotoUrl             String?               @db.LongText
+  fotoPublicId        String?               @db.LongText
+  fotoPath            String?
+  createdAt           DateTime              @default(dbgenerated("(now())"))
+  createdBy           Int                   @default(1)
+  rol                 OperadorRol           @default(operador)
+  isLocked            Boolean               @default(false)
+  lockedAt            DateTime?
+  lockedBy            Int?
+  isDeleted           Boolean               @default(false)
+  deletedAt           DateTime?
+  deletedBy           Int?
+  routes              AppRoute[]
+  despachoRecoleccion DespachoRecoleccion[]
+  despachoEntrega     DespachoEntrega[]
+  tipo                CatalogoUsuariosTipos @relation(fields: [tipoId], references: [id])
 }
 
 model UsuariosHawk {
@@ -613,9 +648,10 @@ model UsuariosHawk {
   nombre              String
   password            String
   correo              String                         @unique
-  rol                 UsuariosHawkRoles
+  oldRol              UsuariosHawkRoles?
   departamentoId      Int                            @default(1)
   tipoId              Int                            @default(1)
+  rolId               Int?
   celular             String?
   countryCode         String?
   fotoUrl             String?                        @db.LongText
@@ -631,9 +667,22 @@ model UsuariosHawk {
   deletedBy           Int?
   departamento        CatalogoUsuariosDepartamentos  @relation(fields: [departamentoId], references: [id])
   tipo                CatalogoUsuariosTipos          @relation(fields: [tipoId], references: [id])
+  rol                 CatalogoUsuariosRoles?         @relation(fields: [rolId], references: [id])
   actividades         ActividadOperaciones[]
   actividadesNacional NacionalActividadOperaciones[]
   bloques             BloqueoServicios[]
+}
+
+model CatalogoUsuariosRoles {
+  id        Int            @id @default(autoincrement())
+  rol       String
+  desc      String?
+  createdAt DateTime       @default(dbgenerated("(now())"))
+  createdBy Int            @default(1)
+  isDeleted Boolean        @default(false)
+  deletedAt DateTime?
+  deletedBy Int?
+  usuario   UsuariosHawk[]
 }
 
 model CatalogoUsuariosEmpresas {
@@ -1646,10 +1695,17 @@ model Cod2Config {
 }
 
 // Preferencias por cliente y ancla de su ventana/corte
+// Configuración de COD por cliente
 model Cod2ClientSettings {
   id                  Int              @id @default(autoincrement())
   clienteId           Int
   defaultPayoutMethod Cod2PayoutMethod @default(RECOGER_EN_OFICINA)
+  // IMPORTANTE: activeAnchorAt es la fecha del ÚLTIMO CORTE (settlement)
+  // - Se actualiza cada vez que se genera un settlement
+  // - Si hay cobros pendientes (not collected) → activeAnchorAt = fecha del corte
+  // - Si NO hay cobros pendientes → activeAnchorAt = null
+  // - El período actual SIEMPRE es: desde activeAnchorAt hasta activeAnchorAt + 7 días
+  // - Los cobros del período son: createdAt >= activeAnchorAt AND settlementLine IS NULL
   activeAnchorAt      DateTime?
   createdAt           DateTime         @default(now())
   updatedAt           DateTime         @updatedAt
@@ -1671,6 +1727,7 @@ model Cod2Charge {
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
 
+  pedido         Pedido              @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
   attempts       Cod2Attempt[]
   payment        Cod2Payment?
   settlementLine Cod2SettlementLine?
@@ -1815,7 +1872,8 @@ model Cod2Payout {
   receiptUrl        String?
   amountDeposited   Int?
 
-  settlement Cod2Settlement @relation(fields: [settlementId], references: [id], onDelete: Cascade)
+  settlement Cod2Settlement  @relation(fields: [settlementId], references: [id], onDelete: Cascade)
+  fees       Cod2PayoutFee[] // NUEVO - relación con fees individuales
 
   @@index([settlementId, status])
   @@index([status, assignedCourierId, dueAt])
@@ -1860,6 +1918,21 @@ model Cod2AuditLog {
   createdBy  Int?
 
   @@map("Cod2AuditLog")
+}
+
+// NUEVO MODELO - Fees/Cargos individuales del payout
+model Cod2PayoutFee {
+  id          String   @id @default(cuid())
+  payoutId    String
+  description String // "Comisión bancaria", "Cargo por depósito", "IVA", etc.
+  amount      Int // en centavos
+  createdAt   DateTime @default(now())
+  createdBy   Int?
+
+  payout Cod2Payout @relation(fields: [payoutId], references: [id], onDelete: Cascade)
+
+  @@index([payoutId])
+  @@map("Cod2PayoutFee")
 }
 
 // ====================== COD v2 (separado) END ======================

@@ -64,6 +64,18 @@ export async function GET(req: Request) {
             createdAt: Prisma.SortOrder.desc,
           },
         },
+        cod2Charges: {
+          include: {
+            attempts: true,
+            payment: true,
+            issues: {
+              where: { status: "OPEN" },
+            },
+          },
+          orderBy: {
+            createdAt: Prisma.SortOrder.desc,
+          },
+        },
       },
       take: take ? parseInt(take as string) : 15,
       ...(lastCursor && {
@@ -115,6 +127,18 @@ export async function GET(req: Request) {
         incidencias: {
           include: {
             fotos: true,
+          },
+          orderBy: {
+            createdAt: Prisma.SortOrder.desc,
+          },
+        },
+        cod2Charges: {
+          include: {
+            attempts: true,
+            payment: true,
+            issues: {
+              where: { status: "OPEN" },
+            },
           },
           orderBy: {
             createdAt: Prisma.SortOrder.desc,

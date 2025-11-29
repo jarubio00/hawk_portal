@@ -193,13 +193,12 @@ export async function POST(request: Request) {
           },
         });
         cobroAddId = cobroAdd.id;
-
         //COD2 Cobro
         const charge = await tx.cod2Charge.create({
           data: {
             pedidoId: Number(pedidoId),
             clienteId: Number(currentUser.id),
-            amountRequested: Number(p.cobroCantidad),
+            amountRequested: Number(p.cobroCantidad) * 100,
           },
         });
 

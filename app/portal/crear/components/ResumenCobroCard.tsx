@@ -3,43 +3,40 @@
 import { useContext, useEffect, useState } from "react";
 import { PedidoContext } from "@/app/portal/crear/context/PedidoContext";
 import { IPedido } from "@/app/types/pedido";
-import Button from "@/app/components/Button";
-import { useRouter } from "next/navigation";
-import useLoader from "@/app/hooks/useLoader";
-import { FaCog, FaPlus, FaHome, FaMapMarkedAlt, FaClock } from "react-icons/fa";
-import { MdNightlightRound, MdLocationOn, MdViewInAr } from "react-icons/md";
-import { BsFillBoxSeamFill } from "react-icons/bs";
-import { IoMdClose } from "react-icons/io";
-import { namedDate, namedDateString } from "@/app/components/utils/helpers";
-import { useProgramaStore } from "../store/crear-store";
 import { AiFillDollarCircle } from "react-icons/ai";
+import { Card } from "@/components/ui/card";
 
 interface ResumenCobroCardProps {
   data: IPedido;
 }
 
-//se quito w-full , se agregp px-2
 const ResumenCobroCard: React.FC<ResumenCobroCardProps> = ({ data }) => {
-  const pv2 = useProgramaStore();
+  // Función para formatear moneda con separador de miles
+  function currencyFormat(num: number) {
+    return Number(num).toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+  }
+
+  if (!data.cobro || !data.cobroCantidad) {
+    return null;
+  }
 
   return (
-    <div className="">
-      <div className="flex flex-col gap-1 w-full  lg:w-2/4 border border-neutral-300  rounded-sm mt-3 ">
-        <div className="flex flex-row items-center gap-3  justify-between p-3">
-          <div className="flex flex-row items-center gap-2">
-            <AiFillDollarCircle className="text-rose-500" size={20} />
-            <p className="text-xs md:text-sm ">Cobro </p>
+    <div className="mt-3">
+      <Card className="w-full lg:w-2/4 p-4 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200">
+        <div className="flex flex-row items-center gap-3">
+          <div className="flex-shrink-0 w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+            <AiFillDollarCircle size={24} className="text-green-600" />
           </div>
-          <div className="flex flex-col items-end">
-            {/* <p className="text-xs text-blue-500">{namedDateString(data.programa?.fechaRecoleccion)}</p> */}
-            {data.cobro && (
-              <p className="text-xs text-blue-500 text-right">
-                Se cobrarán ${data.cobroCantidad}.00 al destinatario
-              </p>
-            )}
+          <div>
+            <p className="text-xs text-gray-600 font-medium">
+              Cobro a destinatario
+            </p>
+            <p className="text-lg font-bold text-green-700">
+              ${currencyFormat(parseFloat(data.cobroCantidad as any))}
+            </p>
           </div>
         </div>
-      </div>
+      </Card>
     </div>
   );
 };
