@@ -92,16 +92,10 @@ export async function GET(request: Request) {
     }
 
     // Filtrar cobros del período actual
-    // Período = desde activeAnchorAt (último corte) hasta hoy
-    // Los cobros con settlementLine ya fueron excluidos en la query anterior
-    const currentPeriodCharges = charges.filter((c) => {
-      // Si no hay activeAnchorAt (sin período activo), incluir todos los cobros
-      if (!currentPeriodStart) return true;
-
-      // Incluir solo cobros creados desde el último corte (activeAnchorAt)
-      const chargeDate = new Date(c.createdAt);
-      return chargeDate >= currentPeriodStart;
-    });
+    // Los cobros sin settlementLine son cobros activos del período actual
+    // Ya fueron filtrados en la query anterior (settlementLine: null)
+    // Por lo tanto, todos los cobros devueltos son del período actual
+    const currentPeriodCharges = charges;
 
     // Calcular estadísticas del período actual (montos en centavos, dividir entre 100)
     const totalRequested = currentPeriodCharges.reduce(

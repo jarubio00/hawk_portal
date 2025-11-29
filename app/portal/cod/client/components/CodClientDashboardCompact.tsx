@@ -237,11 +237,25 @@ export function CodClientDashboardCompact({
         </TabsContent>
 
         <TabsContent value="cortes" className="mt-4">
-          <div className="text-sm text-gray-500">Contenido de Cortes</div>
+          <Card className="p-8 border border-gray-200">
+            <div className="flex flex-col items-center justify-center text-center gap-2">
+              <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
+                <Calendar className="h-6 w-6 text-gray-400" />
+              </div>
+              <p className="text-sm text-gray-500">No hay cortes disponibles</p>
+            </div>
+          </Card>
         </TabsContent>
 
         <TabsContent value="retornos" className="mt-4">
-          <div className="text-sm text-gray-500">Contenido de Retornos</div>
+          <Card className="p-8 border border-gray-200">
+            <div className="flex flex-col items-center justify-center text-center gap-2">
+              <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
+                <ShieldCheck className="h-6 w-6 text-gray-400" />
+              </div>
+              <p className="text-sm text-gray-500">No hay retornos disponibles</p>
+            </div>
+          </Card>
         </TabsContent>
       </Tabs>
 

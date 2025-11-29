@@ -1,24 +1,12 @@
 "use client";
-// import { useContext, useEffect, useState } from "react";
-// import axios from "axios";
-// import { namedDate, namedDateString } from "@/app/components/utils/helpers";
-// import { useQuery } from "@tanstack/react-query";
-// import { Badge } from "@/components/ui/badge";
-// import { MdAccessTimeFilled, MdCancel } from "react-icons/md";
-// import { HiCheckCircle } from "react-icons/hi";
-// import Activas from "./components/Activas";
-// import Completadas from "./components/Completadas";
-// import Canceladas from "./components/Canceladas";
-// import EnviosDisplay from "./components/EnviosDisplay";
+import { useEffect } from "react";
 import { SafeCobro } from "@/app/types";
-// import CobrosDisplay from "./components/CobrosDisplay";
-// import CobrosDash from "./components/CobrosDash";
 import { CodClientDashboardCompact } from "@/app/portal/cod/client/components/CodClientDashboardCompact";
-
-// const pedidosQuery = async () => {
-//   const response = await axios.get("/api/cobros/counts");
-//   return response?.data;
-// };
+import { useCodTutorialStore } from "@/app/portal/cod/store/useCodTutorialStore";
+import { CodTutorialModal } from "@/app/portal/cod/components/CodTutorialModal";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { DollarSign } from "lucide-react";
 
 interface CobrosTabProps {
   onView: (open: boolean, c: SafeCobro) => void;
@@ -26,89 +14,68 @@ interface CobrosTabProps {
 }
 
 const CobrosTab: React.FC<CobrosTabProps> = ({ currentUser }) => {
-  console.log('[COBROS_TAB] Renderizado con currentUser:', currentUser);
-  console.log('[COBROS_TAB] currentUser.id:', currentUser?.id);
+  const {
+    serviceEnabled,
+    isLoading,
+    loadChecklist,
+    openModal,
+  } = useCodTutorialStore();
 
-  // const [filter, setFilter] = useState("1");
-  // const [completadasOrder, setCompletadasOrder] = useState("desc");
+  useEffect(() => {
+    if (currentUser?.id) {
+      loadChecklist();
+    }
+  }, [currentUser?.id, loadChecklist]);
 
-  // const changeFilter = (filter: string) => {
-  //   setFilter(filter);
-  // };
+  // Skeleton mientras carga
+  if (isLoading) {
+    return (
+      <div className="w-full py-2 flex flex-col gap-2">
+        <div className="space-y-4 animate-pulse">
+          <div className="grid grid-cols-2 gap-3">
+            <div className="h-24 bg-gray-200 rounded-lg"></div>
+            <div className="h-24 bg-gray-200 rounded-lg"></div>
+          </div>
+          <div className="h-64 bg-gray-200 rounded-lg"></div>
+        </div>
+      </div>
+    );
+  }
 
-  // const handleCompletadasOrder = (order: string) => {
-  //   setCompletadasOrder(order);
-  // };
-
-  // const { data, error, isLoading, isSuccess } = useQuery({
-  //   queryFn: () => pedidosQuery(),
-  //   queryKey: ["cobrosCounts"],
-  // });
+  // Si el servicio no está habilitado, mostrar pantalla de habilitación
+  if (!serviceEnabled) {
+    return (
+      <div className="w-full py-2 flex flex-col gap-2">
+        <CodTutorialModal />
+        <Card className="p-8 border border-gray-200">
+          <div className="flex flex-col items-center justify-center text-center gap-4">
+            <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center">
+              <DollarSign className="h-8 w-8 text-gray-400" />
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Servicio de cobros a destinatario
+              </h3>
+              <p className="text-sm text-gray-500 max-w-md">
+                Este servicio te permite cobrar al destinatario al momento de la
+                entrega. Habilítalo para comenzar a usar esta funcionalidad.
+              </p>
+            </div>
+            <Button onClick={openModal} className="mt-2">
+              Habilitar servicio
+            </Button>
+          </div>
+        </Card>
+      </div>
+    );
+  }
 
   return (
-    <div className=" w-full py-2 flex flex-col gap-2">
-      {/* COD v2 Dashboard Compacto */}
+    <div className="w-full py-2 flex flex-col gap-2">
+      <CodTutorialModal />
       {currentUser?.id && (
         <CodClientDashboardCompact clienteId={currentUser.id} />
       )}
-
-      {/* Sistema de cobros existente - comentado temporalmente */}
-      {/* <CobrosDash data={data} /> */}
-      {/* <div className="my-4 flex flex-row items-center gap-4 overflow-x-auto touch-auto no-scrollbar">
-        <Badge
-          variant={filter == "1" ? "default" : "secondary"}
-          className="cursor-pointer  pr-2 pl-2 py-1"
-          onClick={() => changeFilter("1")}
-        >
-          <div className="flex flex-row items-center gap-1">
-            <MdAccessTimeFilled />
-            <p className="text-[11px]">Por cobrar</p>
-            <p className="text-[11px]">
-              ({data && data.activos ? data.activos : 0})
-            </p>
-          </div>
-        </Badge>
-        <Badge
-          variant={filter == "5" ? "default" : "secondary"}
-          className="cursor-pointer  pr-2 pl-2 py-1"
-          onClick={() => changeFilter("5")}
-        >
-          <div className="flex flex-row items-center gap-1">
-            <HiCheckCircle />
-            <p className="text-[11px]">Cobrados corte</p>
-            <p className="text-[11px]">
-              ({data && data.entregados ? data.entregados : 0})
-            </p>
-          </div>
-        </Badge>
-        <Badge
-          variant={filter == "4" ? "default" : "secondary"}
-          className="cursor-pointer  pr-2 pl-2 py-1"
-          onClick={() => changeFilter("4")}
-        >
-          <div className="flex flex-row items-center gap-1">
-            <MdCancel />
-            <p className="text-[11px]">Cobrados todos</p>
-            <p className="text-[11px]">
-              ({data && data.cancelados ? data.cancelados : 0})
-            </p>
-          </div>
-        </Badge>
-        <Badge
-          variant={filter == "4" ? "default" : "secondary"}
-          className="cursor-pointer  pr-2 pl-2 py-1"
-          onClick={() => changeFilter("4")}
-        >
-          <div className="flex flex-row items-center gap-1">
-            <MdCancel />
-            <p className="text-[11px]">Cancelados</p>
-            <p className="text-[11px]">
-              ({data && data.cancelados ? data.cancelados : 0})
-            </p>
-          </div>
-        </Badge>
-      </div>
-      <CobrosDisplay filter={filter} onView={onView} /> */}
     </div>
   );
 };

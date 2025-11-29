@@ -21,6 +21,9 @@ interface CodTutorialStore {
   // Loading state
   isLoading: boolean;
 
+  // Checklist loaded flag - para evitar recargar y mostrar dialogs en cada navegación
+  checklistLoaded: boolean;
+
   // Tutorial modal actions
   openModal: () => void;
   closeModal: () => void;
@@ -64,6 +67,9 @@ export const useCodTutorialStore = create<CodTutorialStore>((set, get) => ({
 
   // Loading state
   isLoading: false,
+
+  // Checklist loaded flag
+  checklistLoaded: false,
 
   // Tutorial modal actions
   openModal: () => set({ isModalOpen: true }),
@@ -160,6 +166,10 @@ export const useCodTutorialStore = create<CodTutorialStore>((set, get) => ({
 
   // Data actions
   loadChecklist: async () => {
+    // Si ya se cargó el checklist en esta sesión, solo actualizar serviceEnabled
+    // pero no mostrar dialogs nuevamente
+    const { checklistLoaded } = get();
+
     try {
       set({ isLoading: true });
 
@@ -168,12 +178,22 @@ export const useCodTutorialStore = create<CodTutorialStore>((set, get) => ({
 
       const data = await response.json();
 
-      set({
-        serviceEnabled: data.cobrosEnabled,
-        showLoginDialog: data.displayCobrosDialog,
-        showBanner: data.displayCobrosBanner,
-        isLoading: false,
-      });
+      if (checklistLoaded) {
+        // Ya se cargó antes, solo actualizar serviceEnabled sin mostrar dialogs
+        set({
+          serviceEnabled: data.cobrosEnabled,
+          isLoading: false,
+        });
+      } else {
+        // Primera carga, mostrar dialogs si corresponde
+        set({
+          serviceEnabled: data.cobrosEnabled,
+          showLoginDialog: data.displayCobrosDialog,
+          showBanner: data.displayCobrosBanner,
+          isLoading: false,
+          checklistLoaded: true,
+        });
+      }
     } catch (error) {
       console.error('Error loading checklist:', error);
       set({ isLoading: false });
