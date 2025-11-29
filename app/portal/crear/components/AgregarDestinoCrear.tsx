@@ -29,7 +29,7 @@ import { PedidoContext } from "@/app/portal/crear/context/PedidoContext";
 import { IoMdClose } from "react-icons/io";
 import { PedidoContextType } from "@/app/types/pedido";
 import { FaInfoCircle } from "react-icons/fa";
-import ConfirmDialog from "@/app/components/modals/ConfirmDialog";
+import PedidoConfirmDialog from "@/app/components/modals/PedidoConfirmDialog";
 import { ErrorMessage } from "@hookform/error-message";
 import { MdInfo } from "react-icons/md";
 import {
@@ -148,7 +148,7 @@ const AgregarDestinoCrear: React.FC<AgregarDestinoCrearProps> = ({
   }, [saved]);
 
   useEffect(() => {
-    console.log(direccion);
+    //console.log(direccion);
     if (direccion && saved) {
       setCpActive(true);
       setCustomValue("cp", direccion.cpId);
@@ -197,8 +197,8 @@ const AgregarDestinoCrear: React.FC<AgregarDestinoCrearProps> = ({
   }, [saved]);
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
-    console.log("on submit");
-    console.log(data.colonia);
+    //console.log("on submit");
+    //console.log(data.colonia);
     if (otraColoniaSelected && !data?.otraColonia) {
       setError("otraColonia", {
         type: "custom",
@@ -262,7 +262,7 @@ const AgregarDestinoCrear: React.FC<AgregarDestinoCrearProps> = ({
     axios
       .post(`/api/colonias/${cp}`)
       .then((response) => {
-        console.log("colonias", response.data);
+        //console.log("colonias", response.data);
         const r = response.data;
 
         if (r.status == 1) {
@@ -347,12 +347,12 @@ const AgregarDestinoCrear: React.FC<AgregarDestinoCrearProps> = ({
     if (!saved) {
       if (cpActive) {
         if (!otraColoniaSelected && !getValues().colonia) {
-          console.log("error colonia");
+          //console.log("error colonia");
           setColoniaError(true);
         } else {
-          console.log("next else");
+          //console.log("next else");
           setCustomValue("cp", cpFromSearch);
-          console.log("handle next before submit");
+          //console.log("handle next before submit");
           handleSubmit(onSubmit)();
         }
 
@@ -434,7 +434,7 @@ const AgregarDestinoCrear: React.FC<AgregarDestinoCrearProps> = ({
                         input: () => "text-lg",
                         option: () => "text-lg",
                       }}
-                      theme={(theme) => ({
+                      theme={(theme: any) => ({
                         ...theme,
                         borderRadius: 6,
                         colors: {
@@ -507,7 +507,7 @@ const AgregarDestinoCrear: React.FC<AgregarDestinoCrearProps> = ({
                 input: () => "text-lg",
                 option: () => "text-lg",
               }}
-              theme={(theme) => ({
+              theme={(theme: any) => ({
                 ...theme,
                 borderRadius: 6,
                 colors: {
@@ -689,7 +689,7 @@ const AgregarDestinoCrear: React.FC<AgregarDestinoCrearProps> = ({
 
   return (
     <>
-      <ConfirmDialog
+      <PedidoConfirmDialog
         isOpen={sinCpDialogOpen}
         onClose={handleConfirmSinCp}
         dialogContent={dialogContent}

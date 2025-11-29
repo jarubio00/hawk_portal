@@ -137,7 +137,7 @@ export async function markDireccion(props: any) {
   const result = await axios
     .post(`/api/direcciones/${props.id}/mark`)
     .then(() => {
-      console.log("axios mark");
+      //console.log("axios mark");
       const response: ApiResponse = {
         status: 1,
         statusMessage: "OK",
@@ -162,7 +162,7 @@ export async function updateDireccion(props: any) {
   const result = await axios
     .patch(`/api/direcciones/${props.id}`, props.data)
     .then(() => {
-      console.log("axios update");
+      //console.log("axios update");
       const response: ApiResponse = {
         status: 1,
         statusMessage: "OK",
@@ -359,7 +359,7 @@ export async function autoProgramaNuevo(
       municipioEntregaId: municipioEntregaId,
     })
     .then((response) => {
-      console.log("paso api");
+      //console.log("paso api");
       const responseData: ApiResponse = {
         status: 1,
         statusMessage: "OK",
@@ -383,7 +383,7 @@ export async function autoPrograma(direccionId: number) {
   const result = await axios
     .get(`/api/programa/auto/${direccionId}`)
     .then((response) => {
-      console.log("paso api");
+      //console.log("paso api");
       const responseData: ApiResponse = {
         status: 1,
         statusMessage: "OK",
@@ -407,7 +407,7 @@ export async function autoAppend(data: any) {
   const result = await axios
     .post(`/api/programa/append/now`, data)
     .then((response) => {
-      console.log("paso api");
+      //console.log("paso api");
       const responseData: ApiResponse = {
         status: 1,
         statusMessage: "OK",
@@ -691,7 +691,7 @@ export async function passwordChangeProfile(props: any) {
         };
         return responseData;
       } else {
-        console.log("apiquery error");
+        //console.log("apiquery error");
         const responseData: ApiResponse = {
           status: 2,
           statusMessage: response.data.statusMessage,
@@ -724,7 +724,7 @@ export async function nameChangeProfile(props: any) {
         };
         return responseData;
       } else {
-        console.log("apiquery error");
+        //console.log("apiquery error");
         const responseData: ApiResponse = {
           status: 2,
           statusMessage: response.data.statusMessage,
@@ -778,7 +778,7 @@ export async function nameChangeEmpresa(props: any) {
 }
 
 export async function confirmPhone(props: any) {
-  console.log(props);
+  //console.log(props);
 
   const result = await axios
     .post(`/api/user/phone/confirm`, props)

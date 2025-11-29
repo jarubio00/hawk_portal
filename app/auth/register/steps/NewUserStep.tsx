@@ -130,7 +130,7 @@ const NewUserStep: React.FC<NewUserStepProps> = ({ data }) => {
           type: data.type,
         });
       }
-      console.log(result);
+      //console.log(result);
       if (result && result.status == 1) {
         setIsLoading(false);
         updateActiveStep(1);
@@ -232,7 +232,7 @@ const NewUserStep: React.FC<NewUserStepProps> = ({ data }) => {
           preferredCountries={["mx", "us"]}
           value={`${registration?.newUser?.countryCode}${registration?.newUser?.celular}`}
           onBlur={(e) => {
-            console.log(e.target.value);
+            //console.log(e.target.value);
           }}
           countryCodeEditable={false}
           placeholder="No. de celular / whatsapp"

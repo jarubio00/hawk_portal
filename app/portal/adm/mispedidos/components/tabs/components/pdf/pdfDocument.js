@@ -21,7 +21,7 @@ const logo =
 const handleCallback = async (val) => {};
 
 export const guiaDoc = (p) => {
-  console.log(p);
+  //console.log(p);
 
   return (
     <Document onRender={(blob) => handleCallback("renderizado...")}>

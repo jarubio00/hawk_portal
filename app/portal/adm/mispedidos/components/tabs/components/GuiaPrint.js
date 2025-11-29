@@ -15,7 +15,7 @@ export default function GuiaPrint({ data }) {
   const componentRef = useRef();
 
   function onDocumentLoadSuccess({ numPages }) {
-    console.log("object: pdf");
+    //console.log("object: pdf");
     setIsLoading(false);
   }
 

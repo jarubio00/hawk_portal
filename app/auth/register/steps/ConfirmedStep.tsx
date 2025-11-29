@@ -67,7 +67,7 @@ const ConfirmedStep: React.FC<ConfirmedStepProps> = ({ data }) => {
         ...data,
         redirect: false,
       }).then((callback) => {
-        console.log(callback);
+        //console.log(callback);
         setStatusMessage("Redireccionando al panel...");
         setIsLoading(false);
 

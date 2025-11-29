@@ -1,18 +1,14 @@
-'use client';
+"use client";
 
 import axios from "axios";
-import { signIn } from 'next-auth/react';
+import { signIn } from "next-auth/react";
 
 import { AiFillGithub } from "react-icons/ai";
 //import { signIn } from "next-auth/react";
 import { FcGoogle } from "react-icons/fc";
 import { useCallback, useState } from "react";
 import { toast } from "react-hot-toast";
-import { 
-  FieldValues, 
-  SubmitHandler,
-  useForm
-} from "react-hook-form";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 
 import useLoginModal from "@/app/hooks/useLoginModal";
 import useRegisterModal from "@/app/hooks/useRegisterModal";
@@ -23,26 +19,24 @@ import Input from "../inputs/Input";
 import Heading from "../Heading";
 import Button from "../Button";
 
-const RegisterModal= () => {
+const RegisterModal = () => {
   const router = useRouter();
   const registerModal = useRegisterModal();
   const loginModal = useLoginModal();
   const [isLoading, setIsLoading] = useState(false);
 
-  const { 
-    register, 
+  const {
+    register,
     handleSubmit,
     setValue,
-      watch,
-    formState: {
-      errors,
-    },
+    watch,
+    formState: { errors },
   } = useForm<FieldValues>({
     defaultValues: {
-      nombre: '',
-      email: '',
-      password: '',
-      celular: ''
+      nombre: "",
+      email: "",
+      password: "",
+      celular: "",
     },
   });
 
@@ -50,58 +44,57 @@ const RegisterModal= () => {
     setValue(id, value, {
       shouldDirty: true,
       shouldTouch: true,
-      shouldValidate: true
-    })
-  }
+      shouldValidate: true,
+    });
+  };
 
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
     setIsLoading(true);
 
-    axios.post('/api/register', data)
-    .then(() => {
-      toast.success('Registered!');
-      registerModal.onClose();
-      loginAfter(data);
-    })
-    .catch((error) => {
+    axios
+      .post("/api/register", data)
+      .then(() => {
+        toast.success("Registered!");
+        registerModal.onClose();
+        loginAfter(data);
+      })
+      .catch((error) => {
         //console.log('error',error);
-      toast.error(error.message);
-    })
-    .finally(() => {
-      setIsLoading(false);
-    })
-  }
+        toast.error(error.message);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  };
 
-  const loginAfter = 
-  (data: any) => {
+  const loginAfter = (data: any) => {
     setIsLoading(true);
 
-    signIn('credentials', { 
-      ...data, 
+    signIn("credentials", {
+      ...data,
       redirect: false,
-    })
-    .then((callback) => {
-      console.log(callback);
+    }).then((callback) => {
+      //console.log(callback);
       setIsLoading(false);
 
       if (callback?.ok) {
-        toast.success('Logged in');
+        toast.success("Logged in");
         router.refresh();
-        router.push('/portal/adm/mispedidos')
+        router.push("/portal/adm/mispedidos");
         loginModal.onClose();
       }
-      
+
       if (callback?.error) {
-        console.log('error', callback.error);
+        console.log("error", callback.error);
         toast.error(callback.error);
       }
     });
-  }
+  };
 
   const onToggle = useCallback(() => {
     registerModal.onClose();
     loginModal.onOpen();
-  }, [registerModal, loginModal])
+  }, [registerModal, loginModal]);
 
   const bodyContent = (
     <div className="flex flex-col gap-4">
@@ -117,7 +110,7 @@ const RegisterModal= () => {
         errors={errors}
         required
         onChange={(event: any) => {
-          setCustomValue('email', event.target.value);
+          setCustomValue("email", event.target.value);
         }}
       />
       <Input
@@ -128,7 +121,7 @@ const RegisterModal= () => {
         errors={errors}
         required
         onChange={(event: any) => {
-          setCustomValue('nombre', event.target.value);
+          setCustomValue("nombre", event.target.value);
         }}
       />
       <Input
@@ -140,29 +133,29 @@ const RegisterModal= () => {
         errors={errors}
         required
         onChange={(event: any) => {
-          setCustomValue('password', event.target.value);
+          setCustomValue("password", event.target.value);
         }}
       />
-       <Input
+      <Input
         id="celular"
         label="Celular"
-        type='number'
+        type="number"
         disabled={isLoading}
-        register={register}  
+        register={register}
         errors={errors}
         required
         onChange={(event: any) => {
-          setCustomValue('celular', event.target.value);
+          setCustomValue("celular", event.target.value);
         }}
       />
     </div>
-  )
+  );
 
   const footerContent = (
     <div className="flex flex-col gap-4 mt-3">
       <hr />
 
-      <div 
+      <div
         className="
           text-neutral-500 
           text-center 
@@ -170,19 +163,23 @@ const RegisterModal= () => {
           font-light
         "
       >
-        <p>Ya tienes cuenta?
-          <span 
-            onClick={onToggle} 
+        <p>
+          Ya tienes cuenta?
+          <span
+            onClick={onToggle}
             className="
               text-neutral-800
               cursor-pointer 
               hover:underline
             "
-            > Entrar</span>
+          >
+            {" "}
+            Entrar
+          </span>
         </p>
       </div>
     </div>
-  )
+  );
 
   return (
     <Modal
@@ -196,6 +193,6 @@ const RegisterModal= () => {
       footer={footerContent}
     />
   );
-}
+};
 
 export default RegisterModal;
