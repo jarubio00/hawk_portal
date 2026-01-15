@@ -19,10 +19,10 @@ const CrearNextButton: React.FC<CrearNextButtonProps> = ({
       //className={`w-full mx-4 p-2 rounded-md bg-gradient-to-r from-orange-400 via-rose-500 to-orange-900`}
       className={`w-full p-3 rounded-sm  shadow-lg  ${
         disabled
-          ? "bg-gray-400 bg-gradient-to-r from-gray-300 via-gray-300 to-gray-300 shadow-none"
+          ? "bg-gray-400 bg-gradient-to-r from-gray-300 via-gray-300 to-gray-300 shadow-none cursor-not-allowed"
           : "bg-gradient-to-r from-pink-600 via-rose-500 to-orange-900"
       }`}
-      onClick={onClick}
+      onClick={disabled ? undefined : onClick}
     >
       <div className="flex flex-row gap-2 items-center justify-center">
         <div
