@@ -19,7 +19,11 @@ export async function POST(req: Request) {
     const sd: ServerDate = await getServerDate();
     const hoyString = `${sd.year}-${pad2(sd.month)}-${pad2(sd.day)}`;
     const datePrisma = new Date(sd.year, sd.month - 1, sd.day);
-    const recLimit = 9 * 60 + 30;
+    // 9:30 am
+    //const recLimit = 9 * 60 + 30;
+    //
+    //10:00 am
+    const recLimit = 10 * 60 + 0;
 
     // Fechas bloqueadas desde BD (a partir de hoy)
     const blockedData: any[] = await prisma.$queryRaw`
@@ -28,12 +32,12 @@ export async function POST(req: Request) {
       WHERE fecha >= ${hoyString} AND (servicio = "REC" OR servicio = "TODO")
     `;
 
-    // Si es después de 09:30, bloquear el mismo día (regla existente)
+    // Si es después del limite de hora, bloquear el mismo día (regla existente)
     if (sd.totalMinutes > recLimit) {
       blockedData.push(createBlockedObject(hoyString, "regla_horaria"));
     }
 
-    // 🔒 Regla municipio 10: permitir SOLO sábados futuros (no hoy)
+    // Regla municipio 10: permitir SOLO sábados futuros (no hoy)
     if (municipioRecId === 10) {
       const extraBlocks = saturdayOnlyBlocks(datePrisma, 30); // hoy + 30 = 31 días visibles
       blockedData.push(...extraBlocks);
@@ -43,12 +47,11 @@ export async function POST(req: Request) {
   } catch (error: any) {
     return new Response(
       JSON.stringify(JSON.stringify({ error: error.message })),
-      { status: 403 }
+      { status: 403 },
     );
   }
 }
 
-/** Crea un registro de bloqueo coherente con tu shape actual */
 function createBlockedObject(fechaString: string, tipo: string = "normal") {
   return {
     id: Number(`${Date.now()}${Math.floor(Math.random() * 1000)}`), // id sintético
