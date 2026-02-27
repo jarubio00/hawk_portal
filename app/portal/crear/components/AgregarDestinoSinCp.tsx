@@ -16,7 +16,7 @@ import axios from "axios";
 import BuscarCodigoDialog from "@/app/components/modals/BuscarCodigoDialog";
 import toast from "react-hot-toast";
 import { SafeUser, ApiResponse } from "@/app/types";
-import { addDireccion, addDestino } from "@/app/actions/apiQuerys";
+import { addDireccion, addDestino, getColoniasSinCobertura } from "@/app/actions/apiQuerys";
 import { Switch } from "@headlessui/react";
 import { PedidoContext } from "@/app/portal/crear/context/PedidoContext";
 import { IoMdClose } from "react-icons/io";
@@ -69,6 +69,51 @@ const AgregarDestinoSinCp: React.FC<AgregarDestinoSinCpProps> = ({
   const [axiosString, setAxiosString] = useState("");
   const [sinCpDialogOpen, setSinCpDialogOpen] = useState(false);
   const [dialogContent, setDialogContent] = useState({});
+  const [customColonias, setCustomColonias] = useState<any[]>([]);
+  const [customColoniaError, setCustomColoniaError] = useState(false);
+
+  const normalizeText = (text: string): string => {
+    return text
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .trim();
+  };
+
+  const matchesCustomColonia = (input: string, coloniasList: any[]): boolean => {
+    const normalizedInput = normalizeText(input);
+    if (normalizedInput.length < 3) return false;
+
+    for (const col of coloniasList) {
+      const normalizedCol = normalizeText(col.label);
+
+      if (normalizedInput === normalizedCol) return true;
+
+      const stopWords = ["de", "del", "la", "las", "los", "el", "en"];
+      const colWords = normalizedCol
+        .split(/\s+/)
+        .filter((w: string) => !stopWords.includes(w));
+      const inputWords = normalizedInput
+        .split(/\s+/)
+        .filter((w: string) => !stopWords.includes(w));
+
+      const colMatchCount = colWords.filter((w: string) =>
+        inputWords.some((iw: string) => iw.includes(w) || w.includes(iw))
+      ).length;
+      const inputMatchCount = inputWords.filter((iw: string) =>
+        colWords.some((w: string) => iw.includes(w) || w.includes(iw))
+      ).length;
+
+      const colRatio =
+        colWords.length > 0 ? colMatchCount / colWords.length : 0;
+      const inputRatio =
+        inputWords.length > 0 ? inputMatchCount / inputWords.length : 0;
+
+      if (colRatio >= 0.6 && inputRatio >= 0.6) return true;
+    }
+
+    return false;
+  };
 
   const {
     updateActiveStep,
@@ -178,10 +223,7 @@ const AgregarDestinoSinCp: React.FC<AgregarDestinoSinCpProps> = ({
   };
 
   const handleNext = () => {
-    //updateActiveStep(4);
-
-    ("next");
-    errors;
+    if (customColoniaError) return;
     handleSubmit(onSubmit)();
   };
 
@@ -244,19 +286,6 @@ const AgregarDestinoSinCp: React.FC<AgregarDestinoSinCpProps> = ({
                   }}
                 />
               </div>
-              <div className="block col-span-2">
-                <Input
-                  id="colonia"
-                  label="Colonia"
-                  disabled={isLoading || saved}
-                  required
-                  register={register}
-                  errors={errors}
-                  onChange={(event: any) => {
-                    setCustomValue("colonia", event.target.value);
-                  }}
-                />
-              </div>
               <div className="col-span-2 md:col-span-2">
                 <Select
                   placeholder="Municipio"
@@ -291,10 +320,39 @@ const AgregarDestinoSinCp: React.FC<AgregarDestinoSinCpProps> = ({
                       primary25: "#ffe4e6",
                     },
                   })}
-                  onChange={(val: any) => {
+                  onChange={async (val: any) => {
                     setCustomValue("municipio", val);
+                    setCustomValue("colonia", "");
+                    setCustomColoniaError(false);
+                    if (val) {
+                      const res = await getColoniasSinCobertura(val.value);
+                      setCustomColonias(res.response?.data?.colonias || []);
+                    } else {
+                      setCustomColonias([]);
+                    }
                   }}
                 />
+              </div>
+              <div className="block col-span-2">
+                <Input
+                  id="colonia"
+                  label="Colonia"
+                  disabled={isLoading || saved || !municipio}
+                  required
+                  register={register}
+                  errors={errors}
+                  onChange={(event: any) => {
+                    setCustomValue("colonia", event.target.value);
+                    setCustomColoniaError(
+                      matchesCustomColonia(event.target.value, customColonias)
+                    );
+                  }}
+                />
+                <p className="text-[11px] md:text-xs text-red-500 mt-1">
+                  {customColoniaError
+                    ? "Esta colonia no tiene cobertura. Verifica o selecciona otra colonia."
+                    : ""}
+                </p>
               </div>
               <div className="col-span-2">
                 <Input
