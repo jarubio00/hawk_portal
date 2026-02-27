@@ -873,3 +873,26 @@ export async function getAvisoActivo() {
 
   return response.data;
 }
+
+export async function getColoniasSinCobertura(municipioId: number) {
+  const result = await axios
+    .post(`/api/colonias/sin_cobertura/${municipioId}`)
+    .then((res) => {
+      const response: ApiResponse = {
+        status: 1,
+        statusMessage: "OK",
+        response: { data: res.data },
+      };
+      return response;
+    })
+    .catch((error) => {
+      const response: ApiResponse = {
+        status: 2,
+        statusMessage: "Error de API",
+        response: { data: {}, error: error },
+      };
+      return response;
+    });
+
+  return result;
+}

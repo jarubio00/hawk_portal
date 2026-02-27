@@ -44,6 +44,7 @@ export async function POST(request: Request, { params }: { params: IParams }) {
     cpId: col.cpId,
     municipioId: col.municipio_id,
     tipo: col.tipo,
+    custom: col.custom,
   }));
 
   formattedColonias?.push({

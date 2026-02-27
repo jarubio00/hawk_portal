@@ -98,6 +98,60 @@ const AgregarDestinoCrear: React.FC<AgregarDestinoCrearProps> = ({
   const [dialogContent, setDialogContent] = useState({});
   const [coloniaTooltip, setColoniaTooltip] = useState(false);
   const [coloniaError, setColoniaError] = useState(false);
+  const [customColoniaError, setCustomColoniaError] = useState(false);
+
+  const normalizeText = (text: string): string => {
+    return text
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .trim();
+  };
+
+  const matchesCustomColonia = (input: string): boolean => {
+    const normalizedInput = normalizeText(input);
+    if (normalizedInput.length < 3) return false;
+
+    const customColonias = colonias.filter((col: any) => col.custom === true);
+
+    for (const col of customColonias) {
+      const normalizedCol = normalizeText((col as any).label);
+
+      // Coincidencia exacta normalizada
+      if (normalizedInput === normalizedCol) return true;
+
+      // Similitud por palabras: 60%+ de palabras de la colonia deben coincidir
+      // Y al menos 60% de las palabras del input deben coincidir también
+      // Esto evita que una sola palabra como "apodaca" matchee "mirador de apodaca"
+      const stopWords = ["de", "del", "la", "las", "los", "el", "en"];
+      const colWords = normalizedCol
+        .split(/\s+/)
+        .filter((w: string) => !stopWords.includes(w));
+      const inputWords = normalizedInput
+        .split(/\s+/)
+        .filter((w: string) => !stopWords.includes(w));
+
+      const colMatchCount = colWords.filter((w: string) =>
+        inputWords.some(
+          (iw: string) => iw.includes(w) || w.includes(iw)
+        )
+      ).length;
+      const inputMatchCount = inputWords.filter((iw: string) =>
+        colWords.some(
+          (w: string) => iw.includes(w) || w.includes(iw)
+        )
+      ).length;
+
+      const colRatio =
+        colWords.length > 0 ? colMatchCount / colWords.length : 0;
+      const inputRatio =
+        inputWords.length > 0 ? inputMatchCount / inputWords.length : 0;
+
+      if (colRatio >= 0.6 && inputRatio >= 0.6) return true;
+    }
+
+    return false;
+  };
 
   const {
     updateActiveStep,
@@ -266,6 +320,17 @@ const AgregarDestinoCrear: React.FC<AgregarDestinoCrearProps> = ({
         const r = response.data;
 
         if (r.status == 1) {
+          if (response.data.codigo.coberturaId === 100) {
+            setColoniasLoading(false);
+            setCpActive(false);
+            setCpError({
+              error: true,
+              errorMessage: "Código postal sin cobertura",
+            });
+            loader.onClose();
+            return;
+          }
+
           setCpActive(true);
           setColoniasLoading(false);
           setColonias(response.data.colonias);
@@ -347,12 +412,12 @@ const AgregarDestinoCrear: React.FC<AgregarDestinoCrearProps> = ({
     if (!saved) {
       if (cpActive) {
         if (!otraColoniaSelected && !getValues().colonia) {
-          //console.log("error colonia");
           setColoniaError(true);
+        } else if (otraColoniaSelected && customColoniaError) {
+          // Bloquear si la colonia escrita coincide con una sin cobertura
+          return;
         } else {
-          //console.log("next else");
           setCustomValue("cp", cpFromSearch);
-          //console.log("handle next before submit");
           handleSubmit(onSubmit)();
         }
 
@@ -429,6 +494,17 @@ const AgregarDestinoCrear: React.FC<AgregarDestinoCrearProps> = ({
                       options={colonias}
                       isLoading={coloniasLoading}
                       isDisabled={!cpActive || saved}
+                      isOptionDisabled={(option: any) => option.custom === true}
+                      formatOptionLabel={(option: any) => (
+                        <div className="flex items-center justify-between">
+                          <span>{option.label}</span>
+                          {option.custom && (
+                            <span className="text-[10px] text-red-500 font-semibold ml-2">
+                              Sin cobertura
+                            </span>
+                          )}
+                        </div>
+                      )}
                       classNames={{
                         control: () => "p-2 border-2",
                         input: () => "text-lg",
@@ -475,11 +551,15 @@ const AgregarDestinoCrear: React.FC<AgregarDestinoCrearProps> = ({
               register={register}
               errors={errors}
               onChange={(event: any) => {
-                //console.log(event.target.value);
-                //setCustomValue("colonia", event.target.value);
                 setCustomValue("otraColonia", event.target.value);
+                setCustomColoniaError(matchesCustomColonia(event.target.value));
               }}
             />
+            <p className="text-[11px] md:text-xs text-red-500 mt-1">
+              {customColoniaError
+                ? "Esta colonia no tiene cobertura. Verifica o selecciona otra colonia."
+                : ""}
+            </p>
           </div>
 
           <div className="col-span-2 md:col-span-1">
