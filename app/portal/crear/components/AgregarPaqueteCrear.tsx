@@ -61,10 +61,16 @@ const AgregarPaqueteCrear: React.FC<AgregarPaqueteCrearProps> = ({
   paquete,
 }) => {
   const { updateActiveStep, savePaquete, saveCobro, pedido } = useContext(
-    PedidoContext
+    PedidoContext,
   ) as PedidoContextType;
 
-  const { serviceEnabled, openModal, loadChecklist, isLoading: isLoadingCobros, isModalOpen } = useCodTutorialStore();
+  const {
+    serviceEnabled,
+    openModal,
+    loadChecklist,
+    isLoading: isLoadingCobros,
+    isModalOpen,
+  } = useCodTutorialStore();
 
   const loader = useLoader();
   const router = useRouter();
@@ -95,7 +101,7 @@ const AgregarPaqueteCrear: React.FC<AgregarPaqueteCrearProps> = ({
   const [cobrosDialogOpen, setCobrosDialogOpen] = useState(false);
   const [terminosDialogOpen, setTerminosDialogOpen] = useState(false);
   const [saveEnabled, setSaveEnabled] = useState(
-    pedido?.paquete?.save ? pedido?.paquete?.save : false
+    pedido?.paquete?.save ? pedido?.paquete?.save : false,
   );
   const [quitarConfirm, setQuitarConfirm] = useState(false);
   const [resetCobro, setResetCobro] = useState(false);
@@ -258,6 +264,7 @@ const AgregarPaqueteCrear: React.FC<AgregarPaqueteCrearProps> = ({
         editCobro={editCobro}
         onOpenTerminos={() => setTerminosDialogOpen(true)}
         currentAmount={pedido?.cobroCantidad}
+        cobrosMax={currentUser?.cobrosMax || 5000}
       />
       <div className="w-full 2xl:w-3/4 flex flex-col gap-2 mx-0 md:mx-2 py-2">
         <div>
@@ -361,7 +368,7 @@ const AgregarPaqueteCrear: React.FC<AgregarPaqueteCrearProps> = ({
                     onFocus={() => {
                       setFotoPaq(fotoPeso);
                       setNotas(
-                        "El peso en kilogramos. Utiliza decimales para menos de 1 Kg. Ej. medio kilo = .5 kg"
+                        "El peso en kilogramos. Utiliza decimales para menos de 1 Kg. Ej. medio kilo = .5 kg",
                       );
                     }}
                     onBlur={() => {

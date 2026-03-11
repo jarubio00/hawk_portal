@@ -32,6 +32,7 @@ interface CobrosDialogProps {
   editCobro?: boolean;
   onOpenTerminos?: () => void;
   currentAmount?: number;
+  cobrosMax?: number;
 }
 
 const CobrosDialog: React.FC<CobrosDialogProps> = ({
@@ -42,6 +43,7 @@ const CobrosDialog: React.FC<CobrosDialogProps> = ({
   editCobro,
   onOpenTerminos,
   currentAmount,
+  cobrosMax = 5000,
 }) => {
   const {
     register,
@@ -202,12 +204,17 @@ const CobrosDialog: React.FC<CobrosDialogProps> = ({
             <div className="space-y-6">
               {/* Input de monto */}
               <div className="flex flex-col gap-1">
-                <Label
-                  htmlFor="montoCobro"
-                  className="text-sm sm:text-base font-semibold block"
-                >
-                  Monto a cobrar
-                </Label>
+                <div className="flex items-center gap-2">
+                  <Label
+                    htmlFor="montoCobro"
+                    className="text-sm sm:text-base font-semibold block"
+                  >
+                    Monto a cobrar
+                  </Label>
+                  <span className="text-[11px] sm:text-xs text-blue-500">
+                    Tu límite es de ${currencyFormat(cobrosMax)}
+                  </span>
+                </div>
                 <div className="relative ">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-base sm:text-lg font-medium pointer-events-none ">
                     $
@@ -227,8 +234,8 @@ const CobrosDialog: React.FC<CobrosDialogProps> = ({
                         if (isNaN(num) || num <= 0) {
                           return "Ingrese un monto válido";
                         }
-                        if (num > 5000) {
-                          return "El monto máximo es de $5,000";
+                        if (num > cobrosMax) {
+                          return `El monto máximo es de $${currencyFormat(cobrosMax)}`;
                         }
                         return true;
                       },

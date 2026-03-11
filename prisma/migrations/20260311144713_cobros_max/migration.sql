@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE `Clientes` ADD COLUMN `cobrosMax` INTEGER NULL DEFAULT 5000,
+    MODIFY `cobrosPermitidos` BOOLEAN NOT NULL DEFAULT true;
