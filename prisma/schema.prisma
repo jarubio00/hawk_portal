@@ -32,7 +32,8 @@ model User {
   empresa                 String?
   kommoContactId          Int?
   whatsappEnabled         Boolean?                      @default(false)
-  cobrosPermitidos        Boolean                       @default(false)
+  cobrosPermitidos        Boolean                       @default(true)
+  cobrosMax               Int?                          @default(5000)
   deleted                 Boolean                       @default(false)
   deletedAt               DateTime?
   deletedBy               Int?
