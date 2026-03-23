@@ -23,6 +23,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { AlertCircle } from "lucide-react";
+import { TiWarning } from "react-icons/ti";
 
 interface CobrosDialogProps {
   isOpen?: boolean;
@@ -256,6 +257,15 @@ const CobrosDialog: React.FC<CobrosDialogProps> = ({
                     </span>
                   </p>
                 )}
+              </div>
+
+              <div className="my-2 flex flex-row gap-2 items-center">
+                <TiWarning className="w-10 h-10 text-amber-600" />
+
+                <p className="text-xs text-red-500 ">
+                  Te recordamos que no es posible cobrar el costo de la guía al
+                  destinatario, dicho monto debe ser cubierto en la recolección.
+                </p>
               </div>
 
               {/* Resumen de comisión */}

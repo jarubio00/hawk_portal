@@ -551,8 +551,14 @@ const AgregarPaqueteCrear: React.FC<AgregarPaqueteCrearProps> = ({
                           height={28}
                           className="rounded-full object-contain sm:w-[42px] sm:h-[32px]"
                         />
-                        <div className="mt-1 font-bold text-black">
-                          Agregar cobro a destinatario
+                        <div className="flex flex-col">
+                          <div className="mt-0 font-bold text-black">
+                            Cobra tu producto al destinatario
+                          </div>
+                          <div className="mt-1 text-xs text-gray-600">
+                            El costo de la guía debe ser cubierto en la
+                            recolección.
+                          </div>
                         </div>
                       </div>
                     )}
