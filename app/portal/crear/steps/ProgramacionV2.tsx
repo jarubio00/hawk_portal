@@ -7,6 +7,8 @@ import { useProgramaStore } from "../store/crear-store";
 import CalendarioEntrega from "./components/programaV2/CalendarioEntrega";
 import CalendarioMismoDia from "./components/programaV2/CalendarioMismoDia";
 import { EntregaSkeleton } from "./components/programaV2/EntregaSkeleton";
+import { formatYMDLocal } from "@/app/utils/dateUtils";
+import { buildMismoDiaPayload } from "@/app/portal/crear/utils/mismoDiaPayload";
 
 interface ProgramacionV2StepProps {
   data?: string;
@@ -17,10 +19,22 @@ const ProgramacionV2Step: React.FC<ProgramacionV2StepProps> = ({ data }) => {
     window.scrollTo(0, 0);
   }, []);
 
+  const { pedido } = useContext(PedidoContext) as PedidoContextType;
   const pv2 = useProgramaStore();
 
   useEffect(() => {
     pv2.getAvisoActivo();
+
+    // Si se regresa a este paso con una fecha ya elegida (p.ej. después de
+    // cambiar el destino) se revalidan las opciones de entrega y mismo día
+    // contra los datos actuales del pedido.
+    if (pv2.recSelectedDate) {
+      pv2.getEntregaDates({
+        fechaString: formatYMDLocal(pv2.recSelectedDate),
+        municipioEntId: pedido?.destino?.municipioId ?? 1,
+        mismoDiaData: buildMismoDiaPayload(pedido),
+      });
+    }
   }, []);
   return (
     <div className="flex flex-col gap-6 mt-8 ">
@@ -43,7 +57,7 @@ const ProgramacionV2Step: React.FC<ProgramacionV2StepProps> = ({ data }) => {
                 <div className="flex flex-col  w-[350px] border rounded-lg items-center justify-center p-3 gap-2 bg-neutral-200">
                   <div className=" text-xs h-11 flex flex-row items-center justify-between w-full">
                     <div>
-                      {pv2.mismoDiaCustomMessage.length > 10 ? (
+                      {pv2.mismoDiaCustomMessage?.trim() ? (
                         <p className="text-start text-neutral-400 italic line-clamp-3">
                           {pv2.mismoDiaCustomMessage}
                         </p>

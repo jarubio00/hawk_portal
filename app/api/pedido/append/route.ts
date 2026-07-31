@@ -10,6 +10,10 @@ import PedidoProvider, {
 import { format, subHours } from "date-fns";
 import { generateLabels } from "@/app/actions/utils";
 import { userActivityRegister } from "@/app/api/utils/activity";
+import {
+  getMismoDiaPrecio,
+  validarMismoDia,
+} from "@/app/api/utils/mismoDiaUtils";
 
 export async function POST(request: Request) {
   const currentUser = await getCurrentUser();
@@ -34,6 +38,34 @@ export async function POST(request: Request) {
   let paqueteSaveId = 0;
 
   if (p) {
+    // Misma revalidación de catálogo que en la creación normal
+    if (p?.programa?.mismoDia) {
+      const mismoDia = await validarMismoDia({
+        recoleccion: {
+          cpId: p.recoleccion?.cpId,
+          colonia: p.recoleccion?.colonia,
+          otraColonia: p.recoleccion?.otraColonia,
+        },
+        entrega: {
+          cpId: p.destino?.cpId,
+          colonia: p.destino?.colonia,
+          otraColonia: p.destino?.otraColonia,
+        },
+      });
+
+      if (!mismoDia.enabled) {
+        return NextResponse.json(
+          { error: mismoDia.customMessage },
+          { status: 400 }
+        );
+      }
+    }
+
+    // Parte del total que corresponde al mismo día (ver /api/pedido/v2)
+    const mismoDiaPrecioVenta = p?.programa?.mismoDia
+      ? p?.cotizacion?.mismoDiaPrecio ?? (await getMismoDiaPrecio()).precio
+      : 0;
+
     const pedidoCrear = {
       clienteId: currentUser.id,
       recoleccionId: r,
@@ -63,7 +95,7 @@ export async function POST(request: Request) {
       comprobanteUrl: p.metodoPago?.comprobanteUrl,
       cobroDestino: p.cobro,
       mismoDia: p.programa.mismoDia,
-      mismoDiaPrecioVenta: 42,
+      mismoDiaPrecioVenta,
       operaciones: {
         create: {
           punteoRecoleccion: false,

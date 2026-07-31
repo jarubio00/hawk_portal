@@ -3,6 +3,15 @@ export function parseYMDLocal(ymd: string): Date {
   return new Date(y, m - 1, d); // mes - 1 porque Date usa meses base 0
 }
 
+/** "YYYY-MM-DD" tomando las partes LOCALES de la fecha (no UTC) */
+export function formatYMDLocal(date: Date | undefined): string {
+  if (!date) return "";
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
+    date.getDate()
+  )}`;
+}
+
 export function formatLongEs(date: Date, locale = "es-MX") {
   const parts = new Intl.DateTimeFormat(locale, {
     weekday: "long",

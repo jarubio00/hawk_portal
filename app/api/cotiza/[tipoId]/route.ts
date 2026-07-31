@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import prisma from "@/app/libs/prismadb";
 import getCurrentUser from "@/app/actions/getCurrentUser";
+import { getMismoDiaCotizaItem } from "@/app/api/utils/mismoDiaUtils";
 
 export async function POST(request: Request) {
   const currentUser = await getCurrentUser();
@@ -50,13 +51,13 @@ export async function POST(request: Request) {
   result.push(cotiza[0]);
 
   if (mismoDia) {
-    const cotizaMd = await prisma.catalogoProductos.findMany({
-      where: {
-        id: 18,
-      },
-    });
+    // Cobra promo_md cuando está vigente y es más barato que servicio_md,
+    // conservando la descripción de servicio_md en el renglón
+    const itemMd = await getMismoDiaCotizaItem();
 
-    result.push(cotizaMd[0]);
+    if (itemMd) {
+      result.push(itemMd);
+    }
   }
 
   //console.log(cotiza);

@@ -3,6 +3,10 @@ import { NextResponse } from "next/server";
 import prisma from "@/app/libs/prismadb";
 import getCurrentUser from "@/app/actions/getCurrentUser";
 import { userActivityRegister } from "@/app/api/utils/activity";
+import {
+  getMismoDiaPrecio,
+  validarMismoDia,
+} from "@/app/api/utils/mismoDiaUtils";
 
 /**
  * Convierte "YYYY-MM-DD HH:mm:ss" (sin tz) a Date usando Date.UTC,
@@ -52,6 +56,38 @@ export async function POST(request: Request) {
       );
     }
 
+    // El flag de mismo día viene del cliente y pudo quedar desactualizado
+    // (p.ej. si se cambió el destino después de programar): se revalida aquí.
+    if (p?.programa?.mismoDia) {
+      const mismoDia = await validarMismoDia({
+        recoleccion: {
+          cpId: p.recoleccion?.cpId,
+          colonia: p.recoleccion?.colonia,
+          otraColonia: p.recoleccion?.otraColonia,
+        },
+        entrega: {
+          cpId: p.destino?.cpId,
+          colonia: p.destino?.colonia,
+          otraColonia: p.destino?.otraColonia,
+        },
+      });
+
+      if (!mismoDia.enabled) {
+        return NextResponse.json(
+          { error: mismoDia.customMessage },
+          { status: 400 }
+        );
+      }
+    }
+
+    // Parte del total que corresponde al mismo día. Se toma de la cotización
+    // que generó ese total (no se relee el catálogo) para que las partes
+    // cuadren con lo cobrado aunque la promoción cambie a media captura.
+    // 0 cuando el envío no es de mismo día.
+    const mismoDiaPrecioVenta = p?.programa?.mismoDia
+      ? p?.cotizacion?.mismoDiaPrecio ?? (await getMismoDiaPrecio()).precio
+      : 0;
+
     // Convertimos los strings a Date (UTC) con helper
     const fechaEntregaUtc = naiveStrToUTCDate(p.programa.fechaEntString); // "YYYY-MM-DD HH:mm:ss"
     const fechaRecoUtc = naiveStrToUTCDate(p.programa.fechaRecString);
@@ -92,7 +128,7 @@ export async function POST(request: Request) {
       cobroDestinoCantidad: p.cobroCantidad ? parseFloat(p.cobroCantidad) : 0,
 
       mismoDia: p.programa?.mismoDia,
-      mismoDiaPrecioVenta: 42, // ajusta si lo tienes dinámico
+      mismoDiaPrecioVenta,
 
       operaciones: {
         create: { punteoRecoleccion: false },
