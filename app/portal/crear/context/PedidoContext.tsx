@@ -241,6 +241,7 @@ const PedidoProvider: React.FC<Props> = ({ children }) => {
         descripcion: cotiza.descripcion,
         precio: cotiza.precio,
         cantidad: cotiza.cantidad,
+        mismoDiaPrecio: cotiza.mismoDiaPrecio,
       },
     });
   };

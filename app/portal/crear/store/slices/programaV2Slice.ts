@@ -5,6 +5,8 @@ import {
 } from "@/app/actions/apiQuerys";
 import { DateV2, ServerDate } from "@/app/types";
 import { formatLongEs, parseYMDLocal } from "@/app/utils/dateUtils";
+import { MismoDiaPayload } from "@/app/portal/crear/utils/mismoDiaPayload";
+import { MD_PRECIO_FALLBACK } from "@/app/portal/crear/utils/mismoDiaPromo";
 import { StateCreator } from "zustand";
 
 export interface ProgramaV2Slice {
@@ -35,6 +37,9 @@ export interface ProgramaV2Slice {
   updateMismoDiaSelected: (val: boolean) => void;
   mismoDiaEnabled: boolean;
   mismoDiaCustomMessage: string;
+  mismoDiaPrecio: number;
+  mismoDiaPrecioRegular: number;
+  mismoDiaPromoEtiqueta: string;
   entregaLoading: boolean;
   updateEntregaLoading: (val: boolean) => void;
 
@@ -46,9 +51,11 @@ export interface ProgramaV2Slice {
   getEntregaDates: ({
     fechaString,
     municipioEntId,
+    mismoDiaData,
   }: {
     fechaString: string;
     municipioEntId: number;
+    mismoDiaData?: MismoDiaPayload;
   }) => void;
 
   //Timeout
@@ -70,6 +77,9 @@ const initialState = {
   mismoDiaSelected: false,
   mismoDiaEnabled: false,
   mismoDiaCustomMessage: "",
+  mismoDiaPrecio: MD_PRECIO_FALLBACK,
+  mismoDiaPrecioRegular: MD_PRECIO_FALLBACK,
+  mismoDiaPromoEtiqueta: "",
   recBlockedDates: [] as Date[],
   entBlockedDates: [] as Date[],
   entregaLoading: false,
@@ -139,15 +149,33 @@ export const createProgramaV2Slice: StateCreator<ProgramaV2Slice> = (
   getEntregaDates: async ({
     fechaString,
     municipioEntId,
+    mismoDiaData,
   }: {
     fechaString: string;
     municipioEntId: number;
+    mismoDiaData?: MismoDiaPayload;
   }) => {
     set({ entregaLoading: true });
 
-    const result = await getEntDatesV2({ fechaString, municipioEntId });
+    const result = await getEntDatesV2({
+      fechaString,
+      municipioEntId,
+      mismoDiaData,
+    });
     set({ mismoDiaEnabled: result.mismoDia.enabled });
     set({ mismoDiaCustomMessage: result.mismoDia.customMessage });
+    set({
+      mismoDiaPrecio: result.mismoDia.precio ?? MD_PRECIO_FALLBACK,
+      mismoDiaPrecioRegular:
+        result.mismoDia.precioRegular ?? MD_PRECIO_FALLBACK,
+      mismoDiaPromoEtiqueta: result.mismoDia.promoEtiqueta ?? "",
+    });
+
+    // Si el mismo día dejó de estar disponible no puede quedar seleccionado
+    if (!result.mismoDia.enabled) {
+      set({ mismoDiaSelected: false });
+    }
+
     set({
       entBlockedDates: result.blockedData.map((d: any) =>
         parseYMDLocal(d.fechaString)

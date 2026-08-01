@@ -20,6 +20,8 @@ import { FaCheck, FaCheckSquare } from "react-icons/fa";
 import OptionContainer from "./OptionContainer";
 import { PedidoContext } from "@/app/portal/crear/context/PedidoContext";
 import { PedidoContextType } from "@/app/types/pedido";
+import { formatYMDLocal } from "@/app/utils/dateUtils";
+import { buildMismoDiaPayload } from "@/app/portal/crear/utils/mismoDiaPayload";
 
 interface CalendarioRecoleccionProps {
   data?: string;
@@ -42,13 +44,6 @@ const CalendarioRecoleccion: React.FC<CalendarioRecoleccionProps> = ({
     pv2.updateRecCalOpen(!pv2.recCalOpen);
   };
 
-  function formatYMD(d: Date | undefined): string {
-    if (!d) return "";
-    return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
-  }
-  function pad2(n: number) {
-    return String(n).padStart(2, "0");
-  }
   return (
     <div className="flex flex-col gap-4">
       <OptionContainer selected={Boolean(pv2.recSelectedDate)}>
@@ -98,8 +93,9 @@ const CalendarioRecoleccion: React.FC<CalendarioRecoleccionProps> = ({
                     onSelect={(d) => {
                       pv2.updateRecSelectedDate(d);
                       pv2.getEntregaDates({
-                        fechaString: formatYMD(d),
+                        fechaString: formatYMDLocal(d),
                         municipioEntId: pedido?.destino?.municipioId ?? 1,
+                        mismoDiaData: buildMismoDiaPayload(pedido),
                       });
                     }}
                     className="rounded-md border shadow-sm w-full bg-transparent"

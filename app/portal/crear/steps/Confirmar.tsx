@@ -75,6 +75,8 @@ const ConfirmarStep: React.FC<ConfirmarStepProps> = ({
           ? c.reduce((acc: any, item: any) => acc + item.precio, 0)
           : c[0].precio,
         cantidad: 1,
+        // el cargo de mismo día es el segundo renglón que devuelve el cotizador
+        mismoDiaPrecio: pv2.mismoDiaSelected ? c[1]?.precio ?? 0 : 0,
       });
       setIsLoading(false);
     } else {

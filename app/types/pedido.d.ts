@@ -138,6 +138,12 @@ export interface ICotizaItem {
   descripcion?: string;
   precio?: number;
   cantidad?: number;
+  /** Parte del total que corresponde al cargo de mismo día (0 si no aplica) */
+  mismoDiaPrecio?: number;
+  /** Leyenda de la promoción aplicada a este renglón, si la hay */
+  promoEtiqueta?: string;
+  /** Precio de lista, para pintarlo tachado cuando hay promoción */
+  precioRegular?: number;
 }
 
 export interface IMetodoPago {

@@ -5,6 +5,11 @@ import getCurrentUser from "@/app/actions/getCurrentUser";
 import { parseYMDLocal } from "@/app/utils/dateUtils";
 import { ServerDate } from "@/app/types";
 import { getServerDate } from "@/app/api/utils/validatorUtils";
+import {
+  getMismoDiaPrecio,
+  MismoDiaData,
+  validarMismoDia,
+} from "@/app/api/utils/mismoDiaUtils";
 
 export async function POST(req: Request) {
   try {
@@ -15,9 +20,10 @@ export async function POST(req: Request) {
 
     const body = await req.json();
 
-    const { fechaString, municipioEntId } = body as {
+    const { fechaString, municipioEntId, mismoDiaData } = body as {
       fechaString: string; // "YYYY-MM-DD" (recolección)
       municipioEntId: number;
+      mismoDiaData?: MismoDiaData; // cp y colonia de recolección y entrega
     };
 
     const sd: ServerDate = await getServerDate();
@@ -68,12 +74,26 @@ export async function POST(req: Request) {
       mismoDiaEnabled = false;
     }
 
+    // Catálogo: cp y colonia de recolección Y entrega deben soportar mismo día.
+    // Los envíos sin cp o con colonia capturada a mano tampoco lo tienen.
+    const mismoDiaCatalogo = await validarMismoDia(mismoDiaData ?? {});
+    if (!mismoDiaCatalogo.enabled) {
+      mismoDiaEnabled = false;
+    }
+
+    // El mensaje del bloqueo por fecha tiene prioridad sobre el del catálogo
+    const mismoDiaCustomMessage =
+      mismoDiaBlocked[0]?.customMessage?.trim() ||
+      (mismoDiaCatalogo.enabled ? "" : mismoDiaCatalogo.customMessage);
+
+    // Mismo catálogo que usa el cotizador, para no duplicar precios en la UI
+    const mismoDiaPrecio = await getMismoDiaPrecio();
+
     const result: any = {
       mismoDia: {
         enabled: mismoDiaEnabled,
-        customMessage: mismoDiaBlocked[0]?.customMessage
-          ? mismoDiaBlocked[0].customMessage
-          : "",
+        customMessage: mismoDiaCustomMessage,
+        ...mismoDiaPrecio,
       },
       blockedData: blockedData,
     };

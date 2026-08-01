@@ -2,6 +2,7 @@ import useLoader from "@/app/hooks/useLoader";
 import { SafeUser, ApiResponse } from "@/app/types";
 import axios from "axios";
 import { ICotizaParams, IPedido, IValidatorParams } from "@/app/types/pedido";
+import { MismoDiaPayload } from "@/app/portal/crear/utils/mismoDiaPayload";
 
 export async function addDireccion(props: any) {
   //console.log("apiquery", props);
@@ -560,7 +561,8 @@ export async function crearPedidoV2(pedido: IPedido) {
     .catch((error) => {
       const response: ApiResponse = {
         status: 2,
-        statusMessage: error.message,
+        // el mensaje del servidor es más útil que "Request failed with status code 400"
+        statusMessage: error?.response?.data?.error || error.message,
         response: { data: {}, error: error },
       };
       return response;
@@ -583,7 +585,7 @@ export async function appendPedido(pedido: IPedido, recoleccion: number) {
     .catch((error) => {
       const response: ApiResponse = {
         status: 2,
-        statusMessage: error.message,
+        statusMessage: error?.response?.data?.error || error.message,
         response: { data: {}, error: error },
       };
       return response;
@@ -850,13 +852,16 @@ export async function getRecDatesV2({
 export async function getEntDatesV2({
   fechaString,
   municipioEntId,
+  mismoDiaData,
 }: {
   fechaString: String;
   municipioEntId: Number;
+  mismoDiaData?: MismoDiaPayload;
 }) {
   const response = await axios.post(`/api/programa/v2/ent`, {
     fechaString,
     municipioEntId,
+    mismoDiaData,
   });
 
   return response.data;

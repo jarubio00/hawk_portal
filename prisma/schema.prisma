@@ -1077,6 +1077,8 @@ model CatalogoCodigosPostales {
   deletedAt            DateTime?
   deletedBy            Int?
   editable             Boolean              @default(true)
+  /// false = sin servicio de entrega el mismo dia en este cp
+  mdSupported          Boolean              @default(true)
   municipio            CatalogoMunicipios   @relation(fields: [municipioId], references: [id], onDelete: Cascade)
   ruta                 CatalalogoRutas      @relation(fields: [rutaId], references: [id])
   cobertura            CatalogoCoberturas   @relation(fields: [coberturaId], references: [id])
@@ -1104,6 +1106,8 @@ model CatalogoColonias {
   deletedAt       DateTime?
   deletedBy       Int?
   editable        Boolean                 @default(true)
+  /// false = sin servicio de entrega el mismo dia en esta colonia
+  mdSupported     Boolean                 @default(true)
   cp              CatalogoCodigosPostales @relation(fields: [cpId], references: [id], onDelete: Cascade)
 
   @@index([cpId], map: "CatalogoColonias_cpId_fkey")
