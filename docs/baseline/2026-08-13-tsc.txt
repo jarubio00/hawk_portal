@@ -1,0 +1,74 @@
+.next/types/app/api/pedidos/counts/route.ts(8,13): error TS2344: Type 'OmitWithTag<typeof import("C:/dev/nextjs/hawk_portal/app/api/pedidos/counts/route"), "GET" | "DELETE" | "HEAD" | "OPTIONS" | "POST" | "PUT" | "PATCH" | "config" | "generateStaticParams" | ... 6 more ... | "maxDuration", "">' does not satisfy the constraint '{ [x: string]: never; }'.
+  Property 'getSession' is incompatible with index signature.
+    Type '() => Promise<Session | null>' is not assignable to type 'never'.
+.next/types/app/api/pedidos/route.ts(8,13): error TS2344: Type 'OmitWithTag<typeof import("C:/dev/nextjs/hawk_portal/app/api/pedidos/route"), "GET" | "DELETE" | "HEAD" | "OPTIONS" | "POST" | "PUT" | "PATCH" | "config" | "generateStaticParams" | "revalidate" | ... 5 more ... | "maxDuration", "">' does not satisfy the constraint '{ [x: string]: never; }'.
+  Property 'getSession' is incompatible with index signature.
+    Type '() => Promise<Session | null>' is not assignable to type 'never'.
+app/api/cod/dashboard/route.ts(178,24): error TS2339: Property 'severity' does not exist on type '{ id: string; createdAt: Date; updatedAt: Date; createdBy: number | null; status: Cod2IssueStatus; cod2ChargeId: string; evidenceUrl: string | null; cod2AttemptId: string | null; ... 5 more ...; resolutionNote: string | null; }'.
+app/api/colonias/[cpId]/route.ts(45,22): error TS2339: Property 'municipio_id' does not exist on type '{ id: number; cpId: number; colonia: string; createdAt: Date; isDeleted: boolean; deletedAt: Date | null; deletedBy: number | null; tipo: string | null; createdBy: number; editable: boolean; mdSupported: boolean; custom: boolean | null; customCreatedAt: Date | null; }'.
+app/api/colonias/[cpId]/route.ts(50,27): error TS2345: Argument of type '{ value: number; label: string; cpId: number; municipioId: any; tipo: string; }' is not assignable to parameter of type '{ value: number; label: string; cpId: number; municipioId: any; tipo: string | null; custom: boolean | null; }'.
+  Property 'custom' is missing in type '{ value: number; label: string; cpId: number; municipioId: any; tipo: string; }' but required in type '{ value: number; label: string; cpId: number; municipioId: any; tipo: string | null; custom: boolean | null; }'.
+app/auth/register/steps/NewUserStep copy.tsx(68,5): error TS2322: Type 'Resolver<{ nombre: string; email: string; celular: string; password: string; confirmPassword: string; }>' is not assignable to type 'Resolver<RegisterFormType, any, RegisterFormType>'.
+  Types of parameters 'options' and 'options' are incompatible.
+    Type 'ResolverOptions<RegisterFormType>' is not assignable to type 'ResolverOptions<{ nombre: string; email: string; celular: string; password: string; confirmPassword: string; }>'.
+      Types of property 'names' are incompatible.
+        Type '(keyof RegisterFormType)[] | undefined' is not assignable to type '("nombre" | "email" | "celular" | "password" | "confirmPassword")[] | undefined'.
+          Type '(keyof RegisterFormType)[]' is not assignable to type '("nombre" | "email" | "celular" | "password" | "confirmPassword")[]'.
+            Type 'keyof RegisterFormType' is not assignable to type '"nombre" | "email" | "celular" | "password" | "confirmPassword"'.
+              Type '"countryCode"' is not assignable to type '"nombre" | "email" | "celular" | "password" | "confirmPassword"'.
+app/auth/register/steps/NewUserStep copy.tsx(222,31): error TS2345: Argument of type 'SubmitHandler<RegisterFormType>' is not assignable to parameter of type 'SubmitHandler<TFieldValues>'.
+  Type 'TFieldValues' is not assignable to type 'RegisterFormType'.
+    Type 'FieldValues' is missing the following properties from type 'RegisterFormType': email, nombre, password, confirmPassword, and 2 more.
+app/auth/register/steps/zbak_ConfirmationStep.tsx(14,22): error TS2305: Module '"@/app/actions/apiQuerys"' has no exported member 'sendOtpWhatsapp'.
+app/components/homePage/SectionCotizar.tsx(18,14): error TS2741: Property 'errors' is missing in type '{ id: string; label: string; disabled: false; required: true; onChange: (event: any) => void; }' but required in type 'InputSingleProps'.
+app/components/portal/AgregarDireccion.tsx(243,23): error TS7006: Parameter 'theme' implicitly has an 'any' type.
+app/components/portal/AgregarDireccion.tsx(294,23): error TS7006: Parameter 'theme' implicitly has an 'any' type.
+app/components/portal/AgregarPaquete.tsx(337,35): error TS7006: Parameter 'theme' implicitly has an 'any' type.
+app/components/portal/BuscarCodigo.tsx(84,13): error TS2322: Type '{ search(requests: any): Promise<{ results: any; }> | Readonly<Promise<MultipleQueriesResponse<unknown>>>; version: string; }' is not assignable to type 'SearchClient'.
+  The types returned by 'search(...)' are incompatible between these types.
+    Type 'Promise<{ results: any; }> | Readonly<Promise<MultipleQueriesResponse<unknown>>>' is not assignable to type 'Readonly<Promise<MultipleQueriesResponse<TObject>>>'.
+      Type 'Readonly<Promise<MultipleQueriesResponse<unknown>>>' is not assignable to type 'Readonly<Promise<MultipleQueriesResponse<TObject>>>'.
+        Types of property 'then' are incompatible.
+          Type '<TResult1 = MultipleQueriesResponse<unknown>, TResult2 = never>(onfulfilled?: ((value: MultipleQueriesResponse<unknown>) => TResult1 | PromiseLike<TResult1>) | null | undefined, onrejected?: ((reason: any) => TResult2 | PromiseLike<...>) | ... 1 more ... | undefined) => Promise<...>' is not assignable to type '<TResult1 = MultipleQueriesResponse<TObject>, TResult2 = never>(onfulfilled?: ((value: MultipleQueriesResponse<TObject>) => TResult1 | PromiseLike<...>) | null | undefined, onrejected?: ((reason: any) => TResult2 | PromiseLike<...>) | ... 1 more ... | undefined) => Promise<...>'.
+            Types of parameters 'onfulfilled' and 'onfulfilled' are incompatible.
+              Types of parameters 'value' and 'value' are incompatible.
+                Type 'MultipleQueriesResponse<unknown>' is not assignable to type 'MultipleQueriesResponse<TObject>'.
+app/components/portal/EditarDireccion.tsx(152,33): error TS7006: Parameter 'theme' implicitly has an 'any' type.
+app/components/portal/EditarDireccion.tsx(180,33): error TS7006: Parameter 'theme' implicitly has an 'any' type.
+app/components/portal/EditarPaquete.tsx(334,35): error TS7006: Parameter 'theme' implicitly has an 'any' type.
+app/components/portal/z_old_AgregarDireccion_alone.tsx(263,33): error TS7006: Parameter 'theme' implicitly has an 'any' type.
+app/components/portal/z_old_AgregarDireccion_alone.tsx(304,33): error TS7006: Parameter 'theme' implicitly has an 'any' type.
+app/portal/adm/miperfil/page.tsx(23,26): error TS2741: Property 'searchParams' is missing in type '{ currentUser: { createdAt: string; updatedAt: string; checklist: { id: number; correoVerificado: boolean; correoVerificadoAt: Date; celularVerificado: boolean; celularVerificadoAt: Date; ... 5 more ...; clienteEmail: string; } | null; ... 33 more ...; mismoDiaEnabled: boolean; }; }' but required in type 'MiPerfilProps'.
+app/portal/cod/client/components/CodClientDashboard.tsx(119,41): error TS2339: Property 'pendingCharges' does not exist on type '{ totalRequested: number; totalCollected: number; totalChargesCount: number; daysRemaining: number; totalHandedIn: number; handedInCount: number; totalInReview: number; inReviewCount: number; totalPending: number; pendingCount: number; }'.
+app/portal/cod/client/components/CodClientDashboard.tsx(136,41): error TS2339: Property 'activeCharges' does not exist on type '{ totalRequested: number; totalCollected: number; totalChargesCount: number; daysRemaining: number; totalHandedIn: number; handedInCount: number; totalInReview: number; inReviewCount: number; totalPending: number; pendingCount: number; }'.
+app/portal/components/welcome/phoneConfirm/PhoneConfirmForm.tsx(12,23): error TS2307: Cannot find module '../../inputs/FormInput' or its corresponding type declarations.
+app/portal/components/welcome/phoneConfirm/PhoneConfirmForm.tsx(13,21): error TS2307: Cannot find module '../../Heading' or its corresponding type declarations.
+app/portal/crear/steps/Confirmar_bakv1.tsx(187,33): error TS2740: Type 'ICotizaItem' is missing the following properties from type 'ICotizaItem[]': length, pop, push, concat, and 31 more.
+app/portal/crear/steps/Programacion_conbloque1.tsx(46,10): error TS2724: '"../store/crear-store"' has no exported member named 'useProgramaAviso'. Did you mean 'useProgramaStore'?
+app/portal/crear/steps/zBak_autoNuevo_Programacion.tsx(144,11): error TS2554: Expected 1 arguments, but got 2.
+components/ui/alert-dialog.tsx(14,3): error TS2339: Property 'className' does not exist on type 'AlertDialogPortalProps'.
+components/ui/alert-dialog.tsx(17,32): error TS2322: Type '{ children?: ReactNode; container?: Element | DocumentFragment | null | undefined; forceMount?: true | undefined; className: string; }' is not assignable to type 'IntrinsicAttributes & AlertDialogPortalProps'.
+  Property 'className' does not exist on type 'IntrinsicAttributes & AlertDialogPortalProps'.
+components/ui/calendar copy.tsx(9,10): error TS2724: '"react-day-picker"' has no exported member named 'DayButton'. Did you mean 'Button'?
+components/ui/calendar copy.tsx(9,32): error TS2305: Module '"react-day-picker"' has no exported member 'getDefaultClassNames'.
+components/ui/calendar copy.tsx(18,3): error TS2322: Type '"label"' is not assignable to type 'CaptionLayout'.
+components/ui/calendar copy.tsx(39,9): error TS2322: Type '{ formatCaption: DateFormatter; formatMonthCaption?: DateFormatter | undefined; formatYearCaption?: DateFormatter | undefined; formatDay?: DateFormatter | undefined; formatWeekNumber?: WeekNumberFormatter | undefined; formatWeekdayName?: DateFormatter | undefined; formatMonthDropdown: (date: any) => any; }' is not assignable to type 'Partial<Formatters>'.
+  Object literal may only specify known properties, and 'formatMonthDropdown' does not exist in type 'Partial<Formatters>'.
+components/ui/calendar copy.tsx(39,31): error TS7006: Parameter 'date' implicitly has an 'any' type.
+components/ui/calendar copy.tsx(59,9): error TS2322: Type '{ root: string; multiple_months?: string | undefined; with_weeknumber?: string | undefined; vhidden?: string | undefined; button_reset?: string | undefined; button?: string | undefined; ... 51 more ...; hidden: string; }' is not assignable to type 'Partial<StyledElement<string>>'.
+  Object literal may only specify known properties, but 'button_previous' does not exist in type 'Partial<StyledElement<string>>'. Did you mean to write 'nav_button_previous'?
+components/ui/calendar copy.tsx(87,11): error TS2367: This comparison appears to be unintentional because the types 'CaptionLayout' and '"label"' have no overlap.
+components/ui/calendar copy.tsx(133,9): error TS2322: Type '{ Caption?: ((props: CaptionProps) => Element | null) | undefined; CaptionLabel?: ((props: CaptionLabelProps) => Element | null) | undefined; ... 14 more ...; DayButton: ({ className, day, modifiers, ...props }: any) => Element; }' is not assignable to type 'CustomComponents'.
+  Object literal may only specify known properties, and 'Root' does not exist in type 'CustomComponents'.
+components/ui/calendar copy.tsx(133,18): error TS7031: Binding element 'className' implicitly has an 'any' type.
+components/ui/calendar copy.tsx(133,29): error TS7031: Binding element 'rootRef' implicitly has an 'any' type.
+components/ui/calendar copy.tsx(143,21): error TS7031: Binding element 'className' implicitly has an 'any' type.
+components/ui/calendar copy.tsx(143,32): error TS7031: Binding element 'orientation' implicitly has an 'any' type.
+components/ui/calendar copy.tsx(164,24): error TS2339: Property 'children' does not exist on type 'WeekNumberProps'.
+components/ui/drawer-sidebar.tsx(4,43): error TS2307: Cannot find module 'vaul' or its corresponding type declarations.
+components/ui/drawer.tsx(4,43): error TS2307: Cannot find module 'vaul' or its corresponding type declarations.
+components/ui/sheet.tsx(17,3): error TS2339: Property 'className' does not exist on type 'DialogPortalProps'.
+components/ui/sheet.tsx(20,26): error TS2322: Type '{ children?: ReactNode; container?: Element | DocumentFragment | null | undefined; forceMount?: true | undefined; className: string; }' is not assignable to type 'IntrinsicAttributes & DialogPortalProps'.
+  Property 'className' does not exist on type 'IntrinsicAttributes & DialogPortalProps'.
+instrumentation.ts(3,18): error TS2307: Cannot find module './sentry.server.config' or its corresponding type declarations.
+instrumentation.ts(7,18): error TS2307: Cannot find module './sentry.edge.config' or its corresponding type declarations.
