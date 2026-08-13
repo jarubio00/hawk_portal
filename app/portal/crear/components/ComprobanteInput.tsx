@@ -6,8 +6,8 @@ import { PedidoContextType } from "@/app/types/pedido";
 import { GrCloudUpload } from "react-icons/gr";
 import { MdCloudUpload } from "react-icons/md";
 import Image from "next/image";
-import { preUploadFile, uploadFile } from "@/app/actions/apiQuerys";
 import axios from "axios";
+import { esComprobanteUrlValida } from "@/app/utils/comprobante";
 import { FaCircleMinus } from "react-icons/fa6";
 import { TiDelete } from "react-icons/ti";
 import { useProgramaStore } from "../store/crear-store";
@@ -56,8 +56,16 @@ const ComprobanteInput: React.FC<ComprobanteInputProps> = ({ onChange }) => {
     }, 200);
   };
 
-  const stopProgress = () => {
-    if (progressInterval.current) clearInterval(progressInterval.current);
+  const clearProgressInterval = () => {
+    if (progressInterval.current) {
+      clearInterval(progressInterval.current);
+      progressInterval.current = null;
+    }
+  };
+
+  /** Solo se llama cuando el comprobante quedó realmente cargado. */
+  const finalizarProgreso = () => {
+    clearProgressInterval();
     setProgress(100);
     setTimeout(() => {
       pv2.updateComprobanteLoading(false);
@@ -65,64 +73,84 @@ const ComprobanteInput: React.FC<ComprobanteInputProps> = ({ onChange }) => {
     }, 500); // pequeño delay para transición
   };
 
-  const handleInputFile = async (event: any) => {
-    let file = null;
-    let fileType = "";
+  /**
+   * Deja el estado como si nunca se hubiera cargado nada y muestra el motivo.
+   * Antes el .catch solo apagaba el spinner: el usuario seguía viendo su archivo
+   * en pantalla creyendo que se había subido.
+   */
+  const fallarCarga = (mensaje: string) => {
+    clearProgressInterval();
+    setProgress(0);
+    setFileSelected(false);
+    setImage("");
+    setErrorMessage(mensaje);
 
-    if (event.target.files[0].type.match(/^image\//)) {
-      file = event.target.files[0];
-      await pv2.updateComprobanteFile(event.target.files[0]);
+    pv2.updateComprobanteLoading(false);
+    pv2.updateComprobanteFile(undefined);
+    pv2.updateComprobanteUrl("");
+    pv2.updateComprobanteUploaded(false);
+    pv2.updateTransferSelected(false);
+
+    saveMetodoPago({
+      ...pedido?.metodoPago,
+      formaPagoId: 2,
+      passed: false,
+      comprobante: false,
+      comprobanteUrl: "",
+      comprobanteSelected: false,
+      comprobanteError: true,
+      comprobanteErrorMessage: mensaje,
+    });
+  };
+
+  const rechazarArchivo = (mensaje: string) => {
+    pv2.updateComprobanteFile(undefined);
+    setErrorMessage(mensaje);
+    saveMetodoPago({
+      ...pedido?.metodoPago,
+      comprobanteError: true,
+      comprobanteErrorMessage: mensaje,
+    });
+  };
+
+  const handleInputFile = async (event: any) => {
+    const seleccionado: File | undefined = event.target.files?.[0];
+    event.target.value = null;
+
+    if (!seleccionado) return;
+
+    let fileType = "";
+    if (seleccionado.type.match(/^image\//)) {
       fileType = "imagen";
-    } else if (event.target.files[0].type.match(/\/pdf/)) {
-      file = event.target.files[0];
-      await pv2.updateComprobanteFile(event.target.files[0]);
+    } else if (seleccionado.type.match(/\/pdf/)) {
       fileType = "pdf";
     } else {
-      setErrorMessage("Formato no soportado");
-      saveMetodoPago({
-        ...pedido?.metodoPago,
-        comprobanteError: true,
-        comprobanteErrorMessage: "Formato no soportado",
-      });
+      // Antes no se cortaba aquí y más abajo se leía file.name sobre null,
+      // lo que reventaba el input.
+      rechazarArchivo("Formato no soportado");
+      return;
     }
 
-    if (file) {
-      //setImageFile(file);
-      const fileMb = parseFloat((file.size / (1024 * 1024)).toFixed(2));
-
-      if (fileMb >= 10) {
-        pv2.updateComprobanteFile(undefined);
-        setErrorMessage("El archivo excede el tamaño máximo (10Mb)");
-        saveMetodoPago({
-          ...pedido?.metodoPago,
-          comprobanteError: true,
-          comprobanteErrorMessage: "El archivo excede el tamaño máximo (10Mb)",
-        });
-        return;
-      } else {
-        setErrorMessage("");
-        saveMetodoPago({
-          ...pedido?.metodoPago,
-          comprobanteError: false,
-          comprobanteErrorMessage: "",
-        });
-      }
+    const fileMb = parseFloat((seleccionado.size / (1024 * 1024)).toFixed(2));
+    if (fileMb >= 10) {
+      rechazarArchivo("El archivo excede el tamaño máximo (10Mb)");
+      return;
     }
 
-    if (fileType == "imagen") {
-      setFileType("imagen");
-      setImage(URL.createObjectURL(file));
-      setImageName(file.name);
-      setFileSelected(true);
-    } else if (fileType == "pdf") {
-      ("usando pdf");
-      setFileType("pdf");
-      setImage(pdfPlaceholder);
-      setImageName(file.name);
-      setFileSelected(true);
-    }
+    const file = seleccionado;
+    await pv2.updateComprobanteFile(file);
 
-    event.target.value = null;
+    setErrorMessage("");
+    saveMetodoPago({
+      ...pedido?.metodoPago,
+      comprobanteError: false,
+      comprobanteErrorMessage: "",
+    });
+
+    setFileType(fileType);
+    setImage(fileType === "imagen" ? URL.createObjectURL(file) : pdfPlaceholder);
+    setImageName(file.name);
+    setFileSelected(true);
 
     const filetoUpload: UploadFile = {
       file: file,
@@ -130,18 +158,22 @@ const ComprobanteInput: React.FC<ComprobanteInputProps> = ({ onChange }) => {
       pedidoId: 88443322,
     };
 
-    const upload = await handleuploadFile(filetoUpload);
+    await handleuploadFile(filetoUpload);
   };
 
   const handleQuitarFile = () => {
     setFileSelected(false);
     pv2.updateComprobanteFile(undefined);
+    pv2.updateComprobanteUrl("");
     pv2.updateComprobanteUploaded(false);
     pv2.updateTransferSelected(false);
     saveMetodoPago({
       ...pedido?.metodoPago,
       comprobanteSelected: false,
       comprobanteString: "",
+      // sin esto quedaba viva la URL del archivo que el usuario acaba de quitar
+      comprobante: false,
+      comprobanteUrl: "",
       comprobanteError: false,
       comprobanteErrorMessage: "",
       passed: false,
@@ -152,44 +184,48 @@ const ComprobanteInput: React.FC<ComprobanteInputProps> = ({ onChange }) => {
   };
 
   const handleuploadFile = async (file: UploadFile) => {
-    if (file.file) {
-      let formData = new FormData();
-      formData.append("file", file?.file);
-      formData.append("fileName", file?.fileName);
-      formData.append("pedido", `${file.pedidoId}`);
+    if (!file.file) return;
 
-      //const up = await preUploadFile(formData);
-      const up = await directUpload(formData);
-    } else {
-      ("no comprobanteFile");
-    }
+    let formData = new FormData();
+    formData.append("file", file?.file);
+    formData.append("fileName", file?.fileName);
+    formData.append("pedido", `${file.pedidoId}`);
+
+    await directUpload(formData);
   };
 
   const directUpload = async (props: FormData) => {
     pv2.updateComprobanteLoading(true);
     simulateProgress();
-    const result = await axios
-      .post(`/api/preupload`, props)
-      .then((response) => {
-        const url: string = response.data.downloadUrl ?? "";
-        const isValid = url.includes("googleapis");
 
-        pv2.updateComprobanteUrl(url ?? "");
-        stopProgress();
-        pv2.updateComprobanteUploaded(isValid);
-        saveMetodoPago({
-          ...pedido?.metodoPago,
-          formaPagoId: 2,
-          passed: true,
-          comprobante: true,
-          comprobanteUrl: url ?? "",
-        });
-      })
-      .catch((error) => {
-        ("Error en preupload");
-        error;
-        pv2.updateComprobanteLoading(false);
+    try {
+      const response = await axios.post(`/api/preupload`, props);
+      const url: string = response.data?.downloadUrl ?? "";
+
+      // El éxito lo define la URL, no el hecho de que la petición no reventara.
+      if (!esComprobanteUrlValida(url)) {
+        fallarCarga("No se pudo cargar el comprobante. Vuelve a intentarlo.");
+        return;
+      }
+
+      pv2.updateComprobanteUrl(url);
+      pv2.updateComprobanteUploaded(true);
+      saveMetodoPago({
+        ...pedido?.metodoPago,
+        formaPagoId: 2,
+        passed: true,
+        comprobante: true,
+        comprobanteUrl: url,
+        comprobanteSelected: true,
+        comprobanteError: false,
+        comprobanteErrorMessage: "",
       });
+      finalizarProgreso();
+    } catch (error) {
+      fallarCarga(
+        "No se pudo cargar el comprobante. Revisa tu conexión y vuelve a intentarlo."
+      );
+    }
   };
 
   return (

@@ -11,6 +11,7 @@ import PaymentMethodSelector from "../components/PaymentMethodSelector";
 import { useProgramaStore } from "../store/crear-store";
 import CrearNextButton from "../components/CrearNextButton";
 import useCreandoPedidoModal from "@/app/hooks/useCreandoPedidoModal";
+import { esComprobanteUrlValida } from "@/app/utils/comprobante";
 
 interface PagoStepProps {
   data?: string;
@@ -39,8 +40,19 @@ const PagoStep: React.FC<PagoStepProps> = ({ data }) => {
     updateActiveStep(4);
   };
 
+  /**
+   * Antes esto solo miraba `transferSelected`, una bandera de presentación que
+   * se encendía aunque el upload hubiera fallado. Ahora el pago por
+   * transferencia exige una URL de comprobante realmente válida.
+   */
+  const pagoListo = pv2.efectivoSelected
+    ? true
+    : pv2.transferSelected &&
+      pv2.comprobanteUploaded &&
+      esComprobanteUrlValida(pv2.comprobanteUrl);
+
   const handleNext = async () => {
-    pedido;
+    if (!pagoListo) return;
     CreandoPedidoModal.onOpen();
   };
 
@@ -98,9 +110,7 @@ const PagoStep: React.FC<PagoStepProps> = ({ data }) => {
         <Button outline label="Validar" onClick={validate} /> */}
         <CrearNextButton
           onClick={handleNext}
-          disabled={
-            isLoading || (!pv2.transferSelected && !pv2.efectivoSelected)
-          }
+          disabled={isLoading || !pagoListo}
           last
         />
       </div>

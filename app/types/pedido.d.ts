@@ -154,7 +154,6 @@ export interface IMetodoPago {
   comprobanteString?: string;
   comprobanteFileType?: string;
   comprobanteSelected?: boolean;
-  comprobanteImageFile?: File;
   passed?: boolean;
   comprobanteError?: Boolean;
   comprobanteErrorMessage?: String;

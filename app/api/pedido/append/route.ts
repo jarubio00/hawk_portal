@@ -14,6 +14,7 @@ import {
   getMismoDiaPrecio,
   validarMismoDia,
 } from "@/app/api/utils/mismoDiaUtils";
+import { validarComprobantePago } from "@/app/utils/comprobante";
 
 export async function POST(request: Request) {
   const currentUser = await getCurrentUser();
@@ -38,6 +39,17 @@ export async function POST(request: Request) {
   let paqueteSaveId = 0;
 
   if (p) {
+    // Misma validación de comprobante que en /api/pedido/v2: sin comprobante
+    // válido no se crea el envío de transferencia.
+    const pago = validarComprobantePago({
+      formaPagoId: p?.metodoPago?.formaPagoId,
+      comprobanteUrl: p?.metodoPago?.comprobanteUrl,
+    });
+
+    if (!pago.ok) {
+      return NextResponse.json({ error: pago.error }, { status: 400 });
+    }
+
     // Misma revalidación de catálogo que en la creación normal
     if (p?.programa?.mismoDia) {
       const mismoDia = await validarMismoDia({
@@ -90,9 +102,10 @@ export async function POST(request: Request) {
       paqContenido: p.paquete?.paqContenido,
       paqPesoVol: parseFloat(p.paquete?.paqPesoVol),
       precioVenta: parseFloat(p.cotizacion?.precio),
-      formaPagoId: parseInt(p.metodoPago?.formaPagoId),
-      comprobante: p.metodoPago?.comprobante,
-      comprobanteUrl: p.metodoPago?.comprobanteUrl,
+      // Valores ya validados arriba; no se leen del payload del cliente.
+      formaPagoId: pago.formaPagoId,
+      comprobante: pago.comprobante,
+      comprobanteUrl: pago.comprobanteUrl,
       cobroDestino: p.cobro,
       mismoDia: p.programa.mismoDia,
       mismoDiaPrecioVenta,

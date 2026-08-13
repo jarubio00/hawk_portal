@@ -474,55 +474,9 @@ export async function pedidoValidator(props: IValidatorParams) {
   return result;
 }
 
-export async function uploadFile(props: FormData) {
-  const timer = setTimeout(async () => {
-    const result = await axios
-      .post(`/api/upload`, props)
-      .then((response) => {
-        const responseData: ApiResponse = {
-          status: 1,
-          statusMessage: "OK",
-          response: { data: response.data },
-        };
-        return responseData;
-      })
-      .catch((error) => {
-        const response: ApiResponse = {
-          status: 2,
-          statusMessage: "Error de API",
-          response: { data: {}, error: error },
-        };
-        return response;
-      });
-
-    return result;
-  }, 3000);
-}
-
-export async function preUploadFile(props: FormData) {
-  const timer = setTimeout(async () => {
-    const result = await axios
-      .post(`/api/preupload`, props)
-      .then((response) => {
-        const responseData: ApiResponse = {
-          status: 1,
-          statusMessage: "OK",
-          response: { data: response.data },
-        };
-        return responseData;
-      })
-      .catch((error) => {
-        const response: ApiResponse = {
-          status: 2,
-          statusMessage: "Error de API",
-          response: { data: {}, error: error },
-        };
-        return response;
-      });
-
-    return result;
-  }, 3000);
-}
+// uploadFile() y preUploadFile() vivían aquí. Ambas envolvían la petición en un
+// setTimeout y devolvían undefined, así que nunca funcionaron. El único flujo de
+// carga es el de ComprobanteInput, que llama /api/preupload directamente.
 
 export async function crearPedido(pedido: IPedido) {
   const result = await axios
