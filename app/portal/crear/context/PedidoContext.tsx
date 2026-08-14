@@ -257,7 +257,6 @@ const PedidoProvider: React.FC<Props> = ({ children }) => {
         comprobanteString: metodo.comprobanteString,
         comprobanteFileType: metodo.comprobanteFileType,
         comprobanteSelected: metodo.comprobanteSelected,
-        comprobanteImageFile: metodo.comprobanteImageFile,
         comprobanteError: metodo.comprobanteError,
         comprobanteErrorMessage: metodo.comprobanteErrorMessage,
         passed: metodo.passed,

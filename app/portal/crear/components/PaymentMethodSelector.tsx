@@ -72,6 +72,7 @@ export default function PaymentMethodSelector({
     pv2.updateEfectivoOpen(true);
     pv2.updateEfectivoSelected(true);
     pv2.updateComprobanteFile(undefined);
+    pv2.updateComprobanteUrl("");
     pv2.updateComprobanteUploaded(false);
 
     saveMetodoPago({

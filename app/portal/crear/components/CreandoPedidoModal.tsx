@@ -22,15 +22,8 @@ import { PulseLoader } from "react-spinners";
 import Button from "../../../components/Button";
 import ModalCreando from "./ModalCreando";
 import GuiaShare from "@/app/portal/crear/components/GuiaShare";
-import { uploadFile } from "@/app/actions/apiQuerys";
 import ProgramacionV2Step from "../steps/ProgramacionV2";
 import { useProgramaStore } from "../store/crear-store";
-
-type UploadFile = {
-  file: File;
-  fileName: string;
-  pedidoId: number;
-};
 
 const CreandoPedidoModal = () => {
   const router = useRouter();
@@ -88,21 +81,8 @@ const CreandoPedidoModal = () => {
       //(pedidoResult);
 
       if (pedidoResult.status == 1) {
-        if (pedido.metodoPago?.formaPagoId == 2) {
-          if (
-            pedido?.metodoPago?.comprobanteImageFile &&
-            pedidoResult?.response?.data.pedidoId
-          ) {
-            const file: UploadFile = {
-              file: pedido?.metodoPago?.comprobanteImageFile,
-              fileName: pedido?.metodoPago?.comprobanteImageFile?.name,
-              pedidoId: pedidoResult?.response?.data.pedidoId,
-            };
-            const upload = await handleuploadFile(file);
-          } else {
-            ("algo salio mal");
-          }
-        }
+        // El comprobante ya viene subido desde el paso de pago (preupload):
+        // aquí no hay nada que cargar.
         setPedidoCreado(pedidoResult?.response?.data);
         const timer = setTimeout(() => {
           setIsLoading(false);
@@ -115,6 +95,9 @@ const CreandoPedidoModal = () => {
         setError(true);
         setErrorMessage(pedidoResult.statusMessage);
         setIsLoading(false);
+        // Si no se limpia aquí, el estado del método de pago sobrevive en el
+        // store global y el siguiente intento arranca con el botón habilitado.
+        pv2.updateTimeoutMpClear();
       }
     }
   };
@@ -125,43 +108,22 @@ const CreandoPedidoModal = () => {
       pedidoResult;
 
       if (pedidoResult.status == 1) {
-        if (pedido.metodoPago?.formaPagoId == 2) {
-          if (
-            pedido?.metodoPago?.comprobanteImageFile &&
-            pedidoResult?.response?.data.pedidoId
-          ) {
-            const file: UploadFile = {
-              file: pedido?.metodoPago?.comprobanteImageFile,
-              fileName: pedido?.metodoPago?.comprobanteImageFile?.name,
-              pedidoId: pedidoResult?.response?.data.pedidoId,
-            };
-            const upload = await handleuploadFile(file);
-          } else {
-            ("algo salio mal");
-          }
-        }
         setPedidoCreado(pedidoResult?.response?.data);
         const timer = setTimeout(() => {
           setIsLoading(false);
           setGuiaBox(true);
           setCreated(true);
+          // Faltaba en esta rama: el append dejaba el método de pago sucio para
+          // el siguiente envío.
+          pv2.updateProgramaClear();
+          pv2.updateTimeoutMpClear();
         }, 500);
       } else if (pedidoResult.status == 2) {
         setError(true);
         setErrorMessage(pedidoResult.statusMessage);
         setIsLoading(false);
+        pv2.updateTimeoutMpClear();
       }
-    }
-  };
-
-  const handleuploadFile = async (file: UploadFile) => {
-    if (pedido?.metodoPago?.comprobanteImageFile) {
-      let formData = new FormData();
-      formData.append("file", file?.file);
-      formData.append("fileName", file?.fileName);
-      formData.append("pedido", `${file.pedidoId}`);
-
-      const up = await uploadFile(formData);
     }
   };
 

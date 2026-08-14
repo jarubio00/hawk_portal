@@ -7,6 +7,7 @@ import {
   getMismoDiaPrecio,
   validarMismoDia,
 } from "@/app/api/utils/mismoDiaUtils";
+import { validarComprobantePago } from "@/app/utils/comprobante";
 
 /**
  * Convierte "YYYY-MM-DD HH:mm:ss" (sin tz) a Date usando Date.UTC,
@@ -54,6 +55,18 @@ export async function POST(request: Request) {
         { error: "Faltan fechas de entrega/recolección" },
         { status: 400 }
       );
+    }
+
+    // Igual que con mismoDia: lo que manda el cliente sobre el comprobante no es
+    // confiable. Si el upload falla, el wizard manda comprobante:true con la URL
+    // vacía. Se revalida aquí y sin comprobante válido no se crea el envío.
+    const pago = validarComprobantePago({
+      formaPagoId: p?.metodoPago?.formaPagoId,
+      comprobanteUrl: p?.metodoPago?.comprobanteUrl,
+    });
+
+    if (!pago.ok) {
+      return NextResponse.json({ error: pago.error }, { status: 400 });
     }
 
     // El flag de mismo día viene del cliente y pudo quedar desactualizado
@@ -120,9 +133,10 @@ export async function POST(request: Request) {
 
       precioVenta: parseFloat(p.cotizacion?.precio),
 
-      formaPagoId: parseInt(p.metodoPago?.formaPagoId),
-      comprobante: p.metodoPago?.comprobante,
-      comprobanteUrl: p.metodoPago?.comprobanteUrl,
+      // Valores ya validados arriba; no se leen del payload del cliente.
+      formaPagoId: pago.formaPagoId,
+      comprobante: pago.comprobante,
+      comprobanteUrl: pago.comprobanteUrl,
 
       cobroDestino: p.cobro || false,
       cobroDestinoCantidad: p.cobroCantidad ? parseFloat(p.cobroCantidad) : 0,
