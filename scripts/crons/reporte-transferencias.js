@@ -61,6 +61,28 @@ const MAX_DETALLE = 15;
 const FORMA_PAGO_TRANSFERENCIA = 2;
 const ESTATUS_PAGO_CONFIRMADO = 3;
 
+// --- Acceso a datos --------------------------------------------------------
+
+/**
+ * Envoltura sobre el conector.
+ *
+ * El helper de la casa no propaga los errores de MySQL: imprime "ERROR MYSQL"
+ * y devuelve undefined. Sin esta verificación, una consulta rota se convierte
+ * en un TypeError varias líneas después y el aviso de WhatsApp reporta el
+ * síntoma en vez de la causa.
+ */
+async function consultar(etiqueta, sql, params) {
+  const filas = await query(sql, params);
+
+  if (!Array.isArray(filas)) {
+    throw new Error(
+      `La consulta "${etiqueta}" no devolvió filas. Revisa el error de MySQL en el log.`
+    );
+  }
+
+  return filas;
+}
+
 // --- Ventana del periodo ---------------------------------------------------
 
 /**
@@ -82,7 +104,7 @@ async function obtenerPeriodo() {
          CONCAT(DATE_SUB(CURDATE(), INTERVAL 2 DAY), ' 09:30:00')) AS inicio,
       NOW() AS relojBd`;
 
-  const filas = await query(sql);
+  const filas = await consultar("periodo", sql);
   return filas[0];
 }
 
@@ -100,7 +122,7 @@ async function generadosEnPeriodo(inicio, fin) {
     WHERE p.formaPagoId = ?
       AND p.createdAt >= ? AND p.createdAt < ?`;
 
-  const filas = await query(sql, [
+  const filas = await consultar("generados en el periodo", sql, [
     ESTATUS_PAGO_CONFIRMADO,
     FORMA_PAGO_TRANSFERENCIA,
     inicio,
@@ -125,12 +147,11 @@ async function backlogSinConfirmar() {
     WHERE p.formaPagoId = ?
       AND p.estatusPagoId <> ?
       AND p.comprobanteUrl IS NOT NULL AND TRIM(p.comprobanteUrl) <> ''
-      AND p.createdAt >= DATE_SUB(NOW(), INTERVAL ? DAY)`;
+      AND p.createdAt >= DATE_SUB(NOW(), INTERVAL ${BACKLOG_DIAS} DAY)`;
 
-  const filas = await query(sql, [
+  const filas = await consultar("backlog sin confirmar", sql, [
     FORMA_PAGO_TRANSFERENCIA,
     ESTATUS_PAGO_CONFIRMADO,
-    BACKLOG_DIAS,
   ]);
   return filas[0];
 }
@@ -142,19 +163,24 @@ async function idMasAntiguoSinConfirmar() {
     WHERE p.formaPagoId = ?
       AND p.estatusPagoId <> ?
       AND p.comprobanteUrl IS NOT NULL AND TRIM(p.comprobanteUrl) <> ''
-      AND p.createdAt >= DATE_SUB(NOW(), INTERVAL ? DAY)
+      AND p.createdAt >= DATE_SUB(NOW(), INTERVAL ${BACKLOG_DIAS} DAY)
     ORDER BY p.createdAt ASC
     LIMIT 1`;
 
-  const filas = await query(sql, [
+  const filas = await consultar("envío más antiguo sin confirmar", sql, [
     FORMA_PAGO_TRANSFERENCIA,
     ESTATUS_PAGO_CONFIRMADO,
-    BACKLOG_DIAS,
   ]);
   return filas.length ? filas[0].id : null;
 }
 
-/** Solo se consulta cuando el conteo salió distinto de cero. */
+/**
+ * Solo se consulta cuando el conteo salió distinto de cero.
+ *
+ * MAX_DETALLE va interpolado y no como parámetro: MySQL no acepta placeholders
+ * en LIMIT cuando la consulta va preparada (ER_WRONG_ARGUMENTS). Es una
+ * constante entera de este archivo, no entra nada del exterior.
+ */
 async function detalleSinComprobante(inicio, fin) {
   const sql = `
     SELECT p.id, p.clienteId, p.precioVenta
@@ -163,9 +189,13 @@ async function detalleSinComprobante(inicio, fin) {
       AND (p.comprobanteUrl IS NULL OR TRIM(p.comprobanteUrl) = '')
       AND p.createdAt >= ? AND p.createdAt < ?
     ORDER BY p.id
-    LIMIT ?`;
+    LIMIT ${MAX_DETALLE}`;
 
-  return query(sql, [FORMA_PAGO_TRANSFERENCIA, inicio, fin, MAX_DETALLE]);
+  return consultar("detalle sin comprobante", sql, [
+    FORMA_PAGO_TRANSFERENCIA,
+    inicio,
+    fin,
+  ]);
 }
 
 // --- Formato ---------------------------------------------------------------
