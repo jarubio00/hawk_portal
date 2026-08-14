@@ -217,7 +217,14 @@ function componerMensaje({ periodo, generados, backlog, backlogId, detalle }) {
   const sinComprobante = Number(generados.sinComprobante) || 0;
   const confirmados = Number(generados.confirmados) || 0;
   const sinConfirmar = total - confirmados;
-  const pctConfirmados = total > 0 ? Math.round((confirmados / total) * 100) : 0;
+
+  // "1 (0%)" se lee como si no hubiera ninguno.
+  const pctConfirmados =
+    total === 0 || confirmados === 0
+      ? "0%"
+      : Math.round((confirmados / total) * 100) < 1
+      ? "<1%"
+      : `${Math.round((confirmados / total) * 100)}%`;
 
   const lineas = [];
 
@@ -227,7 +234,9 @@ function componerMensaje({ periodo, generados, backlog, backlogId, detalle }) {
   lineas.push("");
 
   lineas.push("*GENERADOS EN EL PERIODO*");
-  lineas.push(`Envíos: *${total}*   ${dinero(generados.monto)}`);
+  // "Envíos" se leía como el total de envíos del día, no como los de
+  // transferencia.
+  lineas.push(`Transferencias: *${total}*   ${dinero(generados.monto)}`);
   lineas.push(
     sinComprobante === 0
       ? "Sin comprobante: *0* ✅"
@@ -248,7 +257,7 @@ function componerMensaje({ periodo, generados, backlog, backlogId, detalle }) {
   if (total === 0) {
     lineas.push("Sin envíos que confirmar");
   } else {
-    lineas.push(`Confirmados: *${confirmados}*   (${pctConfirmados}%)`);
+    lineas.push(`Confirmados: *${confirmados}*   (${pctConfirmados})`);
     lineas.push(`Sin confirmar: *${sinConfirmar}*`);
   }
 
