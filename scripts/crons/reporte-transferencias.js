@@ -29,8 +29,21 @@ const qs = require("qs");
 
 // --- Configuración ---------------------------------------------------------
 
-const GRUPO_WHATSAPP = "120363418005940156@g.us";
 const ULTRAMSG_URL = "https://api.ultramsg.com/instance56455/messages/chat";
+
+const GRUPO_OPERACIONES = "120363418005940156@g.us";
+const NUMERO_PRUEBAS = "528115995194";
+
+/**
+ * Destino del reporte.
+ *
+ * Mientras se valida en producción va al número personal. Para publicarlo al
+ * grupo, cambiar el default a GRUPO_OPERACIONES — es un cambio deliberado de
+ * una línea, no algo que dependa de acordarse de exportar una variable.
+ *
+ * REPORTE_DESTINO permite sobreescribirlo sin tocar el archivo.
+ */
+const DESTINO = process.env.REPORTE_DESTINO || NUMERO_PRUEBAS;
 
 /**
  * Días hacia atrás que cubre el backlog de confirmación.
@@ -256,7 +269,7 @@ async function main() {
 
   const mensaje = componerMensaje({ periodo, generados, backlog, backlogId, detalle });
 
-  await enviarWhatsapp(GRUPO_WHATSAPP, mensaje);
+  await enviarWhatsapp(DESTINO, mensaje);
 
   console.log(
     `${periodo.relojBd} -- reporte enviado: ${generados.total} transferencias, ` +
@@ -274,7 +287,7 @@ async function main() {
     console.error(new Date().toISOString(), "-- reporte de transferencias falló:", error);
     try {
       await enviarWhatsapp(
-        GRUPO_WHATSAPP,
+        DESTINO,
         `⚠️ *El reporte de transferencias falló*\n\n${error.message}`
       );
     } catch (errorAviso) {
