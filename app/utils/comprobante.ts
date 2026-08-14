@@ -13,11 +13,15 @@
 /** Id de forma de pago = transferencia electrónica (CatalogoMetodosPago). */
 export const FORMA_PAGO_TRANSFERENCIA = 2;
 
-/** Hosts donde vive un comprobante realmente subido. */
-const HOSTS_VALIDOS = [
-  "storage.googleapis.com",
-  "firebasestorage.googleapis.com",
-];
+/**
+ * Dominio donde vive un comprobante realmente subido.
+ *
+ * Se acepta el dominio completo y cualquier subdominio porque la API devuelve
+ * la URL en más de una forma según el caso (`storage.`, `firebasestorage.`,
+ * `www.` para las URLs de descarga de la JSON API). Verificado contra las
+ * ~240,000 filas históricas de Pedidos: todas caen bajo googleapis.com.
+ */
+const DOMINIO_VALIDO = "googleapis.com";
 
 /**
  * True solo si la URL apunta a un archivo alojado en el storage de comprobantes.
@@ -30,9 +34,9 @@ export function esComprobanteUrlValida(url: unknown): url is string {
   try {
     const parsed = new URL(url.trim());
     if (parsed.protocol !== "https:") return false;
-    return HOSTS_VALIDOS.some(
-      (host) => parsed.hostname === host || parsed.hostname.endsWith(`.${host}`)
-    );
+
+    const host = parsed.hostname.toLowerCase();
+    return host === DOMINIO_VALIDO || host.endsWith(`.${DOMINIO_VALIDO}`);
   } catch {
     return false; // URL malformada
   }

@@ -55,6 +55,15 @@ export async function POST(request: Request) {
   // como éxito y el wizard habilitaba el botón de generar envío sin comprobante.
   // Un fallo tiene que verse como fallo desde el código HTTP.
   if (result?.status != 1 || !esComprobanteUrlValida(result?.downloadUrl)) {
+    // Sin esto, un rechazo es indistinguible de una caída de la API.
+    console.error("[preupload] rechazado", {
+      cliente: currentUser.id,
+      apiStatus: result?.status,
+      downloadUrl: result?.downloadUrl ?? null,
+      motivo:
+        result?.status != 1 ? "api_status_distinto_de_1" : "url_no_valida",
+    });
+
     return NextResponse.json(
       { status: 2, statusMessage: "No se pudo cargar el comprobante" },
       { status: 502 }
