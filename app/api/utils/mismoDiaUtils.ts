@@ -1,4 +1,5 @@
 import prisma from "@/app/libs/prismadb";
+import { enviarAvisoWhatsapp } from "@/app/api/utils/whatsapp";
 
 /**
  * Cps "comodin" que se guardan cuando un envio se captura SIN codigo postal.
@@ -12,6 +13,12 @@ export const MENSAJE_SIN_CP =
 
 export const MENSAJE_NO_SOPORTADO =
   "El servicio de entrega el mismo día no está disponible en esta zona.";
+
+export const MENSAJE_SIN_CUPO =
+  "El servicio de entrega el mismo día ha llegado a su límite para esta fecha y ya no está disponible.";
+
+/** estatusPedidoId de un pedido cancelado; no ocupa cupo. */
+export const ESTATUS_PEDIDO_CANCELADO = 5;
 
 /** Productos del catalogo que representan el cargo de entrega el mismo dia */
 export const MD_PRODUCTO_NOMBRE = "servicio_md";
@@ -176,4 +183,166 @@ export async function validarMismoDia(
   }
 
   return { enabled: true, customMessage: "" };
+}
+
+// --- Cupo diario -----------------------------------------------------------
+
+/**
+ * Normaliza una fecha a "YYYY-MM-DD".
+ *
+ * Acepta lo que traen los dos llamadores: el calendario manda ya un string y el
+ * pedido manda "YYYY-MM-DD HH:mm:ss". Se corta en seco en vez de construir un
+ * Date porque el runtime corre en UTC y las fechas de operación son locales:
+ * pasar por Date desplazaría el día.
+ */
+export function normalizaFecha(fecha: unknown): string | null {
+  if (fecha instanceof Date) {
+    const y = fecha.getFullYear();
+    const m = String(fecha.getMonth() + 1).padStart(2, "0");
+    const d = String(fecha.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  }
+
+  if (typeof fecha !== "string") return null;
+
+  const match = fecha.trim().match(/^(\d{4}-\d{2}-\d{2})/);
+  return match ? match[1] : null;
+}
+
+/**
+ * Límite vigente para una fecha, o null si no hay ninguno.
+ *
+ * Lo normal es que la tabla esté vacía, así que esta consulta sale sin
+ * resultados y nos ahorramos el conteo, que es lo caro. Si dos rangos activos
+ * cubren la misma fecha gana el más restrictivo.
+ */
+export async function getLimiteMismoDia(fecha: string): Promise<number | null> {
+  const filas: any[] = await prisma.$queryRaw`
+    SELECT MIN(limite) AS limite
+    FROM hawk_prisma.LimitesServicio
+    WHERE activo = 1
+      AND servicio = 'MD'
+      AND ${fecha} BETWEEN fechaInicio AND fechaFin
+  `;
+
+  const limite = filas?.[0]?.limite;
+  return limite == null ? null : Number(limite);
+}
+
+/** Envíos de mismo día ya comprometidos para una fecha de recolección. */
+export async function contarMismoDia(fecha: string): Promise<number> {
+  const filas: any[] = await prisma.$queryRaw`
+    SELECT COUNT(*) AS total
+    FROM hawk_prisma.Pedidos p
+    INNER JOIN hawk_prisma.Recolecciones r ON p.recoleccionId = r.id
+    WHERE p.mismoDia = 1
+      AND p.estatusPedidoId <> ${ESTATUS_PEDIDO_CANCELADO}
+      AND DATE(r.fecha) = ${fecha}
+  `;
+
+  return Number(filas?.[0]?.total ?? 0);
+}
+
+/** ¿Ya hay un bloqueo registrado para esa fecha? */
+export async function estaBloqueadoMismoDia(fecha: string): Promise<boolean> {
+  const filas: any[] = await prisma.$queryRaw`
+    SELECT 1
+    FROM hawk_prisma.BloqueoServicios
+    WHERE fecha = ${fecha} AND servicio IN ('MD', 'TODO')
+    LIMIT 1
+  `;
+
+  return filas.length > 0;
+}
+
+export interface CupoMismoDia extends MismoDiaResult {
+  /** null cuando no hay límite configurado para esa fecha */
+  limite: number | null;
+  usados: number;
+}
+
+/**
+ * Disponibilidad de mismo día para una fecha, por bloqueo o por cupo.
+ *
+ * La usan el calendario y la creación del pedido, para que las dos apliquen el
+ * mismo criterio. Antes el bloqueo solo lo consultaba el calendario, así que el
+ * cierre de las 8:00 no impedía crear el envío.
+ *
+ * Ante un error de base se deja habilitado: el cupo es una restricción
+ * comercial, no de integridad, y prefiero vender de más a caerme.
+ */
+export async function validarCupoMismoDia(
+  fechaRecoleccion: unknown
+): Promise<CupoMismoDia> {
+  const disponible: CupoMismoDia = {
+    enabled: true,
+    customMessage: "",
+    limite: null,
+    usados: 0,
+  };
+
+  const fecha = normalizaFecha(fechaRecoleccion);
+  if (!fecha) return disponible;
+
+  try {
+    if (await estaBloqueadoMismoDia(fecha)) {
+      return { ...disponible, enabled: false, customMessage: MENSAJE_SIN_CUPO };
+    }
+
+    const limite = await getLimiteMismoDia(fecha);
+    if (limite == null) return disponible;
+
+    const usados = await contarMismoDia(fecha);
+
+    return {
+      enabled: usados < limite,
+      customMessage: usados < limite ? "" : MENSAJE_SIN_CUPO,
+      limite,
+      usados,
+    };
+  } catch (error: any) {
+    console.error("validarCupoMismoDia:", error?.message);
+    return disponible;
+  }
+}
+
+/**
+ * Avisa por WhatsApp cuando el pedido recién creado llenó el cupo del día.
+ *
+ * A propósito NO escribe nada en BloqueoServicios. Esa tabla guarda decisiones
+ * deliberadas —el cierre de las 8:00, un bloqueo manual de operaciones— que son
+ * pegajosas por diseño: el día ya pasó su hora de corte y una cancelación no lo
+ * revive. El límite es otra cosa: es un estado calculado a partir de cuántos
+ * envíos hay ahora. Materializarlo lo convertiría en decisión, y una fecha se
+ * quedaría cerrada aunque se cancelaran envíos y hubiera cupo otra vez, cosa
+ * que aquí pasa seguido y a veces de varios envíos del mismo cliente.
+ *
+ * Como no hay bandera persistente, el aviso vuelve a salir si el cupo se llena
+ * de nuevo tras una cancelación. Es el comportamiento correcto: cada mensaje es
+ * cierto en el momento en que se manda.
+ *
+ * Se llama después de crear el pedido y nunca lanza: el envío ya existe y es
+ * válido. Si esto falla, se pierde el aviso, no la venta.
+ */
+export async function avisarSiSeLlenoMismoDia(
+  fechaRecoleccion: unknown
+): Promise<void> {
+  try {
+    const fecha = normalizaFecha(fechaRecoleccion);
+    if (!fecha) return;
+
+    const limite = await getLimiteMismoDia(fecha);
+    if (limite == null) return;
+
+    const usados = await contarMismoDia(fecha);
+    if (usados < limite) return;
+
+    // Sin await: colgar la respuesta del cliente de una llamada HTTP externa
+    // sería pagar hasta 8 segundos de espera por un mensaje interno.
+    void enviarAvisoWhatsapp(
+      `*Mensaje de Hawk IA Agent*\n \n Se ha llegado al limite de entregas mismo dia establecido para el *${fecha}* (${limite}).`
+    );
+  } catch (error: any) {
+    console.error("avisarSiSeLlenoMismoDia:", error?.message);
+  }
 }

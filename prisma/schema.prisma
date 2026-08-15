@@ -186,6 +186,8 @@ model Recoleccion {
   @@index([clienteId], map: "Recolecciones_clienteId_fkey")
   @@index([estatusRecoleccionId], map: "Recolecciones_estatusRecoleccionId_fkey")
   @@index([municipioId], map: "Recolecciones_municipioId_fkey")
+  // Lo usa el conteo de cupo de mismo día
+  @@index([fecha], map: "Recolecciones_fecha_idx")
   @@map("Recolecciones")
 }
 
@@ -1590,6 +1592,25 @@ model BloqueoServicios {
   createdAt     DateTime      @default(dbgenerated("(now())"))
   createdBy     Int           @default(1)
   user          UsuariosHawk  @relation(fields: [createdBy], references: [id])
+}
+
+/// Límite de servicios por día para un periodo.
+///
+/// Que no haya fila cubriendo una fecha significa "sin límite", que es el
+/// estado normal. El rango es por periodo porque operaciones ya razona así
+/// ("bloquear todo el mes"): una fila cubre una semana completa.
+model LimitesServicio {
+  id          Int           @id @default(autoincrement())
+  fechaInicio DateTime      @db.Date
+  fechaFin    DateTime      @db.Date
+  servicio    TipoServicios @default(MD)
+  limite      Int
+  activo      Boolean       @default(true)
+  motivo      String?       @db.VarChar(255)
+  createdAt   DateTime?     @default(dbgenerated("(now())"))
+  createdBy   Int           @default(1)
+
+  @@index([servicio, activo, fechaInicio, fechaFin], map: "LimitesServicio_rango_idx")
 }
 
 enum TipoServicios {
