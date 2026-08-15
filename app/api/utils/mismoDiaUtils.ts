@@ -307,18 +307,24 @@ export async function validarCupoMismoDia(
 }
 
 /**
- * Cierra mismo día para una fecha cuando el pedido recién creado alcanzó el
- * límite, y avisa por WhatsApp.
+ * Avisa por WhatsApp cuando el pedido recién creado llenó el cupo del día.
  *
- * El bloqueo se materializa en BloqueoServicios en lugar de recalcularse en
- * cada carga del calendario: esa tabla ya la consulta el calendario, así que la
- * fecha desaparece sola y la fila sirve además de bandera para que el aviso
- * salga una sola vez.
+ * A propósito NO escribe nada en BloqueoServicios. Esa tabla guarda decisiones
+ * deliberadas —el cierre de las 8:00, un bloqueo manual de operaciones— que son
+ * pegajosas por diseño: el día ya pasó su hora de corte y una cancelación no lo
+ * revive. El límite es otra cosa: es un estado calculado a partir de cuántos
+ * envíos hay ahora. Materializarlo lo convertiría en decisión, y una fecha se
+ * quedaría cerrada aunque se cancelaran envíos y hubiera cupo otra vez, cosa
+ * que aquí pasa seguido y a veces de varios envíos del mismo cliente.
+ *
+ * Como no hay bandera persistente, el aviso vuelve a salir si el cupo se llena
+ * de nuevo tras una cancelación. Es el comportamiento correcto: cada mensaje es
+ * cierto en el momento en que se manda.
  *
  * Se llama después de crear el pedido y nunca lanza: el envío ya existe y es
  * válido. Si esto falla, se pierde el aviso, no la venta.
  */
-export async function cerrarMismoDiaSiSeLlenó(
+export async function avisarSiSeLlenoMismoDia(
   fechaRecoleccion: unknown
 ): Promise<void> {
   try {
@@ -331,23 +337,12 @@ export async function cerrarMismoDiaSiSeLlenó(
     const usados = await contarMismoDia(fecha);
     if (usados < limite) return;
 
-    // Sin índice único en BloqueoServicios (hay duplicados históricos
-    // legítimos), así que la carrera entre dos pedidos simultáneos podría
-    // duplicar el aviso. El costo es un mensaje repetido, no un dato malo.
-    if (await estaBloqueadoMismoDia(fecha)) return;
-
-    await prisma.$executeRaw`
-      INSERT INTO hawk_prisma.BloqueoServicios (fecha, servicio, tipo, createdBy)
-      VALUES (${fecha}, 'MD', 'limite', 1)
-    `;
-
-    // Sin await: el bloqueo ya quedó escrito y el calendario ya es consistente.
-    // Colgar la respuesta del cliente de una llamada HTTP externa sería pagar
-    // hasta 8 segundos de espera por un mensaje interno.
+    // Sin await: colgar la respuesta del cliente de una llamada HTTP externa
+    // sería pagar hasta 8 segundos de espera por un mensaje interno.
     void enviarAvisoWhatsapp(
       `*Mensaje de Hawk IA Agent*\n \n El número de entregas mismo dia para el *${fecha}* es de *${usados}*. Se llegó al limite establecido (${limite}).`
     );
   } catch (error: any) {
-    console.error("cerrarMismoDiaSiSeLlenó:", error?.message);
+    console.error("avisarSiSeLlenoMismoDia:", error?.message);
   }
 }

@@ -7,7 +7,7 @@ import {
   getMismoDiaPrecio,
   validarMismoDia,
   validarCupoMismoDia,
-  cerrarMismoDiaSiSeLlenó,
+  avisarSiSeLlenoMismoDia,
 } from "@/app/api/utils/mismoDiaUtils";
 import { validarComprobantePago } from "@/app/utils/comprobante";
 
@@ -346,7 +346,7 @@ export async function POST(request: Request) {
     // creado. Va con su propio try/catch adentro: el pedido ya existe y nada de
     // esto puede convertirlo en un error para el cliente.
     if (p?.programa?.mismoDia) {
-      await cerrarMismoDiaSiSeLlenó(p?.programa?.fechaRecString);
+      await avisarSiSeLlenoMismoDia(p?.programa?.fechaRecString);
     }
 
     return NextResponse.json(result);
