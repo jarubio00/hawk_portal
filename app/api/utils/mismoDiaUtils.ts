@@ -15,7 +15,7 @@ export const MENSAJE_NO_SOPORTADO =
   "El servicio de entrega el mismo día no está disponible en esta zona.";
 
 export const MENSAJE_SIN_CUPO =
-  "El servicio de entrega el mismo día ya no está disponible para esta fecha.";
+  "El servicio de entrega el mismo día ha llegado a su límite para esta fecha y ya no está disponible.";
 
 /** estatusPedidoId de un pedido cancelado; no ocupa cupo. */
 export const ESTATUS_PEDIDO_CANCELADO = 5;
@@ -340,7 +340,7 @@ export async function avisarSiSeLlenoMismoDia(
     // Sin await: colgar la respuesta del cliente de una llamada HTTP externa
     // sería pagar hasta 8 segundos de espera por un mensaje interno.
     void enviarAvisoWhatsapp(
-      `*Mensaje de Hawk IA Agent*\n \n El número de entregas mismo dia para el *${fecha}* es de *${usados}*. Se llegó al limite establecido (${limite}).`
+      `*Mensaje de Hawk IA Agent*\n \n Se ha llegado al limite de entregas mismo dia establecido para el *${fecha}* (${limite}).`
     );
   } catch (error: any) {
     console.error("avisarSiSeLlenoMismoDia:", error?.message);
