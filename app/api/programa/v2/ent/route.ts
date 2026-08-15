@@ -9,6 +9,7 @@ import {
   getMismoDiaPrecio,
   MismoDiaData,
   validarMismoDia,
+  validarCupoMismoDia,
 } from "@/app/api/utils/mismoDiaUtils";
 
 export async function POST(req: Request) {
@@ -81,9 +82,22 @@ export async function POST(req: Request) {
       mismoDiaEnabled = false;
     }
 
+    // Cupo del día. Normalmente no hay límite configurado y esto sale con una
+    // sola consulta a una tabla vacía, sin llegar a contar pedidos.
+    //
+    // Hace falta aunque el bloqueo ya se materialice al alcanzar el límite:
+    // si operaciones configura un límite retroactivo sobre una fecha que ya lo
+    // rebasó, no hay ningún pedido nuevo que dispare el bloqueo, y sin esto la
+    // fecha se seguiría ofreciendo para reventar al final del wizard.
+    const mismoDiaCupo = await validarCupoMismoDia(fechaString);
+    if (!mismoDiaCupo.enabled) {
+      mismoDiaEnabled = false;
+    }
+
     // El mensaje del bloqueo por fecha tiene prioridad sobre el del catálogo
     const mismoDiaCustomMessage =
       mismoDiaBlocked[0]?.customMessage?.trim() ||
+      (mismoDiaCupo.enabled ? "" : mismoDiaCupo.customMessage) ||
       (mismoDiaCatalogo.enabled ? "" : mismoDiaCatalogo.customMessage);
 
     // Mismo catálogo que usa el cotizador, para no duplicar precios en la UI

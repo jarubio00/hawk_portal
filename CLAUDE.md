@@ -23,8 +23,11 @@ Excepción: cuando la instrucción es directamente ejecutar algo ya acordado
 - **El entorno de desarrollo apunta a la base de datos de producción.** Nunca ejecutar
   `prisma migrate dev` ni `prisma migrate deploy`. El flujo de cambios de esquema es
   SQL manual + `prisma migrate resolve`.
-- **No compilar en el servidor de producción.** Un `npm run build` en hawk-prod tumbó
-  el login. El build se hace en otro lado.
+- **El build en el servidor de producción tumba el servidor.** Ha pasado dos veces: el
+  `npm run build` satura la máquina y se cae el login (sssd deja de alcanzar el metadata
+  server). Si hay que compilar ahí, correrlo con prioridad degradada:
+  `nice -n 19 ionice -c 3 npm run build`. Mejor todavía: compilar fuera y subir el
+  resultado.
 - **No ejecutar queries contra la base sin autorización.** Si hace falta una consulta de
   diagnóstico, escribirla y entregarla para que la ejecute el desarrollador.
 

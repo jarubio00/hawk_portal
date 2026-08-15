@@ -6,6 +6,8 @@ import { userActivityRegister } from "@/app/api/utils/activity";
 import {
   getMismoDiaPrecio,
   validarMismoDia,
+  validarCupoMismoDia,
+  cerrarMismoDiaSiSeLlenó,
 } from "@/app/api/utils/mismoDiaUtils";
 import { validarComprobantePago } from "@/app/utils/comprobante";
 
@@ -88,6 +90,18 @@ export async function POST(request: Request) {
       if (!mismoDia.enabled) {
         return NextResponse.json(
           { error: mismoDia.customMessage },
+          { status: 400 }
+        );
+      }
+
+      // Cupo del día: bloqueo vigente o límite alcanzado. Hasta ahora el
+      // bloqueo solo lo miraba el calendario, así que el cierre de las 8:00 no
+      // impedía crear el envío desde una pestaña ya abierta.
+      const cupo = await validarCupoMismoDia(p?.programa?.fechaRecString);
+
+      if (!cupo.enabled) {
+        return NextResponse.json(
+          { error: cupo.customMessage },
           { status: 400 }
         );
       }
@@ -327,6 +341,13 @@ export async function POST(request: Request) {
         paqueteSaveId,
       };
     });
+
+    // Después de la transacción, para que el conteo incluya el envío recién
+    // creado. Va con su propio try/catch adentro: el pedido ya existe y nada de
+    // esto puede convertirlo en un error para el cliente.
+    if (p?.programa?.mismoDia) {
+      await cerrarMismoDiaSiSeLlenó(p?.programa?.fechaRecString);
+    }
 
     return NextResponse.json(result);
   } catch (err: any) {
