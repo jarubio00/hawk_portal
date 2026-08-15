@@ -26,4 +26,10 @@ CREATE TABLE `LimitesServicio` (
 
 -- El conteo de mismo día filtra por Recolecciones.fecha, que hoy no tiene
 -- índice: solo clienteId, estatusRecoleccionId y municipioId.
-CREATE INDEX `Recolecciones_fecha_idx` ON `Recolecciones`(`fecha`);
+--
+-- ALGORITHM/LOCK explícitos: la tabla es grande y está en producción. Así el
+-- índice se construye en línea, y si por alguna razón el motor no pudiera
+-- hacerlo sin bloquear, la sentencia falla en vez de dejar la tabla trabada.
+ALTER TABLE `Recolecciones`
+  ADD INDEX `Recolecciones_fecha_idx` (`fecha`),
+  ALGORITHM=INPLACE, LOCK=NONE;
