@@ -29,7 +29,7 @@ CREATE TABLE `Cod2PayoutCargo` (
   `updatedAt`  DATETIME(3)  NOT NULL,
   UNIQUE INDEX `Cod2PayoutCargo_clave_key`(`clave`),
   PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- ── 2) Catálogo de métodos ───────────────────────────────────────────────
 CREATE TABLE `Cod2PayoutMethod` (
@@ -44,7 +44,7 @@ CREATE TABLE `Cod2PayoutMethod` (
   `updatedAt`      DATETIME(3)  NOT NULL,
   UNIQUE INDEX `Cod2PayoutMethod_clave_key`(`clave`),
   PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- ── 3) Qué cargos aplica cada método ─────────────────────────────────────
 CREATE TABLE `Cod2PayoutMethodCargo` (
@@ -56,7 +56,7 @@ CREATE TABLE `Cod2PayoutMethodCargo` (
   UNIQUE INDEX `Cod2PayoutMethodCargo_methodId_cargoId_key`(`methodId`, `cargoId`),
   INDEX `Cod2PayoutMethodCargo_cargoId_idx`(`cargoId`),
   PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 ALTER TABLE `Cod2PayoutMethodCargo`
   ADD CONSTRAINT `Cod2PayoutMethodCargo_methodId_fkey`
@@ -75,7 +75,7 @@ CREATE TABLE `Cod2PayoutEvent` (
   `createdBy`   INTEGER      NULL,
   INDEX `Cod2PayoutEvent_payoutId_createdAt_idx`(`payoutId`, `createdAt`),
   PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE `Cod2PayoutEvidencia` (
   `id`        VARCHAR(191) NOT NULL,
@@ -86,7 +86,7 @@ CREATE TABLE `Cod2PayoutEvidencia` (
   `createdBy` INTEGER      NULL,
   INDEX `Cod2PayoutEvidencia_payoutId_idx`(`payoutId`),
   PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 ALTER TABLE `Cod2PayoutEvent`
   ADD CONSTRAINT `Cod2PayoutEvent_payoutId_fkey`
