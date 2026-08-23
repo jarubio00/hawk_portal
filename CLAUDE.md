@@ -23,6 +23,16 @@ Excepción: cuando la instrucción es directamente ejecutar algo ya acordado
 - **El entorno de desarrollo apunta a la base de datos de producción.** Nunca ejecutar
   `prisma migrate dev` ni `prisma migrate deploy`. El flujo de cambios de esquema es
   SQL manual + `prisma migrate resolve`.
+- **Este repositorio es el dueño del esquema.** La base `hawk_prisma` la comparte con
+  hawk2admin, que nunca corre `migrate`: todas las migraciones nacen aquí. Lo que se
+  mantiene sincronizado entre los dos es el `schema.prisma`, por unión y no por copia
+  (ninguno es superconjunto del otro).
+  Antecedente de por qué importa: un `db push` desde hawk2admin revirtió en silencio el
+  default de `Clientes.cobrosPermitidos` que este repo había puesto en marzo de 2026.
+- **Cuando el esquema declare una columna que aún no existe en la base, no correr
+  `prisma generate`.** Prisma selecciona todos los campos escalares declarados, así que
+  el cliente generado falla en runtime con `Unknown column`. Primero se aplica el SQL,
+  después se genera.
 - **El build en el servidor de producción tumba el servidor.** Ha pasado dos veces: el
   `npm run build` satura la máquina y se cae el login (sssd deja de alcanzar el metadata
   server). Si hay que compilar ahí, correrlo con prioridad degradada:

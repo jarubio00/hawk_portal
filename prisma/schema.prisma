@@ -1696,6 +1696,9 @@ enum Cod2IssueType {
   RECIPIENT_ABSENT
   INCORRECT_ADDRESS
   COUNTERFEIT_BILL
+  /// El destinatario pagó directo al cliente (mod tipo 5 del app).
+  /// Ya existe en el ENUM de MySQL y hay filas usándolo.
+  PAID_TO_CLIENT
   OTHER
 }
 
@@ -1759,9 +1762,11 @@ model Cod2Charge {
   settlementLine Cod2SettlementLine?
   issues         Cod2Issue[]
 
+  /// Un COD siempre va ligado a un envío, y solo uno. El índice único ya existe
+  /// en la base (Cod2Charge_pedidoId_key), aplicado con la migración de ingesta.
+  @@unique([pedidoId])
   @@index([clienteId, status])
   @@index([clienteId, pedidoId, status])
-  @@index([pedidoId])
   @@index([courierId])
   @@map("Cod2Charge")
 }
