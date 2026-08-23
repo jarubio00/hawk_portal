@@ -23,6 +23,10 @@ Excepción: cuando la instrucción es directamente ejecutar algo ya acordado
 - **El entorno de desarrollo apunta a la base de datos de producción.** Nunca ejecutar
   `prisma migrate dev` ni `prisma migrate deploy`. El flujo de cambios de esquema es
   SQL manual + `prisma migrate resolve`.
+- **Nunca `prisma db push` contra `hawk_prisma`, desde ningún repositorio.** No deja
+  rastro en `_prisma_migrations` y sincroniza la base al esquema local, así que revierte
+  en silencio lo que hizo el otro proyecto. Fue lo que deshizo el default de
+  `Clientes.cobrosPermitidos` en marzo de 2026, y tardó cinco meses en salir a la luz.
 - **Este repositorio es el dueño del esquema.** La base `hawk_prisma` la comparte con
   hawk2admin, que nunca corre `migrate`: todas las migraciones nacen aquí. Lo que se
   mantiene sincronizado entre los dos es el `schema.prisma`, por unión y no por copia
