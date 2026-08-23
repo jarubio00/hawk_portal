@@ -65,6 +65,9 @@ model User {
   recoleccionesNacionales NacionalRecoleccion[]
   mercadoPagoCustomer     MercadoPagoCustomer[]
   mercadoPagoTransaction  MercadoPagoTransaction[]
+  cod2Charges             Cod2Charge[]
+  cod2Settlements         Cod2Settlement[]
+  cod2Settings            Cod2ClientSettings[]
 
   @@fulltext([nombre])
   @@fulltext([email])
@@ -307,6 +310,7 @@ model Pedido {
   actividad              ActividadOperaciones[]
   approute               AppRouteGuias[]
   cod2Charges            Cod2Charge[]
+  cod2Payouts            Cod2Payout[]
   despachoRecoleccion    DespachoRecoleccion[]
   despachoEntrega        DespachoEntrega[]
 
@@ -1666,7 +1670,19 @@ enum Cod2AttemptResult {
 }
 
 // Método de retorno al cliente
-enum Cod2PayoutMethod {
+/// Estado del retorno. Antes era texto libre.
+enum Cod2PayoutStatus {
+  PENDING // generado con el corte, sin ejecutar
+  ASSIGNED // asignado a un mensajero o en proceso
+  COMPLETED // el cliente recibió su dinero
+  FAILED // no se pudo entregar
+}
+
+/// DEPRECADO — lo reemplaza el catálogo `Cod2PayoutMethod`.
+/// Se conserva porque el portal escribe `defaultPayoutMethod` con este enum al
+/// crear la configuración de un cliente; quitarlo ahora rompería la generación
+/// de envíos con cobro. Se elimina cuando el portal se alinee.
+enum Cod2PayoutMethodLegacy {
   DEPOSITO_BANCO
   DEPOSITO_CONVENIENCIA
   RECOGER_EN_OFICINA
@@ -1696,9 +1712,7 @@ enum Cod2IssueType {
   RECIPIENT_ABSENT
   INCORRECT_ADDRESS
   COUNTERFEIT_BILL
-  /// El destinatario pagó directo al cliente (mod tipo 5 del app).
-  /// Ya existe en el ENUM de MySQL y hay filas usándolo.
-  PAID_TO_CLIENT
+  PAID_TO_CLIENT // El destinatario pagó directo al cliente (mod tipo 5 del app)
   OTHER
 }
 
@@ -1724,23 +1738,24 @@ model Cod2Config {
 }
 
 // Preferencias por cliente y ancla de su ventana/corte
-// Configuración de COD por cliente
 model Cod2ClientSettings {
-  id                  Int              @id @default(autoincrement())
+  id                  Int                    @id @default(autoincrement())
   clienteId           Int
-  defaultPayoutMethod Cod2PayoutMethod @default(RECOGER_EN_OFICINA)
-  // IMPORTANTE: activeAnchorAt es la fecha del ÚLTIMO CORTE (settlement)
-  // - Se actualiza cada vez que se genera un settlement
-  // - Si hay cobros pendientes (not collected) → activeAnchorAt = fecha del corte
-  // - Si NO hay cobros pendientes → activeAnchorAt = null
-  // - El período actual SIEMPRE es: desde activeAnchorAt hasta activeAnchorAt + 7 días
-  // - Los cobros del período son: createdAt >= activeAnchorAt AND settlementLine IS NULL
+  /// DEPRECADO — lo escribe el portal. La fuente buena es `methodId`.
+  defaultPayoutMethod Cod2PayoutMethodLegacy @default(RECOGER_EN_OFICINA)
+  /// Método de retorno preferido, del catálogo. Hoy lo elige servicio al
+  /// cliente; el portal todavía no tiene esa opción.
+  methodId            Int?
   activeAnchorAt      DateTime?
-  createdAt           DateTime         @default(now())
-  updatedAt           DateTime         @updatedAt
+  createdAt           DateTime               @default(now())
+  updatedAt           DateTime               @updatedAt
+
+  cliente User              @relation(fields: [clienteId], references: [id])
+  method  Cod2PayoutMethod? @relation(fields: [methodId], references: [id])
 
   @@unique([clienteId])
   @@index([clienteId])
+  @@index([methodId])
   @@map("Cod2ClientSettings")
 }
 
@@ -1757,14 +1772,14 @@ model Cod2Charge {
   updatedAt       DateTime         @updatedAt
 
   pedido         Pedido              @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+  // Sin esta relación había que rodear por el pedido para llegar al cliente.
+  cliente        User                @relation(fields: [clienteId], references: [id])
   attempts       Cod2Attempt[]
   payment        Cod2Payment?
   settlementLine Cod2SettlementLine?
   issues         Cod2Issue[]
 
-  /// Un COD siempre va ligado a un envío, y solo uno. El índice único ya existe
-  /// en la base (Cod2Charge_pedidoId_key), aplicado con la migración de ingesta.
-  @@unique([pedidoId])
+  @@unique([pedidoId]) // Un COD siempre va ligado a un envío, y solo uno
   @@index([clienteId, status])
   @@index([clienteId, pedidoId, status])
   @@index([courierId])
@@ -1849,7 +1864,9 @@ model Cod2Settlement {
   clienteId       Int
   periodStart     DateTime
   periodEnd       DateTime
-  payoutMethod    Cod2PayoutMethod
+  /// DEPRECADO — la fuente buena es `methodId`.
+  payoutMethod    Cod2PayoutMethodLegacy
+  methodId        Int?
   status          Cod2SettlementStatus @default(DRAFT)
   grossTotal      Int                  @default(0)
   commissionTotal Int                  @default(0)
@@ -1861,12 +1878,17 @@ model Cod2Settlement {
   reconciledAt    DateTime?
   notes           String?
 
+  // Sin esta relación, buscar un corte por nombre de cliente necesitaba dos
+  // consultas: el corte solo guardaba el id suelto.
+  cliente User                 @relation(fields: [clienteId], references: [id])
+  method  Cod2PayoutMethod?    @relation(fields: [methodId], references: [id])
   lines   Cod2SettlementLine[]
   payouts Cod2Payout[]
 
   @@unique([clienteId, periodStart, periodEnd])
   @@index([clienteId, status])
   @@index([clienteId, periodStart, periodEnd, status])
+  @@index([methodId])
   @@map("Cod2Settlement")
 }
 
@@ -1889,34 +1911,50 @@ model Cod2SettlementLine {
 
 // Pago del corte al cliente (retorno)
 model Cod2Payout {
-  id                String           @id @default(cuid())
+  id                String                 @id @default(cuid())
   settlementId      String
-  method            Cod2PayoutMethod
+  /// DEPRECADO — la fuente buena es `methodId`.
+  method            Cod2PayoutMethodLegacy
+  methodId          Int?
   amount            Int
   feeApplied        Int
   executedAt        DateTime?
   reference         String?
-  status            String           @default("PENDING") // PENDING|ASSIGNED|COMPLETED|FAILED
+  status            Cod2PayoutStatus       @default(PENDING)
   notes             String?
   assignedCourierId Int?
   dueAt             DateTime?
+  /// DEPRECADO — admite una sola. Las nuevas van en `Cod2PayoutEvidencia`.
   receiptUrl        String?
   amountDeposited   Int?
+  /// Envío ligado al retorno, cuando el método lo requiere. Opcional porque
+  /// puede no estar disponible desde el inicio.
+  pedidoId          Int?
 
-  settlement Cod2Settlement  @relation(fields: [settlementId], references: [id], onDelete: Cascade)
-  fees       Cod2PayoutFee[] // NUEVO - relación con fees individuales
+  settlement  Cod2Settlement        @relation(fields: [settlementId], references: [id], onDelete: Cascade)
+  metodo      Cod2PayoutMethod?     @relation(fields: [methodId], references: [id])
+  pedido      Pedido?               @relation(fields: [pedidoId], references: [id])
+  fees        Cod2PayoutFee[]
+  eventos     Cod2PayoutEvent[]
+  evidencias  Cod2PayoutEvidencia[]
+  issues      Cod2Issue[]
 
   @@index([settlementId, status])
   @@index([status, assignedCourierId, dueAt])
+  @@index([methodId])
+  @@index([pedidoId])
   @@map("Cod2Payout")
 }
 
 // Issues de cobro (por envío; opcionalmente ligados a attempt/payment)
 model Cod2Issue {
+  /// También cuelgan de un retorno: extender este modelo con `cod2PayoutId`
+  /// reusa toda la interfaz de incidencias en vez de duplicarla.
   id             String          @id @default(cuid())
   cod2ChargeId   String
   cod2AttemptId  String?
   cod2PaymentId  String?
+  cod2PayoutId   String?
   type           Cod2IssueType
   status         Cod2IssueStatus @default(OPEN)
   description    String?
@@ -1931,10 +1969,12 @@ model Cod2Issue {
   charge  Cod2Charge   @relation(fields: [cod2ChargeId], references: [id], onDelete: Cascade)
   attempt Cod2Attempt? @relation(fields: [cod2AttemptId], references: [id], onDelete: SetNull)
   payment Cod2Payment? @relation(fields: [cod2PaymentId], references: [id], onDelete: SetNull)
+  payout  Cod2Payout?  @relation(fields: [cod2PayoutId], references: [id], onDelete: SetNull)
 
   @@index([cod2ChargeId, status])
   @@index([cod2AttemptId])
   @@index([cod2PaymentId])
+  @@index([cod2PayoutId])
   @@map("Cod2Issue")
 }
 
@@ -1951,19 +1991,160 @@ model Cod2AuditLog {
   @@map("Cod2AuditLog")
 }
 
+// Estado de un evento recibido desde el API legacy
+enum Cod2IngestStatus {
+  PENDING // recibido, aún no procesado
+  PROCESSED // aplicado sobre el cobro
+  FAILED // falló al procesar; se puede reprocesar
+  IGNORED // no aplicaba (p.ej. la guía no tiene cobro)
+}
+
+// Buzón de entrada de los eventos de calle que manda el API legacy.
+// Se guarda el payload crudo ANTES de procesarlo: la app manda cada visita una
+// sola vez, así que un error al procesar no debe perder el evento.
+model Cod2IngestEvent {
+  id          String           @id @default(cuid())
+  visitaId    Int // id de la visita en la BD legacy
+  guia        Int // = Pedido.id (sysop_id en legacy)
+  payload     Json // el evento tal como llegó
+  status      Cod2IngestStatus @default(PENDING)
+  error       String?          @db.Text
+  attempts    Int              @default(0)
+  scenario    String? // E1..E5, se llena al procesar
+  chargeId    String? // Cod2Charge afectado, si aplicó
+  receivedAt  DateTime         @default(now())
+  processedAt DateTime?
+
+  @@unique([visitaId, guia]) // idempotencia: una visita-guía se procesa una sola vez
+  @@index([status, receivedAt])
+  @@index([guia])
+  @@map("Cod2IngestEvent")
+}
+
 // NUEVO MODELO - Fees/Cargos individuales del payout
 model Cod2PayoutFee {
   id          String   @id @default(cuid())
   payoutId    String
   description String // "Comisión bancaria", "Cargo por depósito", "IVA", etc.
   amount      Int // en centavos
+  /// Solo trazabilidad: de qué cargo del catálogo salió. El monto y el nombre
+  /// que valen son los de esta fila — subir el catálogo no toca el historial.
+  cargoId     Int?
+  createdAt   DateTime @default(now())
+  createdBy   Int?
+
+  payout Cod2Payout @relation(fields: [payoutId], references: [id], onDelete: Cascade)
+  cargo  Cod2PayoutCargo? @relation(fields: [cargoId], references: [id])
+
+  @@index([payoutId])
+  @@index([cargoId])
+  @@map("Cod2PayoutFee")
+}
+
+// ---------------------- Catálogo de retornos ----------------------
+//
+// Los métodos y sus costos viven en tablas y no en el código ni en Cod2Config:
+// van a aparecer métodos nuevos (cobro con terminal, transferencia) y cada uno
+// trae sus propios cargos. Agregarlos debe ser dato, no despliegue.
+//
+// OJO: el catálogo dice cuánto *debería* costar hoy. Lo que de verdad se cobró
+// en un retorno queda congelado en Cod2PayoutFee, así que subir un cargo nunca
+// altera el historial.
+
+enum Cod2CargoTipo {
+  FIJO
+  PORCENTAJE
+}
+
+/// Conceptos de cargo. Se catalogan aparte de los métodos porque el mismo
+/// concepto lo comparten varios: el "envío" lo cobran domicilio, banco y
+/// conveniencia. Así sube una vez y los tres quedan al día.
+model Cod2PayoutCargo {
+  id         Int           @id @default(autoincrement())
+  clave      String        @unique // ENVIO, COMISION_CONVENIENCIA
+  nombre     String // lo que ve el cliente en su corte
+  tipo       Cod2CargoTipo @default(FIJO)
+  monto      Int? // centavos, cuando es FIJO
+  porcentaje Decimal?      @db.Decimal(5, 4) // cuando es PORCENTAJE
+  activo     Boolean       @default(true)
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+
+  metodos Cod2PayoutMethodCargo[]
+  fees    Cod2PayoutFee[]
+
+  @@map("Cod2PayoutCargo")
+}
+
+/// Formas de devolverle el dinero al cliente.
+model Cod2PayoutMethod {
+  id             Int      @id @default(autoincrement())
+  clave          String   @unique // RECOGER_EN_OFICINA, ENTREGA_DOMICILIO, ...
+  nombre         String
+  descripcion    String?
+  /// Si el retorno se mueve físicamente, se le puede ligar un envío.
+  requierePedido Boolean  @default(false)
+  activo         Boolean  @default(true)
+  orden          Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  cargos     Cod2PayoutMethodCargo[]
+  payouts    Cod2Payout[]
+  settlements Cod2Settlement[]
+  clientes   Cod2ClientSettings[]
+
+  @@map("Cod2PayoutMethod")
+}
+
+/// Qué cargos aplica cada método.
+model Cod2PayoutMethodCargo {
+  id       Int  @id @default(autoincrement())
+  methodId Int
+  cargoId  Int
+  /// Válvula de escape: si el envío al banco costara distinto que a domicilio,
+  /// se pone aquí sin tocar el catálogo de cargos.
+  monto    Int?
+  orden    Int  @default(0)
+
+  method Cod2PayoutMethod @relation(fields: [methodId], references: [id], onDelete: Cascade)
+  cargo  Cod2PayoutCargo  @relation(fields: [cargoId], references: [id], onDelete: Cascade)
+
+  @@unique([methodId, cargoId])
+  @@index([cargoId])
+  @@map("Cod2PayoutMethodCargo")
+}
+
+/// Bitácora del retorno: el negocio pide que tenga su propio seguimiento.
+model Cod2PayoutEvent {
+  id          String   @id @default(cuid())
+  payoutId    String
+  /// CREADO, ASIGNADO, EJECUTADO, FALLIDO, REINTENTO, NOTA, EVIDENCIA
+  tipo        String
+  descripcion String?  @db.Text
   createdAt   DateTime @default(now())
   createdBy   Int?
 
   payout Cod2Payout @relation(fields: [payoutId], references: [id], onDelete: Cascade)
 
+  @@index([payoutId, createdAt])
+  @@map("Cod2PayoutEvent")
+}
+
+/// Evidencias del retorno. En plural: Cod2Payout.receiptUrl solo admite una y
+/// el negocio pide varias.
+model Cod2PayoutEvidencia {
+  id        String   @id @default(cuid())
+  payoutId  String
+  url       String   @db.Text
+  nota      String?
+  createdAt DateTime @default(now())
+  createdBy Int?
+
+  payout Cod2Payout @relation(fields: [payoutId], references: [id], onDelete: Cascade)
+
   @@index([payoutId])
-  @@map("Cod2PayoutFee")
+  @@map("Cod2PayoutEvidencia")
 }
 
 // ====================== COD v2 (separado) END ======================
